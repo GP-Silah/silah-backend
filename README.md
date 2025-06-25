@@ -15,8 +15,6 @@ git clone https://github.com/GP-Silah/silah-backend.git
 cd silah-backend
 ```
 
----
-
 ### 2. Install Dependencies
 
 Use `npm` to install all project dependencies:
@@ -25,8 +23,6 @@ Use `npm` to install all project dependencies:
 npm install
 ```
 
----
-
 ### 3. Start the Server
 
 To run the NestJS server in development mode (with hot reload):
@@ -34,3 +30,7 @@ To run the NestJS server in development mode (with hot reload):
 ```bash
 npm run start:dev
 ```
+
+---
+
+> Built with care by Silah's Backend Team, as a requirement of a Graduation Project.

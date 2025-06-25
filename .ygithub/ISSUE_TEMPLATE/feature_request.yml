@@ -1,0 +1,108 @@
+name: Feature Request
+description: Suggest a new feature or enhancement.
+title: 'Feat: '
+labels: [enhancement]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please provide as much detail as you can to help us understand and evaluate your idea.
+
+  - type: input
+    id: feature_summary
+    attributes:
+      label: Feature Summary
+      description: A short, clear title for this feature
+      placeholder: 'e.g. Add admin dashboard access control'
+
+  - type: textarea
+    id: feature_description
+    attributes:
+      label: Description
+      description: Explain the feature in detail. What problem does it solve? Who benefits from it?
+      placeholder: |
+        Describe what you want to build and why.
+        - What's the motivation?
+        - What's the expected behavior?
+        - Any technical notes or constraints?
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What are the conditions for this feature to be considered complete?
+      placeholder: |
+        - [ ] User can access X
+        - [ ] API returns correct Y
+        - [ ] Edge case Z is handled
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Paste screenshots if applicable.
+
+  - type: checkboxes
+    id: self_assign
+    attributes:
+      label: Self Assign
+      options:
+        - label: I want to work on this feature
+
+  - type: markdown
+      attributes:
+        value: |
+          ---
+          "### For Assignees (Optional)"
+          If you're working on this feature, use the section below to plan and track your work.
+
+  - type: textarea
+    id: internal_notes
+    attributes:
+      label: Internal Notes (Subtasks, DoD, etc.)
+      description: For your own planning, feel free to use Markdown.
+      placeholder: |
+        "## ✅ Definition of Done (DoD)"
+
+        **Note:** This DoD is meant as a helpful guide; not every item is required for every task or feature. Use what makes sense and skip what doesn't. You're doing great!
+
+          "### 📦 Functionality & Stability"
+          - [ ] All required endpoints and business logic are fully implemented  
+          - [ ] Testing/demo mode is implemented (if relevant) — speeds up background jobs or long-running features for presentation purposes (e.g. faster cron job intervals)  
+          - [ ] No runtime errors or unhandled exceptions during execution  
+          - [ ] Application compiles cleanly with no TypeScript errors  
+          - [ ] Feature is deployed locally and ready to be consumed by the frontend  
+
+          "### 🗃️ Database & Schema"
+          - [ ] Prisma schema is updated to reflect any model changes  
+          - [ ] Migrations are generated, tested, and executed successfully  
+
+          "### 🔍 Testing"
+          - [ ] Unit tests written for controllers and services  
+          - [ ] E2E tests written  
+          - [ ] All tests pass reliably  
+
+          "### 📚 Documentation"
+          - [ ] Swagger docs are updated  
+          - [ ] Static Swagger UI files are pushed (to GitHub Pages)  
+          - [ ] JSDoc comments are added where relevant  
+          - [ ] README or related markdown documentation is updated (if needed)  
+
+          "### 🧹 Code Quality"
+          - [ ] Linting passes with no major issues  
+          - [ ] No unused files, variables, or leftover debug code  
+          - [ ] Consistent and meaningful naming throughout  
+          - [ ] Proper folder and module structure is followed  
+
+          "### 🛡️ Security & Best Practices"
+          - [ ] No hard-coded secrets, API keys, or credentials  
+          - [ ] Sensitive data (e.g., passwords, tokens) is never exposed in logs or responses  
+          - [ ] JWT authentication, guards, and role checks are implemented (if needed)  
+          - [ ] Input validation is enforced via DTOs and class-validator  
+          - [ ] Defensive programming practices are applied  
+          - [ ] Negative-case handling (edge cases, failures) is considered  
+
+          "### 🔁 Communication"
+          - [ ] Any breaking changes (e.g., API response formats, route changes) are clearly communicated to the team  
+      render: markdown
