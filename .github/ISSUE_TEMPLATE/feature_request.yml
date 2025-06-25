@@ -1,34 +1,41 @@
-name: Bug report
-description: Report a bug you have encountered.
-title: 'Bug: '
-labels: [bug]
+name: Feature Request
+description: Suggest a new feature or enhancement.
+title: 'Feat: '
+labels: [enhancement]
 
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting a bug! Please fill out the details below.
+        Thanks for suggesting a feature! Please provide as much detail as you can to help us understand and evaluate your idea.
 
   - type: input
-    id: environment
+    id: feature_summary
     attributes:
-      label: Environment
-      description: OS, Browser, etc.
-      placeholder: 'e.g. Windows 10, Chrome 91, v1.0.3'
+      label: Feature Summary
+      description: A short, clear title for this feature
+      placeholder: 'e.g. Add admin dashboard access control'
 
   - type: textarea
-    id: steps
+    id: feature_description
     attributes:
-      label: Steps to Reproduce
-      description: How can we reproduce the problem?
-      placeholder: "1. Go to '...'\n2. Click on '....'\n3. See error"
-      render: markdown
+      label: Description
+      description: Explain the feature in detail. What problem does it solve? Who benefits from it?
+      placeholder: |
+        Describe what you want to build and why.
+        - What's the motivation?
+        - What's the expected behavior?
+        - Any technical notes or constraints?
 
   - type: textarea
-    id: expected
+    id: acceptance_criteria
     attributes:
-      label: Expected behavior
-      placeholder: 'What should have happened instead?'
+      label: Acceptance Criteria
+      description: What are the conditions for this feature to be considered complete?
+      placeholder: |
+        - [ ] User can access X
+        - [ ] API returns correct Y
+        - [ ] Edge case Z is handled
 
   - type: textarea
     id: screenshots
@@ -41,14 +48,14 @@ body:
     attributes:
       label: Self Assign
       options:
-        - label: I want to work on this bug
+        - label: I want to work on this feature
 
   - type: markdown
-      attributes:
-        value: |
-          ---
-          "### For Assignees (Optional)"
-          If you're working on this bug, use the section below to plan and track your work.
+    attributes:
+      value: |
+        ---
+        "### For Assignees (Optional)"
+        If you're working on this feature, use the section below to plan and track your work.
 
   - type: textarea
     id: internal_notes
@@ -56,15 +63,9 @@ body:
       label: Internal Notes (Subtasks, DoD, etc.)
       description: For your own planning, feel free to use Markdown.
       placeholder: |
-        - [ ] Investigate root cause 
-        - [ ] Write failing test  
-        - [ ] Fix issue  
-        - [ ] Add test coverage  
-        - [ ] Confirm fix in dev
-
         "## ✅ Definition of Done (DoD)"
 
-        **Note:** This DoD is meant as a helpful guide; not every item is required for every task or bug. Use what makes sense and skip what doesn't. You're doing great!
+        **Note:** This DoD is meant as a helpful guide; not every item is required for every task or feature. Use what makes sense and skip what doesn't. You're doing great!
 
           "### 📦 Functionality & Stability"
           - [ ] All required endpoints and business logic are fully implemented  
@@ -103,5 +104,5 @@ body:
           - [ ] Negative-case handling (edge cases, failures) is considered  
 
           "### 🔁 Communication"
-          - [ ] Any breaking changes (e.g., API response formats, route changes) are clearly communicated to the team  
+          - [ ] Any breaking changes (e.g., API response formats, route changes) are clearly communicated to the team
       render: markdown
