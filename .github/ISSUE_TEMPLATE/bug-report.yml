@@ -53,7 +53,7 @@ body:
   - type: textarea
     id: internal_notes
     attributes:
-      label: Internal Notes (Subtasks, DoD, etc.)
+      label: Internal Notes (Subtasks, etc.)
       description: For your own planning, feel free to use Markdown.
       placeholder: |
         - [ ] Investigate root cause
@@ -62,45 +62,77 @@ body:
         - [ ] Add test coverage
         - [ ] Confirm fix in dev
 
-        ## Definition of Done (DoD):
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ## Definition of Done (DoD)
 
         **Note:** This DoD is meant as a helpful guide; not every item is required for every task or bug. Use what makes sense and skip what doesn't. You're doing great!
 
-          ### 📦 Functionality & Stability
-          - [ ] All required endpoints and business logic are fully implemented
-          - [ ] Testing/demo mode is implemented (if relevant) — speeds up background jobs or long-running features for presentation purposes (e.g. faster cron job intervals)
-          - [ ] No runtime errors or unhandled exceptions during execution
-          - [ ] Application compiles cleanly with no TypeScript errors
-          - [ ] Feature is deployed locally and ready to be consumed by the frontend
+  - type: checkboxes
+    id: dod_functionality_stability
+    attributes:
+      label: '📦 Functionality & Stability'
+      options:
+        - label: All required endpoints and business logic are fully implemented
+        - label: Testing/demo mode is implemented (if relevant) — speeds up background jobs or long-running features for presentation purposes (e.g. faster cron job intervals)
+        - label: No runtime errors or unhandled exceptions during execution
+        - label: Application compiles cleanly with no TypeScript errors
+        - label: Feature is deployed locally and ready to be consumed by the frontend
 
-          ### 🗃️ Database & Schema
-          - [ ] Prisma schema is updated to reflect any model changes
-          - [ ] Migrations are generated, tested, and executed successfully
+  - type: checkboxes
+    id: dod_database_schema
+    attributes:
+      label: '🗃️ Database & Schema'
+      options:
+        - label: Prisma schema is updated to reflect any model changes
+        - label: Migrations are generated, tested, and executed successfully
 
-          ### 🔍 Testing
-          - [ ] Unit tests written for controllers and services
-          - [ ] E2E tests written
-          - [ ] All tests pass reliably
+  - type: checkboxes
+    id: dod_testing
+    attributes:
+      label: '🔍 Testing'
+      options:
+        - label: Unit tests written for controllers and services
+        - label: E2E tests written
+        - label: All tests pass reliably
 
-          ### 📚 Documentation
-          - [ ] Swagger docs are updated
-          - [ ] Static Swagger UI files are pushed (to GitHub Pages)
-          - [ ] JSDoc comments are added where relevant
-          - [ ] README or related markdown documentation is updated (if needed)
+  - type: checkboxes
+    id: dod_documentation
+    attributes:
+      label: '📚 Documentation'
+      options:
+        - label: Swagger docs are updated
+        - label: Static Swagger UI files are pushed (to GitHub Pages)
+        - label: JSDoc comments are added where relevant
+        - label: README or related markdown documentation is updated (if needed)
 
-          ### 🧹 Code Quality
-          - [ ] Linting passes with no major issues
-          - [ ] No unused files, variables, or leftover debug code
-          - [ ] Consistent and meaningful naming throughout
-          - [ ] Proper folder and module structure is followed
+  - type: checkboxes
+    id: dod_code_quality
+    attributes:
+      label: '🧹 Code Quality'
+      options:
+        - label: Linting passes with no major issues
+        - label: No unused files, variables, or leftover debug code
+        - label: Consistent and meaningful naming throughout
+        - label: Proper folder and module structure is followed
 
-          ### 🛡️ Security & Best Practices
-          - [ ] No hard-coded secrets, API keys, or credentials
-          - [ ] Sensitive data (e.g., passwords, tokens) is never exposed in logs or responses
-          - [ ] JWT authentication, guards, and role checks are implemented (if needed)
-          - [ ] Input validation is enforced via DTOs and class-validator
-          - [ ] Defensive programming practices are applied
-          - [ ] Negative-case handling (edge cases, failures) is considered
+  - type: checkboxes
+    id: dod_security_best_practices
+    attributes:
+      label: '🛡️ Security & Best Practices'
+      options:
+        - label: No hard-coded secrets, API keys, or credentials
+        - label: Sensitive data (e.g., passwords, tokens) is never exposed in logs or responses
+        - label: JWT authentication, guards, and role checks are implemented (if needed)
+        - label: Input validation is enforced via DTOs and class-validator
+        - label: Defensive programming practices are applied
+        - label: Negative-case handling (edge cases, failures) is considered
 
-          ### 🔁 Communication
-          - [ ] Any breaking changes (e.g., API response formats, route changes) are clearly communicated to the team
+  - type: checkboxes
+    id: dod_communication
+    attributes:
+      label: '🔁 Communication'
+      options:
+        - label: Any breaking changes (e.g., API response formats, route changes) are clearly communicated to the team
