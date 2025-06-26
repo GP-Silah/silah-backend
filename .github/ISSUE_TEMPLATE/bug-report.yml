@@ -1,0 +1,106 @@
+---
+name: Bug report
+description: Report a bug you have encountered.
+title: 'Bug: '
+labels: [bug]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please fill out the details below.
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Browser, etc.
+      placeholder: 'e.g. Windows 10, Chrome 91, v1.0.3'
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce the problem?
+      placeholder: "1. Go to '...'\n2. Click on '....'\n3. See error"
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: 'What should have happened instead?'
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Paste screenshots if applicable.
+
+  - type: checkboxes
+    id: self_assign
+    attributes:
+      label: Self Assign
+      options:
+        - label: I want to work on this bug
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ### For Assignees (Optional)
+        If you're working on this bug, use the section below to plan and track your work.
+
+  - type: textarea
+    id: internal_notes
+    attributes:
+      label: Internal Notes (Subtasks, DoD, etc.)
+      description: For your own planning, feel free to use Markdown.
+      placeholder: |
+        - [ ] Investigate root cause
+        - [ ] Write failing test
+        - [ ] Fix issue
+        - [ ] Add test coverage
+        - [ ] Confirm fix in dev
+
+        ## Definition of Done (DoD):
+
+        **Note:** This DoD is meant as a helpful guide; not every item is required for every task or bug. Use what makes sense and skip what doesn't. You're doing great!
+
+          ### 📦 Functionality & Stability
+          - [ ] All required endpoints and business logic are fully implemented
+          - [ ] Testing/demo mode is implemented (if relevant) — speeds up background jobs or long-running features for presentation purposes (e.g. faster cron job intervals)
+          - [ ] No runtime errors or unhandled exceptions during execution
+          - [ ] Application compiles cleanly with no TypeScript errors
+          - [ ] Feature is deployed locally and ready to be consumed by the frontend
+
+          ### 🗃️ Database & Schema
+          - [ ] Prisma schema is updated to reflect any model changes
+          - [ ] Migrations are generated, tested, and executed successfully
+
+          ### 🔍 Testing
+          - [ ] Unit tests written for controllers and services
+          - [ ] E2E tests written
+          - [ ] All tests pass reliably
+
+          ### 📚 Documentation
+          - [ ] Swagger docs are updated
+          - [ ] Static Swagger UI files are pushed (to GitHub Pages)
+          - [ ] JSDoc comments are added where relevant
+          - [ ] README or related markdown documentation is updated (if needed)
+
+          ### 🧹 Code Quality
+          - [ ] Linting passes with no major issues
+          - [ ] No unused files, variables, or leftover debug code
+          - [ ] Consistent and meaningful naming throughout
+          - [ ] Proper folder and module structure is followed
+
+          ### 🛡️ Security & Best Practices
+          - [ ] No hard-coded secrets, API keys, or credentials
+          - [ ] Sensitive data (e.g., passwords, tokens) is never exposed in logs or responses
+          - [ ] JWT authentication, guards, and role checks are implemented (if needed)
+          - [ ] Input validation is enforced via DTOs and class-validator
+          - [ ] Defensive programming practices are applied
+          - [ ] Negative-case handling (edge cases, failures) is considered
+
+          ### 🔁 Communication
+          - [ ] Any breaking changes (e.g., API response formats, route changes) are clearly communicated to the team
