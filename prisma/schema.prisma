@@ -45,7 +45,7 @@ model UserToken {
   token     String
   createdAt DateTime  @default(now())
   expiresAt DateTime
-  isUsed    Boolean   @default(false)
+  isUsed    Boolean?   @default(false)
 }
 
 // ============  ⚔️ ENUMS ================
@@ -58,4 +58,5 @@ enum Role {
 enum TokenType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
+  ACCESS_TOKEN
 }
