@@ -13,3 +13,49 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// ============  👤 USER ================
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  crn           String   @unique
+  password      String
+  name          String
+  isVerified    Boolean  @default(false)
+  role          Role     @default(BUYER)
+  business_name String
+  city          String
+  nid           String   @unique
+  agreedTerms   Boolean  @default(true)
+  pfpUrl        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  token UserToken[]
+}
+
+// ============ 🤫 USER_TOKEN ===============
+
+model UserToken {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  tokenType TokenType
+  token     String
+  createdAt DateTime  @default(now())
+  expiresAt DateTime
+  isUsed    Boolean   @default(false)
+}
+
+// ============  ⚔️ ENUMS ================
+
+enum Role {
+  SUPPLIER
+  BUYER
+}
+
+enum TokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
