@@ -58,5 +58,5 @@ enum Role {
 enum TokenType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
-  ACCESS_TOKEN
+  TOKEN
 }
