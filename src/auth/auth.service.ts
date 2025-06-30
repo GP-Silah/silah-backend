@@ -7,6 +7,8 @@ import { LoginDto } from './dtos/login.dto';
 import { TokenType } from 'src/enums/tokenType';
 import * as crypto from 'crypto';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { User } from '@prisma/client';
+import * as nodemailer from 'nodemailer';
 
 /**
  * AuthService contains all authentication-related business logic,
@@ -48,6 +50,22 @@ export class AuthService {
     plainText: string,
   ): Promise<boolean> {
     return await bcrypt.compare(plainText, hashedPassword);
+  }
+
+  async storeToken(user: User, token: string, tokenType: TokenType) {
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const expiration =
+      tokenType === TokenType.PASSWORD_RESET
+        ? new Date(Date.now() + 5 * 60 * 1000) // 5 minutes from now
+        : new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 day from now
+    await this.prisma.userToken.create({
+      data: {
+        userId: user.id,
+        token: hashedToken,
+        tokenType,
+        expiresAt: expiration,
+      },
+    });
   }
 
   /**
@@ -116,23 +134,52 @@ export class AuthService {
       },
     });
 
+    // Generate a JWT token for email verification and store it in DB
+    const emailToekn = await this.jwtService.signAsync({
+      sub: user.id,
+      email: payload.email,
+    });
+    this.storeToken(user, emailToekn, TokenType.EMAIL_VERIFICATION);
+    this.sendVerificationEmail(payload.email, emailToekn);
+
     // Generate a JWT token and return it to the controller so it sends it as a cookie
     const token = await this.jwtService.signAsync({
       sub: user.id, // Standard JWT subject claim
       email: user.email, // Useful for some identity checks
       role: user.role, // For role-based access
     });
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24); // 1 day
-    await this.prisma.userToken.create({
-      data: {
-        userId: user.id,
-        token: hashedToken,
-        tokenType: TokenType.TOKEN,
-        expiresAt,
+    this.storeToken(user, token, TokenType.TOKEN);
+    return { token };
+  }
+
+  async sendVerificationEmail(email: string, token: string) {
+    const verifyUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+
+    // Create reusable transporter object using SMTP transport
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAIL_HOST,
+      port: Number(process.env.MAIL_PORT),
+      secure: process.env.MAIL_SECURE,
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
       },
     });
-    return { token };
+
+    const mailOptions = {
+      from: `"Silah Support" <${process.env.MAIL_USER}>`,
+      to: email,
+      subject: 'Verify your email address',
+      html: `
+      <h2>Welcome to Silah!</h2>
+      <p>Please verify your email address by clicking the button below:</p>
+      <a href="${verifyUrl}" style="display:inline-block; padding:10px 20px; background-color:#4CAF50; color:white; text-decoration:none; border-radius:4px;">Verify Email</a>
+      <p>If the button doesn't work, copy and paste the following link in your browser:</p>
+      <p>${verifyUrl}</p>
+    `,
+    };
+
+    await transporter.sendMail(mailOptions);
   }
 
   async login(payload: LoginDto) {
@@ -159,16 +206,7 @@ export class AuthService {
       email: user.email, // Useful for some identity checks
       role: user.role, // For role-based access
     });
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24); // 1 day
-    await this.prisma.userToken.create({
-      data: {
-        userId: user.id,
-        token: hashedToken,
-        tokenType: TokenType.TOKEN,
-        expiresAt,
-      },
-    });
+    this.storeToken(user, token, TokenType.TOKEN);
     return { token };
   }
 
