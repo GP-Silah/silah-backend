@@ -203,7 +203,7 @@
             }
           }
         },
-        "summary": "Register a new user, and send a cookie",
+        "summary": "Registers a new user and returns a JWT token in a cookie",
         "tags": [
           "Auth"
         ]
@@ -211,13 +211,59 @@
     },
     "/api/auth/login": {
       "post": {
+        "description": "Either \"email\" or \"crn\" must be provided, but not both.",
         "operationId": "AuthController_login",
         "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
           }
         },
+        "responses": {
+          "201": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Login successful"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request – validation or authentication failure",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "userNotFound": {
+                    "summary": "The user does not exist in the system",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "User not found",
+                      "error": "Bad Request"
+                    }
+                  },
+                  "invalidCredentials": {
+                    "summary": "The email or CRN exists, but the password is incorrect",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "Invalid credentials",
+                      "error": "Bad Request"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Login user and send back JWT token as a cookie",
         "tags": [
           "Auth"
         ]
@@ -228,10 +274,18 @@
         "operationId": "AuthController_logout",
         "parameters": [],
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "Successfully logged out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": "Successfully logged out"
+                }
+              }
+            }
           }
         },
+        "summary": "Logout user by clearing token cookie",
         "tags": [
           "Auth"
         ]
@@ -358,6 +412,40 @@
           "nid",
           "categories",
           "agreedToTerms"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email address (optional if CRN is provided)",
+            "example": "user@example.com",
+            "format": "email"
+          },
+          "crn": {
+            "type": "string",
+            "description": "User CRN number (10 digits, optional if email is provided)",
+            "example": "1234567890",
+            "pattern": "^\\d{10}$"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password (8 to 28 characters)",
+            "example": "P@ssw0rd123",
+            "minLength": 8,
+            "maxLength": 28
+          },
+          "emailOrCrnCheck": {
+            "type": "boolean",
+            "description": "Internal field to validate that either email or CRN is provided",
+            "example": true,
+            "readOnly": true
+          }
+        },
+        "required": [
+          "password",
+          "emailOrCrnCheck"
         ]
       }
     }

@@ -1,8 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { SignupDto } from './dtos/signup.dto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from './dtos/login.dto';
+import { TokenType } from 'src/enums/tokenType';
+import * as crypto from 'crypto';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 /**
  * AuthService contains all authentication-related business logic,
@@ -11,6 +15,8 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
@@ -116,6 +122,68 @@ export class AuthService {
       email: user.email, // Useful for some identity checks
       role: user.role, // For role-based access
     });
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24); // 1 day
+    await this.prisma.userToken.create({
+      data: {
+        userId: user.id,
+        token: hashedToken,
+        tokenType: TokenType.TOKEN,
+        expiresAt,
+      },
+    });
     return { token };
+  }
+
+  async login(payload: LoginDto) {
+    // Check if the user exists in the database
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ email: payload.email }, { crn: payload.crn }],
+      },
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    // Compare between the entered password with the hashed password stored in DB
+    // If the passwords match, generate a JWT token and return it to the controller so it sends it as a cookie
+    const checkPasswords = await bcrypt.compare(
+      payload.password,
+      user.password,
+    );
+    if (!checkPasswords) {
+      throw new BadRequestException('Invalid credentials');
+    }
+    const token = await this.jwtService.signAsync({
+      sub: user.id, // Standard JWT subject claim
+      email: user.email, // Useful for some identity checks
+      role: user.role, // For role-based access
+    });
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24); // 1 day
+    await this.prisma.userToken.create({
+      data: {
+        userId: user.id,
+        token: hashedToken,
+        tokenType: TokenType.TOKEN,
+        expiresAt,
+      },
+    });
+    return { token };
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async cleanUpExpiredTokens() {
+    const now = new Date();
+
+    const result = await this.prisma.userToken.deleteMany({
+      where: {
+        OR: [{ isUsed: true }, { expiresAt: { lt: now } }],
+      },
+    });
+
+    this.logger.log(
+      `Deleted ${result.count} expired/used tokens at ${now.toISOString()}`,
+    );
   }
 }

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
+import { IsEmailOrCrnConstraint } from './dtos/isEmailOrCrnConstraint';
 
 /**
  * AuthModule is responsible for handling authentication-related features
@@ -16,6 +17,6 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, IsEmailOrCrnConstraint],
 })
 export class AuthModule {}

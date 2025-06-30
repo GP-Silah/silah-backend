@@ -9,6 +9,7 @@ import {
   ApiBadRequestResponse,
   ApiOperation,
 } from '@nestjs/swagger';
+import { LoginDto } from './dtos/login.dto';
 
 /**
  * AuthController handles incoming authentication-related requests,
@@ -128,10 +129,69 @@ export class AuthController {
   }
 
   @Post('login')
-  async login() {}
+  @ApiOperation({
+    summary: 'Login user and send back JWT token as a cookie',
+    description: 'Either "email" or "crn" must be provided, but not both.',
+  })
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({
+    status: 201,
+    description: 'User successfully logged in',
+    schema: {
+      example: {
+        message: 'Login successful',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request – validation or authentication failure',
+    content: {
+      'application/json': {
+        examples: {
+          userNotFound: {
+            summary: 'The user does not exist in the system',
+            value: {
+              statusCode: 400,
+              message: 'User not found',
+              error: 'Bad Request',
+            },
+          },
+          invalidCredentials: {
+            summary: 'The email or CRN exists, but the password is incorrect',
+            value: {
+              statusCode: 400,
+              message: 'Invalid credentials',
+              error: 'Bad Request',
+            },
+          },
+        },
+      },
+    },
+  })
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token = await this.authService.login(dto);
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true, // only over HTTPS in production
+    });
+    return { message: 'Login successful' };
+  }
 
-  @Post('logout')
-  async logout() {}
+  @Post('/logout')
+  @ApiOperation({ summary: 'Logout user by clearing token cookie' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully logged out',
+    schema: { example: 'Successfully logged out' },
+  })
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('token');
+    res.send('Successfully logged out');
+  }
 
   // after signup the system will send an email with a verification link to the user's email address. The user needs to click on the link to go to a page where they click a button to verify it, that is when this route is called.
   @Post('verify-email')
