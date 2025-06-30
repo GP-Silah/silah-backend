@@ -22,7 +22,7 @@ export class UserController {
   async createUser() {}
 }
 
-// Find user by: Id, Email, CRN
+// Find user by: Id, Email, CRN, Name
 //? CheckDuplicates shouldn't this be on the auth?
 //TODO: Look into the UserModule as a whole after implementing the Auth
 //TODO: Docs

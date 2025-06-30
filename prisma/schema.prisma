@@ -15,7 +15,6 @@ datasource db {
 }
 
 // ============  👤 USER ================
-
 model User {
   id            String   @id @default(uuid())
   email         String   @unique
@@ -24,7 +23,7 @@ model User {
   name          String
   isVerified    Boolean  @default(false)
   role          Role     @default(BUYER)
-  business_name String
+  businessName String
   city          String
   nid           String   @unique
   agreedTerms   Boolean  @default(true)
@@ -32,11 +31,11 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  token UserToken[]
+  tokens     UserToken[]
+  categories UserCategory[]
 }
 
 // ============ 🤫 USER_TOKEN ===============
-
 model UserToken {
   id        String    @id @default(uuid())
   userId    String
@@ -45,8 +44,45 @@ model UserToken {
   token     String
   createdAt DateTime  @default(now())
   expiresAt DateTime
-  isUsed    Boolean?   @default(false)
+  isUsed    Boolean?  @default(false)
 }
+
+// =========== 📁 CATEGORY ==============
+model Category {
+  id               Int        @id @default(autoincrement())
+  name             String     @unique
+  parentCategoryId Int?
+  parentCategory   Category?  @relation("CategoryToSubcategories", fields: [parentCategoryId], references: [id])
+  subcategories    Category[] @relation("CategoryToSubcategories")
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  users UserCategory[]
+}
+
+// ===========  🚥 USER_CATEGORY =============
+model UserCategory {
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, categoryId])
+}
+
+// ===========  ⭐️ SUPPLIER_CATEGORY =============
+// model SupplierCategory {
+//   supplierId    String
+//   supplier      Supplier  @relation(fields: [supplierId], references: [id])
+//   categoryId Int
+//   category   Category @relation(fields: [categoryId], references: [id])
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   @@unique([userId, categoryId])
+// }
 
 // ============  ⚔️ ENUMS ================
 
