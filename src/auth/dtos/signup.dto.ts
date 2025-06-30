@@ -30,7 +30,9 @@ export class SignupDto {
 
   @IsString()
   @IsNotEmpty()
-  @Matches(/^\d{10}$/, { message: 'CRN must be exactly 10 digits' })
+  @Matches(/^\d{10}$/, {
+    message: 'CRN must be exactly 10 digits (Numbers only)',
+  })
   crn: string;
 
   @IsString()
@@ -44,7 +46,9 @@ export class SignupDto {
 
   @IsString()
   @IsNotEmpty()
-  @Matches(/^\d{10}$/, { message: 'NID must be exactly 10 digits' })
+  @Matches(/^\d{10}$/, {
+    message: 'NID must be exactly 10 digits (Numbers only)',
+  })
   nid: string;
 
   @IsArray()

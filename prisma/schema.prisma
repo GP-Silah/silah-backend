@@ -26,7 +26,7 @@ model User {
   businessName String
   city          String
   nid           String   @unique
-  agreedTerms   Boolean  @default(true)
+  agreedToTerms   Boolean  @default(true)
   pfpUrl        String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
