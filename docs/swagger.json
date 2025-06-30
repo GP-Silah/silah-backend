@@ -118,9 +118,92 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "User signed up successfully. JWT sent in cookie.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Signup successful"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - validation or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "These categories are invalid: Cleaning, Laundry",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "NID already exists",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "CRN already exists",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Email already exists",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
+                },
+                "examples": {
+                  "categories": {
+                    "summary": "Invalid Categories",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "These categories are invalid: Cleaning, Laundry",
+                      "error": "Bad Request"
+                    }
+                  },
+                  "nid": {
+                    "summary": "NID already exists",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "NID already exists",
+                      "error": "Bad Request"
+                    }
+                  },
+                  "crn": {
+                    "summary": "CRN already exists",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "CRN already exists",
+                      "error": "Bad Request"
+                    }
+                  },
+                  "email": {
+                    "summary": "Email already exists",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "Email already exists",
+                      "error": "Bad Request"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Register a new user, and send a cookie",
         "tags": [
           "Auth"
         ]
@@ -221,7 +304,61 @@
     "schemas": {
       "SignupDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "StrongPass123"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "crn": {
+            "type": "string",
+            "example": "1234567890"
+          },
+          "businessName": {
+            "type": "string",
+            "example": "Acme Corp"
+          },
+          "city": {
+            "type": "string",
+            "example": "Riyadh"
+          },
+          "nid": {
+            "type": "string",
+            "example": "0987654321"
+          },
+          "categories": {
+            "example": [
+              "Home & Living",
+              "Technical & Repair Services"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "agreedToTerms": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "name",
+          "crn",
+          "businessName",
+          "city",
+          "nid",
+          "categories",
+          "agreedToTerms"
+        ]
       }
     }
   }

@@ -4,6 +4,11 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 
+/**
+ * AuthService contains all authentication-related business logic,
+ * such as signup, password hashing, validation, and JWT generation.
+ */
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -11,6 +16,13 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  /**
+   * Hashes a plain-text password using bcrypt.
+   *
+   * @param {string} plainText - The raw password to hash.
+   * @param {number} saltRounds - The cost factor for hashing. Default is 10.
+   * @returns {Promise<string>} A hashed password string.
+   */
   async encryptPassword(
     plainText: string,
     saltRounds: number = 10,
@@ -18,6 +30,13 @@ export class AuthService {
     return await bcrypt.hash(plainText, saltRounds);
   }
 
+  /**
+   * Compares a hashed password with a plain-text password.
+   *
+   * @param {string} hashedPassword - The stored hashed password.
+   * @param {string} plainText - The input password to compare.
+   * @returns {Promise<boolean>} A boolean indicating if the passwords match.
+   */
   async comparePasswords(
     hashedPassword: string,
     plainText: string,
@@ -25,6 +44,18 @@ export class AuthService {
     return await bcrypt.compare(plainText, hashedPassword);
   }
 
+  /**
+   * Registers a new user in the system.
+   * - Validates categories.
+   * - Ensures uniqueness of NID, CRN, and email.
+   * - Hashes the password.
+   * - Stores the user and links categories.
+   * - Returns a JWT token.
+   *
+   * @param {SignupDto} payload - The signup data from the user.
+   * @returns {{token: string}} A JWT token to be sent to the client.
+   * @throws BadRequestException if validation fails.
+   */
   async signUp(payload: SignupDto): Promise<{ token: string }> {
     // Validate that the recieved categories exists in DB, and convert them to IDs to store them later
     const categories = await this.prisma.category.findMany({

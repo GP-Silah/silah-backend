@@ -3,6 +3,10 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 
+/**
+ * AuthModule is responsible for handling authentication-related features
+ * such as user signup and JWT configuration.
+ */
 @Module({
   imports: [
     JwtModule.register({
