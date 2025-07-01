@@ -13,3 +13,75 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// ============  👤 USER ================
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  crn             String   @unique
+  password        String
+  name            String
+  isVerified      Boolean  @default(false)
+  role            Role     @default(BUYER)
+  businessName    String
+  city            String
+  nid             String   @unique
+  agreedToTerms   Boolean  @default(true)
+  isEmailVerified Boolean  @default(false)
+  pfpUrl          String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  categories UserCategory[]
+}
+
+// =========== 📁 CATEGORY ==============
+model Category {
+  id               Int        @id @default(autoincrement())
+  name             String     @unique
+  parentCategoryId Int?
+  parentCategory   Category?  @relation("CategoryToSubcategories", fields: [parentCategoryId], references: [id])
+  subcategories    Category[] @relation("CategoryToSubcategories")
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  users UserCategory[]
+}
+
+// ===========  🚥 USER_CATEGORY =============
+model UserCategory {
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, categoryId])
+}
+
+// ===========  ⭐️ SUPPLIER_CATEGORY =============
+// model SupplierCategory {
+//   supplierId    String
+//   supplier      Supplier  @relation(fields: [supplierId], references: [id])
+//   categoryId Int
+//   category   Category @relation(fields: [categoryId], references: [id])
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   @@unique([userId, categoryId])
+// }
+
+// ============  ⚔️ ENUMS ================
+
+enum Role {
+  GUEST
+  SUPPLIER
+  BUYER
+}
+
+enum TokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  TOKEN
+}

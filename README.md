@@ -25,13 +25,13 @@ npm install
 
 ### 3. Configure Environment Variables
 
-Create a `.env` file in the project root and add your PostgreSQL connection string:
+Copy the provided `.env.example` file to `.env` and fill in the required values:
 
 ```bash
-DATABASE_URL="postgresql://yourusername:yourpassword@localhost:5432/yourdb"
+cp .env.example .env
 ```
 
-Replace `yourusername`, `yourpassword`, and `yourdb` with your actual PostgreSQL credentials.
+The `.env.example` file includes all necessary environment variables with explanations for each. Make sure to review and update them according to your local setup.
 
 ### 4.Set Up the Database with Prisma
 
@@ -44,7 +44,19 @@ npx prisma migrate dev
 
 This will generate the Prisma Client and apply any pending migrations to your database.
 
-### 5. Start the Server
+### 5. Seed the Database (Required)
+
+To populate the database with initial data (specifically, the Categories), run:
+
+```bash
+npm run prisma:seed:category
+```
+
+> **Why this matters:**
+> This step inserts around 50 predefined categories into the database using the `src/prisma/categorySeed.ts` script. Each category has a unique ID, and these IDs are used throughout the app to associate users with their selected categories.
+> Skipping this step will cause category-related features to break.
+
+### 6. Start the Server
 
 To run the NestJS server in development mode (with hot reload):
 

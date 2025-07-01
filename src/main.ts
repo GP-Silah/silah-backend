@@ -1,11 +1,28 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   app.setGlobalPrefix('api');
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
+  app.enableCors({
+    origin: `${process.env.FRONTEND_URL}`,
+    credentials: true,
+  });
+
+  app.use(cookieParser());
 
   // Swagger config
   const config = new DocumentBuilder()
@@ -14,7 +31,6 @@ async function bootstrap() {
       'Use this documentation to explore, test, and understand the available API endpoints, their request/response structure, and any required parameters such as headers, cookies, or authentication tokens.',
     )
     .setVersion('1.0')
-    .addBearerAuth() // because we are using JWT
     .addCookieAuth('token')
     .build();
   const document = SwaggerModule.createDocument(app, config);
