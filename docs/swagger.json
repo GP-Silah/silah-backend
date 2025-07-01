@@ -293,13 +293,125 @@
     },
     "/api/auth/verify-email": {
       "post": {
+        "description": "This endpoint should be called when the user clicks the verification button which is after clicking the link in their email.",
         "operationId": "AuthController_verifyEmail",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "query",
+            "description": "JWT token from email link",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "Email verified successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Email verified successfully"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or expired token, or already verified",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "userNotFound": {
+                    "summary": "The user not found or already verified",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "User not found or already verified",
+                      "error": "Bad Request"
+                    }
+                  },
+                  "invalidCredentials": {
+                    "summary": "Invalid or expired token",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "Invalid or expired verification token",
+                      "error": "Bad Request"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Verify user email using token",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/resend-verification-email": {
+      "post": {
+        "description": "This endpoint allows users to request a new verification email if they missed the original one or if the token expired. <br>If the you received \"Invalid or expired verification token\" error you should call this endpoint to resend the email. ",
+        "operationId": "AuthController_resendVerificationEmail",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Email to resend verification to",
+          "content": {
+            "application/json": {
+              "schema": {
+                "example": {
+                  "email": "example@email.com"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification email resent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Verification email resent successfully"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email already verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Email already verified",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Resend verification email to user",
         "tags": [
           "Auth"
         ]

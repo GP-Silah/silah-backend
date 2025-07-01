@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { IsEmailOrCrnConstraint } from './dtos/isEmailOrCrnConstraint';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 /**
  * AuthModule is responsible for handling authentication-related features
@@ -10,10 +11,15 @@ import { IsEmailOrCrnConstraint } from './dtos/isEmailOrCrnConstraint';
  */
 @Module({
   imports: [
-    JwtModule.register({
+    ConfigModule.forRoot(), // make sure this is imported once at app root
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1d' },
+      }),
       global: true,
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1d' },
     }),
   ],
   controllers: [AuthController],

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Query, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { SignupDto } from './dtos/signup.dto';
@@ -8,6 +8,8 @@ import {
   ApiBody,
   ApiBadRequestResponse,
   ApiOperation,
+  ApiQuery,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { LoginDto } from './dtos/login.dto';
 
@@ -193,9 +195,96 @@ export class AuthController {
     res.send('Successfully logged out');
   }
 
-  // after signup the system will send an email with a verification link to the user's email address. The user needs to click on the link to go to a page where they click a button to verify it, that is when this route is called.
+  // After signup the system will send an email with a verification link to the user's email address.
+  // The user needs to click on the link to go to a page where they click a button to verify it,that is when this route is called.
   @Post('verify-email')
-  async verifyEmail() {}
+  @ApiOperation({
+    summary: 'Verify user email using token',
+    description:
+      'This endpoint should be called when the user clicks the verification button which is after clicking the link in their email.',
+  })
+  @ApiQuery({
+    name: 'token',
+    required: true,
+    description: 'JWT token from email link',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Email verified successfully',
+    schema: { example: { message: 'Email verified successfully' } },
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid or expired token, or already verified',
+    content: {
+      'application/json': {
+        examples: {
+          userNotFound: {
+            summary: 'The user not found or already verified',
+            value: {
+              statusCode: 400,
+              message: 'User not found or already verified',
+              error: 'Bad Request',
+            },
+          },
+          invalidCredentials: {
+            summary: 'Invalid or expired token',
+            value: {
+              statusCode: 400,
+              message: 'Invalid or expired verification token',
+              error: 'Bad Request',
+            },
+          },
+        },
+      },
+    },
+  })
+  async verifyEmail(@Query('token') token: string) {
+    return await this.authService.verifyEmail(token);
+  }
+
+  // In case the user missed the mail or the token expired, the frontend can call this route to resend the verification email.
+  @Post('resend-verification-email')
+  @ApiOperation({
+    summary: 'Resend verification email to user',
+    description:
+      'This endpoint allows users to request a new verification email if they missed the original one or if the token expired. <br>If the you received "Invalid or expired verification token" error you should call this endpoint to resend the email. ',
+  })
+  @ApiBody({
+    description: 'Email to resend verification to',
+    type: String,
+    schema: { example: { email: 'example@email.com' } },
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Verification email resent successfully',
+    schema: {
+      example: { message: 'Verification email resent successfully' },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'User not found',
+    schema: {
+      example: {
+        statusCode: 404,
+        message: 'User not found',
+        error: 'Not Found',
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    description: 'Email already verified',
+    schema: {
+      example: {
+        statusCode: 400,
+        message: 'Email already verified',
+        error: 'Bad Request',
+      },
+    },
+  })
+  async resendVerificationEmail(@Body() email: string) {
+    return await this.authService.resendVerificationEmail(email);
+  }
 
   @Post('request-password-reset')
   async requestPasswordReset() {}
