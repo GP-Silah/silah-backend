@@ -1,4 +1,12 @@
-import { Body, Controller, Patch, Post, Query, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Patch,
+  Post,
+  Query,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { SignupDto } from './dtos/signup.dto';
@@ -14,6 +22,11 @@ import {
 import { LoginDto } from './dtos/login.dto';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
 import { RequestToSendEmailDto } from './dtos/requestToSendEmail.dto';
+import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
+import { Role } from '@prisma/client';
+import { RolesGuard } from './guards/roles/roles.guard';
+import { UserRole } from 'src/enums/userRole';
+import { Roles } from './decorators/roles/roles.decorator';
 
 /**
  * AuthController handles incoming authentication-related requests,

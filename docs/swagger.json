@@ -481,6 +481,20 @@
         ]
       }
     },
+    "/api/auth": {
+      "post": {
+        "operationId": "AuthController_get",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/api/users": {
       "get": {
         "operationId": "UserController_getUserData",

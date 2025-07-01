@@ -75,6 +75,7 @@ model UserCategory {
 // ============  ⚔️ ENUMS ================
 
 enum Role {
+  GUEST
   SUPPLIER
   BUYER
 }
