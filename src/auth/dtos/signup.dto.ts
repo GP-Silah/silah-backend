@@ -1,6 +1,7 @@
 import {
   ArrayMinSize,
   ArrayNotEmpty,
+  Equals,
   IsArray,
   IsBoolean,
   IsEmail,
@@ -18,7 +19,11 @@ export class SignupDto {
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ example: 'StrongPass123' })
+  @ApiProperty({
+    example: 'StrongPass123',
+    minLength: 8,
+    maxLength: 28,
+  })
   @IsString()
   @IsNotEmpty()
   @MinLength(8, { message: 'Password must be at least 8 characters' })
@@ -70,6 +75,7 @@ export class SignupDto {
 
   @ApiProperty({ example: true })
   @IsBoolean()
+  @Equals(true, { message: 'You must agree to the terms and conditions' })
   @IsNotEmpty()
   agreedToTerms: boolean;
 }

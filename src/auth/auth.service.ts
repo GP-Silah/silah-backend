@@ -12,6 +12,8 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dtos/login.dto';
 import * as crypto from 'crypto';
 import * as nodemailer from 'nodemailer';
+import { ResetPasswordDto } from './dtos/resetPassword.dto';
+import { RequestToSendEmailDto } from './dtos/requestToSendEmail.dto';
 
 /**
  * AuthService contains all authentication-related business logic,
@@ -68,6 +70,8 @@ export class AuthService {
    * @throws BadRequestException if validation fails.
    */
   async signUp(payload: SignupDto): Promise<{ token: string }> {
+    //TODO: Validate CRN through WatheqAPI; Probably at DTO level
+
     // Validate that the recieved categories exists in DB, and convert them to IDs to store them later
     const categories = await this.prisma.category.findMany({
       where: { name: { in: payload.categories } },
@@ -171,6 +175,8 @@ export class AuthService {
       <a href="${verifyUrl}" style="display:inline-block; padding:10px 20px; background-color:#543361; color:white; text-decoration:none; border-radius:4px;">Verify Email</a>
       <p>If the button doesn't work, copy and paste the following link in your browser:</p>
       <p>${verifyUrl}</p>
+      <hr />
+      <small>This is an automated message. Please do not reply.</small>
     `,
     };
 
@@ -181,6 +187,55 @@ export class AuthService {
       console.error('Error sending email:', error);
       throw new InternalServerErrorException(
         'Failed to send verification email',
+      );
+    }
+  }
+
+  /**
+   * Sends a reset password email to the user with a JWT-based reset link.
+   *
+   * @param {string} email - The recipient's email address.
+   * @param {string} token - A JWT token used to authenticate the password reset request.
+   *
+   * @throws {InternalServerErrorException} Thrown if sending the reset password email fails due to transport or configuration errors.
+   */
+  async sendResetPasswordEmail(email: string, token: string) {
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAIL_HOST,
+      port: Number(process.env.MAIL_PORT),
+      secure: process.env.MAIL_SECURE === 'true', // convert string to boolean
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: `"Silah Support" <${process.env.MAIL_USER}>`,
+      to: email,
+      subject: 'Reset Your Silah Account Password',
+      html: `
+        <h2>Reset Your Password</h2>
+        <p>We received a request to reset your Silah account password.</p>
+        <p>Click the button below to reset your password. This link is valid for <strong>5 minutes</strong> only.</p>
+        <a href="${resetUrl}" style="display:inline-block; padding:10px 20px; background-color:#543361; color:white; text-decoration:none; border-radius:4px;">Reset Password</a>
+        <p>If the button doesn't work, copy and paste the following link into your browser:</p>
+        <p>${resetUrl}</p>
+        <p>If you did not request a password reset, you can safely ignore this email.</p>
+        <hr />
+        <small>This is an automated message. Please do not reply.</small>
+      `,
+    };
+
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log('Email sent:', info.response);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw new InternalServerErrorException(
+        'Failed to send reset password email',
       );
     }
   }
@@ -226,20 +281,65 @@ export class AuthService {
   }
 
   /**
+   * Resets the password of a user using a provided JWT token and a new password.
+   *
+   * - Verifies the reset password JWT token.
+   * - Ensures the user exists.
+   * - Hashes and updates the user's password.
+   *
+   * @param {string} resetToken - The JWT token sent to the user's email for password reset.
+   * @param {ResetPasswordDto} payload - DTO containing the new password.
+   *
+   * @returns {{ message: string }} A success message confirming password reset.
+   *
+   * @throws {BadRequestException} If the token is invalid or expired.
+   * @throws {NotFoundException} If the user does not exist.
+   */
+  async resetPassword(resetToken: string, payload: ResetPasswordDto) {
+    // Verify the JWT token
+    let decodedToken;
+    try {
+      decodedToken = await this.jwtService.verifyAsync(resetToken);
+    } catch (error) {
+      throw new BadRequestException('Invalid or expired reset password token');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: decodedToken.sub },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Hash the new password
+    const hashedPassword = await this.encryptPassword(payload.newPassword);
+
+    // Update the user's password in the database
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+
+    return { message: 'Password reset successfully' };
+  }
+
+  /**
    * Generates a new email verification token and sends a verification email.
    *
    * - Validates the existence of the user and their unverified email status.
    * - Generates a new JWT token and sends it via email.
    *
-   * @param {string} email - The user's email address to resend the verification email to.
+   * @param {RequestToSendEmailDto} payload - The user's email address to resend the verification email to.
    *
    * @returns {{ message: string }} A confirmation message that the email was resent.
    *
    * @throws {NotFoundException} If no user with the given email is found.
    * @throws {BadRequestException} If the user's email is already verified.
    */
-  async resendVerificationEmail(email: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
+  async resendVerificationEmail(payload: RequestToSendEmailDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: payload.email },
+    });
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -250,10 +350,10 @@ export class AuthService {
     // Generate a JWT token for email verification and send it via email
     const emailToekn = await this.jwtService.signAsync({
       sub: user.id,
-      email,
+      email: payload.email,
       jti: crypto.randomUUID(),
     });
-    this.sendVerificationEmail(email, emailToekn);
+    this.sendVerificationEmail(payload.email, emailToekn);
 
     return { message: 'Verification email resent successfully' };
   }
@@ -298,5 +398,39 @@ export class AuthService {
       jti: crypto.randomUUID(),
     });
     return { token };
+  }
+
+  /**
+   * Handles a password reset request by generating a JWT token and sending it to the user's email.
+   *
+   * - Checks if the user exists and their email is verified.
+   * - Generates a short-lived JWT reset token (5 minutes).
+   * - Sends the reset password email with the token.
+   *
+   * For security reasons, this method returns silently even if the user does not exist or their email is not verified.
+   *
+   * @param {RequestToSendEmailDto} payload - The email address to send the reset link to.
+   *
+   * @returns {{ message: string }} A success message indicating that the email was sent (if applicable).
+   */
+  async requestPasswordReset(payload: RequestToSendEmailDto) {
+    // Check if the user exists in the database
+    const user = await this.prisma.user.findUnique({
+      where: { email: payload.email },
+    });
+    if (!user || !user.isEmailVerified) return; // for security reasons, we don't reveal if the user exists
+
+    // Generate a JWT token for password reset and send it via email
+    const resetToken = await this.jwtService.signAsync(
+      {
+        sub: user.id,
+        email: user.email,
+        jti: crypto.randomUUID(),
+      },
+      { expiresIn: '5m' },
+    ); // Token expires in 5 minutes
+    await this.sendResetPasswordEmail(user.email, resetToken);
+
+    return { message: 'Password reset email sent successfully' };
   }
 }

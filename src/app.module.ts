@@ -7,7 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [ScheduleModule.forRoot(), UserModule, AuthModule, PrismaModule],
+  imports: [ScheduleModule.forRoot(), AuthModule, UserModule, PrismaModule],
   controllers: [AppController],
   providers: [AppService],
 })
