@@ -1,9 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Patch,
   Post,
   Query,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -18,15 +20,15 @@ import {
   ApiOperation,
   ApiQuery,
   ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
 import { LoginDto } from './dtos/login.dto';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
 import { RequestToSendEmailDto } from './dtos/requestToSendEmail.dto';
 import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
-import { Role } from '@prisma/client';
-import { RolesGuard } from './guards/roles/roles.guard';
-import { UserRole } from 'src/enums/userRole';
-import { Roles } from './decorators/roles/roles.decorator';
+import { ApiJwtAuthGuard } from './decorators/api-jwt-auth-guard.decorator';
+import { Request } from 'express';
 
 /**
  * AuthController handles incoming authentication-related requests,
@@ -390,5 +392,32 @@ export class AuthController {
   }
 
   @Patch('switch-role')
-  async switchUserRole() {}
+  @ApiOperation({ summary: 'Switch user role (BUYER ⇌ SUPPLIER)' })
+  @ApiOkResponse({
+    description: 'Token regenerated with updated role',
+    schema: {
+      example: {
+        message: 'Role switched successfully',
+        newRole: 'SUPPLIER',
+      },
+    },
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Unexpected role: GUEST should never reach this endpoint',
+    schema: {
+      example: {
+        statusCode: 500,
+        message: 'Unexpected role: GUEST should never reach this endpoint',
+        error: 'Internal Server Error',
+      },
+    },
+  })
+  @ApiJwtAuthGuard()
+  @UseGuards(JwtAuthGuard)
+  async switchUserRole(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return await this.authService.switchUserRole(req, res);
+  }
 }

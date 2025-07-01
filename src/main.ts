@@ -31,7 +31,6 @@ async function bootstrap() {
       'Use this documentation to explore, test, and understand the available API endpoints, their request/response structure, and any required parameters such as headers, cookies, or authentication tokens.',
     )
     .setVersion('1.0')
-    .addBearerAuth() // because we are using JWT
     .addCookieAuth('token')
     .build();
   const document = SwaggerModule.createDocument(app, config);

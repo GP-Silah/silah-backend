@@ -14,6 +14,8 @@ import * as crypto from 'crypto';
 import * as nodemailer from 'nodemailer';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
 import { RequestToSendEmailDto } from './dtos/requestToSendEmail.dto';
+import { UserRole } from 'src/enums/userRole';
+import { Request, Response } from 'express';
 
 /**
  * AuthService contains all authentication-related business logic,
@@ -432,5 +434,32 @@ export class AuthService {
     await this.sendResetPasswordEmail(user.email, resetToken);
 
     return { message: 'Password reset email sent successfully' };
+  }
+
+  async switchUserRole(req: Request, res: Response) {
+    const tokenData = req.tokenData!;
+    const { sub: userId, email, role: currentRole } = tokenData;
+
+    let newRole;
+    if (currentRole === UserRole.BUYER) newRole = UserRole.SUPPLIER;
+    else if (currentRole === UserRole.SUPPLIER) newRole = UserRole.BUYER;
+    else
+      throw new InternalServerErrorException(
+        'Unexpected role: GUEST should never reach this endpoint',
+      );
+
+    // Generate new JWT
+    const newToken = await this.jwtService.signAsync({
+      sub: userId,
+      email,
+      role: newRole,
+    });
+
+    // Overwrite the token cookie
+    res.cookie('token', newToken, {
+      httpOnly: true,
+    });
+
+    return { message: 'Role switched successfully', newRole };
   }
 }

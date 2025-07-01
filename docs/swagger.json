@@ -470,26 +470,77 @@
     "/api/auth/switch-role": {
       "patch": {
         "operationId": "AuthController_switchUserRole",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Token regenerated with updated role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Role switched successfully",
+                    "newRole": "SUPPLIER"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected role: GUEST should never reach this endpoint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 500,
+                    "message": "Unexpected role: GUEST should never reach this endpoint",
+                    "error": "Internal Server Error"
+                  }
+                }
+              }
+            }
           }
         },
-        "tags": [
-          "Auth"
-        ]
-      }
-    },
-    "/api/auth": {
-      "post": {
-        "operationId": "AuthController_get",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
+        "security": [
+          {
+            "token": []
           }
-        },
+        ],
+        "summary": "Switch user role (BUYER ⇌ SUPPLIER)",
         "tags": [
           "Auth"
         ]
@@ -555,11 +606,6 @@
   "servers": [],
   "components": {
     "securitySchemes": {
-      "bearer": {
-        "scheme": "bearer",
-        "bearerFormat": "JWT",
-        "type": "http"
-      },
       "cookie": {
         "type": "apiKey",
         "in": "cookie",
