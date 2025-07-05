@@ -18,5 +18,3 @@ export class UserController {
 }
 
 // Find user by: Id, Email, CRN, Name
-//TODO: Look into the UserModule as a whole after implementing the Auth
-//TODO: Docs

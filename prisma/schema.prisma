@@ -33,7 +33,30 @@ model User {
   updatedAt       DateTime @updatedAt
 
   categories UserCategory[]
+  supplier   Supplier?
 }
+
+// ============ 🛢 SUPPLIER ==============
+model Supplier {
+  id             String       @id @default(uuid())
+  userId         String       @unique
+  user           User         @relation(fields: [userId], references: [id])
+  plan           SupplierPlan @default(BASIC)
+  usedFreeTrial  Boolean      @default(false)
+  isStoreClosed  Boolean      @default(true)
+  storeClosedMsg String       @default("This store is currently closed. Please check back later.")
+  storeBio       String?
+  storeBannerUrl String?
+  deliveryFees   Float        @default(0.0)
+  avgRating      Float        @default(0.0)
+  ratingCount    Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  categories SupplierCategory[]
+}
+
+// ============ 🛍️ BUYER ================
 
 // =========== 📁 CATEGORY ==============
 model Category {
@@ -45,7 +68,8 @@ model Category {
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 
-  users UserCategory[]
+  users     UserCategory[]
+  suppliers SupplierCategory[]
 }
 
 // ===========  🚥 USER_CATEGORY =============
@@ -61,16 +85,16 @@ model UserCategory {
 }
 
 // ===========  ⭐️ SUPPLIER_CATEGORY =============
-// model SupplierCategory {
-//   supplierId    String
-//   supplier      Supplier  @relation(fields: [supplierId], references: [id])
-//   categoryId Int
-//   category   Category @relation(fields: [categoryId], references: [id])
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
+model SupplierCategory {
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-//   @@unique([userId, categoryId])
-// }
+  @@unique([supplierId, categoryId])
+}
 
 // ============  ⚔️ ENUMS ================
 
@@ -84,4 +108,9 @@ enum TokenType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
   TOKEN
+}
+
+enum SupplierPlan {
+  BASIC
+  PREMIUM
 }

@@ -441,12 +441,30 @@ export class AuthService {
     const { sub: userId, email, role: currentRole } = tokenData;
 
     let newRole;
-    if (currentRole === UserRole.BUYER) newRole = UserRole.SUPPLIER;
-    else if (currentRole === UserRole.SUPPLIER) newRole = UserRole.BUYER;
-    else
+    if (currentRole === UserRole.BUYER) {
+      newRole = UserRole.SUPPLIER;
+
+      // If this is the frst time the user is switching to SUPPLIER,
+      // we need to create a supplier account for them
+      const existingSupplier = await this.prisma.supplier.findUnique({
+        where: { userId },
+      });
+      if (!existingSupplier) {
+        await this.prisma.supplier.create({ data: { userId } });
+      }
+    } else if (currentRole === UserRole.SUPPLIER) {
+      newRole = UserRole.BUYER;
+    } else {
       throw new InternalServerErrorException(
         'Unexpected role: GUEST should never reach this endpoint',
       );
+    }
+
+    // Change the user's role in the DB
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { role: newRole },
+    });
 
     // Generate new JWT
     const newToken = await this.jwtService.signAsync({
