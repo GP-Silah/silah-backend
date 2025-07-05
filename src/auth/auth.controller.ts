@@ -25,7 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { LoginDto } from './dtos/login.dto';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
-import { RequestToSendEmailDto } from './dtos/requestToSendEmail.dto';
+import { ParseEmailPipe } from '../pipes/parse-email.pipe';
 import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
 import { ApiJwtAuthGuard } from './decorators/api-jwt-auth-guard.decorator';
 import { Request } from 'express';
@@ -268,7 +268,7 @@ export class AuthController {
   })
   @ApiBody({
     description: 'Email to resend verification to',
-    type: RequestToSendEmailDto,
+    type: ParseEmailPipe,
     schema: { example: { email: 'example@email.com' } },
     required: true,
   })
@@ -299,8 +299,8 @@ export class AuthController {
       },
     },
   })
-  async resendVerificationEmail(@Body() dto: RequestToSendEmailDto) {
-    return await this.authService.resendVerificationEmail(dto);
+  async resendVerificationEmail(@Body(ParseEmailPipe) email: string) {
+    return await this.authService.resendVerificationEmail(email);
   }
 
   @Post('request-password-reset')
@@ -315,7 +315,7 @@ export class AuthController {
   @ApiBody({
     description:
       'The email address of the user who wants to reset their password.',
-    type: RequestToSendEmailDto,
+    type: ParseEmailPipe,
     schema: { example: { email: 'user@example.com' } },
     required: true,
   })
@@ -336,8 +336,8 @@ export class AuthController {
       },
     },
   })
-  async requestPasswordReset(@Body() dto: RequestToSendEmailDto) {
-    return await this.authService.requestPasswordReset(dto);
+  async requestPasswordReset(@Body(ParseEmailPipe) email: string) {
+    return await this.authService.requestPasswordReset(email);
   }
 
   @Post('reset-password')

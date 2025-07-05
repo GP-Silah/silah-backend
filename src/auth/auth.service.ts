@@ -13,7 +13,6 @@ import { LoginDto } from './dtos/login.dto';
 import * as crypto from 'crypto';
 import * as nodemailer from 'nodemailer';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
-import { RequestToSendEmailDto } from './dtos/requestToSendEmail.dto';
 import { UserRole } from 'src/enums/userRole';
 import { Request, Response } from 'express';
 
@@ -331,16 +330,16 @@ export class AuthService {
    * - Validates the existence of the user and their unverified email status.
    * - Generates a new JWT token and sends it via email.
    *
-   * @param {RequestToSendEmailDto} payload - The user's email address to resend the verification email to.
+   * @param {string} email - The user's email address to resend the verification email to.
    *
    * @returns {{ message: string }} A confirmation message that the email was resent.
    *
    * @throws {NotFoundException} If no user with the given email is found.
    * @throws {BadRequestException} If the user's email is already verified.
    */
-  async resendVerificationEmail(payload: RequestToSendEmailDto) {
+  async resendVerificationEmail(email: string) {
     const user = await this.prisma.user.findUnique({
-      where: { email: payload.email },
+      where: { email },
     });
     if (!user) {
       throw new NotFoundException('User not found');
@@ -352,10 +351,10 @@ export class AuthService {
     // Generate a JWT token for email verification and send it via email
     const emailToekn = await this.jwtService.signAsync({
       sub: user.id,
-      email: payload.email,
+      email,
       jti: crypto.randomUUID(),
     });
-    this.sendVerificationEmail(payload.email, emailToekn);
+    this.sendVerificationEmail(email, emailToekn);
 
     return { message: 'Verification email resent successfully' };
   }
@@ -411,14 +410,14 @@ export class AuthService {
    *
    * For security reasons, this method returns silently even if the user does not exist or their email is not verified.
    *
-   * @param {RequestToSendEmailDto} payload - The email address to send the reset link to.
+   * @param {string} email - The email address to send the reset link to.
    *
    * @returns {{ message: string }} A success message indicating that the email was sent (if applicable).
    */
-  async requestPasswordReset(payload: RequestToSendEmailDto) {
+  async requestPasswordReset(email: string) {
     // Check if the user exists in the database
     const user = await this.prisma.user.findUnique({
-      where: { email: payload.email },
+      where: { email },
     });
     if (!user || !user.isEmailVerified) return; // for security reasons, we don't reveal if the user exists
 
