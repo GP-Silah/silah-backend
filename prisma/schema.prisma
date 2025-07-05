@@ -22,7 +22,7 @@ model User {
   password        String
   name            String
   isVerified      Boolean  @default(false)
-  role            Role     @default(BUYER)
+  role            UserRole @default(BUYER)
   businessName    String
   city            String
   nid             String   @unique
@@ -98,7 +98,7 @@ model SupplierCategory {
 
 // ============  ⚔️ ENUMS ================
 
-enum Role {
+enum UserRole {
   GUEST
   SUPPLIER
   BUYER

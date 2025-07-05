@@ -1,4 +1,4 @@
-export class SupplierPlan {
-  BASIC = 'BASIC';
-  PREMIUM = 'PREMIUM';
+export enum SupplierPlan {
+  BASIC = 'BASIC',
+  PREMIUM = 'PREMIUM',
 }

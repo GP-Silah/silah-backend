@@ -38,24 +38,11 @@ export class AuthService {
    * @returns {Promise<string>} A hashed password string.
    */
   async encryptPassword(
+    // this is not a private function because it is used in the user service
     plainText: string,
     saltRounds: number = 10,
   ): Promise<string> {
     return await bcrypt.hash(plainText, saltRounds);
-  }
-
-  /**
-   * Compares a hashed password with a plain-text password.
-   *
-   * @param {string} hashedPassword - The stored hashed password.
-   * @param {string} plainText - The input password to compare.
-   * @returns {Promise<boolean>} A boolean indicating if the passwords match.
-   */
-  async comparePasswords(
-    hashedPassword: string,
-    plainText: string,
-  ): Promise<boolean> {
-    return await bcrypt.compare(plainText, hashedPassword);
   }
 
   /**
@@ -127,12 +114,8 @@ export class AuthService {
     });
 
     // Generate a JWT token for email verification and send it via email
-    const emailToekn = await this.jwtService.signAsync({
-      sub: user.id,
-      email: payload.email,
-      jti: crypto.randomUUID(),
-    });
-    this.sendVerificationEmail(payload.email, emailToekn);
+    const emailToekn = this.generateEmailVerificationToken(user.id, user.email);
+    this.sendVerificationEmail(payload.email, (await emailToekn).toString());
 
     // Generate a JWT token and return it to the controller so it sends it as a cookie
     const token = await this.jwtService.signAsync({
@@ -145,6 +128,25 @@ export class AuthService {
   }
 
   /**
+   * Generates a JWT token for email verification.
+   *
+   * @param {string} id - The user's ID.
+   * @param {string} email - The user's email address.
+   * @returns {Promise<string>} A signed JWT token.
+   */
+  async generateEmailVerificationToken(
+    // this is not a private function because it is used in the user service
+    id: string,
+    email: string,
+  ): Promise<string> {
+    return await this.jwtService.signAsync({
+      sub: id,
+      email,
+      jti: crypto.randomUUID(),
+    });
+  }
+
+  /**
    * Sends an email to the user containing a verification link with a JWT token.
    *
    * @param {string} email - The email address of the user to send the verification to.
@@ -153,6 +155,7 @@ export class AuthService {
    * @throws {InternalServerErrorException} Thrown if sending the email fails due to transport issues or misconfiguration.
    */
   async sendVerificationEmail(email: string, token: string) {
+    // this is not a private function because it is used in the user service
     const verifyUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
 
     // Create reusable transporter object using SMTP transport
@@ -200,7 +203,7 @@ export class AuthService {
    *
    * @throws {InternalServerErrorException} Thrown if sending the reset password email fails due to transport or configuration errors.
    */
-  async sendResetPasswordEmail(email: string, token: string) {
+  private async sendResetPasswordEmail(email: string, token: string) {
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
     const transporter = nodemailer.createTransport({
