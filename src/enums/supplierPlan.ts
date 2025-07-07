@@ -1,4 +1,4 @@
 export enum SupplierPlan {
-  BASIC = 'BASIC',
-  PREMIUM = 'PREMIUM',
+    BASIC = 'BASIC',
+    PREMIUM = 'PREMIUM',
 }

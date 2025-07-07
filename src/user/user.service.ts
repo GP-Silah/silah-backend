@@ -148,7 +148,7 @@ export class UserService {
                 user.id,
                 user.email,
             );
-            await this.auth.sendVerificationEmail(user.email, token);
+            await this.auth.sendVerificationEmail(dto.email, token);
         }
         if (dto.newPassword) {
             hashedPassword = await this.auth.encryptPassword(dto.newPassword);

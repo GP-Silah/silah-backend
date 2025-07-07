@@ -178,7 +178,7 @@ export class UserController {
             },
         },
     })
-    async updateCurrnetUserData(
+    async updateCurrentUserData(
         @Body() dto: UpdateUserDto,
         @Req() req: Request,
     ): Promise<UserResponseDTO> {

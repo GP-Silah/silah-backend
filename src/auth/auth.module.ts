@@ -10,20 +10,20 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
  * such as user signup and JWT configuration.
  */
 @Module({
-  imports: [
-    ConfigModule.forRoot(), // make sure this is imported once at app root
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '1d' },
-      }),
-      global: true,
-    }),
-  ],
-  controllers: [AuthController],
-  providers: [AuthService, IsEmailOrCrnConstraint],
-  exports: [AuthService],
+    imports: [
+        ConfigModule.forRoot(), // make sure this is imported once at app root
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                secret: configService.get<string>('JWT_SECRET'),
+                signOptions: { expiresIn: '1d' },
+            }),
+            global: true,
+        }),
+    ],
+    controllers: [AuthController],
+    providers: [AuthService, IsEmailOrCrnConstraint],
+    exports: [AuthService],
 })
 export class AuthModule {}

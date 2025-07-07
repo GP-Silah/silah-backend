@@ -5,7 +5,7 @@ import * as express from 'express';
 import { JwtPayload } from './jwtPayload';
 
 declare module 'express' {
-  export interface Request {
-    tokenData?: JwtPayload;
-  }
+    export interface Request {
+        tokenData?: JwtPayload;
+    }
 }
