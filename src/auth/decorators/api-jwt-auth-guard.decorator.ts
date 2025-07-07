@@ -2,12 +2,13 @@ import { applyDecorators } from '@nestjs/common';
 import {
     ApiCookieAuth,
     ApiUnauthorizedResponse,
-    ApiForbiddenResponse,
     ApiHeader,
+    ApiSecurity,
 } from '@nestjs/swagger';
 
 export function ApiJwtAuthGuard() {
     return applyDecorators(
+        ApiSecurity({ cookie: [] }),
         ApiCookieAuth('token'),
         ApiHeader({
             name: 'Cookie',
