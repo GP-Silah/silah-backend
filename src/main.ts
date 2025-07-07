@@ -32,6 +32,11 @@ async function bootstrap() {
         )
         .setVersion('1.0')
         .addCookieAuth('token')
+        .addSecurity('cookie', {
+            type: 'apiKey',
+            in: 'cookie',
+            name: 'token', // name of the cookie that stores the token/session
+        })
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document); // => will be lunched on http://localhost:3000/api/docs
