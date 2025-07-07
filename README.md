@@ -33,7 +33,7 @@ cp .env.example .env
 
 The `.env.example` file includes all necessary environment variables with explanations for each. Make sure to review and update them according to your local setup.
 
-### 4.Set Up the Database with Prisma
+### 4. Set Up the Database with Prisma
 
 After setting your `.env`, run the following to generate Prisma Client and apply the schema:
 

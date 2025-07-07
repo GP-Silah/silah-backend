@@ -288,8 +288,7 @@
               "schema": {
                 "example": {
                   "email": "example@email.com"
-                },
-                "$ref": "#/components/schemas/RequestToSendEmailDto"
+                }
               }
             }
           }
@@ -355,8 +354,7 @@
               "schema": {
                 "example": {
                   "email": "user@example.com"
-                },
-                "$ref": "#/components/schemas/RequestToSendEmailDto"
+                }
               }
             }
           }
@@ -546,40 +544,163 @@
         ]
       }
     },
-    "/api/users": {
+    "/api/users/email/{email}": {
       "get": {
-        "operationId": "UserController_getUserData",
-        "parameters": [],
+        "description": "Fetches a single user using their email address.",
+        "operationId": "UserController_getUserByEmail",
+        "parameters": [
+          {
+            "name": "email",
+            "required": true,
+            "in": "path",
+            "description": "Email address of the user",
+            "schema": {
+              "example": "example@email.com",
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
-        "tags": [
-          "Users"
-        ]
-      },
-      "patch": {
-        "operationId": "UserController_updateUser",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
+        "summary": "Get user by email",
         "tags": [
           "Users"
         ]
       }
     },
-    "/api/users/{id}": {
+    "/api/users/crn/{crn}": {
       "get": {
-        "operationId": "UserController_getUserById",
+        "description": "Fetches a user using their unique CRN.",
+        "operationId": "UserController_getUserByCRN",
         "parameters": [
           {
-            "name": "id",
+            "name": "crn",
             "required": true,
             "in": "path",
+            "description": "Customer Registration Number of the user",
+            "schema": {
+              "example": "0123456789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get user by their CRN",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/users/name/{name}": {
+      "get": {
+        "description": "Returns a list of users that match the provided name.",
+        "operationId": "UserController_getUserByName",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "path",
+            "description": "Name to search users by",
+            "schema": {
+              "example": "Sarah",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Users found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponseDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No users found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No users found with the name",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Search users by name",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/users/me": {
+      "get": {
+        "description": "Returns the currently authenticated user's data.",
+        "operationId": "UserController_getCurrentUserData",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -587,9 +708,147 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Current user data retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "summary": "Get current user",
+        "tags": [
+          "Users"
+        ]
+      },
+      "patch": {
+        "description": "Updates the currently authenticated user's profile information.",
+        "operationId": "UserController_updateCurrnetUserData",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "description": "User data to update (you don't have to not send all fields, only the ones you want to change will be updated).",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "These categories are invalid: Hi, LOL",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "token": []
+          }
+        ],
+        "summary": "Update current user",
         "tags": [
           "Users"
         ]
@@ -707,19 +966,6 @@
           "emailOrCrnCheck"
         ]
       },
-      "RequestToSendEmailDto": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "description": "The user's email address",
-            "example": "user@example.com"
-          }
-        },
-        "required": [
-          "email"
-        ]
-      },
       "ResetPasswordDto": {
         "type": "object",
         "properties": {
@@ -733,6 +979,132 @@
         },
         "required": [
           "newPassword"
+        ]
+      },
+      "UserResponseDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "clv70z13w0000unqoj4lcr8x4"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "crn": {
+            "type": "string",
+            "example": "1234567890"
+          },
+          "businessName": {
+            "type": "string",
+            "example": "Acme Corp"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "GUEST",
+              "SUPPLIER",
+              "BUYER"
+            ],
+            "example": "BUYER"
+          },
+          "city": {
+            "type": "string",
+            "example": "Riyadh"
+          },
+          "pfpUrl": {
+            "type": "string",
+            "example": "https://cdn.example.com/pfp/abc123.png"
+          },
+          "categories": {
+            "example": [
+              "Home & Living",
+              "Technical & Repair Services"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isEmailVerified": {
+            "type": "boolean",
+            "example": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2025-07-04T7:31:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2025-07-05T14:48:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "crn",
+          "businessName",
+          "role",
+          "city",
+          "categories",
+          "isEmailVerified",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe",
+            "maxLength": 25
+          },
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "newPassword": {
+            "type": "string",
+            "example": "StrongPass123",
+            "minLength": 8,
+            "maxLength": 28
+          },
+          "businessName": {
+            "type": "string",
+            "example": "Acme Corp",
+            "maxLength": 50
+          },
+          "city": {
+            "type": "string",
+            "example": "Riyadh"
+          },
+          "categories": {
+            "example": [
+              "Home & Living",
+              "Technical & Repair Services"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "newPassword",
+          "businessName",
+          "city",
+          "categories"
         ]
       }
     }
