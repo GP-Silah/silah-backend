@@ -267,7 +267,6 @@ export class AuthController {
   })
   @ApiBody({
     description: 'Email to resend verification to',
-    type: ParseEmailPipe,
     schema: { example: { email: 'example@email.com' } },
     required: true,
   })
@@ -314,7 +313,6 @@ export class AuthController {
   @ApiBody({
     description:
       'The email address of the user who wants to reset their password.',
-    type: ParseEmailPipe,
     schema: { example: { email: 'user@example.com' } },
     required: true,
   })

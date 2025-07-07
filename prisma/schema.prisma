@@ -21,7 +21,6 @@ model User {
   crn             String   @unique
   password        String
   name            String
-  isVerified      Boolean  @default(false)
   role            UserRole @default(BUYER)
   businessName    String
   city            String
