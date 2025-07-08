@@ -113,3 +113,8 @@ enum SupplierPlan {
   BASIC
   PREMIUM
 }
+
+enum ItemType {
+  PRODUCT
+  SERVICE
+}
