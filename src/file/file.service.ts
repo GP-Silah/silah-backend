@@ -4,7 +4,7 @@ import {
     PutObjectCommand,
     GetObjectCommand,
 } from '@aws-sdk/client-s3';
-import { Multer } from 'multer';
+import { Express } from 'multer';
 import { v4 as uuid } from 'uuid';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
@@ -28,7 +28,7 @@ export class FileService {
         return getSignedUrl(this.s3, command, { expiresIn: 3600 }); // 1 hour
     }
 
-    async uploadFile(file: Multer.File) {
+    async uploadFile(file: Express.Multer.File) {
         const key = `${file.originalname}-${uuid()}`;
         await this.s3.send(
             new PutObjectCommand({
