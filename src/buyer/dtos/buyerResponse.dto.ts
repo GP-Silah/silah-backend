@@ -9,4 +9,6 @@ export class BuyerResponseDto {
 
     @ApiProperty({ type: String, required: false, example: 'tok_123456abcdef' })
     cardToken?: string;
+
+    //todo add the card as dto
 }
