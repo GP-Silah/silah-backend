@@ -21,11 +21,13 @@
         "prisma:seed:category": "ts-node prisma/categorySeed.ts"
     },
     "dependencies": {
+        "@aws-sdk/client-s3": "^3.864.0",
+        "@aws-sdk/s3-request-presigner": "^3.864.0",
         "@nestjs/common": "^11.0.1",
         "@nestjs/config": "^4.0.2",
         "@nestjs/core": "^11.0.1",
         "@nestjs/jwt": "^11.0.0",
-        "@nestjs/platform-express": "^11.0.1",
+        "@nestjs/platform-express": "^11.1.6",
         "@nestjs/schedule": "^6.0.0",
         "@nestjs/swagger": "^11.2.0",
         "@nestjs/terminus": "^11.0.0",
@@ -35,6 +37,7 @@
         "class-validator": "^0.14.2",
         "cookie-parser": "^1.4.7",
         "crypto": "^1.0.1",
+        "multer": "^2.0.2",
         "nodemailer": "^7.0.4",
         "reflect-metadata": "^0.2.2",
         "rxjs": "^7.8.1",
