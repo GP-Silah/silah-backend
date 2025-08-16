@@ -10,10 +10,14 @@ export class BuyerController {
     constructor(private readonly buyerService: BuyerService) {}
 
     @Get('me')
-    async getCurrentBuyerData(): Promise<BuyerResponseDto> {}
+    async getCurrentBuyerData(): Promise<BuyerResponseDto> {
+        return this.buyerService.getCurrentBuyerData();
+    }
 
     @Get('me/card')
-    async getCurrentBuyerCard(): Promise<CardDetailsDto> {}
+    async getCurrentBuyerCard(): Promise<CardDetailsDto> {
+        return this.buyerService.getCurrentBuyerCard();
+    }
 
     @Put('me/card')
     async saveOrReplaceCurrentBuyerCard() {}
