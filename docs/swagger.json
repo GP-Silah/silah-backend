@@ -862,6 +862,86 @@
           "Users"
         ]
       }
+    },
+    "/api/buyers/me": {
+      "get": {
+        "operationId": "BuyerController_getCurrentBuyerData",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Buyers"
+        ]
+      }
+    },
+    "/api/buyers/me/card": {
+      "get": {
+        "operationId": "BuyerController_getCurrentBuyerCard",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Buyers"
+        ]
+      },
+      "put": {
+        "operationId": "BuyerController_saveOrReplaceCurrentBuyerCard",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Buyers"
+        ]
+      }
+    },
+    "/api/buyers/wishlist": {
+      "get": {
+        "operationId": "BuyerController_getWishlist",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Buyers"
+        ]
+      }
+    },
+    "/api/buyers/wishlist/{itemId}": {
+      "post": {
+        "operationId": "BuyerController_addToWishlist",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Buyers"
+        ]
+      },
+      "delete": {
+        "operationId": "BuyerController_removeFromWishlist",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Buyers"
+        ]
+      }
     }
   },
   "info": {
