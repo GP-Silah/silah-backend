@@ -11,12 +11,12 @@ jobs:
 
         steps:
             - name: Checkout Silah Backend
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   path: backend
 
             - name: Setup Node.js
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                   node-version: 20
 
@@ -33,10 +33,10 @@ jobs:
               working-directory: ./backend
 
             - name: Checkout Silah API Docs repo
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   repository: GP-Silah/silah-api-docs
-                  token: ${{ secrets.GITHUB_TOKEN }}
+                  token: ${{ secrets.DOCS_REPO_PAT }}
                   path: docs-repo
 
             - name: Copy swagger.json to docs repo
@@ -48,5 +48,9 @@ jobs:
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
                   git add docs/swagger.json
-                  git commit -m "Update swagger.json"
-                  git push origin main
+                  if git diff --cached --quiet; then
+                    echo "No changes to commit."                  
+                  else
+                    git commit -m "Update swagger.json"
+                    git push origin main
+                  fi

@@ -4,7 +4,7 @@ import {
     PutObjectCommand,
     GetObjectCommand,
 } from '@aws-sdk/client-s3';
-import { Express } from 'multer';
+import { Express } from 'express';
 import { v4 as uuid } from 'uuid';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 

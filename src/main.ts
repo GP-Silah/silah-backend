@@ -40,6 +40,7 @@ async function bootstrap() {
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document); // => will be lunched on http://localhost:3000/api/docs
+    fs.mkdirSync('./docs', { recursive: true });
     fs.writeFileSync('./docs/swagger.json', JSON.stringify(document, null, 2)); // => to create a swagger.json file that will be used to generate static files of swagger to deploy on "silah-api-docs", which is a static website "https://docs.silah.site".
 
     await app.listen(process.env.PORT ?? 3000);

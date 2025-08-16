@@ -21,6 +21,7 @@ async function generateSwagger() {
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
+    fs.mkdirSync('./docs', { recursive: true });
     fs.writeFileSync('./docs/swagger.json', JSON.stringify(document, null, 2));
     console.log('Swagger JSON generated successfully!');
     await app.close();
