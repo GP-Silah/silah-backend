@@ -259,12 +259,20 @@ export function UploadProfilePictureApiDocs() {
         ApiOperation({
             summary: 'Update user profile picture',
             description:
-                'Uploads a new profile picture for the authenticated user and updates their record. Replaces the previous picture if it exists.',
+                "Uploads a new profile picture for the authenticated user and updates their record. Replaces the previous picture if it exists.<br><strong>Note:</strong> The file must be an image (PNG, JPEG, GIF) and cannot exceed 5MB in size.<br><strong>IMPORTANT:</strong> Please ensure that uploaded images comply with islam laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         }),
         ApiConsumes('multipart/form-data'),
         ApiBody({
             description: 'Profile picture file to upload',
-            type: 'file',
+            schema: {
+                type: 'object',
+                properties: {
+                    file: {
+                        type: 'string',
+                        format: 'binary',
+                    },
+                },
+            },
         }),
         ApiOkResponse({
             description: 'Profile picture updated successfully',

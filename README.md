@@ -84,15 +84,15 @@ You can run the project with Docker in two modes:
 
 ### Production-like Mode (default)
 
-This mimics a production enviroment
+This mimics a production environment
 
 ```bash
-docker-compose up -d --build
+docker-compose up --build
 ```
 
-- Start Postgres + NestJS backend
-- Runs migrations + Seeds automatically
-- Serves compiled code (`dis/main.js`)
+- Starts Postgres and the NestJS backend
+- Runs migrations and seeds automatically
+- Serves compiled code (`dist/main.js`)
 - Accessible at: `http://localhost:3000`
 
 Check containers:
@@ -106,12 +106,12 @@ docker ps
 For local development with live code updates, use the override file:
 
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --build
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up --build
 ```
 
 - Mounts your local source into the container
 - Runs `npm run start:dev` with hot reload
-- Also run migrations + Seeds automatically
+- Runs migrations and seeds automatically
 
 ---
 
@@ -126,7 +126,7 @@ docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --buil
 ## API Documentation
 
 - Swagger available at `http://localhost:3000/api/docs` (requires starting the server)
-- It inculdes all endpoints, request/response schemas, and examples
+- It includes all endpoints, request/response schemas, and examples
 
 ---
 
@@ -134,7 +134,7 @@ docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --buil
 
 ```bash
 npm run test
-npm run test:watch   # fpr development
+npm run test:watch   # for development
 npm run lint         # check code style
 ```
 

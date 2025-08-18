@@ -2,7 +2,7 @@
 ALTER TABLE "User"
 ADD CONSTRAINT "user_pfp_consistency"
 CHECK (
-  ("isPfpDefault" = true AND "pfpFileName" IS NULL)
+  ("isPfpDefault" IS TRUE AND "pfpFileName" IS NULL)
   OR
-  ("isPfpDefault" = false AND "pfpFileName" IS NOT NULL)
+  ("isPfpDefault" IS FALSE AND "pfpFileName" IS NOT NULL)
 );

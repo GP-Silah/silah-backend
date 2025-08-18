@@ -13,6 +13,16 @@ services:
             POSTGRES_DB: ${POSTGRES_DB_DEV}
         volumes:
             - silah_dev_data:/var/lib/postgresql/data
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}',
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+            start_period: 10s
 
     app:
         build: .
@@ -23,10 +33,11 @@ services:
         env_file:
             - .env
         depends_on:
-            - postgres
+            postgres:
+                condition: service_healthy
         command: sh -c "npx prisma migrate deploy && npm run prisma:seed:category && node dist/main.js"
         volumes:
-            - .:/app
+            - ./app
             - /app/node_modules
 
 volumes:

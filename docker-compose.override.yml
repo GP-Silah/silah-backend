@@ -2,9 +2,6 @@ version: '3.9'
 services:
     app:
         volumes:
-            - .:/app
+            - ./src:/app/src
             - /app/node_modules
-        command: >
-            sh -c "npx prisma migrate deploy &&
-                   npm run prisma:seed:category &&
-                   npm run start:dev"
+        command: ['./docker-entrypoint.sh']
