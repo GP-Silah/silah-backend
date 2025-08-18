@@ -341,8 +341,11 @@ export class UserService {
         const user = await this.prisma.user.findUnique({
             where: { email: userEmail },
         });
-        if (!user || user.isPfpDefault) {
-            throw new NotFoundException('Profile picture not found');
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+        if (user.isPfpDefault) {
+            throw new BadRequestException('Profile picture already default');
         }
         // Future Work ?: Delete the file from the storage (R2)
         await this.generateDefaultAvatar(userEmail);
@@ -357,13 +360,15 @@ export class UserService {
      * @returns {Promise<{ pfpUrl: string }>} - Object containing the profile picture URL.
      */
     async getUserProfilePictureUrl(userId: string) {
-        const user = await this.getUserById(userId);
-        if (!user.pfpUrl) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { pfpFileName: true },
+        });
+        if (!user || !user.pfpFileName) {
             throw new NotFoundException('Profile picture not found');
         }
-        return {
-            pfpUrl: user.pfpUrl,
-        };
+        const pfpUrl = await this.fileService.getFileUrl(user.pfpFileName);
+        return { pfpUrl };
     }
 
     /**

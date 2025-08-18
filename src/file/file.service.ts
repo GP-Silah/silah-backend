@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import {
     S3Client,
     PutObjectCommand,
@@ -7,6 +7,7 @@ import {
 import { v4 as uuid } from 'uuid';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import * as path from 'path';
+import { fileTypeFromBuffer } from 'file-type';
 
 /**
  * Service for handling file storage and retrieval using Cloudflare R2 (S3-compatible API).
@@ -56,22 +57,68 @@ export class FileService {
         if (!file) {
             throw new BadRequestException('No file provided');
         }
-        if (!file.mimetype.startsWith('image/')) {
-            throw new BadRequestException('Only image files are allowed');
+
+        // Configurable max size (default 5MB)
+        const maxSize = parseInt(process.env.MAX_UPLOAD_BYTES || '', 10) || 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            throw new BadRequestException(`File size exceeds ${maxSize / (1024 * 1024)} MB limit`);
         }
-        if (file.size > 5 * 1024 * 1024) {
-            // 5 MB limit
-            throw new BadRequestException('File size exceeds 5 MB limit');
+
+        // Validate file content using magic numbers
+        let detectedType;
+        try {
+            detectedType = await fileTypeFromBuffer(file.buffer);
+        } catch (e) {
+            throw new BadRequestException('Unable to determine file type');
         }
-        const key = `${path.parse(file.originalname).name}-${uuid()}.${file.mimetype.split('/')[1]}`;
-        await this.s3.send(
-            new PutObjectCommand({
-                Bucket: this.bucket,
-                Key: key,
-                Body: file.buffer,
-                ContentType: file.mimetype,
-            }),
-        );
+        // Accept only images (png, jpeg, webp, gif, svg, etc.)
+        const allowedMime = [
+            'image/png',
+            'image/jpeg',
+            'image/webp',
+            'image/gif',
+            'image/svg+xml',
+            'image/bmp',
+            'image/x-icon',
+        ];
+        // If file-type cannot detect (e.g., svg), fallback to mimetype check for svg only
+        let mimeType = detectedType?.mime || file.mimetype;
+        if (!allowedMime.includes(mimeType)) {
+            // Special case: allow svg if mimetype is image/svg+xml
+            if (!(file.mimetype === 'image/svg+xml' && file.originalname.endsWith('.svg'))) {
+                throw new BadRequestException('Only image files are allowed');
+            }
+            mimeType = 'image/svg+xml';
+        }
+
+        // Sanitize and normalize base filename
+        let baseName = path.parse(file.originalname).name;
+        // Remove control characters, trim, and limit length
+        baseName = baseName.replace(/[\x00-\x1F\x7F/\\:*?"<>|]/g, '').trim().slice(0, 100) || 'file';
+
+        // Derive safe extension from detected/normalized mime type
+        let ext = '';
+        if (detectedType?.ext) {
+            ext = detectedType.ext;
+        } else if (mimeType === 'image/svg+xml') {
+            ext = 'svg';
+        } else {
+            ext = (file.mimetype.split('/')[1] || 'img').split('+')[0];
+        }
+
+        const key = `${baseName}-${uuid()}.${ext}`;
+        try {
+            await this.s3.send(
+                new PutObjectCommand({
+                    Bucket: this.bucket,
+                    Key: key,
+                    Body: file.buffer,
+                    ContentType: mimeType,
+                }),
+            );
+        } catch (err) {
+            throw new InternalServerErrorException('Failed to upload file to storage provider');
+        }
         return key;
     }
 }
