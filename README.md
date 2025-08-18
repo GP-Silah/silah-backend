@@ -2,11 +2,23 @@
 
 This is the backend for [Silah](https://github.com/GP-Silah). It is built using [NestJS](https://nestjs.com/), a progressive Node.js framework for building efficient and scalable server-side applications.
 
-## Getting Started
+---
 
-Follow the steps below to set up the project locally.
+## Prerequisites
+
+- Node.js >= 20
+- npm >= 10
+- Docker & Docker Compose (optional, but very recommended)
+- PostgreSQL >= 16 (if not using Docker)
+- Tap Payments account and API keys
+- Cloudflare R2 account and API keys
+- Watheq API credentials
 
 ---
+
+## Getting Started (Without Docker)
+
+Follow the steps below to set up the project locally.
 
 ### 1. Clone the Repository
 
@@ -46,7 +58,7 @@ This will generate the Prisma Client and apply any pending migrations to your da
 
 ### 5. Seed the Database (Required)
 
-To populate the database with initial data (specifically, the Categories), run:
+To populate the database with initial data (specifically, the Categories and Subcategories), run:
 
 ```bash
 npm run prisma:seed:category
@@ -63,6 +75,76 @@ To run the NestJS server in development mode (with hot reload):
 ```bash
 npm run start:dev
 ```
+
+---
+
+## Getting Started (With Docker)
+
+You can run the project with Docker in two modes:
+
+### Production-like Mode (default)
+
+This mimics a production enviroment
+
+```bash
+docker-compose up -d --build
+```
+
+- Start Postgres + NestJS backend
+- Runs migrations + Seeds automatically
+- Serves compiled code (`dis/main.js`)
+- Accessible at: `http://localhost:3000`
+
+Check containers:
+
+```bash
+docker ps
+```
+
+### Development Mode (with Hot Reload)
+
+For local development with live code updates, use the override file:
+
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d --build
+```
+
+- Mounts your local source into the container
+- Runs `npm run start:dev` with hot reload
+- Also run migrations + Seeds automatically
+
+---
+
+## Database
+
+- Uses PostgreSQL
+- Managed with Prisma ORM
+- Seeded with categories and subcategories
+
+---
+
+## API Documentation
+
+- Swagger available at `http://localhost:3000/api/docs` (requires starting the server)
+- It inculdes all endpoints, request/response schemas, and examples
+
+---
+
+## Running Tests
+
+```bash
+npm run test
+npm run test:watch   # fpr development
+npm run lint         # check code style
+```
+
+---
+
+## Troubleshooting
+
+- **DB connection issues:** Check `.env` variables
+- **Prisma migration errors:** Run `npx prisma migrate reset` to reset local DB
+- **Docker issues:** Ensure ports 3000 and 5432 are free, restart containers
 
 ---
 
