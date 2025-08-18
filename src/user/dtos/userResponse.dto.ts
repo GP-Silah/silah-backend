@@ -24,10 +24,18 @@ export class UserResponseDTO {
     city: string;
 
     @ApiProperty({
-        example: 'https://cdn.example.com/pfp/abc123.png', //TODO: Replace with actual example URL
-        required: false,
+        example: 'moon-3263ec71-3e92-441d-aadd-a57b4a99b2e2.jpeg',
+        description: 'Profile picture file name in R2 bucket.',
     })
-    pfpUrl?: string;
+    pfpFileName: string;
+
+    @ApiProperty({
+        example:
+            'https://gp-silah.d025be9440ae5eb8295c69a36497276a.r2.cloudflarestorage.com/gp-silah/moon.jpeg-30510246-41f7-4cff-a052-78bcc30f7301.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=...&X-Amz-Date=20250816T131236Z&X-Amz-Expires=3600&X-Amz-Signature=...',
+        description:
+            'Example of a signed URL from R2. Signed URLs expire 1 hour after creation.',
+    })
+    pfpUrl: string;
 
     @ApiProperty({
         example: ['Home & Living', 'Technical & Repair Services'],

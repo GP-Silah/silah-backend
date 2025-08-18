@@ -1,8 +1,10 @@
+import { UserService } from './../user/user.service';
 import {
     BadRequestException,
+    forwardRef,
+    Inject,
     Injectable,
     InternalServerErrorException,
-    Logger,
     NotFoundException,
 } from '@nestjs/common';
 import { SignupDto } from './dtos/signup.dto';
@@ -23,11 +25,11 @@ import { Request, Response } from 'express';
 
 @Injectable()
 export class AuthService {
-    private readonly logger = new Logger(AuthService.name);
-
     constructor(
         private readonly prisma: PrismaService,
         private readonly jwtService: JwtService,
+        @Inject(forwardRef(() => UserService))
+        private readonly userService: UserService,
     ) {}
 
     /**
@@ -112,6 +114,7 @@ export class AuthService {
                 },
             },
         });
+        await this.userService.generateDefaultAvatar(user.email);
 
         // Generate a JWT token for email verification and send it via email
         const emailToekn = this.generateEmailVerificationToken(
