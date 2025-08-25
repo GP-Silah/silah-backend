@@ -1,7 +1,0 @@
-version: '3.9'
-services:
-    app:
-        volumes:
-            - ./src:/app/src
-            - /app/node_modules
-        command: ['./docker-entrypoint.sh']

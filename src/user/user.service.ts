@@ -1,21 +1,24 @@
 import {
     BadRequestException,
+    forwardRef,
+    Inject,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { UserResponseDTO } from './dtos/userResponse.dto';
 import { User } from '@prisma/client';
 import { UserRole as AppUserRole } from '../enums/userRole';
 import { UpdateUserDto } from './dtos/updateUser.dto';
-import { AuthService } from 'src/auth/auth.service';
-import { FileService } from 'src/file/file.service';
+import { AuthService } from '../auth/auth.service';
+import { FileService } from '../file/file.service';
 import * as sharp from 'sharp'; // converts SVG → PNG
 
 @Injectable()
 export class UserService {
     constructor(
         private readonly prisma: PrismaService,
+        @Inject(forwardRef(() => AuthService))
         private readonly auth: AuthService,
         private readonly fileService: FileService,
     ) {}
@@ -103,10 +106,14 @@ export class UserService {
     /**
      * Searches for users by name using a case-insensitive partial match.
      * @param {string} name - The name or partial name to search for.
+     * @throws {BadRequestException} If the name parameter is empty.
      * @throws {NotFoundException} If no users match the search criteria.
      * @returns {Promise<UserResponseDTO[]>} A list of matching users in DTO format.
      */
     async getUserByName(name: string): Promise<UserResponseDTO[]> {
+        if (!name || name.trim() === '') {
+            throw new BadRequestException('Name parameter is required');
+        }
         const users = await this.prisma.user.findMany({
             where: { name: { contains: name, mode: 'insensitive' } },
         });
@@ -275,7 +282,8 @@ export class UserService {
         const user = await this.prisma.user.findUnique({
             where: { email },
         });
-        const letter = user!.name.charAt(0).toUpperCase();
+        if (!user) throw new NotFoundException('User not found');
+        const letter = user.name.charAt(0).toUpperCase();
         const colors = [
             '#fef5e4',
             '#ffcfcf',
@@ -284,7 +292,7 @@ export class UserService {
             '#f7ebb2',
             '#fff1dc',
         ];
-        const bgColor = colors[user!.name.charCodeAt(0) % colors.length];
+        const bgColor = colors[user.name.charCodeAt(0) % colors.length];
 
         const svg = `
             <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
@@ -297,7 +305,7 @@ export class UserService {
 
         const buffer = Buffer.from(svg);
         const pngBuffer = await sharp(buffer).png().toBuffer();
-        const fileName = `default-avatar-${user!.id}`;
+        const fileName = `default-avatars/${user.id}`;
         const realFileName = await this.fileService.uploadFile({
             originalname: fileName,
             buffer: pngBuffer,
@@ -384,7 +392,13 @@ export class UserService {
             throw new BadRequestException('No user IDs provided');
         }
         // Keep only valid UUIDs
-        const validIds = ids.filter((id) => isUuid(id));
+        const validIds = ids.filter((id) => {
+            try {
+                return isUuid(id);
+            } catch (e) {
+                return false;
+            }
+        });
         if (validIds.length === 0) {
             throw new BadRequestException('No valid UUIDs provided');
         }
@@ -415,7 +429,11 @@ export class UserService {
  */
 function isUuid(id: string): boolean {
     // UUID v4 regex (accepts v1-v5, but v4 is most common)
-    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-        id,
-    );
+    try {
+        return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+            id,
+        );
+    } catch (e) {
+        return false; // Treat invalid inputs as non-UUIDs
+    }
 }

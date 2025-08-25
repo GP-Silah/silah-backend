@@ -7,9 +7,12 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BuyerModule } from './buyer/buyer.module';
 import { FileModule } from './file/file.module';
+import { HealthController } from './health/health.controller';
+import { TerminusModule } from '@nestjs/terminus';
 
 @Module({
     imports: [
+        TerminusModule,
         ScheduleModule.forRoot(),
         AuthModule,
         UserModule,
@@ -17,7 +20,7 @@ import { FileModule } from './file/file.module';
         BuyerModule,
         FileModule,
     ],
-    controllers: [AppController],
+    controllers: [AppController, HealthController],
     providers: [AppService],
 })
 export class AppModule {}

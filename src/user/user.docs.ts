@@ -8,13 +8,13 @@ import {
     ApiOkResponse,
     ApiOperation,
     ApiParam,
-    ApiResponse,
+    ApiQuery,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { UserResponseDTO } from './dtos/userResponse.dto';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 
-export function GetUserByEmailApiDocs() {
+export function ApiDocsGetUserByEmail() {
     return applyDecorators(
         ApiOperation({
             summary: 'Get user by email',
@@ -43,7 +43,7 @@ export function GetUserByEmailApiDocs() {
     );
 }
 
-export function GetUserByCrnApiDocs() {
+export function ApiDocsGetUserByCrn() {
     return applyDecorators(
         ApiOperation({
             summary: 'Get user by their CRN',
@@ -71,23 +71,33 @@ export function GetUserByCrnApiDocs() {
         }),
     );
 }
-
-export function GetUserByNameApiDocs() {
+export function ApiDocsGetUserByName() {
     return applyDecorators(
         ApiOperation({
             summary: 'Search users by name',
             description:
                 'Returns a list of users that match the provided name.',
         }),
-        ApiParam({
+        ApiQuery({
             name: 'name',
             type: String,
-            description: 'Name to search users by',
+            description: 'Name (or partial name) to search users by',
             example: 'Sarah',
+            required: true,
         }),
         ApiOkResponse({
             description: 'Users found',
             type: [UserResponseDTO],
+        }),
+        ApiBadRequestResponse({
+            description: 'Invalid input data',
+            schema: {
+                example: {
+                    statusCode: 400,
+                    message: 'Name parameter is required',
+                    error: 'Bad Request',
+                },
+            },
         }),
         ApiNotFoundResponse({
             description: 'No users found',
@@ -102,7 +112,7 @@ export function GetUserByNameApiDocs() {
     );
 }
 
-export function GetCurrentUserDataApiDocs() {
+export function ApiDocsGetCurrentUserData() {
     return applyDecorators(
         ApiOperation({
             summary: 'Get current user',
@@ -115,7 +125,7 @@ export function GetCurrentUserDataApiDocs() {
     );
 }
 
-export function UpdateCurrentUserDataApiDocs() {
+export function ApiDocsUpdateCurrentUserData() {
     return applyDecorators(
         ApiOperation({
             summary: 'Update current user',
@@ -155,7 +165,7 @@ export function UpdateCurrentUserDataApiDocs() {
     );
 }
 
-export function GetUserProfilePictureApiDocs() {
+export function ApiDocsGetUserProfilePicture() {
     return applyDecorators(
         ApiOperation({
             summary: "Get user's profile picture URL",
@@ -191,7 +201,7 @@ export function GetUserProfilePictureApiDocs() {
     );
 }
 
-export function GetUsersProfilePicturesUrlsApiDocs() {
+export function ApiDocsGetUsersProfilePicturesUrls() {
     return applyDecorators(
         ApiOperation({
             summary: 'Get profile pictures for multiple users',
@@ -232,6 +242,16 @@ export function GetUsersProfilePicturesUrlsApiDocs() {
             },
         }),
         ApiBadRequestResponse({
+            description: 'Request body must contain an "ids" array',
+            schema: {
+                example: {
+                    statusCode: 400,
+                    message: 'Request body must contain an "ids" array',
+                    error: 'Bad Request',
+                },
+            },
+        }),
+        ApiBadRequestResponse({
             description: 'Invalid input data',
             schema: {
                 example: {
@@ -253,13 +273,15 @@ export function GetUsersProfilePicturesUrlsApiDocs() {
         }),
     );
 }
-export function UploadProfilePictureApiDocs() {
+export function ApiDocsUploadProfilePicture() {
     return applyDecorators(
         ApiBearerAuth(), // JWT authentication
         ApiOperation({
             summary: 'Update user profile picture',
             description:
-                "Uploads a new profile picture for the authenticated user and updates their record. Replaces the previous picture if it exists.<br><strong>Note:</strong> The file must be an image (PNG, JPEG, GIF) and cannot exceed 5MB in size.<br><strong>IMPORTANT:</strong> Please ensure that uploaded images comply with islam laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
+                'Uploads a new profile picture for the authenticated user and updates their record. Replaces the previous picture if it exists.<br>' +
+                '<strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>' +
+                "<strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         }),
         ApiConsumes('multipart/form-data'),
         ApiBody({
@@ -316,7 +338,7 @@ export function UploadProfilePictureApiDocs() {
     );
 }
 
-export function DeleteProfilePictureApiDocs() {
+export function ApiDocsDeleteProfilePicture() {
     return applyDecorators(
         ApiBearerAuth(), // JWT authentication
         ApiOperation({

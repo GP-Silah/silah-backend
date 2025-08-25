@@ -1,4 +1,4 @@
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import {
     BadRequestException,
     forwardRef,
@@ -9,13 +9,13 @@ import {
 } from '@nestjs/common';
 import { SignupDto } from './dtos/signup.dto';
 import * as bcrypt from 'bcrypt';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dtos/login.dto';
 import * as crypto from 'crypto';
 import * as nodemailer from 'nodemailer';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
-import { UserRole } from 'src/enums/userRole';
+import { UserRole } from '../enums/userRole';
 import { Request, Response } from 'express';
 
 /**

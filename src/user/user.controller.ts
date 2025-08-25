@@ -10,26 +10,30 @@ import {
     UseGuards,
     UseInterceptors,
     UploadedFile,
+    UsePipes,
+    BadRequestException,
+    Logger,
+    Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { UpdateUserDto } from './dtos/updateUser.dto';
-import { ParseEmailPipe } from 'src/pipes/parse-email.pipe';
-import { ParseCrnPipe } from 'src/pipes/parse-crn.pipe';
+import { ParseEmailPipe } from '../pipes/parse-email.pipe';
+import { ParseCrnPipe } from '../pipes/parse-crn.pipe';
 import { UserResponseDTO } from './dtos/userResponse.dto';
-import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
+import { ApiJwtAuthGuard } from '../auth/decorators/api-jwt-auth-guard.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
 import {
-    GetUserByCrnApiDocs,
-    GetUserByEmailApiDocs,
-    GetUserByNameApiDocs,
-    GetCurrentUserDataApiDocs,
-    UpdateCurrentUserDataApiDocs,
-    GetUserProfilePictureApiDocs,
-    GetUsersProfilePicturesUrlsApiDocs,
-    DeleteProfilePictureApiDocs,
-    UploadProfilePictureApiDocs,
+    ApiDocsGetUserByCrn,
+    ApiDocsGetUserByEmail,
+    ApiDocsGetUserByName,
+    ApiDocsGetCurrentUserData,
+    ApiDocsUpdateCurrentUserData,
+    ApiDocsGetUserProfilePicture,
+    ApiDocsGetUsersProfilePicturesUrls,
+    ApiDocsDeleteProfilePicture,
+    ApiDocsUploadProfilePicture,
 } from './user.docs';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -39,7 +43,7 @@ export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get('email/:email')
-    @GetUserByEmailApiDocs()
+    @ApiDocsGetUserByEmail()
     async getUserByEmail(
         @Param('email', new ParseEmailPipe()) email: string,
     ): Promise<UserResponseDTO> {
@@ -47,25 +51,28 @@ export class UserController {
     }
 
     @Get('crn/:crn')
-    @GetUserByCrnApiDocs()
+    @ApiDocsGetUserByCrn()
     async getUserByCRN(
         @Param('crn', new ParseCrnPipe()) crn: string,
     ): Promise<UserResponseDTO> {
         return this.userService.getUserByCRN(crn);
     }
 
-    @Get('name/:name')
-    @GetUserByNameApiDocs()
+    @Get('name')
+    @ApiDocsGetUserByName()
     async getUserByName(
-        @Param('name') name: string,
+        @Query('name') name: string,
     ): Promise<UserResponseDTO[]> {
+        if (!name || name.trim() === '') {
+            throw new BadRequestException('Name parameter is required');
+        }
         return this.userService.getUserByName(name);
     }
 
     @ApiJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Get('me')
-    @GetCurrentUserDataApiDocs()
+    @ApiDocsGetCurrentUserData()
     async getCurrentUserData(@Req() req: Request): Promise<UserResponseDTO> {
         const userId = req.tokenData!.sub;
         return this.userService.getCurrentUserData(userId);
@@ -74,7 +81,7 @@ export class UserController {
     @ApiJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Patch('me')
-    @UpdateCurrentUserDataApiDocs()
+    @ApiDocsUpdateCurrentUserData()
     async updateCurrentUserData(
         @Body() dto: UpdateUserDto,
         @Req() req: Request,
@@ -85,7 +92,7 @@ export class UserController {
     @ApiJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Post('me/profile-picture')
-    @UploadProfilePictureApiDocs()
+    @ApiDocsUploadProfilePicture()
     @UseInterceptors(FileInterceptor('file')) // "file" = form field name
     async updateProfilePicture(
         @UploadedFile() file: Express.Multer.File,
@@ -100,20 +107,29 @@ export class UserController {
     @ApiJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Delete('me/profile-picture')
-    @DeleteProfilePictureApiDocs()
+    @ApiDocsDeleteProfilePicture()
     async deleteProfilePicture(@Req() req: Request) {
         return this.userService.deleteProfilePicture(req.tokenData!.email);
     }
 
     @Get(':id/profile-picture')
-    @GetUserProfilePictureApiDocs()
+    @ApiDocsGetUserProfilePicture()
     async getUserProfilePictureUrl(@Param('id') userId: string) {
         return this.userService.getUserProfilePictureUrl(userId);
     }
 
     @Post('profile-pictures/batch')
-    @GetUsersProfilePicturesUrlsApiDocs()
-    async getUsersProfilePicturesUrls(@Body() body: { ids: string[] }) {
-        return this.userService.getUsersProfilePicturesUrls(body.ids);
+    @UsePipes() // Disable global ValidationPipe for this endpoint
+    @ApiDocsGetUsersProfilePicturesUrls()
+    async getUsersProfilePicturesUrls(@Body() body: { ids?: string[] }) {
+        const logger = new Logger('UserController');
+        logger.log(`Received request body: ${JSON.stringify(body)}`);
+
+        if (!body || !Array.isArray(body.ids)) {
+            throw new BadRequestException(
+                'Request body must contain an "ids" array',
+            );
+        }
+        return await this.userService.getUsersProfilePicturesUrls(body.ids);
     }
 }

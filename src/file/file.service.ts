@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    InternalServerErrorException,
+} from '@nestjs/common';
 import {
     S3Client,
     PutObjectCommand,
@@ -6,9 +10,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { v4 as uuid } from 'uuid';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import * as path from 'path';
-import { fileTypeFromBuffer } from 'file-type';
-
+import * as fileType from 'file-type';
 /**
  * Service for handling file storage and retrieval using Cloudflare R2 (S3-compatible API).
  * Provides methods for uploading images and generating signed URLs for file access.
@@ -58,67 +60,54 @@ export class FileService {
             throw new BadRequestException('No file provided');
         }
 
-        // Configurable max size (default 5MB)
-        const maxSize = parseInt(process.env.MAX_UPLOAD_BYTES || '', 10) || 5 * 1024 * 1024;
-        if (file.size > maxSize) {
-            throw new BadRequestException(`File size exceeds ${maxSize / (1024 * 1024)} MB limit`);
+        // Size validation
+        const maxBytes = parseInt(
+            process.env.MAX_UPLOAD_BYTES || `${5 * 1024 * 1024}`,
+        ); // 5MB default
+        if (file.size > maxBytes) {
+            throw new BadRequestException(
+                `File size exceeds ${Math.floor(maxBytes / 1024 / 1024)} MB limit`,
+            );
         }
 
-        // Validate file content using magic numbers
-        let detectedType;
-        try {
-            detectedType = await fileTypeFromBuffer(file.buffer);
-        } catch (e) {
+        // Detect file type using magic numbers
+        const detectedType = await fileType.fromBuffer(file.buffer);
+        if (!detectedType) {
             throw new BadRequestException('Unable to determine file type');
         }
-        // Accept only images (png, jpeg, webp, gif, svg, etc.)
-        const allowedMime = [
-            'image/png',
-            'image/jpeg',
-            'image/webp',
-            'image/gif',
-            'image/svg+xml',
-            'image/bmp',
-            'image/x-icon',
-        ];
-        // If file-type cannot detect (e.g., svg), fallback to mimetype check for svg only
-        let mimeType = detectedType?.mime || file.mimetype;
-        if (!allowedMime.includes(mimeType)) {
-            // Special case: allow svg if mimetype is image/svg+xml
-            if (!(file.mimetype === 'image/svg+xml' && file.originalname.endsWith('.svg'))) {
-                throw new BadRequestException('Only image files are allowed');
-            }
-            mimeType = 'image/svg+xml';
+
+        const allowedMime = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!allowedMime.includes(detectedType.mime)) {
+            throw new BadRequestException(
+                'Only JPEG, PNG, and WEBP files are allowed',
+            );
         }
 
-        // Sanitize and normalize base filename
-        let baseName = path.parse(file.originalname).name;
-        // Remove control characters, trim, and limit length
-        baseName = baseName.replace(/[\x00-\x1F\x7F/\\:*?"<>|]/g, '').trim().slice(0, 100) || 'file';
-
-        // Derive safe extension from detected/normalized mime type
-        let ext = '';
-        if (detectedType?.ext) {
-            ext = detectedType.ext;
-        } else if (mimeType === 'image/svg+xml') {
-            ext = 'svg';
-        } else {
-            ext = (file.mimetype.split('/')[1] || 'img').split('+')[0];
+        // Sanitize filename
+        let baseName = file.originalname.replace(/[^a-zA-Z0-9.]/g, '');
+        if (!baseName || baseName.startsWith('.')) {
+            baseName = 'file' + '.' + detectedType.ext;
         }
 
-        const key = `${baseName}-${uuid()}.${ext}`;
+        const ext = detectedType.ext;
+        const truncated = baseName.slice(0, 100).replace(/\.[^.]+$/, ''); // remove original extension
+        const finalName = `${truncated}-${uuid()}.${ext}`;
+
         try {
             await this.s3.send(
                 new PutObjectCommand({
-                    Bucket: this.bucket,
-                    Key: key,
+                    Bucket: process.env.R2_BUCKET_NAME,
+                    Key: finalName,
                     Body: file.buffer,
-                    ContentType: mimeType,
+                    ContentType: detectedType.mime,
                 }),
             );
-        } catch (err) {
-            throw new InternalServerErrorException('Failed to upload file to storage provider');
+        } catch (e) {
+            throw new InternalServerErrorException(
+                'Failed to upload file to storage provider',
+            );
         }
-        return key;
+
+        return finalName;
     }
 }
