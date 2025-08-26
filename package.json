@@ -112,10 +112,26 @@
         "transform": {
             "^.+\\.(t|j)s$": "ts-jest"
         },
+        "collectCoverage": true,
         "collectCoverageFrom": [
-            "**/*.(t|j)s"
+            "src/**/*.{ts,js}",
+            "!src/**/*.d.ts",
+            "!src/**/index.{ts,js}",
+            "!src/**/*.module.ts",
+            "!src/**/*.dto.ts",
+            "!src/**/*.enum.ts",
+            "!src/main.ts"
+        ],
+        "coveragePathIgnorePatterns": [
+            "/node_modules/",
+            "/dist/",
+            "/test/"
         ],
         "coverageDirectory": "../coverage",
+        "coverageReporters": [
+            "text",
+            "lcov"
+        ],
         "testEnvironment": "node"
     }
 }

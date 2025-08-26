@@ -23,7 +23,7 @@ import { ParseEmailPipe } from '../pipes/parse-email.pipe';
 import { ParseCrnPipe } from '../pipes/parse-crn.pipe';
 import { UserResponseDTO } from './dtos/userResponse.dto';
 import { ApiJwtAuthGuard } from '../auth/decorators/api-jwt-auth-guard.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
     ApiDocsGetUserByCrn,
     ApiDocsGetUserByEmail,

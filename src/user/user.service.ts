@@ -8,7 +8,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { UserResponseDTO } from './dtos/userResponse.dto';
 import { User } from '@prisma/client';
-import { UserRole as AppUserRole } from '../enums/userRole';
+import { UserRole as AppUserRole } from '../enums/userRole.enum';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { AuthService } from '../auth/auth.service';
 import { FileService } from '../file/file.service';

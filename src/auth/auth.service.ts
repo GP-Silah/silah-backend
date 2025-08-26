@@ -15,7 +15,7 @@ import { LoginDto } from './dtos/login.dto';
 import * as crypto from 'crypto';
 import * as nodemailer from 'nodemailer';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
-import { UserRole } from '../enums/userRole';
+import { UserRole } from '../enums/userRole.enum';
 import { Request, Response } from 'express';
 
 /**

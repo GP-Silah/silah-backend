@@ -13,7 +13,7 @@ import * as request from 'supertest';
 import * as crypto from 'crypto';
 import { UserResponseDTO } from 'src/user/dtos/userResponse.dto';
 import { UpdateUserDto } from 'src/user/dtos/updateUser.dto';
-import { UserRole } from 'src/enums/userRole';
+import { UserRole } from 'src/enums/userRole.enum';
 import { AppModule } from 'src/app.module';
 import * as cookieParser from 'cookie-parser';
 

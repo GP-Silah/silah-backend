@@ -3,7 +3,7 @@ import {
     BadRequestException,
     InternalServerErrorException,
 } from '@nestjs/common';
-import { FileService } from './file.service';
+import { FileService } from '../../src/file/file.service';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import * as fileType from 'file-type';

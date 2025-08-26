@@ -5,7 +5,7 @@ import { UpdateUserDto } from '../../src/user/dtos/updateUser.dto';
 import { UserResponseDTO } from '../../src/user/dtos/userResponse.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Request } from 'express';
-import { UserRole } from '../../src/enums/userRole';
+import { UserRole } from '../../src/enums/userRole.enum';
 import { JwtService } from '@nestjs/jwt';
 
 describe('UserController', () => {

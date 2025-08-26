@@ -119,7 +119,7 @@ This single command will:
 
 **Important:** The category seeding step is crucial. It inserts ~50 predefined categories that the application relies on. Skipping this will break category-related features.
 
-**What you'll see:**
+**What you'll see (simplified):**
 
 ```bash
 Creating silah_db ... done
@@ -202,9 +202,8 @@ npm run start:dev
 postgres_dev: # Development DB on port 5432
 postgres_test: # Test DB on port 5433 (ephemeral data)
 
-# Two application container that are used based on environment
-app_dev: # NestJS backend on port 3000
-app_test: # NestJS backend on port 3001
+# One application container
+app: # NestJS backend on port 3000
 ```
 
 **Why separate test database?**
@@ -339,13 +338,13 @@ npm run test:e2e
 
 **Development Database (postgres_dev):**
 
-- Port: 5432
+- Local Port: 5432
 - Persistent data (survives container restarts)
 - Used for: Manual testing, development
 
 **Test Database (postgres_test):**
 
-- Port: 5433
+- Local Port: 5433
 - Ephemeral data (fresh start each time)
 - Used for: Integration and E2E tests
 - Automatically managed by test scripts
@@ -362,7 +361,7 @@ npm run test && npm run test:int
 # Full test suite (CI/CD pipeline)
 npm test && npm run test:int && npm run test:e2e
 
-# Coverage report for stakeholders
+# Coverage report
 npm run test:cov
 ```
 
@@ -387,7 +386,7 @@ npm run lint
 npm run format
 
 # Database operations
-npm run prisma:dev        # Run new migrations
+npm run prisma:dev            # Run new migrations
 npm run prisma:seed:category  # Reseed categories
 ```
 

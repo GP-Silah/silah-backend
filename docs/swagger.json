@@ -511,7 +511,7 @@
     },
     "/api/auth/request-password-reset": {
       "post": {
-        "description": "This endpoint sends a password reset link to the user's email address.<br><br>\n    It is used in two cases:<br>\n    - If the user clicks the \"Forgot Password?\" button.<br>\n    - If the user previously requested a reset link but the 5-minute token has expired.<br><br>\n    Note: The token will only be sent if the email exists and is verified. For security reasons, we always return the same success message, regardless of whether the user exists or is verified.",
+        "description": "This endpoint sends a password reset link to the user's email address.<br><br>\n            It is used in two cases:<br>\n            - If the user clicks the \"Forgot Password?\" button.<br>\n            - If the user previously requested a reset link but the 5-minute token has expired.<br><br>\n            Note: The token will only be sent if the email exists and is verified. For security reasons, we always return the same success message, regardless of whether the user exists or is verified.",
         "operationId": "AuthController_requestPasswordReset",
         "parameters": [],
         "requestBody": {

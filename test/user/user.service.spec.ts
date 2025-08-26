@@ -4,7 +4,7 @@ import { UserService } from '../../src/user/user.service';
 import { PrismaService } from '../../src/prisma/prisma.service';
 import { AuthService } from '../../src/auth/auth.service';
 import { FileService } from '../../src/file/file.service';
-import { UserRole as AppUserRole } from '../../src/enums/userRole';
+import { UserRole as AppUserRole } from '../../src/enums/userRole.enum';
 
 describe('UserService', () => {
     let service: UserService;
@@ -782,14 +782,10 @@ describe('UserService', () => {
             const searchName = '';
             prismaService.user.findMany.mockResolvedValue(mockUsers);
 
-            // Act
-            const result = await service.getUserByName(searchName);
-
-            // Assert
-            expect(result).toHaveLength(2);
-            expect(prismaService.user.findMany).toHaveBeenCalledWith({
-                where: { name: { contains: '', mode: 'insensitive' } },
-            });
+            // Act & Assert
+            await expect(service.getUserByName(searchName)).rejects.toThrow(
+                new BadRequestException('Name parameter is required'),
+            );
         });
     });
 

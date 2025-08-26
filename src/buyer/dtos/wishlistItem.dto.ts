@@ -1,4 +1,4 @@
-import { ItemType } from 'src/enums/itemType';
+import { ItemType } from 'src/enums/itemType.enum';
 
 // TODO: Come back to this after implemeting the Supplier, Product, Service, and maybe "Item" modules
 export class WishlistItemDto {
