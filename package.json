@@ -13,8 +13,8 @@
         "start:debug": "nest start --debug --watch",
         "start:prod": "node dist/main",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-        "test": "jest",
-        "test:watch": "jest --watch",
+        "test": "jest --no-coverage",
+        "test:watch": "jest --watch --no-coverage",
         "test:cov": "jest --coverage",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:e2e": "jest --config ./test/jest-e2e.json",
@@ -64,7 +64,9 @@
         "reflect-metadata": "^0.2.2",
         "rxjs": "^7.8.1",
         "sharp": "^0.34.3",
-        "swagger-ui-express": "^5.0.1"
+        "swagger-ui-express": "^5.0.1",
+        "winston": "^3.17.0",
+        "winston-daily-rotate-file": "^5.0.0"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3.2.0",
@@ -120,6 +122,7 @@
             "!src/**/*.module.ts",
             "!src/**/*.dto.ts",
             "!src/**/*.enum.ts",
+            "!src/**/*.docs.ts",
             "!src/main.ts"
         ],
         "coveragePathIgnorePatterns": [

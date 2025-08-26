@@ -189,6 +189,7 @@
             }
           }
         },
+        "summary": "Check API health status",
         "tags": [
           "Health"
         ]

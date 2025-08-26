@@ -16,7 +16,7 @@ import { LoginDto } from './dtos/login.dto';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
 import { ParseEmailPipe } from '../pipes/parse-email.pipe';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { ApiJwtAuthGuard } from './decorators/api-jwt-auth-guard.decorator';
+import { ApiJwtAuthGuard } from './decorators/api-jwt-auth-guard.docs';
 import { Request } from 'express';
 import {
     ApiDocsLogin,

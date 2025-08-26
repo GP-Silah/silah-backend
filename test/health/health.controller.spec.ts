@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HealthController } from '../../src/health/health.controller';
 import { HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 describe('HealthController', () => {
     let controller: HealthController;
@@ -13,7 +14,13 @@ describe('HealthController', () => {
                 {
                     provide: HealthCheckService,
                     useValue: {
-                        check: jest.fn(), // we'll mock this
+                        check: jest.fn(),
+                    },
+                },
+                {
+                    provide: PrismaService,
+                    useValue: {
+                        $queryRaw: jest.fn(), // mock the DB ping
                     },
                 },
             ],
@@ -27,17 +34,20 @@ describe('HealthController', () => {
         expect(controller).toBeDefined();
     });
 
-    it('should call HealthCheckService.check and return its value', async () => {
+    it('should call HealthCheckService.check with indicators and return its value', async () => {
         const mockResult: HealthCheckResult = {
             status: 'ok',
-            info: {},
+            info: { database: { status: 'up' } },
             error: {},
-            details: {},
+            details: { database: { status: 'up' } },
         };
+
+        const indicators = [expect.any(Function)]; // Jest matcher for the function array
         jest.spyOn(healthCheckService, 'check').mockResolvedValue(mockResult);
 
         const result = await controller.check();
-        expect(healthCheckService.check).toHaveBeenCalledWith([]);
+
+        expect(healthCheckService.check).toHaveBeenCalledWith(indicators);
         expect(result).toBe(mockResult);
     });
 });

@@ -7,6 +7,8 @@ import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as fs from 'fs';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import logger from './logger';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -20,6 +22,9 @@ async function bootstrap() {
             transform: true,
         }),
     );
+
+    app.useGlobalFilters(new AllExceptionsFilter());
+
     app.enableCors({
         origin: `${process.env.FRONTEND_URL}`,
         credentials: true,

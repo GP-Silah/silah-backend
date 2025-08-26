@@ -6,6 +6,9 @@ COPY . .
 RUN npx prisma generate
 RUN npm run build
 
+# Create logs folder
+RUN mkdir -p logs
+
 RUN chmod +x ./docker/docker-entrypoint.sh
 
 ENV PORT=3000

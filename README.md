@@ -260,6 +260,51 @@ npm run db:wait:dev
 
 ---
 
+### Monitoring & Logging
+
+#### Application Logs
+
+View real-time logs from all containers:
+
+```bash
+npm run docker:logs
+```
+
+View logs for a specific service:
+
+```bash
+docker logs silah_backend -f
+docker logs silah_db -f
+```
+
+Search logs for specific events (e.g., errors):
+
+```bash
+docker logs silah_backend 2>&1 | grep "ERROR"
+```
+
+#### Database Monitoring
+
+Connect to the database:
+
+```bash
+docker exec -it silah_db psql -U silah_user -d silah_dev
+```
+
+View active connections:
+
+```bash
+SELECT * FROM pg_stat_activity;
+```
+
+Monitor query performance:
+
+```bash
+SELECT * FROM pg_stat_statements ORDER BY mean_time DESC;
+```
+
+---
+
 ## Testing Strategy
 
 We use a comprehensive 3-tier testing approach:
