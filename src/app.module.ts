@@ -10,10 +10,17 @@ import { FileModule } from './file/file.module';
 import { HealthController } from './health/health.controller';
 import { TerminusModule } from '@nestjs/terminus';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
     imports: [
         TerminusModule,
+        ThrottlerModule.forRoot([
+            {
+                ttl: 60, // Time to live = 60 seconds
+                limit: 10, // Allow max 10 requests per IP per 60 seconds
+            },
+        ]),
         ScheduleModule.forRoot(),
         AuthModule,
         UserModule,

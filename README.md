@@ -264,42 +264,28 @@ npm run db:wait:dev
 
 #### Application Logs
 
-View real-time logs from all containers:
-
 ```bash
+# View real-time logs
 npm run docker:logs
-```
 
-View logs for a specific service:
-
-```bash
+# View specific service logs
 docker logs silah_backend -f
 docker logs silah_db -f
-```
 
-Search logs for specific events (e.g., errors):
-
-```bash
+# Search logs for specific events (e.g., errors)
 docker logs silah_backend 2>&1 | grep "ERROR"
 ```
 
 #### Database Monitoring
 
-Connect to the database:
-
 ```bash
+# Connect to database
 docker exec -it silah_db psql -U silah_user -d silah_dev
-```
 
-View active connections:
-
-```bash
+# View active connections
 SELECT * FROM pg_stat_activity;
-```
 
-Monitor query performance:
-
-```bash
+# Monitor query performance
 SELECT * FROM pg_stat_statements ORDER BY mean_time DESC;
 ```
 

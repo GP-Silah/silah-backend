@@ -52,6 +52,7 @@
         "@nestjs/schedule": "^6.0.0",
         "@nestjs/swagger": "^11.2.0",
         "@nestjs/terminus": "^11.0.0",
+        "@nestjs/throttler": "^6.4.0",
         "@prisma/client": "^6.10.1",
         "@types/multer": "^2.0.0",
         "bcrypt": "^6.0.0",

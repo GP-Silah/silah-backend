@@ -8,12 +8,14 @@ import * as cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as fs from 'fs';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
-import logger from './logger';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
     app.setGlobalPrefix('api');
+
+    app.useGlobalGuards(app.get(ThrottlerGuard));
 
     app.useGlobalPipes(
         new ValidationPipe({
