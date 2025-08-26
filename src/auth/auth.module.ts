@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { IsEmailOrCrnConstraint } from './dtos/isEmailOrCrnConstraint';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UserModule } from '../user/user.module';
 
 /**
  * AuthModule is responsible for handling authentication-related features
@@ -21,6 +22,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             }),
             global: true,
         }),
+        forwardRef(() => UserModule),
     ],
     controllers: [AuthController],
     providers: [AuthService, IsEmailOrCrnConstraint],

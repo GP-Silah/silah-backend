@@ -1,10 +1,10 @@
 {
     "name": "silah-backend",
     "version": "0.0.1",
-    "description": "",
-    "author": "",
+    "description": "Backend API server for Silah B2B platform connecting suppliers and buyers. Manages users, products, orders, RFPs, messaging, and integrations with payment gateways and storage services.",
+    "author": "Silah Backend Team",
     "private": true,
-    "license": "UNLICENSED",
+    "license": "See LICENSE file",
     "scripts": {
         "build": "nest build",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -13,12 +13,33 @@
         "start:debug": "nest start --debug --watch",
         "start:prod": "node dist/main",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-        "test": "jest",
-        "test:watch": "jest --watch",
+        "test": "jest --no-coverage",
+        "test:watch": "jest --watch --no-coverage",
         "test:cov": "jest --coverage",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:e2e": "jest --config ./test/jest-e2e.json",
-        "prisma:seed:category": "ts-node prisma/categorySeed.ts"
+        "pretest:int": "npm run docker:test",
+        "pretest:int:watch": "npm run docker:test",
+        "test:int": "jest -i --no-cache --config ./test/jest-int.json",
+        "test:int:watch": "jest -i --watch --no-cache --config ./test/jest-int.json",
+        "prisma:seed:category": "ts-node prisma/categorySeed.ts",
+        "prisma:dev": "dotenv -e .env.dev -- npx prisma migrate dev",
+        "prisma:test": "dotenv -e .env.test -- npx prisma migrate deploy",
+        "env:dev:merge": "rm -f .env.merged && cat .env .env.dev > .env.merged",
+        "env:test:merge": "rm -f .env.merged && cat .env .env.test > .env.merged",
+        "docker:dev": "npm run kill:5432 && npm run docker:cleanup && npm run env:dev:merge && DB_SERVICE=postgres_dev docker compose --env-file .env.merged -f docker/docker-compose.yml -f docker/docker-compose.override.yml up --build app && npm run db:wait:dev",
+        "docker:dev:d": "npm run kill:5432 && npm run docker:cleanup && npm run env:dev:merge && DB_SERVICE=postgres_dev docker compose --env-file .env.merged -f docker/docker-compose.yml -f docker/docker-compose.override.yml up --build -d app && npm run db:wait:dev",
+        "docker:test": "npm run kill:5432 && npm run docker:cleanup && npm run env:test:merge && DB_SERVICE=postgres_test docker compose --env-file .env.merged -f docker/docker-compose.yml -f docker/docker-compose.override.yml up --build -d app && npm run db:wait:test",
+        "db:wait:dev": "npx wait-port 5432 -t 30000",
+        "db:wait:test": "npx wait-port 5433 -t 30000",
+        "docker:down": "docker compose -f docker/docker-compose.yml -f docker/docker-compose.override.yml down",
+        "kill:5432:unix": "sudo lsof -ti:5432 | xargs sudo kill -9 || true",
+        "kill:5432:win": "npx kill-port 5432 || echo 'Port cleanup attempted'",
+        "kill:5432": "npm run kill:5432:unix || npm run kill:5432:win",
+        "docker:cleanup": "docker compose -f docker/docker-compose.yml -f docker/docker-compose.override.yml down && docker system prune -f",
+        "docker:logs:dev": "docker compose -f docker/docker-compose.yml -f docker/docker-compose.override.yml logs -f app_dev",
+        "docker:logs:test": "docker compose -f docker/docker-compose.yml -f docker/docker-compose.override.yml logs -f app_test",
+        "docker:logs": "docker compose logs -f"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.864.0",
@@ -31,17 +52,22 @@
         "@nestjs/schedule": "^6.0.0",
         "@nestjs/swagger": "^11.2.0",
         "@nestjs/terminus": "^11.0.0",
+        "@nestjs/throttler": "^6.4.0",
         "@prisma/client": "^6.10.1",
         "@types/multer": "^2.0.0",
         "bcrypt": "^6.0.0",
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.2",
         "cookie-parser": "^1.4.7",
+        "file-type": "^16.5.4",
         "multer": "^2.0.2",
         "nodemailer": "^7.0.4",
         "reflect-metadata": "^0.2.2",
         "rxjs": "^7.8.1",
-        "swagger-ui-express": "^5.0.1"
+        "sharp": "^0.34.3",
+        "swagger-ui-express": "^5.0.1",
+        "winston": "^3.17.0",
+        "winston-daily-rotate-file": "^5.0.0"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3.2.0",
@@ -55,39 +81,61 @@
         "@types/express": "^5.0.3",
         "@types/jest": "^29.5.14",
         "@types/node": "^22.10.7",
-        "@types/supertest": "^6.0.2",
+        "@types/supertest": "^6.0.3",
         "eslint": "^9.18.0",
         "eslint-config-prettier": "^10.0.1",
         "eslint-plugin-prettier": "^5.2.2",
         "globals": "^16.0.0",
         "jest": "^29.7.0",
+        "kill-port": "^2.0.1",
         "prettier": "^3.4.2",
         "prisma": "^6.10.1",
         "source-map-support": "^0.5.21",
-        "supertest": "^7.0.0",
+        "supertest": "^7.1.4",
         "swagger-ui-dist": "^5.25.3",
         "ts-jest": "^29.2.5",
         "ts-loader": "^9.5.2",
         "ts-node": "^10.9.2",
         "tsconfig-paths": "^4.2.0",
         "typescript": "^5.7.3",
-        "typescript-eslint": "^8.20.0"
+        "typescript-eslint": "^8.20.0",
+        "wait-port": "^1.1.0"
     },
     "jest": {
+        "moduleNameMapper": {
+            "src/(.*)": "<rootDir>/src/$1"
+        },
         "moduleFileExtensions": [
             "js",
             "json",
             "ts"
         ],
-        "rootDir": "src",
+        "rootDir": "./",
         "testRegex": ".*\\.spec\\.ts$",
         "transform": {
             "^.+\\.(t|j)s$": "ts-jest"
         },
+        "collectCoverage": true,
         "collectCoverageFrom": [
-            "**/*.(t|j)s"
+            "src/**/*.{ts,js}",
+            "!src/**/*.d.ts",
+            "!src/**/index.{ts,js}",
+            "!src/**/*.module.ts",
+            "!src/**/*.dto.ts",
+            "!src/**/*.enum.ts",
+            "!src/**/*.docs.ts",
+            "!src/main.ts"
+        ],
+        "coveragePathIgnorePatterns": [
+            "/node_modules/",
+            "/dist/",
+            "/test/"
         ],
         "coverageDirectory": "../coverage",
+        "coverageReporters": [
+            "text",
+            "lcov"
+        ],
         "testEnvironment": "node"
     }
 }

@@ -26,6 +26,175 @@
         ]
       }
     },
+    "/api/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Check API health status",
+        "tags": [
+          "Health"
+        ]
+      }
+    },
     "/api/auth/signup": {
       "post": {
         "operationId": "AuthController_signUp",
@@ -343,7 +512,7 @@
     },
     "/api/auth/request-password-reset": {
       "post": {
-        "description": "This endpoint sends a password reset link to the user's email address.<br><br>\n    It is used in two cases:<br>\n    - If the user clicks the \"Forgot Password?\" button.<br>\n    - If the user previously requested a reset link but the 5-minute token has expired.<br><br>\n    Note: The token will only be sent if the email exists and is verified. For security reasons, we always return the same success message, regardless of whether the user exists or is verified.",
+        "description": "This endpoint sends a password reset link to the user's email address.<br><br>\n            It is used in two cases:<br>\n            - If the user clicks the \"Forgot Password?\" button.<br>\n            - If the user previously requested a reset link but the 5-minute token has expired.<br><br>\n            Note: The token will only be sent if the email exists and is verified. For security reasons, we always return the same success message, regardless of whether the user exists or is verified.",
         "operationId": "AuthController_requestPasswordReset",
         "parameters": [],
         "requestBody": {
@@ -643,7 +812,7 @@
         ]
       }
     },
-    "/api/users/name/{name}": {
+    "/api/users/name": {
       "get": {
         "description": "Returns a list of users that match the provided name.",
         "operationId": "UserController_getUserByName",
@@ -651,8 +820,8 @@
           {
             "name": "name",
             "required": true,
-            "in": "path",
-            "description": "Name to search users by",
+            "in": "query",
+            "description": "Name (or partial name) to search users by",
             "schema": {
               "example": "Sarah",
               "type": "string"
@@ -668,6 +837,20 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/UserResponseDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Name parameter is required",
+                    "error": "Bad Request"
                   }
                 }
               }
@@ -858,6 +1041,343 @@
           }
         ],
         "summary": "Update current user",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/users/me/profile-picture": {
+      "post": {
+        "description": "Uploads a new profile picture for the authenticated user and updates their record. Replaces the previous picture if it exists.<br><strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br><strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
+        "operationId": "UserController_updateProfilePicture",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Profile picture file to upload",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile picture updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Profile picture updated successfully",
+                    "pfpFileName": "user-avatar/12345.png"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. File missing or invalid format.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "No file provided or invalid file type",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found or profile picture cannot be updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Update user profile picture",
+        "tags": [
+          "Users"
+        ]
+      },
+      "delete": {
+        "description": "Deletes the authenticated user's current profile picture and replaces it with a default avatar.",
+        "operationId": "UserController_deleteProfilePicture",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile picture deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Profile picture deleted successfully"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found or already has the default profile picture",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Profile picture not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Delete current user profile picture",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/users/{id}/profile-picture": {
+      "get": {
+        "description": "Retrieves the URL of a user's profile picture that is stored on R2. Throws a 404 error if the user or their profile picture does not exist.",
+        "operationId": "UserController_getUserProfilePictureUrl",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "ID of the user whose profile picture URL is being retrieved",
+            "schema": {
+              "example": "b4f2d8c1-9876-5432-10ba-2f3e4d5c6789",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile picture URL retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "pfpUrl": "https://gp-silah.d025be9440ae5eb8295c69a36497276a.r2.cloudflarestorage.com/gp-silah/moon-51f34c39-5545-41f1-b2a3-239c9633f794.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=2cd46f1efb9f7de0471b97ee91fcab0f%2F20250818%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250818T145052Z&X-Amz-Expires=3600&X-Amz-Signature=d5d0c78469525c2fa8a6ab806508f26b4aa6dec57cbf38174264d6d093d9b5b1&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User or profile picture not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Profile picture not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get user's profile picture URL",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/users/profile-pictures/batch": {
+      "post": {
+        "description": "Retrieves the profile picture URLs for multiple users by their IDs. Only valid UUIDs are considered.",
+        "operationId": "UserController_getUsersProfilePicturesUrls",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Array of user IDs to retrieve profile picture URLs for",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "example": [
+                      "a3e1c9f0-1234-5678-90ab-1c2d3e4f5678",
+                      "b4f2d8c1-9876-5432-10ba-2f3e4d5c6789"
+                    ]
+                  }
+                },
+                "required": [
+                  "ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile picture URLs retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "a3e1c9f0-1234-5678-90ab-1c2d3e4f5678",
+                      "pfpUrl": "https://gp-silah.d025be9440ae5eb8295c69a36497276a.r2.cloudflarestorage.com/gp-silah/moon-51f34c39-5545-41f1-b2a3-239c9633f794.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=2cd46f1efb9f7de0471b97ee91fcab0f%2F20250818%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250818T145052Z&X-Amz-Expires=3600&X-Amz-Signature=d5d0c78469525c2fa8a6ab806508f26b4aa6dec57cbf38174264d6d093d9b5b1&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+                    },
+                    {
+                      "id": "b4f2d8c1-9876-5432-10ba-2f3e4d5c6789",
+                      "pfpUrl": null
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "No user IDs provided",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No users found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No users found with the provided IDs",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get profile pictures for multiple users",
         "tags": [
           "Users"
         ]
@@ -1106,9 +1626,16 @@
             "type": "string",
             "example": "Riyadh"
           },
+          "pfpFileName": {
+            "type": "string",
+            "example": "moon-3263ec71-3e92-441d-aadd-a57b4a99b2e2.jpeg",
+            "description": "Profile picture file name in R2 bucket."
+          },
           "pfpUrl": {
             "type": "string",
-            "example": "https://cdn.example.com/pfp/abc123.png"
+            "example": "https://gp-silah.d025be9440ae5eb8295c69a36497276a.r2.cloudflarestorage.com/gp-silah/moon.jpeg-30510246-41f7-4cff-a052-78bcc30f7301.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=...&X-Amz-Date=20250816T131236Z&X-Amz-Expires=3600&X-Amz-Signature=...",
+            "description": "Example of a signed URL from R2. Signed URLs expire 1 hour after creation.",
+            "format": "uri"
           },
           "categories": {
             "example": [
@@ -1143,6 +1670,8 @@
           "businessName",
           "role",
           "city",
+          "pfpFileName",
+          "pfpUrl",
           "categories",
           "isEmailVerified",
           "createdAt",

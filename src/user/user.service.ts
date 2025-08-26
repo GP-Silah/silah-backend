@@ -1,20 +1,26 @@
 import {
     BadRequestException,
+    forwardRef,
+    Inject,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { UserResponseDTO } from './dtos/userResponse.dto';
 import { User } from '@prisma/client';
-import { UserRole as AppUserRole } from '../enums/userRole';
+import { UserRole as AppUserRole } from '../enums/userRole.enum';
 import { UpdateUserDto } from './dtos/updateUser.dto';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
+import { FileService } from '../file/file.service';
+import * as sharp from 'sharp'; // converts SVG → PNG
 
 @Injectable()
 export class UserService {
     constructor(
         private readonly prisma: PrismaService,
+        @Inject(forwardRef(() => AuthService))
         private readonly auth: AuthService,
+        private readonly fileService: FileService,
     ) {}
 
     /**
@@ -25,6 +31,9 @@ export class UserService {
      */
     private async toUserResponseDTO(user: User): Promise<UserResponseDTO> {
         const categories = await this.getUserCategories(user.id);
+        const pfpUrl = await this.fileService.getFileUrl(
+            user.pfpFileName || '',
+        );
         return {
             id: user.id,
             name: user.name,
@@ -33,12 +42,31 @@ export class UserService {
             businessName: user.businessName,
             role: AppUserRole[user.role], // cast the prisma enum to our app enum (ts file found on src/enums/)
             city: user.city,
-            pfpUrl: user.pfpUrl || undefined,
+            pfpFileName: user.pfpFileName || '',
+            pfpUrl: pfpUrl || '',
             categories,
             isEmailVerified: user.isEmailVerified,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
         };
+    }
+
+    /**
+     * Retrieves a user by their ID.
+     * @param {string} id - The id of the user to retrieve.
+     * @throws {NotFoundException} If the user with the given id is not found.
+     * @returns {Promise<UserResponseDTO>} The found user in DTO format.
+     */
+    async getUserById(id: string): Promise<UserResponseDTO> {
+        // Check if a user exists with the given id
+        // Return the user if found, otherwise return null (404 Not Found)
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+        });
+        if (!user) {
+            throw new NotFoundException(`User with id ${id} not found`);
+        }
+        return this.toUserResponseDTO(user);
     }
 
     /**
@@ -78,10 +106,14 @@ export class UserService {
     /**
      * Searches for users by name using a case-insensitive partial match.
      * @param {string} name - The name or partial name to search for.
+     * @throws {BadRequestException} If the name parameter is empty.
      * @throws {NotFoundException} If no users match the search criteria.
      * @returns {Promise<UserResponseDTO[]>} A list of matching users in DTO format.
      */
     async getUserByName(name: string): Promise<UserResponseDTO[]> {
+        if (!name || name.trim() === '') {
+            throw new BadRequestException('Name parameter is required');
+        }
         const users = await this.prisma.user.findMany({
             where: { name: { contains: name, mode: 'insensitive' } },
         });
@@ -236,5 +268,172 @@ export class UserService {
         }
 
         return userWithCategories.categories.map((uc) => uc.category.name);
+    }
+
+    /**
+     * Generates a default avatar PNG for a user based on the first letter of their name.
+     * The avatar background color is deterministically chosen from a preset color palette.
+     * The generated PNG is uploaded using the FileService and the user's record is updated.
+     *
+     * @param {string} email - The email of the user for whom to generate the avatar.
+     * @returns {Promise<string>} - The file name of the uploaded default avatar.
+     */
+    async generateDefaultAvatar(email: string) {
+        const user = await this.prisma.user.findUnique({
+            where: { email },
+        });
+        if (!user) throw new NotFoundException('User not found');
+        const letter = user.name.charAt(0).toUpperCase();
+        const colors = [
+            '#fef5e4',
+            '#ffcfcf',
+            '#cce9e5',
+            '#ecc3df',
+            '#f7ebb2',
+            '#fff1dc',
+        ];
+        const bgColor = colors[user.name.charCodeAt(0) % colors.length];
+
+        const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
+            <rect width="100%" height="100%" fill="${bgColor}"/>
+            <text x="50%" y="50%" font-size="64" text-anchor="middle" dy=".35em" fill="#333">
+                ${letter}
+            </text>
+            </svg>
+        `;
+
+        const buffer = Buffer.from(svg);
+        const pngBuffer = await sharp(buffer).png().toBuffer();
+        const fileName = `default-avatars/${user.id}`;
+        const realFileName = await this.fileService.uploadFile({
+            originalname: fileName,
+            buffer: pngBuffer,
+            mimetype: 'image/png',
+            size: pngBuffer.length,
+        } as Express.Multer.File);
+        await this.prisma.user.update({
+            where: { email },
+            data: { pfpFileName: realFileName, isPfpDefault: true },
+        });
+        return realFileName;
+    }
+
+    /**
+     * Updates a user's profile picture by uploading a new file and updating the user's record.
+     *
+     * @param {Express.Multer.File} file - The new profile picture file to upload.
+     * @param {string} userEmail - The email of the user whose profile picture will be updated.
+     * @returns {Promise<{ message: string; pfpFileName: string }>} - Confirmation message and uploaded file name.
+     */
+    async updateProfilePicture(file: Express.Multer.File, userEmail: string) {
+        const fileName = await this.fileService.uploadFile(file);
+        await this.prisma.user.update({
+            where: { email: userEmail },
+            data: { pfpFileName: fileName, isPfpDefault: false },
+        });
+        return {
+            message: 'Profile picture updated successfully',
+            pfpFileName: fileName,
+        };
+    }
+
+    /**
+     * Deletes a user's current profile picture and replaces it with a default avatar.
+     *
+     * @param {string} userEmail - The email of the user whose profile picture will be deleted.
+     * @throws {NotFoundException} if the user does not exist or already has a default profile picture.
+     * @returns {Promise<{ message: string }>} - Confirmation message of successful deletion.
+     */
+    async deleteProfilePicture(userEmail: string) {
+        const user = await this.prisma.user.findUnique({
+            where: { email: userEmail },
+        });
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+        if (user.isPfpDefault) {
+            throw new BadRequestException('Profile picture already default');
+        }
+        // Future Work ?: Delete the file from the storage (R2)
+        await this.generateDefaultAvatar(userEmail);
+        return { message: 'Profile picture deleted successfully' };
+    }
+
+    /**
+     * Retrieves the URL of a user's profile picture that is uploaded on R2.
+     *
+     * @param {string} userId - The ID of the user whose profile picture URL will be retrieved.
+     * @throws {NotFoundException} if the user or profile picture does not exist.
+     * @returns {Promise<{ pfpUrl: string }>} - Object containing the profile picture URL.
+     */
+    async getUserProfilePictureUrl(userId: string) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { pfpFileName: true },
+        });
+        if (!user || !user.pfpFileName) {
+            throw new NotFoundException('Profile picture not found');
+        }
+        const pfpUrl = await this.fileService.getFileUrl(user.pfpFileName);
+        return { pfpUrl };
+    }
+
+    /**
+     * Retrieves the profile picture URLs for multiple users by their IDs.
+     * Only valid UUIDs are considered.
+     *
+     * @param {string[]} ids - Array of user IDs to retrieve profile picture URLs for.
+     *@throws {BadRequestException} if input is invalid or NotFoundException if no users are found.
+     * @returns {Promise<{ id: string; pfpUrl: string | null }[]>} - Array of objects with user IDs and their profile picture URLs.
+     */
+    async getUsersProfilePicturesUrls(ids: string[]) {
+        if (!Array.isArray(ids) || ids.length === 0) {
+            throw new BadRequestException('No user IDs provided');
+        }
+        // Keep only valid UUIDs
+        const validIds = ids.filter((id) => {
+            try {
+                return isUuid(id);
+            } catch (e) {
+                return false;
+            }
+        });
+        if (validIds.length === 0) {
+            throw new BadRequestException('No valid UUIDs provided');
+        }
+        const users = await this.prisma.user.findMany({
+            where: { id: { in: validIds } },
+            select: { id: true, pfpFileName: true },
+        });
+        if (users.length === 0) {
+            throw new NotFoundException('No users found with the provided IDs');
+        }
+        const urls = await Promise.all(
+            users.map(async (user) => {
+                const pfpUrl = user.pfpFileName
+                    ? await this.fileService.getFileUrl(user.pfpFileName)
+                    : null;
+                return { id: user.id, pfpUrl };
+            }),
+        );
+        return urls;
+    }
+}
+
+/**
+ * Checks whether a string is a valid UUID (v1-v5).
+ *
+ * @param {string} id - The string to validate as a UUID.
+ * @returns {boolean} - True if the string is a valid UUID, false otherwise.
+ */
+function isUuid(id: string): boolean {
+    // UUID v4 regex (accepts v1-v5, but v4 is most common)
+    try {
+        return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+            id,
+        );
+    } catch (e) {
+        return false; // Treat invalid inputs as non-UUIDs
     }
 }

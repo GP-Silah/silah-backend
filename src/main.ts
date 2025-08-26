@@ -1,14 +1,21 @@
+import * as dotenv from 'dotenv';
+dotenv.config({ path: '.env.merged' });
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as fs from 'fs';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
     app.setGlobalPrefix('api');
+
+    app.useGlobalGuards(app.get(ThrottlerGuard));
 
     app.useGlobalPipes(
         new ValidationPipe({
@@ -17,6 +24,9 @@ async function bootstrap() {
             transform: true,
         }),
     );
+
+    app.useGlobalFilters(new AllExceptionsFilter());
+
     app.enableCors({
         origin: `${process.env.FRONTEND_URL}`,
         credentials: true,

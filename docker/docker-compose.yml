@@ -1,0 +1,71 @@
+services:
+    # Development Database
+    postgres_dev:
+        image: postgres:15
+        container_name: silah_db_dev
+        restart: always
+        ports:
+            - '5432:5432'
+        env_file:
+            - ../.env
+            - ../.env.dev
+            - ../.env.merged
+        volumes:
+            - silah_dev_data:/var/lib/postgresql/data
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB_DEV}',
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+            start_period: 10s
+
+    # Test Database
+    postgres_test:
+        image: postgres:15
+        container_name: silah_db_test
+        restart: always
+        ports:
+            - '5433:5432'
+        env_file:
+            - ../.env
+            - ../.env.test
+            - ../.env.merged
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB_TEST}',
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+            start_period: 10s
+
+    app:
+        build:
+            context: ..
+            dockerfile: docker/Dockerfile
+        container_name: silah_backend
+        restart: unless-stopped
+        ports:
+            - '3000:3000'
+        env_file:
+            - ../.env
+            - ../${ENV_FILE:-.env.dev}
+            - ../.env.merged
+        environment:
+            - DOCKER_ENV=true
+        depends_on:
+            - ${DB_SERVICE:-postgres_dev}
+        volumes:
+            - ..:/app
+            - /app/node_modules
+            - ./logs:/app/logs
+        entrypoint: ['sh', './docker/docker-entrypoint.sh']
+
+volumes:
+    silah_dev_data:
