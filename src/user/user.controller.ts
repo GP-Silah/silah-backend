@@ -1,30 +1,44 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     Patch,
+    Post,
     Req,
     UseGuards,
+    UseInterceptors,
+    UploadedFile,
+    UsePipes,
+    BadRequestException,
+    Logger,
+    Query,
+    ParseFilePipe,
+    MaxFileSizeValidator,
+    FileTypeValidator,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import {
-    ApiBadRequestResponse,
-    ApiBody,
-    ApiNotFoundResponse,
-    ApiOkResponse,
-    ApiOperation,
-    ApiParam,
-    ApiResponse,
-    ApiTags,
-} from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { UpdateUserDto } from './dtos/updateUser.dto';
-import { ParseEmailPipe } from 'src/pipes/parse-email.pipe';
-import { ParseCrnPipe } from 'src/pipes/parse-crn.pipe';
+import { ParseEmailPipe } from '../pipes/parse-email.pipe';
+import { ParseCrnPipe } from '../pipes/parse-crn.pipe';
 import { UserResponseDTO } from './dtos/userResponse.dto';
-import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
+import { ApiJwtAuthGuard } from '../auth/decorators/api-jwt-auth-guard.docs';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import {
+    ApiDocsGetUserByCrn,
+    ApiDocsGetUserByEmail,
+    ApiDocsGetUserByName,
+    ApiDocsGetCurrentUserData,
+    ApiDocsUpdateCurrentUserData,
+    ApiDocsGetUserProfilePicture,
+    ApiDocsGetUsersProfilePicturesUrls,
+    ApiDocsDeleteProfilePicture,
+    ApiDocsUploadProfilePicture,
+} from './user.docs';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Users')
 @Controller('users')
@@ -32,30 +46,7 @@ export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get('email/:email')
-    @ApiOperation({
-        summary: 'Get user by email',
-        description: 'Fetches a single user using their email address.',
-    })
-    @ApiParam({
-        name: 'email',
-        type: String,
-        description: 'Email address of the user',
-        example: 'example@email.com',
-    })
-    @ApiOkResponse({
-        description: 'User found',
-        type: UserResponseDTO,
-    })
-    @ApiNotFoundResponse({
-        description: 'User not found',
-        schema: {
-            example: {
-                statusCode: 404,
-                message: 'User not found',
-                error: 'Not Found',
-            },
-        },
-    })
+    @ApiDocsGetUserByEmail()
     async getUserByEmail(
         @Param('email', new ParseEmailPipe()) email: string,
     ): Promise<UserResponseDTO> {
@@ -63,78 +54,28 @@ export class UserController {
     }
 
     @Get('crn/:crn')
-    @ApiOperation({
-        summary: 'Get user by their CRN',
-        description: 'Fetches a user using their unique CRN.',
-    })
-    @ApiParam({
-        name: 'crn',
-        type: String,
-        description: 'Customer Registration Number of the user',
-        example: '0123456789',
-    })
-    @ApiOkResponse({
-        description: 'User found',
-        type: UserResponseDTO,
-    })
-    @ApiNotFoundResponse({
-        description: 'User not found',
-        schema: {
-            example: {
-                statusCode: 404,
-                message: 'User not found',
-                error: 'Not Found',
-            },
-        },
-    })
+    @ApiDocsGetUserByCrn()
     async getUserByCRN(
         @Param('crn', new ParseCrnPipe()) crn: string,
     ): Promise<UserResponseDTO> {
         return this.userService.getUserByCRN(crn);
     }
 
-    @Get('name/:name')
-    @ApiOperation({
-        summary: 'Search users by name',
-        description: 'Returns a list of users that match the provided name.',
-    })
-    @ApiParam({
-        name: 'name',
-        type: String,
-        description: 'Name to search users by',
-        example: 'Sarah',
-    })
-    @ApiOkResponse({
-        description: 'Users found',
-        type: [UserResponseDTO],
-    })
-    @ApiNotFoundResponse({
-        description: 'No users found',
-        schema: {
-            example: {
-                statusCode: 404,
-                message: 'No users found with the name',
-                error: 'Not Found',
-            },
-        },
-    })
+    @Get('name')
+    @ApiDocsGetUserByName()
     async getUserByName(
-        @Param('name') name: string,
+        @Query('name') name: string,
     ): Promise<UserResponseDTO[]> {
+        if (!name || name.trim() === '') {
+            throw new BadRequestException('Name parameter is required');
+        }
         return this.userService.getUserByName(name);
     }
 
     @ApiJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Get('me')
-    @ApiOperation({
-        summary: 'Get current user',
-        description: "Returns the currently authenticated user's data.",
-    })
-    @ApiOkResponse({
-        description: 'Current user data retrieved successfully',
-        type: UserResponseDTO,
-    })
+    @ApiDocsGetCurrentUserData()
     async getCurrentUserData(@Req() req: Request): Promise<UserResponseDTO> {
         const userId = req.tokenData!.sub;
         return this.userService.getCurrentUserData(userId);
@@ -143,45 +84,64 @@ export class UserController {
     @ApiJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Patch('me')
-    @ApiOperation({
-        summary: 'Update current user',
-        description:
-            "Updates the currently authenticated user's profile information.",
-    })
-    @ApiBody({
-        description:
-            "User data to update (you don't have to not send all fields, only the ones you want to change will be updated).",
-        type: UpdateUserDto,
-        required: false,
-    })
-    @ApiOkResponse({
-        description: 'User updated successfully',
-        type: UserResponseDTO,
-    })
-    @ApiBadRequestResponse({
-        description: 'Invalid input data',
-        schema: {
-            example: {
-                statusCode: 400,
-                message: 'These categories are invalid: Hi, LOL',
-                error: 'Bad Request',
-            },
-        },
-    })
-    @ApiNotFoundResponse({
-        description: 'User not found',
-        schema: {
-            example: {
-                statusCode: 404,
-                message: 'User not found',
-                error: 'Not Found',
-            },
-        },
-    })
+    @ApiDocsUpdateCurrentUserData()
     async updateCurrentUserData(
         @Body() dto: UpdateUserDto,
         @Req() req: Request,
     ): Promise<UserResponseDTO> {
         return this.userService.updateCurrentUserData(dto, req.tokenData!.sub);
+    }
+
+    @ApiJwtAuthGuard()
+    @UseGuards(JwtAuthGuard)
+    @Post('me/profile-picture')
+    @ApiDocsUploadProfilePicture()
+    @UseInterceptors(FileInterceptor('file')) // "file" = form field name
+    async updateProfilePicture(
+        @UploadedFile(
+            new ParseFilePipe({
+                validators: [
+                    new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
+                    new FileTypeValidator({
+                        fileType: /^image\/(png|jpe?g|webp)$/i,
+                    }),
+                ],
+            }),
+        )
+        file: Express.Multer.File,
+        @Req() req: Request,
+    ) {
+        return this.userService.updateProfilePicture(
+            file,
+            req.tokenData!.email,
+        );
+    }
+
+    @ApiJwtAuthGuard()
+    @UseGuards(JwtAuthGuard)
+    @Delete('me/profile-picture')
+    @ApiDocsDeleteProfilePicture()
+    async deleteProfilePicture(@Req() req: Request) {
+        return this.userService.deleteProfilePicture(req.tokenData!.email);
+    }
+
+    @Get(':id/profile-picture')
+    @ApiDocsGetUserProfilePicture()
+    async getUserProfilePictureUrl(@Param('id') userId: string) {
+        return this.userService.getUserProfilePictureUrl(userId);
+    }
+
+    @Post('profile-pictures/batch')
+    @ApiDocsGetUsersProfilePicturesUrls()
+    async getUsersProfilePicturesUrls(@Body() body: { ids?: string[] }) {
+        const logger = new Logger('UserController');
+        logger.log(`Received request body: ${JSON.stringify(body)}`);
+
+        if (!body || !Array.isArray(body.ids)) {
+            throw new BadRequestException(
+                'Request body must contain an "ids" array',
+            );
+        }
+        return await this.userService.getUsersProfilePicturesUrls(body.ids);
     }
 }

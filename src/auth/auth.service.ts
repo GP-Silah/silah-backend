@@ -1,19 +1,21 @@
+import { UserService } from '../user/user.service';
 import {
     BadRequestException,
+    forwardRef,
+    Inject,
     Injectable,
     InternalServerErrorException,
-    Logger,
     NotFoundException,
 } from '@nestjs/common';
 import { SignupDto } from './dtos/signup.dto';
 import * as bcrypt from 'bcrypt';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dtos/login.dto';
 import * as crypto from 'crypto';
 import * as nodemailer from 'nodemailer';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
-import { UserRole } from 'src/enums/userRole';
+import { UserRole } from '../enums/userRole.enum';
 import { Request, Response } from 'express';
 
 /**
@@ -23,11 +25,11 @@ import { Request, Response } from 'express';
 
 @Injectable()
 export class AuthService {
-    private readonly logger = new Logger(AuthService.name);
-
     constructor(
         private readonly prisma: PrismaService,
         private readonly jwtService: JwtService,
+        @Inject(forwardRef(() => UserService))
+        private readonly userService: UserService,
     ) {}
 
     /**
@@ -112,15 +114,16 @@ export class AuthService {
                 },
             },
         });
+        await this.userService.generateDefaultAvatar(user.email);
 
         // Generate a JWT token for email verification and send it via email
-        const emailToekn = this.generateEmailVerificationToken(
+        const emailToken = this.generateEmailVerificationToken(
             user.id,
             user.email,
         );
         this.sendVerificationEmail(
             payload.email,
-            (await emailToekn).toString(),
+            (await emailToken).toString(),
         );
 
         // Generate a JWT token and return it to the controller so it sends it as a cookie
@@ -362,12 +365,12 @@ export class AuthService {
         }
 
         // Generate a JWT token for email verification and send it via email
-        const emailToekn = await this.jwtService.signAsync({
+        const emailToken = await this.jwtService.signAsync({
             sub: user.id,
             email,
             jti: crypto.randomUUID(),
         });
-        this.sendVerificationEmail(email, emailToekn);
+        await this.sendVerificationEmail(email, emailToken);
 
         return { message: 'Verification email resent successfully' };
     }

@@ -1,0 +1,4 @@
+# robots.txt for https://api.silah.site
+
+User-agent: *
+Disallow: /

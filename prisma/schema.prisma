@@ -27,7 +27,8 @@ model User {
   nid             String   @unique
   agreedToTerms   Boolean  @default(true)
   isEmailVerified Boolean  @default(false)
-  pfpUrl          String?
+  pfpFileName     String?
+  isPfpDefault    Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -37,20 +38,20 @@ model User {
 
 // ============ 🛢 SUPPLIER ==============
 model Supplier {
-  id             String       @id @default(uuid())
-  userId         String       @unique
-  user           User         @relation(fields: [userId], references: [id])
-  plan           SupplierPlan @default(BASIC)
-  usedFreeTrial  Boolean      @default(false)
-  isStoreClosed  Boolean      @default(true)
-  storeClosedMsg String       @default("This store is currently closed. Please check back later.")
-  storeBio       String?
-  storeBannerUrl String?
-  deliveryFees   Float        @default(0.0)
-  avgRating      Float        @default(0.0)
-  ratingCount    Int          @default(0)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id                  String       @id @default(uuid())
+  userId              String       @unique
+  user                User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  plan                SupplierPlan @default(BASIC)
+  usedFreeTrial       Boolean      @default(false)
+  isStoreClosed       Boolean      @default(true)
+  storeClosedMsg      String       @default("This store is currently closed. Please check back later.")
+  storeBio            String?
+  storeBannerFileName String?
+  deliveryFees        Float        @default(0.0)
+  avgRating           Float        @default(0.0)
+  ratingCount         Int          @default(0)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
 
   categories SupplierCategory[]
 }
@@ -62,7 +63,7 @@ model Category {
   id               Int        @id @default(autoincrement())
   name             String     @unique
   parentCategoryId Int?
-  parentCategory   Category?  @relation("CategoryToSubcategories", fields: [parentCategoryId], references: [id])
+  parentCategory   Category?  @relation("CategoryToSubcategories", fields: [parentCategoryId], references: [id], onDelete: Cascade)
   subcategories    Category[] @relation("CategoryToSubcategories")
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
@@ -76,7 +77,7 @@ model UserCategory {
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   categoryId Int
-  category   Category @relation(fields: [categoryId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -86,9 +87,9 @@ model UserCategory {
 // ===========  ⭐️ SUPPLIER_CATEGORY =============
 model SupplierCategory {
   supplierId String
-  supplier   Supplier @relation(fields: [supplierId], references: [id])
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
   categoryId Int
-  category   Category @relation(fields: [categoryId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
