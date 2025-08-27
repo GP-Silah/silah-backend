@@ -69,7 +69,9 @@ describe('AuthController', () => {
             expect(authService.signUp).toHaveBeenCalledWith(dto);
             expect(res.cookie).toHaveBeenCalledWith('token', 'fakeToken', {
                 httpOnly: true,
-                secure: true,
+                secure: false, // because in test NODE_ENV !== 'production'
+                sameSite: 'lax',
+                path: '/',
             });
             expect(result).toEqual({ message: 'Signup successful' });
         });

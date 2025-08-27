@@ -63,8 +63,8 @@ services:
             - ${DB_SERVICE:-postgres_dev}
         volumes:
             - ..:/app
-            - /app/node_modules
             - ./logs:/app/logs
+            - /app/node_modules
         entrypoint: ['sh', './docker/docker-entrypoint.sh']
 
 volumes:

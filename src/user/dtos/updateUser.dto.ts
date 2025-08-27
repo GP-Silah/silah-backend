@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
     IsArray,
     IsEmail,
@@ -9,18 +9,18 @@ import {
 } from 'class-validator';
 
 export class UpdateUserDto {
-    @ApiProperty({ example: 'John Doe', maxLength: 25 })
+    @ApiPropertyOptional({ example: 'John Doe', maxLength: 25 })
     @IsString()
     @IsOptional()
     @MaxLength(25)
     name?: string;
 
-    @ApiProperty({ example: 'user@example.com' })
+    @ApiPropertyOptional({ example: 'user@example.com' })
     @IsEmail()
     @IsOptional()
     email?: string;
 
-    @ApiProperty({
+    @ApiPropertyOptional({
         example: 'StrongPass123',
         minLength: 8,
         maxLength: 28,
@@ -31,18 +31,18 @@ export class UpdateUserDto {
     @MaxLength(28, { message: 'Password must not exceed 28 characters' })
     newPassword?: string;
 
-    @ApiProperty({ example: 'Acme Corp', maxLength: 50 })
+    @ApiPropertyOptional({ example: 'Acme Corp', maxLength: 50 })
     @IsString()
     @IsOptional()
     @MaxLength(50)
     businessName?: string;
 
-    @ApiProperty({ example: 'Riyadh' })
+    @ApiPropertyOptional({ example: 'Riyadh' })
     @IsString()
     @IsOptional()
     city?: string;
 
-    @ApiProperty({
+    @ApiPropertyOptional({
         example: ['Home & Living', 'Technical & Repair Services'],
         type: [String],
     })

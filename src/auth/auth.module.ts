@@ -12,7 +12,7 @@ import { UserModule } from '../user/user.module';
  */
 @Module({
     imports: [
-        ConfigModule.forRoot(), // make sure this is imported once at app root
+        ConfigModule,
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],

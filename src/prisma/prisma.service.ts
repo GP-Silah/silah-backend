@@ -6,6 +6,7 @@ export class PrismaService
     extends PrismaClient
     implements OnModuleInit, OnModuleDestroy
 {
+    logger: any;
     constructor() {
         super();
     }
@@ -20,17 +21,24 @@ export class PrismaService
 
     async cleanDatabase() {
         if (process.env.NODE_ENV === 'production') return;
-        const models = Object.keys(this).filter(
-            (key) => typeof this[key] === 'object' && 'deleteMany' in this[key],
+
+        const modelKeys = Object.keys(this).filter(
+            (key) =>
+                !key.startsWith('$') &&
+                typeof (this as any)[key] === 'object' &&
+                typeof (this as any)[key]?.deleteMany === 'function',
         );
-        return Promise.all(
-            models.map(async (model) => {
+
+        return this.$transaction(async (tx) => {
+            for (const key of modelKeys) {
                 try {
-                    await this[model].deleteMany();
+                    await (tx as any)[key].deleteMany();
                 } catch (error) {
-                    console.warn(`Skipping ${model}:`, error.message);
+                    this.logger.warn(
+                        `Skipping ${key}: ${(error as Error).message}`,
+                    );
                 }
-            }),
-        );
+            }
+        });
     }
 }

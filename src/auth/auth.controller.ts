@@ -55,7 +55,9 @@ export class AuthController {
         const token = await this.authService.signUp(dto);
         res.cookie('token', token, {
             httpOnly: true,
-            secure: true, // only over HTTPS in production
+            secure: process.env.NODE_ENV === 'production', // only enforce HTTPS in prod
+            sameSite: 'lax', // mitigates CSRF while allowing same-site requests
+            path: '/', // cookie is available site-wide
         });
         return { message: 'Signup successful' };
     }
@@ -69,7 +71,9 @@ export class AuthController {
         const token = await this.authService.login(dto);
         res.cookie('token', token, {
             httpOnly: true,
-            secure: true, // only over HTTPS in production
+            secure: process.env.NODE_ENV === 'production', // only enforce HTTPS in prod
+            sameSite: 'lax', // mitigates CSRF while allowing same-site requests
+            path: '/', // cookie is available site-wide
         });
         return { message: 'Login successful' };
     }

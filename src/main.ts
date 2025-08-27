@@ -8,14 +8,13 @@ import * as cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as fs from 'fs';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
-import { ThrottlerGuard } from '@nestjs/throttler';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
-    app.setGlobalPrefix('api');
+    app.enableShutdownHooks();
 
-    app.useGlobalGuards(app.get(ThrottlerGuard));
+    app.setGlobalPrefix('api');
 
     app.useGlobalPipes(
         new ValidationPipe({
@@ -28,7 +27,12 @@ async function bootstrap() {
     app.useGlobalFilters(new AllExceptionsFilter());
 
     app.enableCors({
-        origin: `${process.env.FRONTEND_URL}`,
+        origin:
+            process.env.NODE_ENV === 'production'
+                ? process.env.FRONTEND_URL?.split(',')
+                      .map((o) => o.trim())
+                      .filter(Boolean)
+                : true,
         credentials: true,
     });
 
@@ -41,13 +45,13 @@ async function bootstrap() {
             'Use this documentation to explore, test, and understand the available API endpoints, their request/response structure, and any required parameters such as headers, cookies, or authentication tokens.',
         )
         .setVersion('1.0')
-        .addCookieAuth('token')
-        .addSecurity('cookie', {
-            type: 'apiKey',
-            in: 'cookie',
-            name: 'token', // name of the cookie that stores the token/session
-        })
+        .addCookieAuth('token') // cookie scheme
+        .addBearerAuth(
+            { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+            'bearer', // name of the scheme
+        )
         .build();
+
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document); // => will be lunched on http://localhost:3000/api/docs
     fs.mkdirSync('./docs', { recursive: true });

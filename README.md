@@ -1,6 +1,6 @@
 # Silah Backend
 
-_Last Updated: August 2026_
+_Last Updated: August 2025_
 
 This is the backend API server for [Silah](https://github.com/GP-Silah), an AI-augmented full-stack B2B platform that connects suppliers and buyers. Built using [NestJS](https://nestjs.com/), a progressive Node.js framework for building efficient and scalable server-side applications.
 

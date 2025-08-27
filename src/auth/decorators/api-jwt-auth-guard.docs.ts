@@ -9,6 +9,8 @@ import {
 export function ApiJwtAuthGuard() {
     return applyDecorators(
         ApiSecurity({ cookie: [] }),
+        ApiSecurity('cookie'),
+        ApiSecurity('bearer'),
         ApiCookieAuth('token'),
         ApiHeader({
             name: 'Cookie',

@@ -114,7 +114,44 @@ export function ApiDocsLogin() {
             description:
                 'Either "email" or "crn" must be provided, but not both.',
         }),
-        ApiBody({ type: LoginDto }),
+        ApiBody({
+            schema: {
+                oneOf: [
+                    {
+                        type: 'object',
+                        required: ['email', 'password'],
+                        properties: {
+                            email: { type: 'string', format: 'email' },
+                            password: { type: 'string' },
+                        },
+                    },
+                    {
+                        type: 'object',
+                        required: ['crn', 'password'],
+                        properties: {
+                            crn: { type: 'string' },
+                            password: { type: 'string' },
+                        },
+                    },
+                ],
+            },
+            examples: {
+                loginWithEmail: {
+                    summary: 'Login using email and password',
+                    value: {
+                        email: 'user@example.com',
+                        password: 'securePassword123',
+                    },
+                },
+                loginWithCrn: {
+                    summary: 'Login using CRN and password',
+                    value: {
+                        crn: '1234567890',
+                        password: 'securePassword123',
+                    },
+                },
+            },
+        }),
         ApiResponse({
             status: 201,
             description: 'User successfully logged in',

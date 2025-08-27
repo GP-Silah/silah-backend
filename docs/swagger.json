@@ -312,7 +312,55 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoginDto"
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "email",
+                      "password"
+                    ],
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "format": "email"
+                      },
+                      "password": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "crn",
+                      "password"
+                    ],
+                    "properties": {
+                      "crn": {
+                        "type": "string"
+                      },
+                      "password": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
+              },
+              "examples": {
+                "loginWithEmail": {
+                  "summary": "Login using email and password",
+                  "value": {
+                    "email": "user@example.com",
+                    "password": "securePassword123"
+                  }
+                },
+                "loginWithCrn": {
+                  "summary": "Login using CRN and password",
+                  "value": {
+                    "crn": "1234567890",
+                    "password": "securePassword123"
+                  }
+                }
               }
             }
           }
@@ -707,6 +755,12 @@
             "cookie": []
           },
           {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
             "token": []
           }
         ],
@@ -931,7 +985,16 @@
         },
         "security": [
           {
+            "bearer": []
+          },
+          {
             "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
           },
           {
             "token": []
@@ -1034,7 +1097,16 @@
         },
         "security": [
           {
+            "bearer": []
+          },
+          {
             "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
           },
           {
             "token": []
@@ -1154,6 +1226,12 @@
             "cookie": []
           },
           {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
             "token": []
           }
         ],
@@ -1237,6 +1315,12 @@
             "cookie": []
           },
           {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
             "token": []
           }
         ],
@@ -1269,7 +1353,7 @@
               "application/json": {
                 "schema": {
                   "example": {
-                    "pfpUrl": "https://gp-silah.d025be9440ae5eb8295c69a36497276a.r2.cloudflarestorage.com/gp-silah/moon-51f34c39-5545-41f1-b2a3-239c9633f794.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=2cd46f1efb9f7de0471b97ee91fcab0f%2F20250818%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250818T145052Z&X-Amz-Expires=3600&X-Amz-Signature=d5d0c78469525c2fa8a6ab806508f26b4aa6dec57cbf38174264d6d093d9b5b1&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+                    "pfpUrl": "https://cdn.example.com/pfp/USER_ID.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20250101T000000Z&X-Amz-Expires=3600&X-Amz-Signature=REDACTED"
                   }
                 }
               }
@@ -1337,7 +1421,7 @@
                   "example": [
                     {
                       "id": "a3e1c9f0-1234-5678-90ab-1c2d3e4f5678",
-                      "pfpUrl": "https://gp-silah.d025be9440ae5eb8295c69a36497276a.r2.cloudflarestorage.com/gp-silah/moon-51f34c39-5545-41f1-b2a3-239c9633f794.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=2cd46f1efb9f7de0471b97ee91fcab0f%2F20250818%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250818T145052Z&X-Amz-Expires=3600&X-Amz-Signature=d5d0c78469525c2fa8a6ab806508f26b4aa6dec57cbf38174264d6d093d9b5b1&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+                      "pfpUrl": "https://cdn.example.com/pfp/USER_ID.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20250101T000000Z&X-Amz-Expires=3600&X-Amz-Signature=REDACTED"
                     },
                     {
                       "id": "b4f2d8c1-9876-5432-10ba-2f3e4d5c6789",
@@ -1478,6 +1562,11 @@
         "type": "apiKey",
         "in": "cookie",
         "name": "token"
+      },
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
       }
     },
     "schemas": {
@@ -1539,40 +1628,6 @@
           "nid",
           "categories",
           "agreedToTerms"
-        ]
-      },
-      "LoginDto": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "description": "User email address (optional if CRN is provided)",
-            "example": "user@example.com",
-            "format": "email"
-          },
-          "crn": {
-            "type": "string",
-            "description": "User CRN number (10 digits, optional if email is provided)",
-            "example": "1234567890",
-            "pattern": "^\\d{10}$"
-          },
-          "password": {
-            "type": "string",
-            "description": "User password (8 to 28 characters)",
-            "example": "P@ssw0rd123",
-            "minLength": 8,
-            "maxLength": 28
-          },
-          "emailOrCrnCheck": {
-            "type": "boolean",
-            "description": "Internal field to validate that either email or CRN is provided",
-            "example": true,
-            "readOnly": true
-          }
-        },
-        "required": [
-          "password",
-          "emailOrCrnCheck"
         ]
       },
       "ResetPasswordDto": {
@@ -1715,15 +1770,7 @@
               "type": "string"
             }
           }
-        },
-        "required": [
-          "name",
-          "email",
-          "newPassword",
-          "businessName",
-          "city",
-          "categories"
-        ]
+        }
       }
     }
   }

@@ -117,13 +117,13 @@ export class AuthService {
         await this.userService.generateDefaultAvatar(user.email);
 
         // Generate a JWT token for email verification and send it via email
-        const emailToekn = this.generateEmailVerificationToken(
+        const emailToken = this.generateEmailVerificationToken(
             user.id,
             user.email,
         );
         this.sendVerificationEmail(
             payload.email,
-            (await emailToekn).toString(),
+            (await emailToken).toString(),
         );
 
         // Generate a JWT token and return it to the controller so it sends it as a cookie
@@ -365,12 +365,12 @@ export class AuthService {
         }
 
         // Generate a JWT token for email verification and send it via email
-        const emailToekn = await this.jwtService.signAsync({
+        const emailToken = await this.jwtService.signAsync({
             sub: user.id,
             email,
             jti: crypto.randomUUID(),
         });
-        this.sendVerificationEmail(email, emailToekn);
+        await this.sendVerificationEmail(email, emailToken);
 
         return { message: 'Verification email resent successfully' };
     }

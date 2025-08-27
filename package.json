@@ -36,6 +36,7 @@
         "kill:5432:unix": "sudo lsof -ti:5432 | xargs sudo kill -9 || true",
         "kill:5432:win": "npx kill-port 5432 || echo 'Port cleanup attempted'",
         "kill:5432": "npm run kill:5432:unix || npm run kill:5432:win",
+        "kill:5432:cross": "npx kill-port 5432 5433 || true",
         "docker:cleanup": "docker compose -f docker/docker-compose.yml -f docker/docker-compose.override.yml down && docker system prune -f",
         "docker:logs:dev": "docker compose -f docker/docker-compose.yml -f docker/docker-compose.override.yml logs -f app_dev",
         "docker:logs:test": "docker compose -f docker/docker-compose.yml -f docker/docker-compose.override.yml logs -f app_test",
@@ -44,6 +45,7 @@
     "dependencies": {
         "@aws-sdk/client-s3": "^3.864.0",
         "@aws-sdk/s3-request-presigner": "^3.864.0",
+        "@godaddy/terminus": "^4.12.1",
         "@nestjs/common": "^11.0.1",
         "@nestjs/config": "^4.0.2",
         "@nestjs/core": "^11.0.1",

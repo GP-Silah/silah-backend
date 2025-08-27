@@ -10,7 +10,9 @@ import { FileModule } from './file/file.module';
 import { HealthController } from './health/health.controller';
 import { TerminusModule } from '@nestjs/terminus';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
     imports: [
@@ -22,6 +24,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
             },
         ]),
         ScheduleModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
         AuthModule,
         UserModule,
         PrismaModule,
@@ -29,7 +32,13 @@ import { ThrottlerModule } from '@nestjs/throttler';
         FileModule,
     ],
     controllers: [AppController, HealthController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+        },
+    ],
 })
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {

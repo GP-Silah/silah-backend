@@ -31,9 +31,9 @@ export class UserService {
      */
     private async toUserResponseDTO(user: User): Promise<UserResponseDTO> {
         const categories = await this.getUserCategories(user.id);
-        const pfpUrl = await this.fileService.getFileUrl(
-            user.pfpFileName || '',
-        );
+        const pfpUrl = user.pfpFileName
+            ? await this.fileService.getFileUrl(user.pfpFileName)
+            : '';
         return {
             id: user.id,
             name: user.name,
@@ -283,7 +283,8 @@ export class UserService {
             where: { email },
         });
         if (!user) throw new NotFoundException('User not found');
-        const letter = user.name.charAt(0).toUpperCase();
+        const base = (user.name ?? '').trim() || user.email;
+        const letter = base.charAt(0).toUpperCase();
         const colors = [
             '#fef5e4',
             '#ffcfcf',
@@ -292,7 +293,8 @@ export class UserService {
             '#f7ebb2',
             '#fff1dc',
         ];
-        const bgColor = colors[user.name.charCodeAt(0) % colors.length];
+        const idx = base.charCodeAt(0) % colors.length;
+        const bgColor = colors[idx];
 
         const svg = `
             <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">

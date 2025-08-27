@@ -388,29 +388,22 @@ describe('UserService', () => {
         });
 
         it('should handle null/empty pfpFileName correctly', async () => {
-            // Arrange
             const userWithoutPfp = { ...mockUser, pfpFileName: null };
             prismaService.user.findUnique.mockResolvedValue(userWithoutPfp);
-            fileService.getFileUrl.mockResolvedValue(''); // Empty URL when no filename
 
-            // Act
             const result = await service.getUserById(mockUser.id);
 
-            // Assert
             expect(result.pfpFileName).toBe('');
             expect(result.pfpUrl).toBe('');
-            expect(fileService.getFileUrl).toHaveBeenCalledWith('');
+            expect(fileService.getFileUrl).not.toHaveBeenCalled();
         });
 
         it('should handle null pfpUrl from fileService', async () => {
-            // Arrange
             prismaService.user.findUnique.mockResolvedValue(mockUser);
             fileService.getFileUrl.mockResolvedValue(null);
 
-            // Act
             const result = await service.getUserById(mockUser.id);
 
-            // Assert
             expect(result.pfpUrl).toBe('');
         });
 

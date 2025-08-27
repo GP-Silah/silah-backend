@@ -14,6 +14,9 @@ import {
     BadRequestException,
     Logger,
     Query,
+    ParseFilePipe,
+    MaxFileSizeValidator,
+    FileTypeValidator,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -95,7 +98,17 @@ export class UserController {
     @ApiDocsUploadProfilePicture()
     @UseInterceptors(FileInterceptor('file')) // "file" = form field name
     async updateProfilePicture(
-        @UploadedFile() file: Express.Multer.File,
+        @UploadedFile(
+            new ParseFilePipe({
+                validators: [
+                    new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
+                    new FileTypeValidator({
+                        fileType: /^image\/(png|jpe?g|webp)$/i,
+                    }),
+                ],
+            }),
+        )
+        file: Express.Multer.File,
         @Req() req: Request,
     ) {
         return this.userService.updateProfilePicture(
@@ -119,7 +132,6 @@ export class UserController {
     }
 
     @Post('profile-pictures/batch')
-    @UsePipes() // Disable global ValidationPipe for this endpoint
     @ApiDocsGetUsersProfilePicturesUrls()
     async getUsersProfilePicturesUrls(@Body() body: { ids?: string[] }) {
         const logger = new Logger('UserController');

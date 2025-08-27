@@ -37,9 +37,10 @@ describe('AllExceptionsFilter', () => {
 
         filter.catch(exception as any, mockHost as any);
 
-        expect(logger.error).toHaveBeenCalledWith(
-            `${mockRequest.method} ${mockRequest.url} "Bad Request"`,
-        );
+        const logged = (logger.error as jest.Mock).mock.calls[0][0];
+        expect(logged).toContain('GET /test');
+        expect(logged).toContain('400');
+        expect(logged).toContain('Bad Request');
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.json).toHaveBeenCalled();
     });

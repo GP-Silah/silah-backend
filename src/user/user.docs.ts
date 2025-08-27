@@ -118,6 +118,7 @@ export function ApiDocsGetCurrentUserData() {
             summary: 'Get current user',
             description: "Returns the currently authenticated user's data.",
         }),
+        ApiBearerAuth(),
         ApiOkResponse({
             description: 'Current user data retrieved successfully',
             type: UserResponseDTO,
@@ -132,6 +133,7 @@ export function ApiDocsUpdateCurrentUserData() {
             description:
                 "Updates the currently authenticated user's profile information.",
         }),
+        ApiBearerAuth(),
         ApiBody({
             description:
                 "User data to update (you don't have to not send all fields, only the ones you want to change will be updated).",
@@ -184,7 +186,7 @@ export function ApiDocsGetUserProfilePicture() {
             description: 'Profile picture URL retrieved successfully',
             schema: {
                 example: {
-                    pfpUrl: 'https://gp-silah.d025be9440ae5eb8295c69a36497276a.r2.cloudflarestorage.com/gp-silah/moon-51f34c39-5545-41f1-b2a3-239c9633f794.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=2cd46f1efb9f7de0471b97ee91fcab0f%2F20250818%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250818T145052Z&X-Amz-Expires=3600&X-Amz-Signature=d5d0c78469525c2fa8a6ab806508f26b4aa6dec57cbf38174264d6d093d9b5b1&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject',
+                    pfpUrl: 'https://cdn.example.com/pfp/USER_ID.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20250101T000000Z&X-Amz-Expires=3600&X-Amz-Signature=REDACTED',
                 },
             },
         }),
@@ -232,7 +234,7 @@ export function ApiDocsGetUsersProfilePicturesUrls() {
                 example: [
                     {
                         id: 'a3e1c9f0-1234-5678-90ab-1c2d3e4f5678',
-                        pfpUrl: 'https://gp-silah.d025be9440ae5eb8295c69a36497276a.r2.cloudflarestorage.com/gp-silah/moon-51f34c39-5545-41f1-b2a3-239c9633f794.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=2cd46f1efb9f7de0471b97ee91fcab0f%2F20250818%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250818T145052Z&X-Amz-Expires=3600&X-Amz-Signature=d5d0c78469525c2fa8a6ab806508f26b4aa6dec57cbf38174264d6d093d9b5b1&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject',
+                        pfpUrl: 'https://cdn.example.com/pfp/USER_ID.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20250101T000000Z&X-Amz-Expires=3600&X-Amz-Signature=REDACTED',
                     },
                     {
                         id: 'b4f2d8c1-9876-5432-10ba-2f3e4d5c6789',

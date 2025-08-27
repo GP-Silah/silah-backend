@@ -3,10 +3,9 @@ set -e
 
 echo "Starting Silah Backend..."
 
-# Check if we're in Docker (DATABASE_URL should be set by docker-compose)
-if [ -n "$DATABASE_URL" ]; then
-    echo "Running in Docker environment"
-    echo "Database URL: $DATABASE_URL"
+# Check if we're in Docker
+if [ "$DOCKER_ENV" = "true" ]; then 
+  echo "Running in Docker environment"
 else
     echo "Running in local environment, loading .env.merged"
     if [ -f ".env.merged" ]; then
@@ -15,7 +14,6 @@ else
         . .env.merged
         set +a
         echo "Environment variables loaded from .env.merged"
-        echo "Database URL: $DATABASE_URL"
     else
         echo "❌ .env.merged file not found!"
         exit 1
@@ -63,5 +61,26 @@ if [ "$NODE_ENV" = "production" ]; then
     node dist/main.js
 else
     echo "Starting in development mode..."
+    # DEBUGGING SECTION
+    echo "=== DEBUGGING DIST FOLDER ==="
+    echo "Checking if dist exists:"
+    ls -la /app/ | grep dist || echo "No dist folder found"
+    
+    echo "Checking what's inside dist (if exists):"
+    ls -la /app/dist/ 2>/dev/null || echo "Dist folder is empty or doesn't exist"
+    
+    echo "Checking what processes are using /app/dist:"
+    lsof /app/dist 2>/dev/null || echo "No processes using dist folder"
+    
+    echo "Checking mounted filesystems:"
+    mount | grep dist || echo "No dist mounts found"
+    
+    echo "Trying to create a test file in dist:"
+    mkdir -p /app/dist && echo "test" > /app/dist/test.txt && echo "✅ Can write to dist" || echo "❌ Cannot write to dist"
+    
+    echo "Trying to remove test file:"
+    rm -f /app/dist/test.txt && echo "✅ Can delete from dist" || echo "❌ Cannot delete from dist"
+    
+    echo "=== END DEBUGGING ==="
     npm run start:dev
 fi
