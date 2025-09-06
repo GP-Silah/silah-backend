@@ -315,7 +315,7 @@ export class UserService {
         const svg = `
             <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
             <rect width="100%" height="100%" fill="${bgColor}"/>
-            <text x="50%" y="50%" font-size="64" text-anchor="middle" dy=".35em" fill="${textColor} font-family="Georgia, serif">
+            <text x="50%" y="50%" font-size="64" text-anchor="middle" dy=".35em" fill="${textColor}" font-family="Georgia, serif">
                 ${letter}
             </text>
             </svg>
