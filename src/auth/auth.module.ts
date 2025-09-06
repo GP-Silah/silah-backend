@@ -5,6 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { IsEmailOrCrnConstraint } from './dtos/isEmailOrCrnConstraint';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from '../user/user.module';
+import { TapPaymentsModule } from 'src/tap-payments/tap-payments.module';
 
 /**
  * AuthModule is responsible for handling authentication-related features
@@ -23,6 +24,7 @@ import { UserModule } from '../user/user.module';
             global: true,
         }),
         forwardRef(() => UserModule),
+        TapPaymentsModule,
     ],
     controllers: [AuthController],
     providers: [AuthService, IsEmailOrCrnConstraint],

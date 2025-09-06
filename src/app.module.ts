@@ -14,6 +14,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import logger from './logger';
+import { TapPaymentsModule } from './tap-payments/tap-payments.module';
 
 @Module({
     imports: [
@@ -31,6 +32,7 @@ import logger from './logger';
         PrismaModule,
         BuyerModule,
         FileModule,
+        TapPaymentsModule,
     ],
     controllers: [AppController, HealthController],
     providers: [

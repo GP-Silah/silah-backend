@@ -5,6 +5,9 @@ export class UserResponseDTO {
     @ApiProperty({ example: 'clv70z13w0000unqoj4lcr8x4' })
     id: string;
 
+    @ApiProperty({ example: 'cus_13gdft5' })
+    tapCustomerId: string;
+
     @ApiProperty({ example: 'John Doe' })
     name: string;
 

@@ -36,6 +36,7 @@ export class UserService {
             : '';
         return {
             id: user.id,
+            tapCustomerId: user.tapCustomerId,
             name: user.name,
             email: user.email,
             crn: user.crn,

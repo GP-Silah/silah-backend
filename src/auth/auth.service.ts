@@ -17,6 +17,7 @@ import * as nodemailer from 'nodemailer';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
 import { UserRole } from '../enums/userRole.enum';
 import { Request, Response } from 'express';
+import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 
 /**
  * AuthService contains all authentication-related business logic,
@@ -30,6 +31,7 @@ export class AuthService {
         private readonly jwtService: JwtService,
         @Inject(forwardRef(() => UserService))
         private readonly userService: UserService,
+        private readonly tapPaymentsService: TapPaymentsService,
     ) {}
 
     /**
@@ -99,11 +101,18 @@ export class AuthService {
             }
         }
 
+        // Create a Customer on Tap Payments API of the user
+        const tapCustomerId = await this.tapPaymentsService.createCustomer({
+            first_name: payload.name,
+            email: payload.email,
+        });
+
         // Hash the password and store the user in DB
         const hashedPassword = await this.encryptPassword(payload.password);
         const user = await this.prisma.user.create({
             data: {
                 ...payload,
+                tapCustomerId,
                 password: hashedPassword,
                 categories: {
                     create: categoryIds.map((categoryId) => ({
@@ -165,6 +174,7 @@ export class AuthService {
      */
     async sendVerificationEmail(email: string, token: string) {
         // this is not a private function because it is used in the user service
+        // const verifyUrl = `http://localhost:3000/api/auth/verify-email?token=${token}`;
         const verifyUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
 
         // Create reusable transporter object using SMTP transport
@@ -213,6 +223,7 @@ export class AuthService {
      * @throws {InternalServerErrorException} Thrown if sending the reset password email fails due to transport or configuration errors.
      */
     private async sendResetPasswordEmail(email: string, token: string) {
+        // const resetUrl = `http://localhost:3000/api/auth/reset-password?token=${token}`;
         const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
         const transporter = nodemailer.createTransport({

@@ -5,10 +5,12 @@ import { Response } from 'express';
 import { SignupDto } from 'src/auth/dtos/signup.dto';
 import { LoginDto } from 'src/auth/dtos/login.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 
 describe('AuthController', () => {
     let controller: AuthController;
     let authService: AuthService;
+    let tapService: TapPaymentsService;
 
     // mock Response object
     const mockResponse = () => {
@@ -35,6 +37,14 @@ describe('AuthController', () => {
                         switchUserRole: jest.fn(),
                     },
                 },
+                {
+                    provide: TapPaymentsService,
+                    useValue: {
+                        createCustomer: jest
+                            .fn()
+                            .mockResolvedValue('test-customer-id'),
+                    },
+                },
             ],
         })
             .overrideGuard(JwtAuthGuard) // bypass actual JWT validation
@@ -49,6 +59,7 @@ describe('AuthController', () => {
 
         controller = module.get<AuthController>(AuthController);
         authService = module.get<AuthService>(AuthService);
+        tapService = module.get<TapPaymentsService>(TapPaymentsService);
     });
 
     it('should be defined', () => {
@@ -67,6 +78,10 @@ describe('AuthController', () => {
             const result = await controller.signUp(dto, res);
 
             expect(authService.signUp).toHaveBeenCalledWith(dto);
+            expect(tapService.createCustomer).toHaveBeenCalledWith({
+                first_name: dto.name,
+                email: dto.email,
+            });
             expect(res.cookie).toHaveBeenCalledWith('token', 'fakeToken', {
                 httpOnly: true,
                 secure: false, // because in test NODE_ENV !== 'production'

@@ -1505,6 +1505,18 @@
         "tags": [
           "Buyers"
         ]
+      },
+      "delete": {
+        "operationId": "BuyerController_deleteCurrentBuyerCard",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Buyers"
+        ]
       }
     },
     "/api/buyers/wishlist": {
@@ -1652,6 +1664,10 @@
             "type": "string",
             "example": "clv70z13w0000unqoj4lcr8x4"
           },
+          "tapCustomerId": {
+            "type": "string",
+            "example": "cus_13gdft5"
+          },
           "name": {
             "type": "string",
             "example": "John Doe"
@@ -1719,6 +1735,7 @@
         },
         "required": [
           "id",
+          "tapCustomerId",
           "name",
           "email",
           "crn",
