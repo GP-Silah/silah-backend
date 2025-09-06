@@ -22,6 +22,9 @@ export class BuyerController {
     @Put('me/card')
     async saveOrReplaceCurrentBuyerCard() {}
 
+    @Delete('me/card')
+    async deleteCurrentBuyerCard() {}
+
     // TODO: Come back to these after the WishlistItemDto is finalized
     @Get('wishlist')
     async getWishlist() {}

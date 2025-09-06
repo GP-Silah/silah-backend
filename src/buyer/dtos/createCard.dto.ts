@@ -4,3 +4,4 @@ export class CreateCardDto {
     expMonth: number;
     expYear: number;
 }
+//? No need for this dto as we are using tokenization, correct?

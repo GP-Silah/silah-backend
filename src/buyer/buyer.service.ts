@@ -15,4 +15,6 @@ export class BuyerService {
         const cardData: CardDetailsDto = {} as CardDetailsDto;
         return cardData;
     }
+
+    async deleteCurrentBuyerCard() {}
 }

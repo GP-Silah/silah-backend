@@ -3,7 +3,7 @@ import { BuyerService } from './buyer.service';
 import { BuyerController } from './buyer.controller';
 
 @Module({
-  controllers: [BuyerController],
-  providers: [BuyerService],
+    controllers: [BuyerController],
+    providers: [BuyerService],
 })
 export class BuyerModule {}
