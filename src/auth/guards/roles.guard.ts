@@ -24,11 +24,21 @@ export class RolesGuard implements CanActivate {
 
         if (!requiredRoles) return true;
 
-        const req = context.switchToHttp().getRequest<Request>();
-        const tokenObj = req.cookies!.token;
-        const payload = await this.jwtService.verifyAsync(tokenObj.token);
+        const request = context.switchToHttp().getRequest<Request>();
+        let role = (request as any).tokenData?.role ?? request.tokenData?.role;
 
-        if (!payload.role || !requiredRoles.includes(payload.role)) {
+        if (!role) {
+            // In some cases, the 'token' cookie might be sent as a plain string (e.g., 'abc123'),
+            // and in others, it might be sent as an object like { token: 'abc123' }.
+            // The next two lines ensures compatibility with both formats by safely extracting the actual token string.
+            const tokenObj = request.cookies?.token;
+            const token =
+                typeof tokenObj === 'string' ? tokenObj : tokenObj?.token;
+            const payload = await this.jwtService.verifyAsync(token);
+            role = payload.role;
+        }
+
+        if (!role || !requiredRoles.includes(role)) {
             throw new ForbiddenException(
                 'You do not have access to this resource',
             );

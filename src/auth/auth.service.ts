@@ -174,7 +174,6 @@ export class AuthService {
      */
     async sendVerificationEmail(email: string, token: string) {
         // this is not a private function because it is used in the user service
-        // const verifyUrl = `http://localhost:3000/api/auth/verify-email?token=${token}`;
         const verifyUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
 
         // Create reusable transporter object using SMTP transport
@@ -223,7 +222,6 @@ export class AuthService {
      * @throws {InternalServerErrorException} Thrown if sending the reset password email fails due to transport or configuration errors.
      */
     private async sendResetPasswordEmail(email: string, token: string) {
-        // const resetUrl = `http://localhost:3000/api/auth/reset-password?token=${token}`;
         const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
         const transporter = nodemailer.createTransport({

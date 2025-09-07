@@ -25,11 +25,11 @@ export class UserService {
 
     /**
      * Converts a Prisma User model into a UserResponseDTO including categories.
-     * @private
+     *
      * @param {User} user - The user object from the database.
      * @returns {Promise<UserResponseDTO>} A user DTO formatted for responses.
      */
-    private async toUserResponseDTO(user: User): Promise<UserResponseDTO> {
+    async toUserResponseDTO(user: User): Promise<UserResponseDTO> {
         const categories = await this.getUserCategories(user.id);
         const pfpUrl = user.pfpFileName
             ? await this.fileService.getFileUrl(user.pfpFileName)

@@ -10,5 +10,5 @@ export class BuyerResponseDto {
 
     @ApiProperty({ type: () => CardDetailsDto, nullable: true })
     @Type(() => CardDetailsDto)
-    card: CardDetailsDto;
+    card: CardDetailsDto | null;
 }
