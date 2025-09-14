@@ -4,6 +4,7 @@ describe('PrismaService', () => {
     let prisma: PrismaService;
     let deleteManyMock: jest.Mock;
     let transactionMock: jest.Mock;
+    let loggerMock: { warn: jest.Mock };
 
     beforeEach(() => {
         deleteManyMock = jest.fn().mockResolvedValue({ count: 0 });
@@ -20,12 +21,12 @@ describe('PrismaService', () => {
             .fn()
             .mockImplementation(async (cb) => cb(mockModels));
 
-        prisma = new PrismaService();
+        loggerMock = { warn: jest.fn() };
+
+        prisma = new PrismaService(loggerMock as any);
         prisma.$connect = jest.fn();
         prisma.$disconnect = jest.fn();
         prisma.$transaction = transactionMock as any;
-
-        prisma.logger = { warn: jest.fn() };
     });
 
     it('should connect on module init', async () => {
@@ -42,7 +43,7 @@ describe('PrismaService', () => {
         process.env.NODE_ENV = 'test';
         await prisma.cleanDatabase();
         expect(deleteManyMock).toHaveBeenCalled();
-        expect(prisma.logger.warn).not.toHaveBeenCalled();
+        expect(loggerMock.warn).not.toHaveBeenCalled();
     });
 
     it('should not clean database in production', async () => {

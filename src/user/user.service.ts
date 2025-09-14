@@ -25,17 +25,18 @@ export class UserService {
 
     /**
      * Converts a Prisma User model into a UserResponseDTO including categories.
-     * @private
+     *
      * @param {User} user - The user object from the database.
      * @returns {Promise<UserResponseDTO>} A user DTO formatted for responses.
      */
-    private async toUserResponseDTO(user: User): Promise<UserResponseDTO> {
+    async toUserResponseDTO(user: User): Promise<UserResponseDTO> {
         const categories = await this.getUserCategories(user.id);
         const pfpUrl = user.pfpFileName
             ? await this.fileService.getFileUrl(user.pfpFileName)
             : '';
         return {
             id: user.id,
+            tapCustomerId: user.tapCustomerId,
             name: user.name,
             email: user.email,
             crn: user.crn,
@@ -271,6 +272,22 @@ export class UserService {
     }
 
     /**
+     * Generates a darker shade of a given HSL color string.
+     * @private
+     * @param {string} hsl - The HSL color string (e.g., "hsl(210, 50%, 60%)").
+     * @param {number} [amount=20] - The amount to decrease the lightness by (default is 20).
+     * @returns {string} The darker HSL color string.
+     * If the input is invalid, returns a fallback color '#333'.
+     */
+    private darkerColor(hsl, amount = 20) {
+        const match = hsl.match(/hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/);
+        if (!match) return '#333'; // fallback
+        let [_, h, s, l] = match;
+        l = Math.max(0, parseFloat(l) - amount);
+        return `hsl(${h}, ${s}%, ${l}%)`;
+    }
+
+    /**
      * Generates a default avatar PNG for a user based on the first letter of their name.
      * The avatar background color is deterministically chosen from a preset color palette.
      * The generated PNG is uploaded using the FileService and the user's record is updated.
@@ -285,21 +302,21 @@ export class UserService {
         if (!user) throw new NotFoundException('User not found');
         const base = (user.name ?? '').trim() || user.email;
         const letter = base.charAt(0).toUpperCase();
-        const colors = [
-            '#fef5e4',
-            '#ffcfcf',
-            '#cce9e5',
-            '#ecc3df',
-            '#f7ebb2',
-            '#fff1dc',
-        ];
+        // generate random pastel-like colors at startup
+        const colors = Array.from({ length: 6 }, () => {
+            const hue = Math.floor(Math.random() * 360); // 0–360 degrees
+            const saturation = 60 + Math.random() * 20; // 60–80%
+            const lightness = 70 + Math.random() * 10; // 70–80%
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        });
         const idx = base.charCodeAt(0) % colors.length;
         const bgColor = colors[idx];
+        const textColor = this.darkerColor(bgColor);
 
         const svg = `
             <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
             <rect width="100%" height="100%" fill="${bgColor}"/>
-            <text x="50%" y="50%" font-size="64" text-anchor="middle" dy=".35em" fill="#333">
+            <text x="50%" y="50%" font-size="64" text-anchor="middle" dy=".35em" fill="${textColor}" font-family="Georgia, serif">
                 ${letter}
             </text>
             </svg>

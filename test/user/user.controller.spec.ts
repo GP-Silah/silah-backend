@@ -14,6 +14,7 @@ describe('UserController', () => {
 
     const mockUserResponse: UserResponseDTO = {
         id: 'clv70z13w0000unqoj4lcr8x4',
+        tapCustomerId: 'cus_1234567890',
         name: 'John Doe',
         email: 'user@example.com',
         crn: '1234567890',
