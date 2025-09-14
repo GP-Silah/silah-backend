@@ -55,4 +55,52 @@ export class TapPaymentsService {
             throw err;
         }
     }
+
+    /**
+     * Retrieves a card from Tap using customerId and cardId.
+     * @param customerId Tap customer ID (cus_xxx)
+     * @param cardId Tap card ID (card_xxx)
+     * @returns The card object from Tap
+     */
+    async getCard(customerId: string, cardId: string) {
+        try {
+            const response = await axios.get(
+                `https://api.tap.company/v2/card/${customerId}/${cardId}`,
+                {
+                    headers: {
+                        accept: 'application/json',
+                        Authorization: `Bearer ${process.env.TAP_SECRET_KEY}`,
+                    },
+                },
+            );
+            return response.data;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error('Failed to fetch card from Tap');
+        }
+    }
+
+    /**
+     * Deletes a saved card in Tap Payments for a given customer.
+     *
+     * @param {string} customerId - The Tap customer ID (cus_xxx).
+     * @param {string} cardId - The Tap card ID (card_xxx).
+     * @returns {Promise<void>} Resolves if deletion succeeds, throws otherwise.
+     */
+    async deleteCard(customerId: string, cardId: string): Promise<void> {
+        try {
+            await axios.delete(
+                `https://api.tap.company/v2/card/${customerId}/${cardId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${process.env.TAP_SECRET_KEY}`,
+                        Accept: 'application/json',
+                    },
+                },
+            );
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error('Failed to delete card from Tap');
+        }
+    }
 }

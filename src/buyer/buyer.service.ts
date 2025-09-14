@@ -3,12 +3,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BuyerResponseDto } from './dtos/buyerResponse.dto';
 import { CardDetailsDto } from './dtos/cardDetails.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
+import { CreateCardDto } from './dtos/createCard.dto';
 
 @Injectable()
 export class BuyerService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly userService: UserService,
+        private readonly tapPaymentsService: TapPaymentsService,
     ) {}
 
     async getCurrentBuyerData(email: string): Promise<BuyerResponseDto> {
@@ -45,7 +48,7 @@ export class BuyerService {
     async getCurrentBuyerCard(email: string): Promise<CardDetailsDto | null> {
         const user = await this.prisma.user.findUnique({
             where: { email },
-            select: {
+            include: {
                 buyer: {
                     select: {
                         card: true,
@@ -71,7 +74,102 @@ export class BuyerService {
         } as CardDetailsDto;
     }
 
-    async saveOrReplaceCurrentBuyerCard() {}
+    async saveOrReplaceCurrentBuyerCard(
+        userId: string,
+        createCardDto: CreateCardDto,
+    ) {
+        // Find user
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                buyer: { include: { card: true } },
+            },
+        });
 
-    async deleteCurrentBuyerCard() {}
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        // Auto-create Buyer if missing
+        let buyer = user.buyer;
+        if (!buyer) {
+            buyer = await this.prisma.buyer.create({
+                data: { userId: user.id },
+                include: { card: true },
+            });
+        }
+
+        const existingCard = buyer.card;
+
+        if (existingCard) {
+            // Delete from Tap
+            await this.tapPaymentsService.deleteCard(
+                user.tapCustomerId,
+                existingCard.tapCardId,
+            );
+            // Delete from DB
+            await this.prisma.card.delete({
+                where: { id: existingCard.id },
+            });
+        }
+
+        // Fetch full card info from Tap using token
+        const cardInfo = await this.tapPaymentsService.getCard(
+            user.tapCustomerId,
+            createCardDto.token,
+        );
+
+        // Save non-sensitive info in DB
+        const savedCard = await this.prisma.card.create({
+            data: {
+                tapCardId: cardInfo.id,
+                brand: cardInfo.brand,
+                last4: cardInfo.last_four,
+                expMonth: cardInfo.exp_month,
+                expYear: cardInfo.exp_year,
+                cardHolderName: cardInfo.name,
+                buyer: {
+                    connect: { id: buyer.id },
+                },
+            },
+        });
+
+        return {
+            message: 'Card saved successfully',
+            card: {
+                id: savedCard.id,
+                tapCardId: savedCard.tapCardId,
+                cardHolderName: savedCard.cardHolderName,
+                last4: savedCard.last4,
+                brand: savedCard.brand,
+                expMonth: savedCard.expMonth,
+                expYear: savedCard.expYear,
+            } as CardDetailsDto,
+        };
+    }
+
+    async deleteCurrentBuyerCard(userId: string) {
+        // 1. Find buyer with their card
+        const buyer = await this.prisma.buyer.findUnique({
+            where: { userId },
+            include: { card: true, user: true }, // include user because tapCustomerId is in user
+        });
+
+        if (!buyer || !buyer.card) {
+            throw new NotFoundException('No card found for this buyer');
+        }
+
+        const { tapCardId } = buyer.card;
+        const { tapCustomerId } = buyer.user;
+
+        // 2. Call Tap to delete the card
+        await this.tapPaymentsService.deleteCard(tapCustomerId, tapCardId);
+
+        // 3. Remove card record from DB
+        await this.prisma.card.delete({
+            where: { id: buyer.card.id },
+        });
+
+        return { message: 'Card deleted successfully' };
+    }
 }

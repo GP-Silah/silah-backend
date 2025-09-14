@@ -1,4 +1,5 @@
 import {
+    Body,
     Controller,
     Delete,
     Get,
@@ -8,7 +9,7 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { BuyerService } from './buyer.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BuyerResponseDto } from './dtos/buyerResponse.dto';
 import { CardDetailsDto } from './dtos/cardDetails.dto';
 import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.docs';
@@ -17,6 +18,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/enums/userRole.enum';
 import { Request } from 'express';
+import { CreateCardDto } from './dtos/createCard.dto';
 
 @ApiTags('Buyers')
 @Controller('buyers')
@@ -54,21 +56,49 @@ export class BuyerController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('me/card')
-    async saveOrReplaceCurrentBuyerCard() {}
+    async saveOrReplaceCurrentBuyerCard(
+        @Req() req: any,
+        @Body() body: CreateCardDto,
+    ) {
+        return await this.buyerService.saveOrReplaceCurrentBuyerCard(
+            req.tokenData!.sub,
+            body,
+        );
+    }
 
     @ApiJwtAuthGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('me/card')
-    async deleteCurrentBuyerCard() {}
+    async deleteCurrentBuyerCard(@Req() req: Request) {
+        return this.buyerService.deleteCurrentBuyerCard(req.tokenData!.sub);
+    }
 
     // TODO: Come back to these after the WishlistItemDto is finalized
     @Get('wishlist')
+    @ApiOperation({
+        deprecated: true,
+        summary: 'Not yet implemented',
+        description:
+            'This endpoint is a placeholder for future implementation and is not yet functional.',
+    })
     async getWishlist() {}
 
     @Post('wishlist/:itemId')
+    @ApiOperation({
+        deprecated: true,
+        summary: 'Not yet implemented',
+        description:
+            'This endpoint is a placeholder for future implementation and is not yet functional.',
+    })
     async addToWishlist() {}
 
     @Delete('wishlist/:itemId')
+    @ApiOperation({
+        deprecated: true,
+        summary: 'Not yet implemented',
+        description:
+            'This endpoint is a placeholder for future implementation and is not yet functional.',
+    })
     async removeFromWishlist() {}
 }

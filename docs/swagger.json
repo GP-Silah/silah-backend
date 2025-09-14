@@ -1599,6 +1599,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCardDto"
+              }
+            }
+          }
+        },
         "responses": {
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
@@ -1705,6 +1715,8 @@
     },
     "/api/buyers/wishlist": {
       "get": {
+        "deprecated": true,
+        "description": "This endpoint is a placeholder for future implementation and is not yet functional.",
         "operationId": "BuyerController_getWishlist",
         "parameters": [],
         "responses": {
@@ -1712,6 +1724,7 @@
             "description": ""
           }
         },
+        "summary": "Not yet implemented",
         "tags": [
           "Buyers"
         ]
@@ -1719,6 +1732,8 @@
     },
     "/api/buyers/wishlist/{itemId}": {
       "post": {
+        "deprecated": true,
+        "description": "This endpoint is a placeholder for future implementation and is not yet functional.",
         "operationId": "BuyerController_addToWishlist",
         "parameters": [],
         "responses": {
@@ -1726,11 +1741,14 @@
             "description": ""
           }
         },
+        "summary": "Not yet implemented",
         "tags": [
           "Buyers"
         ]
       },
       "delete": {
+        "deprecated": true,
+        "description": "This endpoint is a placeholder for future implementation and is not yet functional.",
         "operationId": "BuyerController_removeFromWishlist",
         "parameters": [],
         "responses": {
@@ -1738,6 +1756,7 @@
             "description": ""
           }
         },
+        "summary": "Not yet implemented",
         "tags": [
           "Buyers"
         ]
@@ -1972,6 +1991,19 @@
             }
           }
         }
+      },
+      "CreateCardDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Tap token received from the frontend after card tokenization process (using Tap's Card SDK)",
+            "example": "tok_TS57A39251831Q2B15Ro8l180"
+          }
+        },
+        "required": [
+          "token"
+        ]
       }
     }
   }
