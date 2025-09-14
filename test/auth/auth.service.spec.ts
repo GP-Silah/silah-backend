@@ -14,6 +14,7 @@ import { ResetPasswordDto } from '../../src/auth/dtos/resetPassword.dto';
 import { UserRole } from '../../src/enums/userRole.enum';
 import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
+import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 
 // Mock bcrypt
 jest.mock('bcrypt');
@@ -33,6 +34,7 @@ describe('AuthService', () => {
     let jwtService: any;
     let userService: any;
     let mockTransporter: any;
+    let tapService: any;
 
     const mockUser = {
         id: 'user-id',
@@ -70,6 +72,10 @@ describe('AuthService', () => {
             generateDefaultAvatar: jest.fn(),
         } as any;
 
+        const mockTapPaymentsService = {
+            createCustomer: jest.fn().mockResolvedValue('mock-tap-customer-id'),
+        };
+
         mockTransporter = {
             sendMail: jest.fn(),
         };
@@ -85,6 +91,10 @@ describe('AuthService', () => {
                 { provide: PrismaService, useValue: mockPrismaService },
                 { provide: JwtService, useValue: mockJwtService },
                 { provide: UserService, useValue: mockUserService },
+                {
+                    provide: TapPaymentsService,
+                    useValue: mockTapPaymentsService,
+                },
             ],
         }).compile();
 
@@ -92,6 +102,7 @@ describe('AuthService', () => {
         prismaService = module.get(PrismaService);
         jwtService = module.get(JwtService);
         userService = module.get(UserService);
+        tapService = module.get(TapPaymentsService);
     });
 
     afterEach(() => {
@@ -167,6 +178,10 @@ describe('AuthService', () => {
             expect(userService.generateDefaultAvatar).toHaveBeenCalledWith(
                 signupDto.email,
             );
+            expect(tapService.createCustomer).toHaveBeenCalledWith({
+                first_name: signupDto.name,
+                email: signupDto.email,
+            });
         });
 
         it('should throw BadRequestException for invalid categories', async () => {

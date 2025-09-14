@@ -5,6 +5,7 @@ import { PrismaService } from '../../src/prisma/prisma.service';
 import { AuthService } from '../../src/auth/auth.service';
 import { FileService } from '../../src/file/file.service';
 import { UserRole as AppUserRole } from '../../src/enums/userRole.enum';
+import { tap } from 'rxjs';
 
 describe('UserService', () => {
     let service: UserService;
@@ -15,6 +16,7 @@ describe('UserService', () => {
     // Mock user data for testing
     const mockUser = {
         id: '123e4567-e89b-12d3-a456-426614174000',
+        tapCustomerId: 'cus_123456789',
         name: 'John Doe',
         email: 'john@example.com',
         crn: 'CRN123456',
@@ -365,6 +367,7 @@ describe('UserService', () => {
             // Assert
             expect(result).toEqual({
                 id: mockUser.id,
+                tapCustomerId: mockUser.tapCustomerId,
                 name: mockUser.name,
                 email: mockUser.email,
                 crn: mockUser.crn,

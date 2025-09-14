@@ -1470,12 +1470,58 @@
     "/api/buyers/me": {
       "get": {
         "operationId": "BuyerController_getCurrentBuyerData",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
-          "200": {
-            "description": ""
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
         "tags": [
           "Buyers"
         ]
@@ -1484,24 +1530,184 @@
     "/api/buyers/me/card": {
       "get": {
         "operationId": "BuyerController_getCurrentBuyerCard",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
-          "200": {
-            "description": ""
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
         "tags": [
           "Buyers"
         ]
       },
       "put": {
         "operationId": "BuyerController_saveOrReplaceCurrentBuyerCard",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCardDto"
+              }
+            }
           }
         },
+        "responses": {
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "tags": [
+          "Buyers"
+        ]
+      },
+      "delete": {
+        "operationId": "BuyerController_deleteCurrentBuyerCard",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
         "tags": [
           "Buyers"
         ]
@@ -1509,6 +1715,8 @@
     },
     "/api/buyers/wishlist": {
       "get": {
+        "deprecated": true,
+        "description": "This endpoint is a placeholder for future implementation and is not yet functional.",
         "operationId": "BuyerController_getWishlist",
         "parameters": [],
         "responses": {
@@ -1516,6 +1724,7 @@
             "description": ""
           }
         },
+        "summary": "Not yet implemented",
         "tags": [
           "Buyers"
         ]
@@ -1523,6 +1732,8 @@
     },
     "/api/buyers/wishlist/{itemId}": {
       "post": {
+        "deprecated": true,
+        "description": "This endpoint is a placeholder for future implementation and is not yet functional.",
         "operationId": "BuyerController_addToWishlist",
         "parameters": [],
         "responses": {
@@ -1530,11 +1741,14 @@
             "description": ""
           }
         },
+        "summary": "Not yet implemented",
         "tags": [
           "Buyers"
         ]
       },
       "delete": {
+        "deprecated": true,
+        "description": "This endpoint is a placeholder for future implementation and is not yet functional.",
         "operationId": "BuyerController_removeFromWishlist",
         "parameters": [],
         "responses": {
@@ -1542,6 +1756,7 @@
             "description": ""
           }
         },
+        "summary": "Not yet implemented",
         "tags": [
           "Buyers"
         ]
@@ -1550,7 +1765,7 @@
   },
   "info": {
     "title": "Silah Backend API Documentation",
-    "description": "Use this documentation to explore, test, and understand the available API endpoints, their request/response structure, and any required parameters such as headers, cookies, or authentication tokens.",
+    "description": "\nUse this documentation to explore, test, and understand the available API endpoints, their request/response structure, and any required parameters such as headers, cookies, or authentication tokens.\n\n**Important Note about Error Responses**\n\nWhen you test the APIs here in Swagger UI, the error responses are shown in a *simplified* format (only what we document in each endpoint).  \n\nIn real life, the server wraps these responses inside a bigger error object because of our logging system.  \n\nFor example, Swagger might show this error response for an endpoint that requires authentication and receives no token:\n\n```json\n{\n  \"statusCode\": 401,\n  \"message\": \"No token found in cookies\",\n  \"error\": \"Unauthorized\"\n}\n```\n\nBut the actual response you will receive when calling the API from your frontend will look like this:\n\n```json\n{\n  \"statusCode\": 401,\n  \"timestamp\": \"2025-09-07T07:24:11.173Z\",\n  \"path\": \"/api/auth/switch-role\",\n  \"error\": {\n    \"statusCode\": 401,\n    \"message\": \"No token found in cookies\",\n    \"error\": \"Unauthorized\"\n  }\n}\n```\n\nHow to use this on frontend:\n- Always read the `error.message` property if you want to show an error to the user.  \n- Ignore `timestamp` and `path` (they're for debugging).  \n- The shape in Swagger helps you know *what kinds of messages to expect*, but real responses are wrapped as shown above.\n",
     "version": "1.0",
     "contact": {}
   },
@@ -1652,6 +1867,10 @@
             "type": "string",
             "example": "clv70z13w0000unqoj4lcr8x4"
           },
+          "tapCustomerId": {
+            "type": "string",
+            "example": "cus_13gdft5"
+          },
           "name": {
             "type": "string",
             "example": "John Doe"
@@ -1719,6 +1938,7 @@
         },
         "required": [
           "id",
+          "tapCustomerId",
           "name",
           "email",
           "crn",
@@ -1771,6 +1991,19 @@
             }
           }
         }
+      },
+      "CreateCardDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Tap token received from the frontend after card tokenization process (using Tap's Card SDK)",
+            "example": "tok_TS57A39251831Q2B15Ro8l180"
+          }
+        },
+        "required": [
+          "token"
+        ]
       }
     }
   }

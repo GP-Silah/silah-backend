@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { UserResponseDTO } from 'src/user/dtos/userResponse.dto';
+import { CardDetailsDto } from './cardDetails.dto';
 
 export class BuyerResponseDto {
     @ApiProperty({ type: () => UserResponseDTO })
     @Type(() => UserResponseDTO)
     user: UserResponseDTO;
 
-    @ApiProperty({ type: String, required: false, example: 'tok_123456abcdef' })
-    cardToken?: string;
-
-    //todo add the card as dto
+    @ApiProperty({ type: () => CardDetailsDto, nullable: true })
+    @Type(() => CardDetailsDto)
+    card: CardDetailsDto | null;
 }

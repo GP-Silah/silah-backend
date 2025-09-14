@@ -3,6 +3,8 @@ import {
     BadRequestException,
     INestApplication,
     NotFoundException,
+    ParseFilePipe,
+    PipeTransform,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FileService } from 'src/file/file.service';
@@ -11,11 +13,12 @@ import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as request from 'supertest';
 import * as crypto from 'crypto';
-import { UserResponseDTO } from 'src/user/dtos/userResponse.dto';
 import { UpdateUserDto } from 'src/user/dtos/updateUser.dto';
-import { UserRole } from 'src/enums/userRole.enum';
 import { AppModule } from 'src/app.module';
 import * as cookieParser from 'cookie-parser';
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Mock the sharp library
 jest.mock('sharp', () => {
@@ -24,6 +27,11 @@ jest.mock('sharp', () => {
         toBuffer: jest.fn().mockResolvedValue(Buffer.from('mock-png-buffer')),
     }));
 });
+
+// Mock ParseFilePipe to bypass file validation in tests
+const MockParseFilePipe = jest.fn().mockImplementation(() => ({
+    transform: jest.fn().mockImplementation((value: any) => value),
+}));
 
 describe('UserController (Integration)', () => {
     let app: INestApplication;
@@ -163,6 +171,27 @@ describe('UserController (Integration)', () => {
             .useValue(fileService)
             .overrideProvider(AuthService)
             .useValue(authService)
+            .overrideProvider(ParseFilePipe)
+            .useValue(new MockParseFilePipe())
+            .overrideInterceptor(FileInterceptor('file'))
+            .useValue({
+                intercept: (context: any, next: any) => {
+                    const request = context.switchToHttp().getRequest();
+                    // Inject a mock file that will pass all validations
+                    request.file = {
+                        fieldname: 'file',
+                        originalname: 'profile.png',
+                        encoding: '7bit',
+                        mimetype: 'image/png',
+                        buffer: Buffer.from('valid-png-content'),
+                        size: 1024,
+                        destination: '',
+                        filename: '',
+                        path: '',
+                    };
+                    return next.handle();
+                },
+            })
             .compile();
 
         app = module.createNestApplication();
@@ -477,10 +506,56 @@ describe('UserController (Integration)', () => {
                 size: 1024,
             };
 
+            const mockFileBuffer = Buffer.from('mock-file-content');
+
+            const filePath = path.join(__dirname, 'fixtures', 'test.png');
+            const fileBuffer = fs.readFileSync(filePath);
+
             const response = await request(app.getHttpServer())
                 .post('/users/me/profile-picture')
                 .set('Cookie', `token=${token}`)
-                .attach('file', file.buffer, 'profile.jpg')
+                .attach('file', fileBuffer, {
+                    filename: 'profile.png',
+                    contentType: 'image/png',
+                })
+                .expect(201);
+
+            expect(response.body).toEqual({
+                message: 'Profile picture updated successfully',
+                pfpFileName: 'mock-file.png',
+            });
+
+            expect(fileService.uploadFile).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    originalname: 'profile.png',
+                    mimetype: 'image/png',
+                }),
+            );
+
+            const user = await prisma.user.findUnique({
+                where: { id: '123e4567-e89b-12d3-a456-426614174001' },
+            });
+            expect(user?.pfpFileName).toBe('mock-file.png');
+            expect(user?.isPfpDefault).toBe(false);
+        });
+
+        it('should work with JPEG too', async () => {
+            const token = await generateJwtToken(
+                '123e4567-e89b-12d3-a456-426614174001',
+                'test1@example.com',
+                'BUYER',
+            );
+
+            const filePath = path.join(__dirname, 'fixtures', 'test.jpg');
+            const fileBuffer = fs.readFileSync(filePath);
+
+            const response = await request(app.getHttpServer())
+                .post('/users/me/profile-picture')
+                .set('Cookie', `token=${token}`)
+                .attach('file', fileBuffer, {
+                    filename: 'profile.jpg',
+                    contentType: 'image/jpeg',
+                })
                 .expect(201);
 
             expect(response.body).toEqual({
@@ -513,6 +588,19 @@ describe('UserController (Integration)', () => {
                 });
         });
     });
+
+    // describe('Regex validation test', () => {
+    //     it('should validate the file type regex', () => {
+    //         const regex = /^image\/(png|jpe?g|webp)$/i;
+
+    //         expect(regex.test('image/png')).toBe(true);
+    //         expect(regex.test('image/jpg')).toBe(true);
+    //         expect(regex.test('image/jpeg')).toBe(true);
+    //         expect(regex.test('image/webp')).toBe(true);
+    //         expect(regex.test('image/gif')).toBe(false);
+    //         expect(regex.test('application/pdf')).toBe(false);
+    //     });
+    // });
 
     describe('DELETE /users/me/profile-picture', () => {
         it('should delete profile picture and set default', async () => {

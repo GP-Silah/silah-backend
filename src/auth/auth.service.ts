@@ -17,6 +17,7 @@ import * as nodemailer from 'nodemailer';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
 import { UserRole } from '../enums/userRole.enum';
 import { Request, Response } from 'express';
+import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 
 /**
  * AuthService contains all authentication-related business logic,
@@ -30,6 +31,7 @@ export class AuthService {
         private readonly jwtService: JwtService,
         @Inject(forwardRef(() => UserService))
         private readonly userService: UserService,
+        private readonly tapPaymentsService: TapPaymentsService,
     ) {}
 
     /**
@@ -99,11 +101,18 @@ export class AuthService {
             }
         }
 
+        // Create a Customer on Tap Payments API of the user
+        const tapCustomerId = await this.tapPaymentsService.createCustomer({
+            first_name: payload.name,
+            email: payload.email,
+        });
+
         // Hash the password and store the user in DB
         const hashedPassword = await this.encryptPassword(payload.password);
         const user = await this.prisma.user.create({
             data: {
                 ...payload,
+                tapCustomerId,
                 password: hashedPassword,
                 categories: {
                     create: categoryIds.map((categoryId) => ({

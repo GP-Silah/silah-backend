@@ -13,6 +13,8 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import logger from './logger';
+import { TapPaymentsModule } from './tap-payments/tap-payments.module';
 
 @Module({
     imports: [
@@ -30,6 +32,7 @@ import { APP_GUARD } from '@nestjs/core';
         PrismaModule,
         BuyerModule,
         FileModule,
+        TapPaymentsModule,
     ],
     controllers: [AppController, HealthController],
     providers: [
@@ -37,6 +40,10 @@ import { APP_GUARD } from '@nestjs/core';
         {
             provide: APP_GUARD,
             useClass: ThrottlerGuard,
+        },
+        {
+            provide: 'LOGGER',
+            useValue: logger,
         },
     ],
 })
