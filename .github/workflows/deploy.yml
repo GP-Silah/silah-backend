@@ -19,8 +19,12 @@ jobs:
                   username: ${{ secrets.SERVER_USER }}
                   key: ${{ secrets.SERVER_SSH_KEY }}
                   script: |
+                      set -euo pipefail
                       cd /root/silah-backend
-                      git pull origin main
-                      npm install
+                      git fetch origin main --prune
+                      git reset --hard origin/main
+                      npm ci --prefer-offline
                       npm run build
-                      pm2 restart silah-backend
+                      npx prisma migrate deploy || true
+                      pm2 reload silah-backend --update-env || pm2 start ecosystem.config.js
+                      pm2 status
