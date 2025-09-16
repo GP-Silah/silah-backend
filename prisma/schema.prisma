@@ -40,22 +40,35 @@ model User {
 
 // ============ 🛢 SUPPLIER ==============
 model Supplier {
-  id                  String       @id @default(uuid())
-  userId              String       @unique
-  user                User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  plan                SupplierPlan @default(BASIC)
-  usedFreeTrial       Boolean      @default(false)
-  isStoreClosed       Boolean      @default(true)
-  storeClosedMsg      String       @default("This store is currently closed. Please check back later.")
+  id                  String         @id @default(uuid())
+  userId              String         @unique
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  plan                SupplierPlan   @default(BASIC)
+  status              SupplierStatus @default(ACTIVE)
+  usedFreeTrial       Boolean        @default(false)
+  isStoreClosed       Boolean        @default(true)
+  storeClosedMsg      String         @default("This store is currently closed. Please check back later.")
   storeBio            String?
   storeBannerFileName String?
-  deliveryFees        Float        @default(0.0)
-  avgRating           Float        @default(0.0)
-  ratingCount         Int          @default(0)
-  createdAt           DateTime     @default(now())
-  updatedAt           DateTime     @updatedAt
+  deliveryFees        Float          @default(0.0)
+  avgRating           Float          @default(0.0)
+  ratingCount         Int            @default(0)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
 
-  categories SupplierCategory[]
+  categories    SupplierFavoriteCategory[]
+  subscriptions SupplierSubscription[]
+}
+
+// ============ 🛂 SUBSCRIPTIONS ==============
+model SupplierSubscription {
+  id         String   @id @default(uuid())
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  startDate  DateTime @default(now())
+  endDate    DateTime @default(dbgenerated("now() + interval '1 month'")) // postgres interval syntax
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 // ============ 🛍️ BUYER ================
@@ -94,7 +107,7 @@ model Category {
   updatedAt        DateTime   @updatedAt
 
   users     UserCategory[]
-  suppliers SupplierCategory[]
+  suppliers SupplierFavoriteCategory[]
 }
 
 // ===========  🚥 USER_CATEGORY =============
@@ -109,16 +122,15 @@ model UserCategory {
   @@unique([userId, categoryId])
 }
 
-// ===========  ⭐️ SUPPLIER_CATEGORY =============
-model SupplierCategory {
+// ===========  ⭐️ SUPPLIER_FAVORITE_CATEGORY =============
+model SupplierFavoriteCategory {
   supplierId String
   supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
   categoryId Int
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
 
-  @@unique([supplierId, categoryId])
+  @@id([supplierId, categoryId]) // composite PK ensures uniqueness
 }
 
 // ============  ⚔️ ENUMS ================
@@ -143,4 +155,14 @@ enum SupplierPlan {
 enum ItemType {
   PRODUCT
   SERVICE
+}
+
+enum SupplierStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum StoreStatus {
+  OPEN
+  CLOSED
 }
