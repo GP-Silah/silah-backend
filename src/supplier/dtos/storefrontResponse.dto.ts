@@ -8,6 +8,9 @@ export class StorefrontResponseDto {
     @ApiProperty({ description: 'Supplier display name', example: 'John Doe' })
     supplierName: string;
 
+    @ApiProperty({ description: 'Supplier email', example: 'john@gmail.com' })
+    supplierEmail: string;
+
     @ApiProperty({
         description: 'Business name of the user',
         example: 'John Bakery',

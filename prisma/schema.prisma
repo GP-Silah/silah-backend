@@ -45,14 +45,14 @@ model Supplier {
   user                User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   plan                SupplierPlan   @default(BASIC)
   status              SupplierStatus @default(ACTIVE)
-  usedFreeTrial       Boolean        @default(false)
+  usedFreeTrail       Boolean        @default(false)
   isStoreClosed       Boolean        @default(true)
   storeClosedMsg      String         @default("This store is currently closed. Please check back later.")
   storeBio            String?
   storeBannerFileName String?
   deliveryFees        Float          @default(0.0)
   avgRating           Float          @default(0.0)
-  ratingCount         Int            @default(0)
+  ratingsCount        Int            @default(0)
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
 

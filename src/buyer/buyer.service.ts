@@ -113,6 +113,7 @@ export class BuyerService {
             });
         }
 
+        console.log('Creating card in Tap with token:', createCardDto.token);
         // Fetch full card info from Tap using token
         const cardInfo = await this.tapPaymentsService.getCard(
             user.tapCustomerId,

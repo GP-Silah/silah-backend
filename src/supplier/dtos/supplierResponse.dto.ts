@@ -12,6 +12,9 @@ export class SupplierResponseDto {
     @ApiProperty({ description: 'Supplier display name', example: 'John Doe' })
     supplierName: string;
 
+    @ApiProperty({ description: 'Supplier email', example: 'john@gmail.com' })
+    supplierEmail: string;
+
     @ApiProperty({
         description: 'Business name of the user',
         example: 'John Bakery',
@@ -94,9 +97,9 @@ export class SupplierResponseDto {
             'List of favorite categories (only subcategories) for quick access',
         type: [Object],
         example: [
-            { id: '16', name: 'Animal Feed' },
-            { id: '33', name: 'Jewelry & Watches' },
+            { id: 16, name: 'Animal Feed' },
+            { id: 33, name: 'Jewelry & Watches' },
         ],
     })
-    favoriteCategories: { id: string; name: string }[];
+    favoriteCategories: { id: number; name: string }[];
 }

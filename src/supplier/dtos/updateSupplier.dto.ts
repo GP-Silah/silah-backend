@@ -69,11 +69,11 @@ export class UpdateSupplierDto {
             'List of favorite categories (only subcategories) for quick access',
         type: [Object],
         example: [
-            { id: '16', name: 'Animal Feed' },
-            { id: '33', name: 'Jewelry & Watches' },
+            { id: 16, name: 'Animal Feed' },
+            { id: 33, name: 'Jewelry & Watches' },
         ],
     })
     @IsOptional()
     @IsArray()
-    favoriteCategories?: { id: string; name: string }[];
+    favoriteCategories?: { id: number; name: string }[];
 }
