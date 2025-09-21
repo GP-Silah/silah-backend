@@ -294,6 +294,28 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Commercial Registration not found (from Wathiq API).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "code": "404.2.1",
+                    "message": "No Results Found"
+                  }
+                },
+                "examples": {
+                  "crnNotFound": {
+                    "summary": "CRN not found in Wathiq",
+                    "value": {
+                      "code": "404.2.1",
+                      "message": "No Results Found"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Registers a new user and returns a JWT token in a cookie",
@@ -1506,6 +1528,20 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1563,6 +1599,20 @@
                       }
                     }
                   ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
                 }
               }
             }
@@ -1634,6 +1684,20 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1689,6 +1753,20 @@
                       }
                     }
                   ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
                 }
               }
             }
@@ -1759,6 +1837,1393 @@
         "summary": "Not yet implemented",
         "tags": [
           "Buyers"
+        ]
+      }
+    },
+    "/api/suppliers/me": {
+      "get": {
+        "description": "Retrieves the supplier data of the authenticated user. Includes linked user information.",
+        "operationId": "SupplierController_getSupplierData",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved supplier profile.",
+            "schema": {
+              "example": {
+                "user": {
+                  "id": "uuid-user-1234",
+                  "name": "John Doe",
+                  "email": "john@gmail.com",
+                  "phone": "+966500000000",
+                  "role": "SUPPLIER",
+                  "createdAt": "2025-08-15T12:00:00.000Z"
+                },
+                "supplierId": "uuid-supplier-5678",
+                "supplierName": "John Doe",
+                "supplierEmail": "john@gmail.com",
+                "businessName": "John Bakery",
+                "city": "Riyadh",
+                "storeStatus": "OPEN",
+                "storeClosedMsg": null,
+                "storeBio": "We specialize in handmade bakery items.",
+                "storeBannerFileName": "banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png",
+                "storeBannerFileUrl": "https://cdn.example.com/banners/banner123.png",
+                "deliveryFees": 15.5,
+                "avgRating": 4.5,
+                "ratingsCount": 23,
+                "usedFreeTrail": true,
+                "supplierStatus": "ACTIVE",
+                "plan": "PREMIUM",
+                "favoriteCategories": [
+                  {
+                    "id": 16,
+                    "name": "Animal Feed"
+                  },
+                  {
+                    "id": 33,
+                    "name": "Jewelry & Watches"
+                  }
+                ]
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found for the given user."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Get current supplier profile",
+        "tags": [
+          "Suppliers"
+        ]
+      },
+      "patch": {
+        "description": "Allows the authenticated supplier to update their profile information such as store status, store closed message, store bio, banner filename, and delivery fees. Only supplier-related fields can be updated.",
+        "operationId": "SupplierController_updateSupplierData",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Supplier fields that can be updated.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSupplierDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supplier profile updated successfully.",
+            "schema": {
+              "example": {
+                "user": {
+                  "id": "uuid-user-1234",
+                  "name": "John Doe",
+                  "email": "john@gmail.com",
+                  "phone": "+966500000000",
+                  "role": "SUPPLIER",
+                  "createdAt": "2025-08-15T12:00:00.000Z"
+                },
+                "supplierId": "uuid-supplier-5678",
+                "supplierName": "John Doe",
+                "supplierEmail": "john@gmail.com",
+                "businessName": "John Bakery",
+                "city": "Riyadh",
+                "storeStatus": "OPEN",
+                "storeClosedMsg": "We are closed for Eid holidays.",
+                "storeBio": "We specialize in handmade bakery items.",
+                "storeBannerFileName": "banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png",
+                "storeBannerFileUrl": "https://cdn.example.com/banners/banner123.png",
+                "deliveryFees": 20,
+                "avgRating": 4.7,
+                "ratingsCount": 30,
+                "usedFreeTrail": true,
+                "supplierStatus": "ACTIVE",
+                "plan": "PREMIUM",
+                "favoriteCategories": [
+                  {
+                    "id": 16,
+                    "name": "Animal Feed"
+                  },
+                  {
+                    "id": 33,
+                    "name": "Jewelry & Watches"
+                  }
+                ]
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found for the given user."
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Update current supplier profile",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
+    "/api/suppliers/me/store": {
+      "get": {
+        "description": "Retrieves the supplier data of the authenticated user. Includes linked user information.",
+        "operationId": "SupplierController_updateSupplierStoreData",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved supplier profile.",
+            "schema": {
+              "example": {
+                "user": {
+                  "id": "uuid-user-1234",
+                  "name": "John Doe",
+                  "email": "john@gmail.com",
+                  "phone": "+966500000000",
+                  "role": "SUPPLIER",
+                  "createdAt": "2025-08-15T12:00:00.000Z"
+                },
+                "supplierId": "uuid-supplier-5678",
+                "supplierName": "John Doe",
+                "supplierEmail": "john@gmail.com",
+                "businessName": "John Bakery",
+                "city": "Riyadh",
+                "storeStatus": "OPEN",
+                "storeClosedMsg": null,
+                "storeBio": "We specialize in handmade bakery items.",
+                "storeBannerFileName": "banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png",
+                "storeBannerFileUrl": "https://cdn.example.com/banners/banner123.png",
+                "deliveryFees": 15.5,
+                "avgRating": 4.5,
+                "ratingsCount": 23,
+                "usedFreeTrail": true,
+                "supplierStatus": "ACTIVE",
+                "plan": "PREMIUM",
+                "favoriteCategories": [
+                  {
+                    "id": 16,
+                    "name": "Animal Feed"
+                  },
+                  {
+                    "id": 33,
+                    "name": "Jewelry & Watches"
+                  }
+                ]
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found for the given user."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Get current supplier profile",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
+    "/api/suppliers/me/favorite-categories": {
+      "get": {
+        "description": "Retrieves the list of favorite subcategories for the authenticated supplier. Each item contains the category ID and name.",
+        "operationId": "SupplierController_getFavoriteCategories",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved favorite categories.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 16
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Animal Feed"
+                      }
+                    }
+                  },
+                  "example": [
+                    {
+                      "id": 16,
+                      "name": "Animal Feed"
+                    },
+                    {
+                      "id": 33,
+                      "name": "Jewelry & Watches"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found when fetching favorite categories."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Get supplier favorite categories",
+        "tags": [
+          "Suppliers"
+        ]
+      },
+      "patch": {
+        "description": "Adds a category to the supplier’s favorite categories if not already present, or removes it if already present. Returns a message and updated favorite categories list.",
+        "operationId": "SupplierController_toggleFavoriteCategory",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "categoryId": {
+                    "type": "number",
+                    "description": "The ID of the category to toggle in favorites",
+                    "example": 16
+                  }
+                },
+                "required": [
+                  "categoryId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully toggled favorite category.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category added to favorites."
+                    },
+                    "favoriteCategories": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number",
+                            "example": 16
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Animal Feed"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "id": 16,
+                          "name": "Animal Feed"
+                        },
+                        {
+                          "id": 33,
+                          "name": "Jewelry & Watches"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid category ID provided or category does not exist."
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Toggle a favorite category for supplier",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
+    "/api/suppliers/me/plan": {
+      "get": {
+        "description": "Retrieves the current subscription plan of the authenticated supplier.",
+        "operationId": "SupplierController_getSupplierPlan",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved supplier plan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "plan": {
+                      "type": "string",
+                      "enum": [
+                        "BASIC",
+                        "PREMIUM"
+                      ],
+                      "example": "PREMIUM"
+                    }
+                  },
+                  "example": {
+                    "plan": "PREMIUM"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Get current supplier plan",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
+    "/api/suppliers/me/subscripe-premium": {
+      "post": {
+        "description": "Upgrades the supplier account to the premium plan. Throws error if already on premium.",
+        "operationId": "SupplierController_subscripePremium",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully subscribed to premium plan.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully subscribed to the premium plan."
+                    },
+                    "plan": {
+                      "type": "string",
+                      "enum": [
+                        "BASIC",
+                        "PREMIUM"
+                      ],
+                      "example": "PREMIUM"
+                    }
+                  },
+                  "example": {
+                    "message": "Successfully subscribed to the premium plan.",
+                    "plan": "PREMIUM"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Supplier is already subscribed to premium."
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Subscribe to premium plan",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
+    "/api/suppliers/me/start-free-trail": {
+      "post": {
+        "description": "Starts the 30-day free trial for the supplier, upgrading to premium plan. Throws error if trial already used.",
+        "operationId": "SupplierController_startFreeTrial",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully started free trial.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Free trial started successfully. You are now on the premium plan for 30 days."
+                    },
+                    "plan": {
+                      "type": "string",
+                      "enum": [
+                        "BASIC",
+                        "PREMIUM"
+                      ],
+                      "example": "PREMIUM"
+                    }
+                  },
+                  "example": {
+                    "message": "Free trial started successfully. You are now on the premium plan for 30 days.",
+                    "plan": "PREMIUM"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Free trial has already been used."
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Start free trial",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
+    "/api/suppliers/me/store-banner": {
+      "post": {
+        "description": "Uploads a new banner image for the supplier store. Max size 5MB. Accepted types: png, jpg, jpeg, webp.",
+        "operationId": "SupplierController_updateStoreBanner",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Banner image file to upload"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Store banner updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Store banner updated successfully"
+                    },
+                    "storeBannerFileName": {
+                      "type": "string",
+                      "example": "banner123-uuid.png"
+                    }
+                  },
+                  "example": {
+                    "message": "Store banner updated successfully",
+                    "storeBannerFileName": "banner123-uuid.png"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Update store banner",
+        "tags": [
+          "Suppliers"
+        ]
+      },
+      "delete": {
+        "description": "Deletes the current banner image for the supplier store.",
+        "operationId": "SupplierController_deleteStoreBanner",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Store banner deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Store banner deleted successfully"
+                    }
+                  },
+                  "example": {
+                    "message": "Store banner deleted successfully"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No store banner to delete."
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Delete store banner",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
+    "/api/suppliers/{id}/store-banner": {
+      "get": {
+        "description": "Retrieves the signed URL of the store banner for a given supplier ID.",
+        "operationId": "SupplierController_getStoreBanner",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved store banner URL.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "storeBannerFileUrl": {
+                      "type": "string",
+                      "format": "uri",
+                      "example": "https://cdn.example.com/banners/banner123.png"
+                    }
+                  },
+                  "example": {
+                    "storeBannerFileUrl": "https://cdn.example.com/banners/banner123.png"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No store banner found for this store."
+          }
+        },
+        "summary": "Get store banner",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
+    "/api/suppliers": {
+      "get": {
+        "description": "Retrieves a list of all suppliers, with optional filters by status (active/inactive) and subscription (subscribed/unsubscribed).",
+        "operationId": "SupplierController_getAllSuppliers",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter suppliers by status",
+            "schema": {
+              "enum": [
+                "active",
+                "inactive"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "subscription",
+            "required": false,
+            "in": "query",
+            "description": "Filter suppliers by subscription plan",
+            "schema": {
+              "enum": [
+                "subscribed",
+                "unsubscribed"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of suppliers retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SupplierResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all suppliers",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
+    "/api/suppliers/{id}": {
+      "get": {
+        "description": "Retrieves full supplier data including profile, store, subscription, and favorite categories.",
+        "operationId": "SupplierController_getSupplierDataById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unique ID of the supplier",
+            "schema": {
+              "example": "uuid-1234",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Supplier data retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier with the given ID not found."
+          }
+        },
+        "summary": "Get supplier data by ID",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
+    "/api/suppliers/{id}/store": {
+      "get": {
+        "description": "Retrieves storefront-specific data for a supplier, suitable for displaying public store pages.",
+        "operationId": "SupplierController_getSupplierStoreDataById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unique ID of the supplier",
+            "schema": {
+              "example": "uuid-1234",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Storefront data retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StorefrontResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier with the given ID not found."
+          }
+        },
+        "summary": "Get supplier storefront data",
+        "tags": [
+          "Suppliers"
         ]
       }
     }
@@ -1908,7 +3373,7 @@
           "pfpUrl": {
             "type": "string",
             "example": "https://gp-silah.d025be9440ae5eb8295c69a36497276a.r2.cloudflarestorage.com/gp-silah/moon.jpeg-30510246-41f7-4cff-a052-78bcc30f7301.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=...&X-Amz-Date=20250816T131236Z&X-Amz-Expires=3600&X-Amz-Signature=...",
-            "description": "Example of a signed URL from R2. Signed URLs expire 1 hour after creation.",
+            "description": "Signed URL from R2. Signed URLs expire 1 hour after creation.",
             "format": "uri"
           },
           "categories": {
@@ -2003,6 +3468,280 @@
         },
         "required": [
           "token"
+        ]
+      },
+      "SupplierResponseDto": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserResponseDTO"
+          },
+          "supplierId": {
+            "type": "string",
+            "description": "Supplier unique ID",
+            "example": "uuid-1234"
+          },
+          "supplierName": {
+            "type": "string",
+            "description": "Supplier display name",
+            "example": "John Doe"
+          },
+          "supplierEmail": {
+            "type": "string",
+            "description": "Supplier email",
+            "example": "john@gmail.com"
+          },
+          "businessName": {
+            "type": "string",
+            "description": "Business name of the user",
+            "example": "John Bakery"
+          },
+          "city": {
+            "type": "string",
+            "description": "City of the user",
+            "example": "Riyadh"
+          },
+          "storeStatus": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "CLOSED"
+            ],
+            "description": "Current store status",
+            "example": "OPEN"
+          },
+          "storeClosedMsg": {
+            "type": "string",
+            "description": "Message displayed if the store is closed",
+            "example": "We are closed for Eid holidays."
+          },
+          "storeBio": {
+            "type": "string",
+            "description": "Short bio or description of the store",
+            "example": "We specialize in handmade bakery items."
+          },
+          "storeBannerFileName": {
+            "type": "string",
+            "description": "File name of the store banner image in R2 bucket",
+            "example": "banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png"
+          },
+          "storeBannerFileUrl": {
+            "type": "string",
+            "description": "Signed URL from R2. Signed URLs expire 1 hour after creation.",
+            "example": "https://cdn.example.com/banners/banner123.png",
+            "format": "uri"
+          },
+          "deliveryFees": {
+            "type": "number",
+            "description": "Delivery fees charged by the supplier",
+            "example": 15.5
+          },
+          "avgRating": {
+            "type": "number",
+            "description": "Average rating of the supplier",
+            "example": 4.5
+          },
+          "ratingsCount": {
+            "type": "number",
+            "description": "Number of ratings received",
+            "example": 23
+          },
+          "usedFreeTrail": {
+            "type": "boolean",
+            "description": "Indicates if the supplier used the free trial",
+            "example": true
+          },
+          "supplierStatus": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "description": "Current status of the supplier account",
+            "example": "ACTIVE"
+          },
+          "plan": {
+            "type": "string",
+            "enum": [
+              "BASIC",
+              "PREMIUM"
+            ],
+            "description": "Current plan of the supplier",
+            "example": "PREMIUM"
+          },
+          "favoriteCategories": {
+            "description": "List of favorite categories (only subcategories) for quick access",
+            "example": [
+              {
+                "id": 16,
+                "name": "Animal Feed"
+              },
+              {
+                "id": 33,
+                "name": "Jewelry & Watches"
+              }
+            ],
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "user",
+          "supplierId",
+          "supplierName",
+          "supplierEmail",
+          "businessName",
+          "city",
+          "storeStatus",
+          "storeClosedMsg",
+          "deliveryFees",
+          "avgRating",
+          "ratingsCount",
+          "usedFreeTrail",
+          "supplierStatus",
+          "plan"
+        ]
+      },
+      "UpdateSupplierDto": {
+        "type": "object",
+        "properties": {
+          "storeStatus": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "CLOSED"
+            ],
+            "description": "Current status of the supplier store",
+            "example": "OPEN"
+          },
+          "storeClosedMsg": {
+            "type": "string",
+            "description": "Custom message displayed when the store is closed",
+            "example": "We are closed for Eid holidays."
+          },
+          "storeBio": {
+            "type": "string",
+            "description": "Short bio or description of the store",
+            "example": "We specialize in handmade bakery items."
+          },
+          "storeBannerFileName": {
+            "type": "string",
+            "description": "File name of the store banner image in R2 bucket",
+            "example": "banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png"
+          },
+          "storeBannerFileUrl": {
+            "type": "string",
+            "description": "Signed URL from R2. Signed URLs expire 1 hour after creation.",
+            "example": "https://cdn.example.com/banners/banner123.png",
+            "format": "uri"
+          },
+          "deliveryFees": {
+            "type": "number",
+            "description": "Delivery fees charged by the supplier",
+            "example": 15.5
+          }
+        },
+        "required": [
+          "storeStatus"
+        ]
+      },
+      "StorefrontResponseDto": {
+        "type": "object",
+        "properties": {
+          "supplierId": {
+            "type": "string",
+            "description": "Supplier unique ID",
+            "example": "uuid-1234"
+          },
+          "supplierName": {
+            "type": "string",
+            "description": "Supplier display name",
+            "example": "John Doe"
+          },
+          "supplierEmail": {
+            "type": "string",
+            "description": "Supplier email",
+            "example": "john@gmail.com"
+          },
+          "businessName": {
+            "type": "string",
+            "description": "Business name of the user",
+            "example": "John Bakery"
+          },
+          "city": {
+            "type": "string",
+            "description": "City of the user",
+            "example": "Riyadh"
+          },
+          "storeStatus": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "CLOSED"
+            ],
+            "description": "Current store status",
+            "example": "OPEN"
+          },
+          "storeClosedMsg": {
+            "type": "string",
+            "description": "Message displayed if the store is closed",
+            "example": "We are closed for Eid holidays."
+          },
+          "storeBio": {
+            "type": "string",
+            "description": "Short bio or description of the store",
+            "example": "We specialize in handmade bakery items."
+          },
+          "storeBannerFileName": {
+            "type": "string",
+            "description": "File name of the store banner image in R2 bucket",
+            "example": "banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png"
+          },
+          "storeBannerFileUrl": {
+            "type": "string",
+            "description": "Signed URL from R2. Signed URLs expire 1 hour after creation.",
+            "example": "https://cdn.example.com/banners/banner123.png",
+            "format": "uri"
+          },
+          "deliveryFees": {
+            "type": "number",
+            "description": "Delivery fees charged by the supplier",
+            "example": 15.5
+          },
+          "avgRating": {
+            "type": "number",
+            "description": "Average rating of the supplier",
+            "example": 4.5
+          },
+          "ratingsCount": {
+            "type": "number",
+            "description": "Number of ratings received",
+            "example": 23
+          },
+          "supplierStatus": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "description": "Current status of the supplier account",
+            "example": "ACTIVE"
+          }
+        },
+        "required": [
+          "supplierId",
+          "supplierName",
+          "supplierEmail",
+          "businessName",
+          "city",
+          "storeStatus",
+          "storeClosedMsg",
+          "deliveryFees",
+          "avgRating",
+          "ratingsCount",
+          "supplierStatus"
         ]
       }
     }

@@ -15,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import logger from './logger';
 import { TapPaymentsModule } from './tap-payments/tap-payments.module';
+import { SupplierModule } from './supplier/supplier.module';
 
 @Module({
     imports: [
@@ -33,6 +34,7 @@ import { TapPaymentsModule } from './tap-payments/tap-payments.module';
         BuyerModule,
         FileModule,
         TapPaymentsModule,
+        SupplierModule,
     ],
     controllers: [AppController, HealthController],
     providers: [

@@ -104,6 +104,28 @@ export function ApiDocsSignUp() {
                 },
             },
         }),
+        ApiNotFoundResponse({
+            description: 'Commercial Registration not found (from Wathiq API).',
+            content: {
+                'application/json': {
+                    schema: {
+                        example: {
+                            code: '404.2.1',
+                            message: 'No Results Found',
+                        },
+                    },
+                    examples: {
+                        crnNotFound: {
+                            summary: 'CRN not found in Wathiq',
+                            value: {
+                                code: '404.2.1',
+                                message: 'No Results Found',
+                            },
+                        },
+                    },
+                },
+            },
+        }),
     );
 }
 
