@@ -63,17 +63,4 @@ export class UpdateSupplierDto {
     @IsNumber()
     @Min(0, { message: 'deliveryFees cannot be negative' })
     deliveryFees?: number;
-
-    @ApiPropertyOptional({
-        description:
-            'List of favorite categories (only subcategories) for quick access',
-        type: [Object],
-        example: [
-            { id: 16, name: 'Animal Feed' },
-            { id: 33, name: 'Jewelry & Watches' },
-        ],
-    })
-    @IsOptional()
-    @IsArray()
-    favoriteCategories?: { id: number; name: string }[];
 }

@@ -25,6 +25,22 @@ import { UserRole } from 'src/enums/userRole.enum';
 import { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
+import { SupplierResponseDto } from './dtos/supplierResponse.dto';
+import {
+    ApiDocsDeleteStoreBanner,
+    ApiDocsGetAllSuppliers,
+    ApiDocsGetFavoriteCategories,
+    ApiDocsGetMySupplierData,
+    ApiDocsGetStoreBanner,
+    ApiDocsGetSupplierDataById,
+    ApiDocsGetSupplierPlan,
+    ApiDocsGetSupplierStoreDataById,
+    ApiDocsStartFreeTrial,
+    ApiDocsSubscribePremium,
+    ApiDocsToggleFavoriteCategory,
+    ApiDocsUpdateMySupplierData,
+    ApiDocsUpdateStoreBanner,
+} from './supplier.docs';
 
 @ApiTags('Suppliers')
 @Controller('suppliers')
@@ -35,6 +51,7 @@ export class SupplierController {
     @ApiRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
+    @ApiDocsGetMySupplierData()
     @Get('me')
     async getSupplierData(@Req() req: Request) {
         const userId = req.tokenData!.sub;
@@ -46,6 +63,7 @@ export class SupplierController {
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me/store')
+    @ApiDocsGetMySupplierData()
     async updateSupplierStoreData(@Req() req: Request) {
         const userId = req.tokenData!.sub;
         return this.supplierService.getSupplierStoreData(userId);
@@ -56,13 +74,18 @@ export class SupplierController {
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch('me')
-    async updateSupplierData() {} //TODO
+    @ApiDocsUpdateMySupplierData()
+    async updateSupplierData(@Req() req: Request) {
+        const userId = req.tokenData!.sub;
+        return this.supplierService.updateSupplierData(userId, req.body);
+    }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me/favorite-categories')
+    @ApiDocsGetFavoriteCategories()
     async getFavoriteCategories(@Req() req: Request) {
         const userId = req.tokenData!.sub;
         return this.supplierService.getSupplierFavoriteCategories(userId);
@@ -73,6 +96,7 @@ export class SupplierController {
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch('me/favorite-categories')
+    @ApiDocsToggleFavoriteCategory()
     async toggleFavoriteCategory(
         @Req() req: Request,
         @Body('categoryId') categoryId: number,
@@ -86,21 +110,33 @@ export class SupplierController {
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me/plan')
-    async getSupplierPlan() {}
+    @ApiDocsGetSupplierPlan()
+    async getSupplierPlan(@Req() req: Request) {
+        const userId = req.tokenData!.sub;
+        return this.supplierService.getSupplierPlan(userId);
+    }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('me/subscripe-premium')
-    async subscripePremium() {}
+    @ApiDocsSubscribePremium()
+    async subscripePremium(@Req() req: Request) {
+        const userId = req.tokenData!.sub;
+        return this.supplierService.subscripePremium(userId);
+    }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Post('me/start-free-trial')
-    async startFreeTrial(@Req() req) {}
+    @Post('me/start-free-trail')
+    @ApiDocsStartFreeTrial()
+    async startFreeTrial(@Req() req) {
+        const userId = req.tokenData!.sub;
+        return this.supplierService.startFreeTrial(userId);
+    }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
@@ -108,6 +144,7 @@ export class SupplierController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('me/store-banner')
     @UseInterceptors(FileInterceptor('file')) // "file" = form field name
+    @ApiDocsUpdateStoreBanner()
     async updateStoreBanner(
         @UploadedFile(
             new ParseFilePipe({
@@ -132,27 +169,34 @@ export class SupplierController {
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('me/store-banner')
+    @ApiDocsDeleteStoreBanner()
     async deleteStoreBanner(@Req() req: Request) {
         const userId = req.tokenData!.sub;
         return this.supplierService.deleteStoreBanner(userId);
     }
 
+    @ApiDocsGetStoreBanner()
     @Get(':id/store-banner')
     async getStoreBanner(@Param('id') id: string) {
         return this.supplierService.getStoreBanner(id);
     }
 
+    @ApiDocsGetAllSuppliers()
     @Get()
     async getAllSuppliers(
         @Query('status') status?: 'active' | 'inactive',
         @Query('subscription') subscription?: 'subscribed' | 'unsubscribed',
-    ) {} //TODO
+    ): Promise<SupplierResponseDto[]> {
+        return this.supplierService.getAllSuppliers(status, subscription);
+    }
 
+    @ApiDocsGetSupplierDataById()
     @Get(':id')
     async getSupplierDataById(@Param('id') id: string) {
         return this.supplierService.getSupplierDataById(id);
     }
 
+    @ApiDocsGetSupplierStoreDataById()
     @Get(':id/store')
     async getSupplierStoreDataById(@Param('id') id: string) {
         return this.supplierService.getSupplierStoreDataById(id);

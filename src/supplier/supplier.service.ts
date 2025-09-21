@@ -4,7 +4,13 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { StoreStatus, Supplier, User } from '@prisma/client';
+import {
+    StoreStatus,
+    Supplier,
+    SupplierPlan,
+    SupplierStatus,
+    User,
+} from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SupplierResponseDto } from './dtos/supplierResponse.dto';
 import { FileService } from 'src/file/file.service';
@@ -249,7 +255,40 @@ export class SupplierService {
         return this.toStorefrontResponseDTO(supplier.user, supplier);
     }
 
-    async updateSupplierData() {}
+    async updateSupplierData(userId: string, dto: UpdateSupplierDto) {
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+            include: { user: true },
+        });
+
+        if (!supplier) {
+            throw new NotFoundException('Supplier not found.');
+        }
+
+        const updated = await this.prisma.supplier.update({
+            where: { userId },
+            data: {
+                ...(dto.storeStatus !== undefined && {
+                    isStoreClosed: dto.storeStatus === 'CLOSED',
+                }),
+                ...(dto.storeClosedMsg !== undefined && {
+                    storeClosedMsg: dto.storeClosedMsg,
+                }),
+                ...(dto.storeBio !== undefined && {
+                    storeBio: dto.storeBio,
+                }),
+                ...(dto.storeBannerFileName !== undefined && {
+                    storeBannerFileName: dto.storeBannerFileName,
+                }),
+                ...(dto.deliveryFees !== undefined && {
+                    deliveryFees: dto.deliveryFees,
+                }),
+            },
+            include: { user: true },
+        });
+
+        return this.toSupplierResponseDTO(updated.user, updated);
+    }
 
     async updateStoreBanner(file: Express.Multer.File, userId: string) {
         const fileName = await this.fileService.uploadFile(file);
@@ -296,7 +335,42 @@ export class SupplierService {
         return { storeBannerFileUrl: fileUrl };
     }
 
-    async getAllSuppliers() {}
+    async getAllSuppliers(
+        status?: 'active' | 'inactive',
+        subscription?: 'subscribed' | 'unsubscribed',
+    ): Promise<SupplierResponseDto[]> {
+        const where: any = {};
+
+        // Filter by supplier status
+        if (status) {
+            where.status =
+                status === 'active'
+                    ? SupplierStatus.ACTIVE
+                    : SupplierStatus.INACTIVE;
+        }
+
+        // Filter by subscription
+        if (subscription) {
+            if (subscription === 'subscribed') {
+                where.plan = SupplierPlan.PREMIUM;
+            } else if (subscription === 'unsubscribed') {
+                where.plan = SupplierPlan.BASIC;
+            }
+        }
+
+        const suppliers = await this.prisma.supplier.findMany({
+            where,
+            include: {
+                user: true,
+            },
+        });
+
+        return Promise.all(
+            suppliers.map((supplier) =>
+                this.toSupplierResponseDTO(supplier.user, supplier),
+            ),
+        );
+    }
 
     async getSupplierDataById(id: string): Promise<SupplierResponseDto> {
         const supplier = await this.prisma.supplier.findUnique({
@@ -318,5 +392,60 @@ export class SupplierService {
             throw new NotFoundException(`Supplier with id ${id} not found`);
         }
         return this.toStorefrontResponseDTO(supplier.user, supplier);
+    }
+
+    async getSupplierPlan(userId: string): Promise<{ plan: SupplierPlan }> {
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+            select: { plan: true },
+        });
+        if (!supplier) {
+            throw new NotFoundException('Supplier not found.');
+        }
+        return { plan: supplier.plan };
+    }
+
+    async subscripePremium(userId: string) {
+        // Future Work?: Integrate with payment gateway for actual payment
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException('Supplier not found.');
+        }
+        if (supplier.plan === SupplierPlan.PREMIUM) {
+            throw new BadRequestException(
+                'You are already subscribed to the premium plan.',
+            );
+        }
+        const updated = await this.prisma.supplier.update({
+            where: { userId },
+            data: { plan: SupplierPlan.PREMIUM },
+        });
+        return {
+            message: 'Successfully subscribed to the premium plan.',
+            plan: updated.plan,
+        };
+    }
+
+    async startFreeTrial(userId: string) {
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException('Supplier not found.');
+        }
+        if (supplier.usedFreeTrail) {
+            throw new BadRequestException('Free trial has already been used.');
+        }
+        const updated = await this.prisma.supplier.update({
+            where: { userId },
+            data: { usedFreeTrail: true, plan: SupplierPlan.PREMIUM },
+        });
+        return {
+            message:
+                'Free trial started successfully. You are now on the premium plan for 30 days.',
+            plan: updated.plan,
+        };
     }
 }
