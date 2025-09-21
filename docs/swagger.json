@@ -1858,44 +1858,6 @@
         "responses": {
           "200": {
             "description": "Successfully retrieved supplier profile.",
-            "schema": {
-              "example": {
-                "user": {
-                  "id": "uuid-user-1234",
-                  "name": "John Doe",
-                  "email": "john@gmail.com",
-                  "phone": "+966500000000",
-                  "role": "SUPPLIER",
-                  "createdAt": "2025-08-15T12:00:00.000Z"
-                },
-                "supplierId": "uuid-supplier-5678",
-                "supplierName": "John Doe",
-                "supplierEmail": "john@gmail.com",
-                "businessName": "John Bakery",
-                "city": "Riyadh",
-                "storeStatus": "OPEN",
-                "storeClosedMsg": null,
-                "storeBio": "We specialize in handmade bakery items.",
-                "storeBannerFileName": "banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png",
-                "storeBannerFileUrl": "https://cdn.example.com/banners/banner123.png",
-                "deliveryFees": 15.5,
-                "avgRating": 4.5,
-                "ratingsCount": 23,
-                "usedFreeTrail": true,
-                "supplierStatus": "ACTIVE",
-                "plan": "PREMIUM",
-                "favoriteCategories": [
-                  {
-                    "id": 16,
-                    "name": "Animal Feed"
-                  },
-                  {
-                    "id": 33,
-                    "name": "Jewelry & Watches"
-                  }
-                ]
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -1944,7 +1906,18 @@
             }
           },
           "404": {
-            "description": "Supplier not found for the given user."
+            "description": "Supplier not found for the given user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier with id 9932-we432 not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1997,44 +1970,6 @@
         "responses": {
           "200": {
             "description": "Supplier profile updated successfully.",
-            "schema": {
-              "example": {
-                "user": {
-                  "id": "uuid-user-1234",
-                  "name": "John Doe",
-                  "email": "john@gmail.com",
-                  "phone": "+966500000000",
-                  "role": "SUPPLIER",
-                  "createdAt": "2025-08-15T12:00:00.000Z"
-                },
-                "supplierId": "uuid-supplier-5678",
-                "supplierName": "John Doe",
-                "supplierEmail": "john@gmail.com",
-                "businessName": "John Bakery",
-                "city": "Riyadh",
-                "storeStatus": "OPEN",
-                "storeClosedMsg": "We are closed for Eid holidays.",
-                "storeBio": "We specialize in handmade bakery items.",
-                "storeBannerFileName": "banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png",
-                "storeBannerFileUrl": "https://cdn.example.com/banners/banner123.png",
-                "deliveryFees": 20,
-                "avgRating": 4.7,
-                "ratingsCount": 30,
-                "usedFreeTrail": true,
-                "supplierStatus": "ACTIVE",
-                "plan": "PREMIUM",
-                "favoriteCategories": [
-                  {
-                    "id": 16,
-                    "name": "Animal Feed"
-                  },
-                  {
-                    "id": 33,
-                    "name": "Jewelry & Watches"
-                  }
-                ]
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -2083,7 +2018,18 @@
             }
           },
           "404": {
-            "description": "Supplier not found for the given user."
+            "description": "Supplier not found for the given user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier with id 9932-we432 not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2124,44 +2070,6 @@
         "responses": {
           "200": {
             "description": "Successfully retrieved supplier profile.",
-            "schema": {
-              "example": {
-                "user": {
-                  "id": "uuid-user-1234",
-                  "name": "John Doe",
-                  "email": "john@gmail.com",
-                  "phone": "+966500000000",
-                  "role": "SUPPLIER",
-                  "createdAt": "2025-08-15T12:00:00.000Z"
-                },
-                "supplierId": "uuid-supplier-5678",
-                "supplierName": "John Doe",
-                "supplierEmail": "john@gmail.com",
-                "businessName": "John Bakery",
-                "city": "Riyadh",
-                "storeStatus": "OPEN",
-                "storeClosedMsg": null,
-                "storeBio": "We specialize in handmade bakery items.",
-                "storeBannerFileName": "banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png",
-                "storeBannerFileUrl": "https://cdn.example.com/banners/banner123.png",
-                "deliveryFees": 15.5,
-                "avgRating": 4.5,
-                "ratingsCount": 23,
-                "usedFreeTrail": true,
-                "supplierStatus": "ACTIVE",
-                "plan": "PREMIUM",
-                "favoriteCategories": [
-                  {
-                    "id": 16,
-                    "name": "Animal Feed"
-                  },
-                  {
-                    "id": 33,
-                    "name": "Jewelry & Watches"
-                  }
-                ]
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -2210,7 +2118,18 @@
             }
           },
           "404": {
-            "description": "Supplier not found for the given user."
+            "description": "Supplier not found for the given user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier with id 9932-we432 not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2325,7 +2244,18 @@
             }
           },
           "404": {
-            "description": "Supplier not found when fetching favorite categories."
+            "description": "Supplier not found when fetching favorite categories.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found when fetching favorite categories",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2428,7 +2358,29 @@
             }
           },
           "400": {
-            "description": "Invalid category ID provided or category does not exist."
+            "description": "Invalid category ID provided or category does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Invalid category ID: abc123 (must be a number)",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Category with id 9999 does not exist",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
@@ -2470,7 +2422,18 @@
             }
           },
           "404": {
-            "description": "Supplier not found."
+            "description": "Supplier not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found.",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2575,7 +2538,18 @@
             }
           },
           "404": {
-            "description": "Supplier not found."
+            "description": "Supplier not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found.",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2646,7 +2620,18 @@
             }
           },
           "400": {
-            "description": "Supplier is already subscribed to premium."
+            "description": "Supplier is already subscribed to premium.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Supplier is already subscribed to premium.",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
@@ -2688,7 +2673,18 @@
             }
           },
           "404": {
-            "description": "Supplier not found."
+            "description": "Supplier not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found.",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2759,7 +2755,18 @@
             }
           },
           "400": {
-            "description": "Free trial has already been used."
+            "description": "Free trial has already been used.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Free trial has already been used.",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
@@ -2801,7 +2808,18 @@
             }
           },
           "404": {
-            "description": "Supplier not found."
+            "description": "Supplier not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found.",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2829,7 +2847,7 @@
     },
     "/api/suppliers/me/store-banner": {
       "post": {
-        "description": "Uploads a new banner image for the supplier store. Max size 5MB. Accepted types: png, jpg, jpeg, webp.",
+        "description": "Uploads a new store banner image for the authenticated supplier and updates their record.<br><strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br><strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         "operationId": "SupplierController_updateStoreBanner",
         "parameters": [
           {
@@ -2927,7 +2945,18 @@
             }
           },
           "404": {
-            "description": "Supplier not found."
+            "description": "Supplier not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found.",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2987,7 +3016,18 @@
             }
           },
           "400": {
-            "description": "No store banner to delete."
+            "description": "No store banner to delete.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "No store banner to delete.",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
@@ -3029,7 +3069,18 @@
             }
           },
           "404": {
-            "description": "Supplier not found."
+            "description": "Supplier not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found.",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -3091,7 +3142,18 @@
             }
           },
           "404": {
-            "description": "No store banner found for this store."
+            "description": "No store banner found for this store.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No store banner found for this store.",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Get store banner",
@@ -3181,7 +3243,18 @@
             }
           },
           "404": {
-            "description": "Supplier with the given ID not found."
+            "description": "Supplier with the given ID not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier with id 9932-we432 not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Get supplier data by ID",
@@ -3218,7 +3291,18 @@
             }
           },
           "404": {
-            "description": "Supplier with the given ID not found."
+            "description": "Supplier with the given ID not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier with id 9932-we432 not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Get supplier storefront data",
@@ -3378,12 +3462,18 @@
           },
           "categories": {
             "example": [
-              "Home & Living",
-              "Technical & Repair Services"
+              {
+                "id": 5,
+                "name": "Home & Living"
+              },
+              {
+                "id": 14,
+                "name": "Technical & Repair Services"
+              }
             ],
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "object"
             }
           },
           "isEmailVerified": {
@@ -3446,13 +3536,14 @@
             "example": "Riyadh"
           },
           "categories": {
+            "description": "List of category IDs (use IDs, not names).",
             "example": [
-              "Home & Living",
-              "Technical & Repair Services"
+              5,
+              14
             ],
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "number"
             }
           }
         }

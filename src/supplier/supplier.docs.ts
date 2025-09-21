@@ -7,6 +7,7 @@ import {
     ApiConsumes,
     ApiParam,
     ApiQuery,
+    ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { SupplierResponseDto } from './dtos/supplierResponse.dto';
 import { StoreStatus, SupplierPlan, SupplierStatus } from '@prisma/client';
@@ -25,44 +26,16 @@ export function ApiDocsGetMySupplierData() {
             status: 200,
             description: 'Successfully retrieved supplier profile.',
             type: SupplierResponseDto,
+        }),
+        ApiNotFoundResponse({
+            description: 'Supplier not found for the given user.',
             schema: {
                 example: {
-                    user: {
-                        id: 'uuid-user-1234',
-                        name: 'John Doe',
-                        email: 'john@gmail.com',
-                        phone: '+966500000000',
-                        role: 'SUPPLIER',
-                        createdAt: '2025-08-15T12:00:00.000Z',
-                    },
-                    supplierId: 'uuid-supplier-5678',
-                    supplierName: 'John Doe',
-                    supplierEmail: 'john@gmail.com',
-                    businessName: 'John Bakery',
-                    city: 'Riyadh',
-                    storeStatus: StoreStatus.OPEN,
-                    storeClosedMsg: null,
-                    storeBio: 'We specialize in handmade bakery items.',
-                    storeBannerFileName:
-                        'banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png',
-                    storeBannerFileUrl:
-                        'https://cdn.example.com/banners/banner123.png',
-                    deliveryFees: 15.5,
-                    avgRating: 4.5,
-                    ratingsCount: 23,
-                    usedFreeTrail: true,
-                    supplierStatus: SupplierStatus.ACTIVE,
-                    plan: SupplierPlan.PREMIUM,
-                    favoriteCategories: [
-                        { id: 16, name: 'Animal Feed' },
-                        { id: 33, name: 'Jewelry & Watches' },
-                    ],
+                    statusCode: 404,
+                    message: 'Supplier with id 9932-we432 not found',
+                    error: 'Not Found',
                 },
             },
-        }),
-        ApiResponse({
-            status: 404,
-            description: 'Supplier not found for the given user.',
         }),
     );
 }
@@ -79,30 +52,16 @@ export function ApiDocsGetMyStoreData() {
             status: 200,
             description: 'Successfully retrieved supplier store data.',
             type: StorefrontResponseDto,
+        }),
+        ApiNotFoundResponse({
+            description: 'Supplier not found for the given user.',
             schema: {
                 example: {
-                    supplierId: 'uuid-supplier-5678',
-                    supplierName: 'John Doe',
-                    supplierEmail: 'john@gmail.com',
-                    businessName: 'John Bakery',
-                    city: 'Riyadh',
-                    storeStatus: 'OPEN',
-                    storeClosedMsg: 'We are closed for Eid holidays.',
-                    storeBio: 'We specialize in handmade bakery items.',
-                    storeBannerFileName:
-                        'banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png',
-                    storeBannerFileUrl:
-                        'https://cdn.example.com/banners/banner123.png',
-                    deliveryFees: 15.5,
-                    avgRating: 4.5,
-                    ratingsCount: 23,
-                    supplierStatus: 'ACTIVE',
+                    statusCode: 404,
+                    message: 'Supplier with id 9932-we432 not found',
+                    error: 'Not Found',
                 },
             },
-        }),
-        ApiResponse({
-            status: 404,
-            description: 'Supplier not found for the given user.',
         }),
     );
 }
@@ -122,44 +81,16 @@ export function ApiDocsUpdateMySupplierData() {
             status: 200,
             description: 'Supplier profile updated successfully.',
             type: SupplierResponseDto,
+        }),
+        ApiNotFoundResponse({
+            description: 'Supplier not found for the given user.',
             schema: {
                 example: {
-                    user: {
-                        id: 'uuid-user-1234',
-                        name: 'John Doe',
-                        email: 'john@gmail.com',
-                        phone: '+966500000000',
-                        role: 'SUPPLIER',
-                        createdAt: '2025-08-15T12:00:00.000Z',
-                    },
-                    supplierId: 'uuid-supplier-5678',
-                    supplierName: 'John Doe',
-                    supplierEmail: 'john@gmail.com',
-                    businessName: 'John Bakery',
-                    city: 'Riyadh',
-                    storeStatus: 'OPEN',
-                    storeClosedMsg: 'We are closed for Eid holidays.',
-                    storeBio: 'We specialize in handmade bakery items.',
-                    storeBannerFileName:
-                        'banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png',
-                    storeBannerFileUrl:
-                        'https://cdn.example.com/banners/banner123.png',
-                    deliveryFees: 20,
-                    avgRating: 4.7,
-                    ratingsCount: 30,
-                    usedFreeTrail: true,
-                    supplierStatus: 'ACTIVE',
-                    plan: 'PREMIUM',
-                    favoriteCategories: [
-                        { id: 16, name: 'Animal Feed' },
-                        { id: 33, name: 'Jewelry & Watches' },
-                    ],
+                    statusCode: 404,
+                    message: 'Supplier with id 9932-we432 not found',
+                    error: 'Not Found',
                 },
             },
-        }),
-        ApiResponse({
-            status: 404,
-            description: 'Supplier not found for the given user.',
         }),
     );
 }
@@ -190,10 +121,17 @@ export function ApiDocsGetFavoriteCategories() {
                 ],
             },
         }),
-        ApiResponse({
-            status: 404,
+        ApiNotFoundResponse({
             description:
                 'Supplier not found when fetching favorite categories.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message:
+                        'Supplier not found when fetching favorite categories',
+                    error: 'Not Found',
+                },
+            },
         }),
     );
 }
@@ -254,10 +192,35 @@ export function ApiDocsToggleFavoriteCategory() {
             status: 400,
             description:
                 'Invalid category ID provided or category does not exist.',
+            schema: {
+                oneOf: [
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Invalid category ID: abc123 (must be a number)',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message: 'Category with id 9999 does not exist',
+                            error: 'Bad Request',
+                        },
+                    },
+                ],
+            },
         }),
-        ApiResponse({
-            status: 404,
+        ApiNotFoundResponse({
             description: 'Supplier not found.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Supplier not found.',
+                    error: 'Not Found',
+                },
+            },
         }),
     );
 }
@@ -285,9 +248,15 @@ export function ApiDocsGetSupplierPlan() {
                 example: { plan: SupplierPlan.PREMIUM },
             },
         }),
-        ApiResponse({
-            status: 404,
+        ApiNotFoundResponse({
             description: 'Supplier not found.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Supplier not found.',
+                    error: 'Not Found',
+                },
+            },
         }),
     );
 }
@@ -325,10 +294,23 @@ export function ApiDocsSubscribePremium() {
         ApiResponse({
             status: 400,
             description: 'Supplier is already subscribed to premium.',
+            schema: {
+                example: {
+                    statusCode: 400,
+                    message: 'Supplier is already subscribed to premium.',
+                    error: 'Bad Request',
+                },
+            },
         }),
-        ApiResponse({
-            status: 404,
+        ApiNotFoundResponse({
             description: 'Supplier not found.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Supplier not found.',
+                    error: 'Not Found',
+                },
+            },
         }),
     );
 }
@@ -368,10 +350,23 @@ export function ApiDocsStartFreeTrial() {
         ApiResponse({
             status: 400,
             description: 'Free trial has already been used.',
+            schema: {
+                example: {
+                    statusCode: 400,
+                    message: 'Free trial has already been used.',
+                    error: 'Bad Request',
+                },
+            },
         }),
-        ApiResponse({
-            status: 404,
+        ApiNotFoundResponse({
             description: 'Supplier not found.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Supplier not found.',
+                    error: 'Not Found',
+                },
+            },
         }),
     );
 }
@@ -382,7 +377,9 @@ export function ApiDocsUpdateStoreBanner() {
         ApiOperation({
             summary: 'Update store banner',
             description:
-                'Uploads a new banner image for the supplier store. Max size 5MB. Accepted types: png, jpg, jpeg, webp.',
+                'Uploads a new store banner image for the authenticated supplier and updates their record.<br>' +
+                '<strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>' +
+                "<strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         }),
         ApiConsumes('multipart/form-data'),
         ApiBody({
@@ -419,9 +416,15 @@ export function ApiDocsUpdateStoreBanner() {
                 },
             },
         }),
-        ApiResponse({
-            status: 404,
+        ApiNotFoundResponse({
             description: 'Supplier not found.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Supplier not found.',
+                    error: 'Not Found',
+                },
+            },
         }),
     );
 }
@@ -451,10 +454,23 @@ export function ApiDocsDeleteStoreBanner() {
         ApiResponse({
             status: 400,
             description: 'No store banner to delete.',
+            schema: {
+                example: {
+                    statusCode: 400,
+                    message: 'No store banner to delete.',
+                    error: 'Bad Request',
+                },
+            },
         }),
-        ApiResponse({
-            status: 404,
+        ApiNotFoundResponse({
             description: 'Supplier not found.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Supplier not found.',
+                    error: 'Not Found',
+                },
+            },
         }),
     );
 }
@@ -485,9 +501,15 @@ export function ApiDocsGetStoreBanner() {
                 },
             },
         }),
-        ApiResponse({
-            status: 404,
+        ApiNotFoundResponse({
             description: 'No store banner found for this store.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'No store banner found for this store.',
+                    error: 'Not Found',
+                },
+            },
         }),
     );
 }
@@ -539,9 +561,15 @@ export function ApiDocsGetSupplierDataById() {
             description: 'Supplier data retrieved successfully.',
             type: SupplierResponseDto,
         }),
-        ApiResponse({
-            status: 404,
+        ApiNotFoundResponse({
             description: 'Supplier with the given ID not found.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Supplier with id 9932-we432 not found',
+                    error: 'Not Found',
+                },
+            },
         }),
     );
 }
@@ -563,9 +591,15 @@ export function ApiDocsGetSupplierStoreDataById() {
             description: 'Storefront data retrieved successfully.',
             type: StorefrontResponseDto,
         }),
-        ApiResponse({
-            status: 404,
+        ApiNotFoundResponse({
             description: 'Supplier with the given ID not found.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Supplier with id 9932-we432 not found',
+                    error: 'Not Found',
+                },
+            },
         }),
     );
 }
