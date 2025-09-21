@@ -10,7 +10,6 @@ import {
     UseGuards,
     UseInterceptors,
     UploadedFile,
-    UsePipes,
     BadRequestException,
     Logger,
     Query,
@@ -104,6 +103,7 @@ export class UserController {
                     new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
                     new FileTypeValidator({
                         fileType: /^image\/(png|jpe?g|webp)$/i,
+                        skipMagicNumbersValidation: true,
                     }),
                 ],
             }),

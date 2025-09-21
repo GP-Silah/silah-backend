@@ -19,6 +19,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/enums/userRole.enum';
 import { Request } from 'express';
 import { CreateCardDto } from './dtos/createCard.dto';
+import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
 
 @ApiTags('Buyers')
 @Controller('buyers')
@@ -26,6 +27,7 @@ export class BuyerController {
     constructor(private readonly buyerService: BuyerService) {}
 
     @ApiJwtAuthGuard()
+    @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me')
@@ -34,6 +36,7 @@ export class BuyerController {
     }
 
     @ApiJwtAuthGuard()
+    @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me/card')
@@ -53,6 +56,7 @@ export class BuyerController {
     }
 
     @ApiJwtAuthGuard()
+    @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('me/card')
@@ -67,6 +71,7 @@ export class BuyerController {
     }
 
     @ApiJwtAuthGuard()
+    @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('me/card')
