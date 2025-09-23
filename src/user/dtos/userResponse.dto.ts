@@ -42,10 +42,13 @@ export class UserResponseDTO {
     pfpUrl: string;
 
     @ApiProperty({
-        example: ['Home & Living', 'Technical & Repair Services'],
-        type: [String],
+        type: [Object],
+        example: [
+            { id: 5, name: 'Home & Living' },
+            { id: 14, name: 'Technical & Repair Services' },
+        ],
     })
-    categories: string[];
+    categories: { id: number; name: string }[];
 
     @ApiProperty({ example: true })
     isEmailVerified: boolean;
