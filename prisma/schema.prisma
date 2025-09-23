@@ -103,6 +103,7 @@ model Category {
   parentCategoryId Int?
   parentCategory   Category?  @relation("CategoryToSubcategories", fields: [parentCategoryId], references: [id], onDelete: Cascade)
   subcategories    Category[] @relation("CategoryToSubcategories")
+  usedFor          ItemType // products or services
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 

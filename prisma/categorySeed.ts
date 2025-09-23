@@ -1,8 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, ItemType } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-    const parentCategories = [
+    // main categories grouped by type
+    const productCategories = [
         'Agricultural & Pet Supplies',
         'Beauty & Personal Care',
         'Fashion & Accessories',
@@ -11,6 +12,9 @@ async function main() {
         'Hardware & Tools',
         'Packaging & Raw Materials',
         'Energy & Sustainability',
+    ];
+
+    const serviceCategories = [
         'Business & Marketing Services',
         'Software & IT Solutions',
         'Shipping & Logistics',
@@ -20,16 +24,23 @@ async function main() {
         'Legal & Compliance Services',
     ];
 
+    // parent seeding
     const parentMap = new Map<string, number>();
-    for (const name of parentCategories) {
+    for (const name of [...productCategories, ...serviceCategories]) {
+        const usedFor = productCategories.includes(name)
+            ? ItemType.PRODUCT
+            : ItemType.SERVICE;
+
         const category = await prisma.category.upsert({
             where: { name },
-            update: {},
-            create: { name },
+            update: { usedFor }, // make sure existing ones are updated too
+            create: { name, usedFor },
         });
+
         parentMap.set(name, category.id);
     }
 
+    // child categories
     const childCategories = [
         { name: 'Animal Feed', parent: 'Agricultural & Pet Supplies' },
         { name: 'Fertilizers', parent: 'Agricultural & Pet Supplies' },
@@ -121,12 +132,19 @@ async function main() {
         if (!parentId)
             throw new Error(`Parent category not found: ${child.parent}`);
 
+        const parent = await prisma.category.findUnique({
+            where: { id: parentId },
+        });
+        if (!parent)
+            throw new Error(`Parent category missing in DB: ${child.parent}`);
+
         await prisma.category.upsert({
             where: { name: child.name },
-            update: {},
+            update: { usedFor: parent.usedFor },
             create: {
                 name: child.name,
                 parentCategoryId: parentId,
+                usedFor: parent.usedFor, // inherit from parent
             },
         });
     }
