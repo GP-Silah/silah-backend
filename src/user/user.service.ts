@@ -223,40 +223,41 @@ export class UserService {
     }
 
     /**
-     * Validates a list of category names by checking if they exist in the database.
-     * Converts valid category names into their corresponding IDs.
+     * Validates a list of category IDs by checking if they exist in the database.
      *
      * @private
-     * @param {string[]} payload - Array of category names to validate.
-     * @throws {BadRequestException} If any of the category names do not exist in the database.
-     * @returns {Promise<number[]>} Array of corresponding category IDs.
+     * @param {number[]} payload - Array of category IDs to validate.
+     * @throws {BadRequestException} If any of the category IDs do not exist in the database.
+     * @returns {Promise<number[]>} Array of valid category IDs.
      */
-    private async validateUserCategories(payload: string[]): Promise<number[]> {
-        // Validate that the recieved categories exists in DB, and convert them to IDs to store them later
+    private async validateUserCategories(payload: number[]): Promise<number[]> {
+        // Fetch all categories matching given IDs
         const categories = await this.prisma.category.findMany({
-            where: { name: { in: payload } },
+            where: { id: { in: payload } },
         });
+
         if (categories.length !== payload.length) {
-            const foundNames = categories.map((c) => c.name);
-            const missing = payload.filter(
-                (name) => !foundNames.includes(name),
-            );
+            const foundIds = categories.map((c) => c.id);
+            const missing = payload.filter((id) => !foundIds.includes(id));
             throw new BadRequestException(
                 `These categories are invalid: ${missing.join(', ')}`,
             );
         }
+
         return categories.map((c) => c.id);
     }
 
     /**
-     * Retrieves all category names associated with a given user.
+     * Retrieves all categories associated with a given user.
      *
      * @private
      * @param {string} userId - The ID of the user whose categories are being fetched.
      * @throws {NotFoundException} If the user is not found in the database.
-     * @returns {Promise<string[]>} Array of category names linked to the user.
+     * @returns {Promise<{id: number, name: string}[]>} Array of categories (ID + name) linked to the user.
      */
-    private async getUserCategories(userId: string): Promise<string[]> {
+    private async getUserCategories(
+        userId: string,
+    ): Promise<{ id: number; name: string }[]> {
         const userWithCategories = await this.prisma.user.findUnique({
             where: { id: userId },
             include: { categories: { include: { category: true } } },
@@ -268,7 +269,10 @@ export class UserService {
             );
         }
 
-        return userWithCategories.categories.map((uc) => uc.category.name);
+        return userWithCategories.categories.map((uc) => ({
+            id: uc.category.id,
+            name: uc.category.name,
+        }));
     }
 
     /**

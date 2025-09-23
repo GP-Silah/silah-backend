@@ -1,10 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
     IsArray,
     IsEmail,
+    IsInt,
     IsOptional,
     IsString,
     MaxLength,
+    Min,
     MinLength,
 } from 'class-validator';
 
@@ -43,11 +46,15 @@ export class UpdateUserDto {
     city?: string;
 
     @ApiPropertyOptional({
-        example: ['Home & Living', 'Technical & Repair Services'],
-        type: [String],
+        description: 'List of category IDs (use IDs, not names).',
+        type: Number,
+        isArray: true,
+        example: [5, 14],
     })
-    @IsArray()
     @IsOptional()
-    @IsString({ each: true })
-    categories?: string[];
+    @IsArray()
+    @Type(() => Number) // transforms "['5','14']" => [5,14] when ValidationPipe.transform = true
+    @IsInt({ each: true }) // ensure each item is an integer
+    @Min(1, { each: true }) // ensure positive IDs
+    categories?: number[];
 }
