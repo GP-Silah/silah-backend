@@ -3884,14 +3884,20 @@
       "CreateCardDto": {
         "type": "object",
         "properties": {
-          "token": {
+          "tokenId": {
             "type": "string",
-            "description": "Tap token received from the frontend after card tokenization process (using Tap's Card SDK)",
+            "description": "Tap token id received from the frontend after card tokenization process (using Tap's Card SDK)",
             "example": "tok_TS57A39251831Q2B15Ro8l180"
+          },
+          "cardId": {
+            "type": "string",
+            "description": "Tap card id received from the frontend after card tokenization process (using Tap's Card SDK)",
+            "example": "card_TS50A42252049msSJ23MV8k170"
           }
         },
         "required": [
-          "token"
+          "tokenId",
+          "cardId"
         ]
       },
       "SupplierResponseDto": {

@@ -113,11 +113,23 @@ export class BuyerService {
             });
         }
 
-        console.log('Creating card in Tap with token:', createCardDto.token);
+        console.log('Creating card in Tap with token:', createCardDto.tokenId);
+        // Create a minimal charge to save the card
+        const charge = await this.tapPaymentsService.createCharge(
+            createCardDto.tokenId,
+            {
+                first_name: user.name,
+                email: user.email,
+            },
+        );
+        console.log('Charge created:', charge.id);
+        console.log(charge);
+
+        console.log('Creating card in Tap with card:', createCardDto.cardId);
         // Fetch full card info from Tap using token
         const cardInfo = await this.tapPaymentsService.getCard(
             user.tapCustomerId,
-            createCardDto.token,
+            createCardDto.cardId,
         );
 
         // Save non-sensitive info in DB
