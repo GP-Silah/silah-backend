@@ -1491,6 +1491,7 @@
     },
     "/api/buyers/me": {
       "get": {
+        "description": "Returns the currently authenticated buyer's user details and saved card information (if available).",
         "operationId": "BuyerController_getCurrentBuyerData",
         "parameters": [
           {
@@ -1504,6 +1505,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Current buyer data retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuyerResponseDto"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -1542,9 +1553,26 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Buyer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
+          {
+            "bearer": []
+          },
           {
             "cookie": []
           },
@@ -1558,6 +1586,7 @@
             "token": []
           }
         ],
+        "summary": "Get current buyer data",
         "tags": [
           "Buyers"
         ]
@@ -1565,6 +1594,7 @@
     },
     "/api/buyers/me/card": {
       "get": {
+        "description": "Returns the saved card of the currently authenticated buyer. If the buyer has no card, returns `{ message: 'No card found', card: null }`.",
         "operationId": "BuyerController_getCurrentBuyerCard",
         "parameters": [
           {
@@ -1578,6 +1608,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Buyer card retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardDetailsDto"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -1616,9 +1656,25 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "No card found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "No card found",
+                    "card": null
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
+          {
+            "bearer": []
+          },
           {
             "cookie": []
           },
@@ -1632,11 +1688,13 @@
             "token": []
           }
         ],
+        "summary": "Get current buyer card",
         "tags": [
           "Buyers"
         ]
       },
       "put": {
+        "description": "Creates or replaces the authenticated buyer's card using Tap tokenization.<br>If a card already exists, it will be deleted from Tap and replaced with the new one.",
         "operationId": "BuyerController_saveOrReplaceCurrentBuyerCard",
         "parameters": [
           {
@@ -1651,6 +1709,7 @@
         ],
         "requestBody": {
           "required": true,
+          "description": "Card details provided from Tap tokenization",
           "content": {
             "application/json": {
               "schema": {
@@ -1660,6 +1719,41 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "Card saved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Card saved successfully",
+                    "card": {
+                      "id": "f1a2b3c4-d5e6-7890-ab12-34567890cdef",
+                      "tapCardId": "card_abc123xyz",
+                      "cardHolderName": "Norah Alqahtani",
+                      "last4": "4242",
+                      "brand": "Visa",
+                      "expMonth": 12,
+                      "expYear": 2028
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Invalid Tap token",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -1698,9 +1792,26 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
+          {
+            "bearer": []
+          },
           {
             "cookie": []
           },
@@ -1714,11 +1825,13 @@
             "token": []
           }
         ],
+        "summary": "Save or replace current buyer card",
         "tags": [
           "Buyers"
         ]
       },
       "delete": {
+        "description": "Deletes the authenticated buyer's saved card from Tap and the database.",
         "operationId": "BuyerController_deleteCurrentBuyerCard",
         "parameters": [
           {
@@ -1732,6 +1845,18 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Card deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Card deleted successfully"
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -1770,9 +1895,26 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "No card found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No card found for this buyer",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
+          {
+            "bearer": []
+          },
           {
             "cookie": []
           },
@@ -1786,6 +1928,7 @@
             "token": []
           }
         ],
+        "summary": "Delete current buyer card",
         "tags": [
           "Buyers"
         ]
@@ -3880,6 +4023,75 @@
             }
           }
         }
+      },
+      "CardDetailsDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Internal database ID of the card",
+            "example": "f1a2b3c4-d5e6-7890-ab12-34567890cdef"
+          },
+          "tapCardId": {
+            "type": "string",
+            "description": "Tap payment gateway card ID",
+            "example": "card_abc123xyz"
+          },
+          "cardHolderName": {
+            "type": "string",
+            "description": "Name of the card holder",
+            "example": "Norah Alqahtani"
+          },
+          "last4": {
+            "type": "string",
+            "description": "Last 4 digits of the card",
+            "example": "4242"
+          },
+          "brand": {
+            "type": "string",
+            "description": "Brand of the card (e.g., Visa, Mastercard)",
+            "example": "Visa"
+          },
+          "expMonth": {
+            "type": "number",
+            "description": "Expiration month of the card (1-12)",
+            "example": 12
+          },
+          "expYear": {
+            "type": "number",
+            "description": "Expiration year of the card (4-digit)",
+            "example": 2028
+          }
+        },
+        "required": [
+          "id",
+          "tapCardId",
+          "cardHolderName",
+          "last4",
+          "brand",
+          "expMonth",
+          "expYear"
+        ]
+      },
+      "BuyerResponseDto": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserResponseDTO"
+          },
+          "card": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CardDetailsDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "user",
+          "card"
+        ]
       },
       "CreateCardDto": {
         "type": "object",
