@@ -1491,6 +1491,7 @@
     },
     "/api/buyers/me": {
       "get": {
+        "description": "Returns the currently authenticated buyer's user details and saved card information (if available).",
         "operationId": "BuyerController_getCurrentBuyerData",
         "parameters": [
           {
@@ -1504,6 +1505,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Current buyer data retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuyerResponseDto"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -1542,9 +1553,26 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Buyer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
+          {
+            "bearer": []
+          },
           {
             "cookie": []
           },
@@ -1558,6 +1586,7 @@
             "token": []
           }
         ],
+        "summary": "Get current buyer data",
         "tags": [
           "Buyers"
         ]
@@ -1565,6 +1594,7 @@
     },
     "/api/buyers/me/card": {
       "get": {
+        "description": "Returns the saved card of the currently authenticated buyer. If the buyer has no card, returns `{ message: 'No card found', card: null }`.",
         "operationId": "BuyerController_getCurrentBuyerCard",
         "parameters": [
           {
@@ -1578,6 +1608,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Buyer card retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardDetailsDto"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -1616,9 +1656,25 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "No card found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "No card found",
+                    "card": null
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
+          {
+            "bearer": []
+          },
           {
             "cookie": []
           },
@@ -1632,11 +1688,13 @@
             "token": []
           }
         ],
+        "summary": "Get current buyer card",
         "tags": [
           "Buyers"
         ]
       },
       "put": {
+        "description": "Creates or replaces the authenticated buyer's card using Tap tokenization.<br>If a card already exists, it will be deleted from Tap and replaced with the new one.",
         "operationId": "BuyerController_saveOrReplaceCurrentBuyerCard",
         "parameters": [
           {
@@ -1651,6 +1709,7 @@
         ],
         "requestBody": {
           "required": true,
+          "description": "Card details provided from Tap tokenization",
           "content": {
             "application/json": {
               "schema": {
@@ -1660,6 +1719,41 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "Card saved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Card saved successfully",
+                    "card": {
+                      "id": "f1a2b3c4-d5e6-7890-ab12-34567890cdef",
+                      "tapCardId": "card_abc123xyz",
+                      "cardHolderName": "Norah Alqahtani",
+                      "last4": "4242",
+                      "brand": "Visa",
+                      "expMonth": 12,
+                      "expYear": 2028
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Invalid Tap token",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -1698,9 +1792,26 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
+          {
+            "bearer": []
+          },
           {
             "cookie": []
           },
@@ -1714,11 +1825,13 @@
             "token": []
           }
         ],
+        "summary": "Save or replace current buyer card",
         "tags": [
           "Buyers"
         ]
       },
       "delete": {
+        "description": "Deletes the authenticated buyer's saved card from Tap and the database.",
         "operationId": "BuyerController_deleteCurrentBuyerCard",
         "parameters": [
           {
@@ -1732,6 +1845,18 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Card deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Card deleted successfully"
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -1770,9 +1895,26 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "No card found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No card found for this buyer",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
+          {
+            "bearer": []
+          },
           {
             "cookie": []
           },
@@ -1786,6 +1928,7 @@
             "token": []
           }
         ],
+        "summary": "Delete current buyer card",
         "tags": [
           "Buyers"
         ]
@@ -3310,6 +3453,339 @@
           "Suppliers"
         ]
       }
+    },
+    "/api/categories": {
+      "get": {
+        "description": "Returns all categories in the system, including nested subcategories. Optionally, filter by `usedFor` (products or services).",
+        "operationId": "CategoryController_getAllCategories",
+        "parameters": [
+          {
+            "name": "usedFor",
+            "required": false,
+            "in": "query",
+            "description": "Filter categories by type",
+            "schema": {
+              "example": "products",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": 1,
+                      "name": "Agricultural & Pet Supplies",
+                      "usedFor": "PRODUCT",
+                      "subcategories": [
+                        {
+                          "id": 2,
+                          "name": "Animal Feed",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        },
+                        {
+                          "id": 3,
+                          "name": "Fertilizers",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        },
+                        {
+                          "id": 4,
+                          "name": "Pet Accessories & Toys",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        },
+                        {
+                          "id": 5,
+                          "name": "Pet Food & Treats",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": 20,
+                      "name": "Software & IT Solutions",
+                      "usedFor": "SERVICE",
+                      "subcategories": [
+                        {
+                          "id": 21,
+                          "name": "Web & App Development",
+                          "usedFor": "SERVICE",
+                          "parentCategory": {
+                            "id": 20,
+                            "name": "Software & IT Solutions"
+                          }
+                        },
+                        {
+                          "id": 22,
+                          "name": "IT & Cloud Services",
+                          "usedFor": "SERVICE",
+                          "parentCategory": {
+                            "id": 20,
+                            "name": "Software & IT Solutions"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all categories",
+        "tags": [
+          "Categories"
+        ]
+      }
+    },
+    "/api/categories/main": {
+      "get": {
+        "description": "Returns only the top-level categories (no parent) in the system, optionally filtered by `usedFor`.",
+        "operationId": "CategoryController_getMainCategories",
+        "parameters": [
+          {
+            "name": "usedFor",
+            "required": false,
+            "in": "query",
+            "description": "Filter categories by type",
+            "schema": {
+              "example": "services",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of top-level categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": 1,
+                      "name": "Agricultural & Pet Supplies",
+                      "usedFor": "PRODUCT",
+                      "subcategories": [
+                        {
+                          "id": 2,
+                          "name": "Animal Feed",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        },
+                        {
+                          "id": 3,
+                          "name": "Fertilizers",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        },
+                        {
+                          "id": 4,
+                          "name": "Pet Accessories & Toys",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        },
+                        {
+                          "id": 5,
+                          "name": "Pet Food & Treats",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get main (top-level) categories",
+        "tags": [
+          "Categories"
+        ]
+      }
+    },
+    "/api/categories/sub": {
+      "get": {
+        "description": "Returns only subcategories (categories that have a parent), optionally filtered by `usedFor`.",
+        "operationId": "CategoryController_getSubCategories",
+        "parameters": [
+          {
+            "name": "usedFor",
+            "required": false,
+            "in": "query",
+            "description": "Filter subcategories by type",
+            "schema": {
+              "example": "products",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of subcategories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": 2,
+                      "name": "Animal Feed",
+                      "usedFor": "PRODUCT",
+                      "parentCategory": {
+                        "id": 1,
+                        "name": "Agricultural & Pet Supplies"
+                      }
+                    },
+                    {
+                      "id": 3,
+                      "name": "Fertilizers",
+                      "usedFor": "PRODUCT",
+                      "parentCategory": {
+                        "id": 1,
+                        "name": "Agricultural & Pet Supplies"
+                      }
+                    },
+                    {
+                      "id": 21,
+                      "name": "Web & App Development",
+                      "usedFor": "SERVICE",
+                      "parentCategory": {
+                        "id": 20,
+                        "name": "Software & IT Solutions"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get subcategories",
+        "tags": [
+          "Categories"
+        ]
+      }
+    },
+    "/api/categories/{id}": {
+      "get": {
+        "description": "Returns a single category by its ID, including its parent category and all nested subcategories.",
+        "operationId": "CategoryController_getCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "description": "The ID of the category to fetch",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": 1,
+                    "name": "Agricultural & Pet Supplies",
+                    "usedFor": "PRODUCT",
+                    "subcategories": [
+                      {
+                        "id": 2,
+                        "name": "Animal Feed",
+                        "usedFor": "PRODUCT",
+                        "parentCategory": {
+                          "id": 1,
+                          "name": "Agricultural & Pet Supplies"
+                        }
+                      },
+                      {
+                        "id": 3,
+                        "name": "Fertilizers",
+                        "usedFor": "PRODUCT",
+                        "parentCategory": {
+                          "id": 1,
+                          "name": "Agricultural & Pet Supplies"
+                        }
+                      },
+                      {
+                        "id": 4,
+                        "name": "Pet Accessories & Toys",
+                        "usedFor": "PRODUCT",
+                        "parentCategory": {
+                          "id": 1,
+                          "name": "Agricultural & Pet Supplies"
+                        }
+                      },
+                      {
+                        "id": 5,
+                        "name": "Pet Food & Treats",
+                        "usedFor": "PRODUCT",
+                        "parentCategory": {
+                          "id": 1,
+                          "name": "Agricultural & Pet Supplies"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Category not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get category by ID",
+        "tags": [
+          "Categories"
+        ]
+      }
     }
   },
   "info": {
@@ -3548,17 +4024,92 @@
           }
         }
       },
-      "CreateCardDto": {
+      "CardDetailsDto": {
         "type": "object",
         "properties": {
-          "token": {
+          "id": {
             "type": "string",
-            "description": "Tap token received from the frontend after card tokenization process (using Tap's Card SDK)",
-            "example": "tok_TS57A39251831Q2B15Ro8l180"
+            "description": "Internal database ID of the card",
+            "example": "f1a2b3c4-d5e6-7890-ab12-34567890cdef"
+          },
+          "tapCardId": {
+            "type": "string",
+            "description": "Tap payment gateway card ID",
+            "example": "card_abc123xyz"
+          },
+          "cardHolderName": {
+            "type": "string",
+            "description": "Name of the card holder",
+            "example": "Norah Alqahtani"
+          },
+          "last4": {
+            "type": "string",
+            "description": "Last 4 digits of the card",
+            "example": "4242"
+          },
+          "brand": {
+            "type": "string",
+            "description": "Brand of the card (e.g., Visa, Mastercard)",
+            "example": "Visa"
+          },
+          "expMonth": {
+            "type": "number",
+            "description": "Expiration month of the card (1-12)",
+            "example": 12
+          },
+          "expYear": {
+            "type": "number",
+            "description": "Expiration year of the card (4-digit)",
+            "example": 2028
           }
         },
         "required": [
-          "token"
+          "id",
+          "tapCardId",
+          "cardHolderName",
+          "last4",
+          "brand",
+          "expMonth",
+          "expYear"
+        ]
+      },
+      "BuyerResponseDto": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserResponseDTO"
+          },
+          "card": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CardDetailsDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "user",
+          "card"
+        ]
+      },
+      "CreateCardDto": {
+        "type": "object",
+        "properties": {
+          "tokenId": {
+            "type": "string",
+            "description": "Tap token id received from the frontend after card tokenization process (using Tap's Card SDK)",
+            "example": "tok_TS57A39251831Q2B15Ro8l180"
+          },
+          "cardId": {
+            "type": "string",
+            "description": "Tap card id received from the frontend after card tokenization process (using Tap's Card SDK)",
+            "example": "card_TS50A42252049msSJ23MV8k170"
+          }
+        },
+        "required": [
+          "tokenId",
+          "cardId"
         ]
       },
       "SupplierResponseDto": {
