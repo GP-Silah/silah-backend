@@ -58,6 +58,7 @@ model Supplier {
 
   categories    SupplierFavoriteCategory[]
   subscriptions SupplierSubscription[]
+  products Product[]
 }
 
 // ============ 🛂 SUBSCRIPTIONS ==============
@@ -109,6 +110,7 @@ model Category {
 
   users     UserCategory[]
   suppliers SupplierFavoriteCategory[]
+  products Product[]
 }
 
 // ===========  🚥 USER_CATEGORY =============
@@ -132,6 +134,34 @@ model SupplierFavoriteCategory {
   createdAt  DateTime @default(now())
 
   @@id([supplierId, categoryId]) // composite PK ensures uniqueness
+}
+
+// ============ 🪧 PRODUCT ===============
+model Product {
+id String @id @default(uuid())
+supplierId String 
+supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+name String
+description String
+price Float
+stock Int @default(0)
+categoryId Int 
+category Category @relation(fields: [categoryId], references: [id])
+imagesFilesNames String[] 
+caseQuantity Int @default(1)
+minOrderQuantity Int @default(1)
+maxOrderQuantity Int?  // optional (nullable) field
+allowGroupPurchase Boolean @default(false)
+minGroupOrderQuantity Int? @default(5)
+groupPurchasePrice Float?
+groupPurchaseDuration GroupPurchaseDuration?
+isPublished Boolean @default(false)
+wishlistCount Int @default(0)
+avgRating Float @default(0.0)
+ratingsCount Int @default(0)
+isDeleted Boolean @default(false)
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
 }
 
 // ============  ⚔️ ENUMS ================
@@ -166,4 +196,10 @@ enum SupplierStatus {
 enum StoreStatus {
   OPEN
   CLOSED
+}
+
+enum GroupPurchaseDuration {
+  THREE_DAYS
+  FIVE_DAYS
+  SEVEN_DAYS
 }
