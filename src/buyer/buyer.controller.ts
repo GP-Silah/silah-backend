@@ -20,6 +20,12 @@ import { UserRole } from 'src/enums/userRole.enum';
 import { Request } from 'express';
 import { CreateCardDto } from './dtos/createCard.dto';
 import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
+import {
+    ApiDocsDeleteCurrentBuyerCard,
+    ApiDocsGetCurrentBuyerCard,
+    ApiDocsGetCurrentBuyerData,
+    ApiDocsSaveOrReplaceCurrentBuyerCard,
+} from './buyer.docs';
 
 @ApiTags('Buyers')
 @Controller('buyers')
@@ -31,6 +37,7 @@ export class BuyerController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me')
+    @ApiDocsGetCurrentBuyerData()
     async getCurrentBuyerData(@Req() req: Request): Promise<BuyerResponseDto> {
         return this.buyerService.getCurrentBuyerData(req.tokenData!.email);
     }
@@ -40,6 +47,7 @@ export class BuyerController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me/card')
+    @ApiDocsGetCurrentBuyerCard()
     async getCurrentBuyerCard(
         @Req() req: Request,
     ): Promise<CardDetailsDto | { message: string; card: null }> {
@@ -60,6 +68,7 @@ export class BuyerController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('me/card')
+    @ApiDocsSaveOrReplaceCurrentBuyerCard()
     async saveOrReplaceCurrentBuyerCard(
         @Req() req: any,
         @Body() body: CreateCardDto,
@@ -75,6 +84,7 @@ export class BuyerController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('me/card')
+    @ApiDocsDeleteCurrentBuyerCard()
     async deleteCurrentBuyerCard(@Req() req: Request) {
         return this.buyerService.deleteCurrentBuyerCard(req.tokenData!.sub);
     }
