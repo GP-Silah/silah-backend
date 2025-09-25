@@ -1,15 +1,23 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { GroupPurchaseDeadline } from '@prisma/client';
+import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';
 
 export class ProductResponseDto {
     @ApiProperty({ description: 'Product ID', example: 'uuid-1234' })
     id: string;
 
-    @ApiProperty({
+    @ApiPropertyOptional({
         description: 'Supplier ID (null = supplier deleated his account)',
         example: 'uuid-5678',
     })
-    supplierId?: string;
+    supplierId?: string | null;
+
+    @ApiPropertyOptional({
+        description:
+            'Supplier details (null if the supplier deleted his account)',
+        type: SupplierResponseDto,
+    })
+    supplier?: SupplierResponseDto | null;
 
     @ApiProperty({
         description: 'Product name',
@@ -105,4 +113,17 @@ export class ProductResponseDto {
 
     @ApiProperty({ description: 'Last update timestamp' })
     updatedAt: Date;
+
+    @ApiProperty({
+        description: 'Indicates if the product is soft-deleted',
+        example: false,
+    })
+    isDeleted: boolean;
+
+    @ApiProperty({
+        description:
+            'Timestamp when the product was soft-deleted (null if not deleted)',
+        nullable: true,
+    })
+    deletedAt?: Date | null;
 }
