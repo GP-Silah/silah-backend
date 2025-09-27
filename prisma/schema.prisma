@@ -59,6 +59,7 @@ model Supplier {
   categories    SupplierFavoriteCategory[]
   subscriptions SupplierSubscription[]
   products      Product[]
+  services      Service[]
 }
 
 // ============ 🛂 SUBSCRIPTIONS ==============
@@ -111,6 +112,7 @@ model Category {
   users     UserCategory[]
   suppliers SupplierFavoriteCategory[]
   products  Product[]
+  services  Service[]
 }
 
 // ===========  🚥 USER_CATEGORY =============
@@ -165,6 +167,29 @@ model Product {
   updatedAt             DateTime               @updatedAt
 }
 
+// ============ ✋ SERVICES ===============
+model Service {
+  id                  String              @id @default(uuid())
+  supplierId          String?
+  supplier            Supplier?           @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  name                String              @db.VarChar(60)
+  description         String              @db.VarChar(1000)
+  price               Float
+  isPriceNegotiable   Boolean             @default(false)
+  categoryId          Int
+  category            Category            @relation(fields: [categoryId], references: [id])
+  imagesFilesNames    String[]
+  serviceAvailability ServiceAvailability
+  isPublished         Boolean             @default(false)
+  wishlistCount       Int                 @default(0)
+  avgRating           Float               @default(0.0)
+  ratingsCount        Int                 @default(0)
+  isDeleted           Boolean             @default(false)
+  deletedAt           DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+}
+
 // ============  ⚔️ ENUMS ================
 
 enum UserRole {
@@ -203,4 +228,12 @@ enum GroupPurchaseDeadline {
   THREE_DAYS
   FIVE_DAYS
   SEVEN_DAYS
+}
+
+enum ServiceAvailability {
+  TWENTY_FOUR_SEVEN
+  EVERYDAY 
+  WEEKDAYS
+  WEEKENDS
+  APPOINTMENT
 }
