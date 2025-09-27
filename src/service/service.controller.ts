@@ -1,9 +1,11 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete,
     FileTypeValidator,
     Get,
+    Headers,
     MaxFileSizeValidator,
     Param,
     ParseFilePipe,
@@ -11,14 +13,12 @@ import {
     Post,
     Query,
     Req,
+    UploadedFile,
+    UploadedFiles,
     UseGuards,
     UseInterceptors,
-    Headers,
-    UploadedFiles,
-    BadRequestException,
-    UploadedFile,
 } from '@nestjs/common';
-import { ProductService } from './product.service';
+import { ServiceService } from './service.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.docs';
 import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
@@ -28,56 +28,56 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
-import { CreateProductDto } from './dtos/createProduct.dto';
+import { CreateServiceDto } from './dtos/createService.dto';
+import { UpdateServiceDto } from './dtos/updateService.dto';
 import {
-    ApiDocsCreateProduct,
-    ApiDocsDeleteProduct,
-    ApiDocsDeleteProductImage,
-    ApiDocsDuplicateProduct,
-    ApiDocsFakeGetCreateProductDto,
-    ApiDocsGetAllProducts,
-    ApiDocsGetAllSupplierProducts,
-    ApiDocsGetProductById,
-    ApiDocsUpdateProduct,
-    ApiDocsUpdateProductImage,
-} from './product.docs';
-import { UpdateProductDto } from './dtos/updateProduct.dto';
+    ApiDocsCreateService,
+    ApiDocsDeleteService,
+    ApiDocsDeleteServiceImage,
+    ApiDocsDuplicateService,
+    ApiDocsFakeGetCreateServiceDto,
+    ApiDocsGetAllServices,
+    ApiDocsGetAllSupplierServices,
+    ApiDocsGetServiceById,
+    ApiDocsUpdateService,
+    ApiDocsUpdateServiceImage,
+} from './service.docs';
 
-@ApiTags('Products')
-@Controller('products')
-export class ProductController {
-    constructor(private readonly productService: ProductService) {}
+@ApiTags('Services')
+@Controller('services')
+export class ServiceController {
+    constructor(private readonly serviceService: ServiceService) {}
 
     @Get()
-    @ApiDocsGetAllProducts()
-    async getAllProducts(
+    @ApiDocsGetAllServices()
+    async getAllServices(
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
         const finalLang = lang || langHeader || 'en';
-        return this.productService.getAllProducts(finalLang);
+        return this.serviceService.getAllServices(finalLang);
     }
 
-    @Get(':productId')
-    @ApiDocsGetProductById()
-    async getProductById(
-        @Param('productId') productId: string,
+    @Get(':serviceId')
+    @ApiDocsGetServiceById()
+    async getServiceById(
+        @Param('serviceId') serviceId: string,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
         const finalLang = lang || langHeader || 'en';
-        return this.productService.getProductById(productId, finalLang);
+        return this.serviceService.getServiceById(serviceId, finalLang);
     }
 
     @Get('supplier/:supplierId')
-    @ApiDocsGetAllSupplierProducts()
-    async getAllSupplierProducts(
+    @ApiDocsGetAllSupplierServices()
+    async getAllSupplierServices(
         @Param('souplierId') supplierId: string,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
         const finalLang = lang || langHeader || 'en';
-        return this.productService.getAllSupplierProducts(
+        return this.serviceService.getAllSupplierServices(
             supplierId,
             finalLang,
         );
@@ -89,8 +89,8 @@ export class ProductController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post()
     @UseInterceptors(FilesInterceptor('files', 3)) // note: "files" for multiple files
-    @ApiDocsCreateProduct()
-    async createProduct(
+    @ApiDocsCreateService()
+    async createService(
         @UploadedFiles(
             new ParseFilePipe({
                 validators: [
@@ -104,20 +104,20 @@ export class ProductController {
         )
         files: Express.Multer.File[],
         @Req() req: Request,
-        // @Body('dto', ParseJsonPipe) dto: CreateProductDto,
+        // @Body('dto', ParseJsonPipe) dto: CreateServiceDto,
     ) {
         // Parse the dto from req.body manually (because NestJS way throws errors and workarounds failed)
-        let dto: CreateProductDto;
+        let dto: CreateServiceDto;
         try {
             dto = JSON.parse(req.body.dto);
         } catch (err) {
             throw new BadRequestException('Invalid JSON in form field');
         }
         const userId = req.tokenData!.sub;
-        return this.productService.createProduct(userId, dto, files);
+        return this.serviceService.createService(userId, dto, files);
     }
-    @Get('create-product-dto')
-    @ApiDocsFakeGetCreateProductDto()
+    @Get('create-service-dto')
+    @ApiDocsFakeGetCreateServiceDto()
     dummy() {
         return; // Never called
     }
@@ -126,29 +126,29 @@ export class ProductController {
     @ApiRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Post(':productId/clone')
-    @ApiDocsDuplicateProduct()
-    async duplicateProduct(
-        @Param('productId') productId: string,
+    @Post(':serviceId/clone')
+    @ApiDocsDuplicateService()
+    async duplicateService(
+        @Param('serviceId') serviceId: string,
         @Req() req: Request,
     ) {
         const userId = req.tokenData!.sub;
-        return this.productService.duplicateProduct(userId, productId);
+        return this.serviceService.duplicateService(userId, serviceId);
     }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Patch(':productId')
-    @ApiDocsUpdateProduct()
-    async updateProduct(
-        @Param('productId') productId: string,
+    @Patch(':serviceId')
+    @ApiDocsUpdateService()
+    async updateService(
+        @Param('serviceId') serviceId: string,
         @Req() req: Request,
-        @Body() dto: UpdateProductDto,
+        @Body() dto: UpdateServiceDto,
     ) {
         const userId = req.tokenData!.sub;
-        return this.productService.updateProduct(userId, productId, dto);
+        return this.serviceService.updateService(userId, serviceId, dto);
     }
 
     @ApiJwtAuthGuard()
@@ -156,9 +156,9 @@ export class ProductController {
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @UseInterceptors(FileInterceptor('file'))
-    @Patch(':productId/images')
-    @ApiDocsUpdateProductImage()
-    async updateProductImages(
+    @Patch(':serviceId/images')
+    @ApiDocsUpdateServiceImage()
+    async updateServiceImages(
         @UploadedFile(
             new ParseFilePipe({
                 validators: [
@@ -171,28 +171,28 @@ export class ProductController {
             }),
         )
         file: Express.Multer.File,
-        @Param('productId') productId: string,
+        @Param('serviceId') serviceId: string,
         @Req() req: Request,
     ) {
         const userId = req.tokenData!.sub;
-        return this.productService.updateProductImages(userId, productId, file);
+        return this.serviceService.updateServiceImages(userId, serviceId, file);
     }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Delete(':productId/image/:fileName')
-    @ApiDocsDeleteProductImage()
-    async deleteProductImage(
-        @Param('productId') productId: string,
+    @Delete(':serviceId/image/:fileName')
+    @ApiDocsDeleteServiceImage()
+    async deleteServiceImage(
+        @Param('serviceId') serviceId: string,
         @Param('fileName') fileName: string,
         @Req() req: Request,
     ) {
         const userId = req.tokenData!.sub;
-        return this.productService.deleteProductImage(
+        return this.serviceService.deleteServiceImage(
             userId,
-            productId,
+            serviceId,
             fileName,
         );
     }
@@ -201,13 +201,13 @@ export class ProductController {
     @ApiRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Delete(':productId')
-    @ApiDocsDeleteProduct()
-    async deleteProduct(
-        @Param('productId') productId: string,
+    @Delete(':serviceId')
+    @ApiDocsDeleteService()
+    async deleteService(
+        @Param('serviceId') serviceId: string,
         @Req() req: Request,
     ) {
         const userId = req.tokenData!.sub;
-        return this.productService.deleteProduct(userId, productId);
+        return this.serviceService.deleteService(userId, serviceId);
     }
 }
