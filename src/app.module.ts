@@ -17,6 +17,7 @@ import logger from './logger';
 import { TapPaymentsModule } from './tap-payments/tap-payments.module';
 import { SupplierModule } from './supplier/supplier.module';
 import { CategoryModule } from './category/category.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
     imports: [
@@ -37,6 +38,7 @@ import { CategoryModule } from './category/category.module';
         TapPaymentsModule,
         SupplierModule,
         CategoryModule,
+        ProductModule,
     ],
     controllers: [AppController, HealthController],
     providers: [
