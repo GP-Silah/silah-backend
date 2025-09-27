@@ -58,6 +58,7 @@ model Supplier {
 
   categories    SupplierFavoriteCategory[]
   subscriptions SupplierSubscription[]
+  products      Product[]
 }
 
 // ============ 🛂 SUBSCRIPTIONS ==============
@@ -109,6 +110,7 @@ model Category {
 
   users     UserCategory[]
   suppliers SupplierFavoriteCategory[]
+  products  Product[]
 }
 
 // ===========  🚥 USER_CATEGORY =============
@@ -132,6 +134,35 @@ model SupplierFavoriteCategory {
   createdAt  DateTime @default(now())
 
   @@id([supplierId, categoryId]) // composite PK ensures uniqueness
+}
+
+// ============ 🪧 PRODUCT ===============
+model Product {
+  id                    String                 @id @default(uuid())
+  supplierId            String?
+  supplier              Supplier?              @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  name                  String                 @db.VarChar(60)
+  description           String                 @db.VarChar(1000)
+  price                 Float
+  stock                 Int                    @default(0)
+  categoryId            Int
+  category              Category               @relation(fields: [categoryId], references: [id])
+  imagesFilesNames      String[]
+  caseQuantity          Int                    @default(1)
+  minOrderQuantity      Int                    @default(1)
+  maxOrderQuantity      Int? // when null it means unlimitid
+  allowGroupPurchase    Boolean                @default(false)
+  minGroupOrderQuantity Int?
+  groupPurchasePrice    Float?
+  groupPurchaseDuration GroupPurchaseDeadline?
+  isPublished           Boolean                @default(false)
+  wishlistCount         Int                    @default(0)
+  avgRating             Float                  @default(0.0)
+  ratingsCount          Int                    @default(0)
+  isDeleted             Boolean                @default(false)
+  deletedAt             DateTime?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
 }
 
 // ============  ⚔️ ENUMS ================
@@ -166,4 +197,10 @@ enum SupplierStatus {
 enum StoreStatus {
   OPEN
   CLOSED
+}
+
+enum GroupPurchaseDeadline {
+  THREE_DAYS
+  FIVE_DAYS
+  SEVEN_DAYS
 }

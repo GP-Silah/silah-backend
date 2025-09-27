@@ -8,5 +8,6 @@ import { UserModule } from 'src/user/user.module';
     imports: [FileModule, UserModule],
     controllers: [SupplierController],
     providers: [SupplierService],
+    exports: [SupplierService],
 })
 export class SupplierModule {}

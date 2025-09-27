@@ -277,9 +277,6 @@ export class SupplierService {
                 ...(dto.storeBio !== undefined && {
                     storeBio: dto.storeBio,
                 }),
-                ...(dto.storeBannerFileName !== undefined && {
-                    storeBannerFileName: dto.storeBannerFileName,
-                }),
                 ...(dto.deliveryFees !== undefined && {
                     deliveryFees: dto.deliveryFees,
                 }),

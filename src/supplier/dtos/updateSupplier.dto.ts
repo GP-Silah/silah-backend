@@ -38,24 +38,6 @@ export class UpdateSupplierDto {
     storeBio?: string;
 
     @ApiPropertyOptional({
-        description: 'File name of the store banner image in R2 bucket',
-        example: 'banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png',
-    })
-    @IsOptional()
-    @IsString()
-    storeBannerFileName?: string;
-
-    @ApiPropertyOptional({
-        description:
-            'Signed URL from R2. Signed URLs expire 1 hour after creation.',
-        example: 'https://cdn.example.com/banners/banner123.png',
-        format: 'uri',
-    })
-    @IsOptional()
-    @IsString()
-    storeBannerFileUrl?: string;
-
-    @ApiPropertyOptional({
         description: 'Delivery fees charged by the supplier',
         example: 15.5,
     })
