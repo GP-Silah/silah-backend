@@ -48,18 +48,6 @@ export class UpdateProductDto {
     @IsInt()
     categoryId?: number;
 
-    @ApiPropertyOptional({
-        description: 'Array of product image filenames',
-        type: [String],
-        example: ['img1.jpg', 'img2.jpg'],
-    })
-    @IsOptional()
-    @IsArray()
-    @ArrayMinSize(1)
-    @ArrayMaxSize(3)
-    @IsString({ each: true })
-    imagesFilesNames?: string[];
-
     @ApiPropertyOptional({ description: 'Case quantity', example: 1 })
     @IsOptional()
     @IsInt()

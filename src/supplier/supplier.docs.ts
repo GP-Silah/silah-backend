@@ -142,7 +142,7 @@ export function ApiDocsToggleFavoriteCategory() {
         ApiOperation({
             summary: 'Toggle a favorite category for supplier',
             description:
-                'Adds a category to the supplier’s favorite categories if not already present, or removes it if already present. Returns a message and updated favorite categories list.',
+                "Adds a category to the supplier's favorite categories if not already present, or removes it if already present. Returns a message and updated favorite categories list.",
         }),
         ApiBody({
             schema: {

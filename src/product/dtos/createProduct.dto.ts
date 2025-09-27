@@ -18,12 +18,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { GroupPurchaseDeadline } from '@prisma/client';
 
 export class CreateProductDto {
-    @ApiPropertyOptional({
-        description: 'Supplier ID',
-    })
-    @IsString()
-    supplierId: string;
-
     @ApiProperty({
         description: 'Product name',
         example: 'Wireless Headphones',
@@ -61,18 +55,6 @@ export class CreateProductDto {
     @ApiProperty({ description: 'Category ID', example: 1 })
     @IsInt()
     categoryId: number;
-
-    @ApiProperty({
-        description: 'Array of product image filenames',
-        type: [String],
-        example: ['img1.jpg', 'img2.jpg'],
-    })
-    @IsArray()
-    @IsOptional()
-    @ArrayMinSize(1)
-    @ArrayMaxSize(3)
-    @IsString({ each: true })
-    imagesFilesNames: string[];
 
     @ApiPropertyOptional({
         description: 'Case quantity (default = 1)',

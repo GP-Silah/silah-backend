@@ -1,6 +1,6 @@
 # Silah Backend
 
-_Last Updated: August 2025_
+_Last Updated: September 2025_
 
 This is the backend API server for [Silah](https://github.com/GP-Silah), an AI-augmented full-stack B2B platform that connects suppliers and buyers. Built using [NestJS](https://nestjs.com/), a progressive Node.js framework for building efficient and scalable server-side applications.
 
@@ -19,7 +19,7 @@ This NestJS backend handles:
 - **Real-time Chat & Notifications**
 - **File Upload & Storage** (Cloudflare R2 integration)
 - **Payment Processing** (Tap Payments integration)
-- **Multi-language Support** (Google Translate API)
+- **Multi-language Support** (DeepL Translate API)
 
 > **Note:** AI features (semantic search, demand forecasting) are handled by a separate FastAPI backend.
 
@@ -32,7 +32,7 @@ This NestJS backend handles:
 - **Authentication:** JWT + Wathq API (Commercial Registration verification)
 - **Storage:** Cloudflare R2 (for file/image storage)
 - **Payments:** Tap Payments Gateway
-- **Translation:** Google Translate API
+- **Translation:** DeepL Translate API
 - **Real-time:** WebSockets for chat and notifications
 - **Testing:** Jest (Unit, Integration, E2E)
 - **DevOps:** Docker & Docker Compose
@@ -57,7 +57,7 @@ You'll need accounts and API keys for:
 - Tap Payments (payment processing)
 - Cloudflare R2 (file storage)
 - Wathq API (Saudi Commercial Registration verification)
-- Google Translate API (for auto-translation of products and services data)
+- DeepL Translate API (for auto-translation of products and services data)
 
 ---
 
