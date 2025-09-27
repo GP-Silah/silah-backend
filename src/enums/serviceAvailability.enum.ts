@@ -1,0 +1,7 @@
+export enum ServiceAvailability {
+    TWENTY_FOUR_SEVEN = 'TWENTY_FOUR_SEVEN',
+    EVERYDAY = 'EVERYDAY',
+    WEEKDAYS = 'WEEKDAYS',
+    WEEKENDS = 'WEEKENDS',
+    APPOINTMENT = 'APPOINTMENT',
+}
