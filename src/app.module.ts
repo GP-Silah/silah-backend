@@ -19,6 +19,7 @@ import { SupplierModule } from './supplier/supplier.module';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { ServiceModule } from './service/service.module';
+import { CartModule } from './cart/cart.module';
 
 @Module({
     imports: [
@@ -41,6 +42,7 @@ import { ServiceModule } from './service/service.module';
         CategoryModule,
         ProductModule,
         ServiceModule,
+        CartModule,
     ],
     controllers: [AppController, HealthController],
     providers: [

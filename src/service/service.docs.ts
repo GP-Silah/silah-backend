@@ -28,7 +28,9 @@ export function ApiDocsCreateService() {
                         <br>Check the Swagger-only endpoint for full schema reference.</li>
                     <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 10 files)</li>
                 </ul>
-                Only categories with <strong>usedFor=SERVICE</strong> can be assigned to services.`,
+                Only categories with <strong>usedFor=SERVICE</strong> can be assigned to services.
+                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>
+                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.`,
         }),
         ApiConsumes('multipart/form-data'),
         ApiBody({
@@ -272,7 +274,9 @@ export function ApiDocsUpdateServiceImage() {
             summary: 'Add a new image to an existing service',
             description: `This endpoint allows the supplier to add an additional image to an already created service.<br>
             Only the image is updated; other fields remain unchanged.<br>
-            Maximum 3 images per service are allowed.`,
+            Maximum 3 images per service are allowed.
+            <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>
+            <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.`,
         }),
         ApiConsumes('multipart/form-data'),
         ApiBody({
