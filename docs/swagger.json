@@ -3840,7 +3840,7 @@
         ]
       },
       "post": {
-        "description": "<strong>IMPORTANT:</strong> This endpoint requires sending the data as <u>multipart/form-data</u>.<br>\n                <strong>Note:</strong> Because this endpoint uses multipart/form-data, Swagger cannot directly show the CreateProductDto schema here. \n                There is a separate Swagger-only endpoint (GET /swagger-products-reference/create-product-dto) where you can view the full CreateProductDto schema and example.<br><br>\n                You must send two fields:\n                <ul>\n                    <li><strong>dto</strong> (type: text) → JSON string of the product details (see example below). \n                    <br>Check the Swagger-only endpoint for full schema reference.</li>\n                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 3 files)</li>\n                </ul>\n                Make sure the JSON string is properly formatted.<br><br>\n                Only subcategories can be assigned to products. Main categories are invalid.",
+        "description": "<strong>IMPORTANT:</strong> This endpoint requires sending the data as <u>multipart/form-data</u>.<br>\n                <strong>Note:</strong> Because this endpoint uses multipart/form-data, Swagger cannot directly show the CreateProductDto schema here. \n                There is a separate Swagger-only endpoint (GET /swagger-products-reference/create-product-dto) where you can view the full CreateProductDto schema and example.<br><br>\n                You must send two fields:\n                <ul>\n                    <li><strong>dto</strong> (type: text) → JSON string of the product details (see example below). \n                    <br>Check the Swagger-only endpoint for full schema reference.</li>\n                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 3 files)</li>\n                </ul>\n                Make sure the JSON string is properly formatted.<br><br>\n                Only subcategories can be assigned to products. Main categories are invalid.<br><br>\n                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         "operationId": "ProductController_createProduct",
         "parameters": [
           {
@@ -4516,7 +4516,7 @@
     },
     "/api/products/{productId}/images": {
       "patch": {
-        "description": "This endpoint allows the supplier to add an additional image to an already created product.<br>\n            Only the image is updated; product name, description, and other fields remain unchanged.<br>\n            Maximum 3 images per product are allowed.",
+        "description": "This endpoint allows the supplier to add an additional image to an already created product.<br>\n            Only the image is updated; product name, description, and other fields remain unchanged.<br>\n            Maximum 3 images per product are allowed.<br><br>\n            <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n            <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         "operationId": "ProductController_updateProductImages",
         "parameters": [
           {
@@ -4845,7 +4845,7 @@
         ]
       },
       "post": {
-        "description": "<strong>IMPORTANT:</strong> This endpoint requires sending the data as <u>multipart/form-data</u>.<br>\n                <strong>Note:</strong> Because this endpoint uses multipart/form-data, Swagger cannot directly show the CreateServiceDto schema here. \n                There is a separate Swagger-only endpoint (GET /create-service-dto) where you can view the full CreateServiceDto schema and example.<br><br>\n                You must send two fields:\n                <ul>\n                    <li><strong>dto</strong> (type: text) → JSON string of the service details (see example below). \n                        <br>Check the Swagger-only endpoint for full schema reference.</li>\n                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 10 files)</li>\n                </ul>\n                Only categories with <strong>usedFor=SERVICE</strong> can be assigned to services.",
+        "description": "<strong>IMPORTANT:</strong> This endpoint requires sending the data as <u>multipart/form-data</u>.<br>\n                <strong>Note:</strong> Because this endpoint uses multipart/form-data, Swagger cannot directly show the CreateServiceDto schema here. \n                There is a separate Swagger-only endpoint (GET /create-service-dto) where you can view the full CreateServiceDto schema and example.<br><br>\n                You must send two fields:\n                <ul>\n                    <li><strong>dto</strong> (type: text) → JSON string of the service details (see example below). \n                        <br>Check the Swagger-only endpoint for full schema reference.</li>\n                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 10 files)</li>\n                </ul>\n                Only categories with <strong>usedFor=SERVICE</strong> can be assigned to services.<br><br>\n                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         "operationId": "ServiceController_createService",
         "parameters": [
           {
@@ -5383,7 +5383,7 @@
     "/api/services/create-service-dto": {
       "get": {
         "deprecated": true,
-        "description": "⚠️ Swagger-only reference for CreateServiceDto schema. \n            This endpoint does not exist in the real API. Check the JSON structure for 'dto' in the multipart/form-data POST /services endpoint.",
+        "description": "⚠️ IMPORTANT: This endpoint is a Swagger-only reference and does NOT exist in the real API.<br>\n            It is here solely so you can view the full CreateServiceDto schema and example in the Swagger Schemas panel.<br>\n            You cannot actually call this endpoint, doing so will return nothing if attempted.<br><br>\n            Why does this exist?<br>\n            The real \"Create Service\" endpoint uses multipart/form-data to accept files and a JSON string,\n            which means Swagger cannot automatically show the CreateServiceDto schema for that endpoint.<br>\n            This fake endpoint is a workaround to let you inspect the expected JSON structure, see required fields, \n            and understand how to format your requests when sending the 'dto' field as a JSON string in the real API.<br><br>\n            Use this purely as a reference to know:<br>\n            - All required and optional fields<br>\n            - Field types and valid values<br>\n            - Example data for testing<br><br>\n            DO NOT use this in your frontend code or try to send requests to it.<br>\n            Always send product data as a JSON string in the 'dto' field of the real multipart/form-data endpoint.",
         "operationId": "ServiceController_dummy",
         "parameters": [],
         "requestBody": {
@@ -5521,7 +5521,7 @@
     },
     "/api/services/{serviceId}/images": {
       "patch": {
-        "description": "This endpoint allows the supplier to add an additional image to an already created service.<br>\n            Only the image is updated; other fields remain unchanged.<br>\n            Maximum 3 images per service are allowed.",
+        "description": "This endpoint allows the supplier to add an additional image to an already created service.<br>\n            Only the image is updated; other fields remain unchanged.<br>\n            Maximum 3 images per service are allowed.<br><br>\n            <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n            <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         "operationId": "ServiceController_updateServiceImages",
         "parameters": [
           {
@@ -5796,6 +5796,996 @@
           "Services"
         ]
       }
+    },
+    "/api/carts": {
+      "get": {
+        "description": "Fetches the currently active cart of the authenticated buyer. Returns details of suppliers, items, and totals. Throws 404 if no active cart exists.",
+        "operationId": "CartController_getBuyerActiveCart",
+        "parameters": [
+          {
+            "name": "accept-language",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Active cart retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No active cart found for this buyer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No active cart for this buyer",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Get active cart for buyer",
+        "tags": [
+          "Carts"
+        ]
+      }
+    },
+    "/api/carts/items": {
+      "post": {
+        "description": "Adds a product to the buyer's active cart. If no cart exists, a new one is automatically created. Groups items by supplier.",
+        "operationId": "CartController_addItem",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCartItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item added to cart successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid supplier or input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Supplier with id 123 not found",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product or buyer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Product not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Add item to cart",
+        "tags": [
+          "Carts"
+        ]
+      }
+    },
+    "/api/carts/{cartId}/items/{itemId}": {
+      "patch": {
+        "description": "Updates the quantity of a specific item in the buyer's cart. Recalculates supplier subtotal and cart totals.",
+        "operationId": "CartController_updateItemQuantity",
+        "parameters": [
+          {
+            "name": "cartId",
+            "required": true,
+            "in": "path",
+            "description": "Cart ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "itemId",
+            "required": true,
+            "in": "path",
+            "description": "Cart Item ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newQuantity": {
+                    "type": "number",
+                    "example": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item quantity updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid new quantity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "New quantity cannot be null or less than 1",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cart or item not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Item not found in this cart",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Update item quantity in cart",
+        "tags": [
+          "Carts"
+        ]
+      },
+      "delete": {
+        "description": "Deletes a specific item from the buyer's cart. If the supplier group has no items left, the supplier is also removed from the cart.",
+        "operationId": "CartController_removeItem",
+        "parameters": [
+          {
+            "name": "cartId",
+            "required": true,
+            "in": "path",
+            "description": "Cart ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "itemId",
+            "required": true,
+            "in": "path",
+            "description": "Cart Item ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cart or item not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Item not found in this cart",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Remove item from cart",
+        "tags": [
+          "Carts"
+        ]
+      }
+    },
+    "/api/carts/{cartId}": {
+      "delete": {
+        "description": "Marks the buyer's cart as deleted. Once deleted, the cart cannot be retrieved as active.",
+        "operationId": "CartController_deleteCart",
+        "parameters": [
+          {
+            "name": "cartId",
+            "required": true,
+            "in": "path",
+            "description": "Cart ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Cart deleted successfully"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cart not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Cart not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Delete entire cart",
+        "tags": [
+          "Carts"
+        ]
+      }
+    },
+    "/api/carts/{cartId}/suppliers/{supplierId}": {
+      "delete": {
+        "description": "Removes all items from a specific supplier in the cart. If the supplier is the last one, the whole cart is deleted.",
+        "operationId": "CartController_removeSupplierFromCart",
+        "parameters": [
+          {
+            "name": "cartId",
+            "required": true,
+            "in": "path",
+            "description": "Cart ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "supplierId",
+            "required": true,
+            "in": "path",
+            "description": "Supplier ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Supplier removed successfully, updated cart returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier or cart not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 404,
+                        "message": "Supplier not found in this cart",
+                        "error": "Not Found"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 404,
+                        "message": "Cart is now empty and has been deleted",
+                        "error": "Not Found"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Remove supplier (and its items) from cart",
+        "tags": [
+          "Carts"
+        ]
+      }
+    },
+    "/api/carts/{cartId}/checkout": {
+      "post": {
+        "description": "Finalizes the buyer's cart by creating orders for each supplier. Marks the cart as bought and returns the checkout details. Payment integration (Tap) will be handled here.",
+        "operationId": "CartController_checkoutCart",
+        "parameters": [
+          {
+            "name": "cartId",
+            "required": true,
+            "in": "path",
+            "description": "Cart ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart checked out successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Paid successfully",
+                    "checkoutId": "uuid-checkout-id",
+                    "buyerId": "uuid-buyer-id",
+                    "cartId": "uuid-cart-id",
+                    "totalPaid": 250,
+                    "orders": [
+                      {
+                        "id": "uuid-order-1",
+                        "supplierId": "uuid-supplier-id",
+                        "finalPrice": 150,
+                        "status": "PENDING"
+                      },
+                      {
+                        "id": "uuid-order-2",
+                        "supplierId": "uuid-supplier-id-2",
+                        "finalPrice": 100,
+                        "status": "PENDING"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Cart is empty",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Cart is empty",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Active cart not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Active cart not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Checkout cart",
+        "tags": [
+          "Carts"
+        ]
+      }
+    },
+    "/api/demand-predictions/{productId}": {
+      "get": {
+        "operationId": "DemandPredictionController_getPredictionForProduct",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "tags": [
+          "Demand Predictions"
+        ]
+      }
     }
   },
   "info": {
@@ -5898,7 +6888,7 @@
       "UserResponseDTO": {
         "type": "object",
         "properties": {
-          "id": {
+          "userId": {
             "type": "string",
             "example": "clv70z13w0000unqoj4lcr8x4"
           },
@@ -5978,7 +6968,7 @@
           }
         },
         "required": [
-          "id",
+          "userId",
           "tapCustomerId",
           "name",
           "email",
@@ -6388,7 +7378,7 @@
       "ProductResponseDto": {
         "type": "object",
         "properties": {
-          "id": {
+          "productId": {
             "type": "string",
             "description": "Product ID",
             "example": "uuid-1234"
@@ -6538,7 +7528,7 @@
           }
         },
         "required": [
-          "id",
+          "productId",
           "name",
           "description",
           "price",
@@ -6722,7 +7712,7 @@
       "ServiceResponseDto": {
         "type": "object",
         "properties": {
-          "id": {
+          "serviceId": {
             "type": "string",
             "description": "Service ID",
             "example": "uuid-1234"
@@ -6840,7 +7830,7 @@
           }
         },
         "required": [
-          "id",
+          "serviceId",
           "name",
           "description",
           "price",
@@ -6960,6 +7950,171 @@
             "example": false
           }
         }
+      },
+      "CartItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "number",
+            "description": "Cart item ID",
+            "example": 1
+          },
+          "productId": {
+            "type": "string",
+            "description": "Product ID",
+            "example": "a1b2c3d4-5678-90ab-cdef-1234567890ab"
+          },
+          "productName": {
+            "type": "string",
+            "description": "Product name",
+            "example": "Hair brushes"
+          },
+          "productPrice": {
+            "type": "number",
+            "description": "Product price",
+            "example": 25
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity of the product",
+            "example": 2
+          },
+          "itemTotalPrice": {
+            "type": "number",
+            "description": "Total price for this item (price * quantity)",
+            "example": 50.5
+          }
+        },
+        "required": [
+          "itemId",
+          "productId",
+          "productName",
+          "productPrice",
+          "quantity",
+          "itemTotalPrice"
+        ]
+      },
+      "CartBySupplierResponseDto": {
+        "type": "object",
+        "properties": {
+          "cartBySupplierId": {
+            "type": "string",
+            "description": "CartBySupplier ID",
+            "example": "f1e2d3c4-5678-90ab-cdef-1234567890ab"
+          },
+          "supplierId": {
+            "type": "string",
+            "description": "Supplier ID",
+            "example": "z1x2c3v4-5678-90ab-cdef-1234567890ab"
+          },
+          "deliveryFee": {
+            "type": "number",
+            "description": "Delivery fee of this supplier",
+            "example": 5
+          },
+          "subTotal": {
+            "type": "number",
+            "description": "Subtotal for this supplier's items (without delivery fee)",
+            "example": 45.5
+          },
+          "supplierTotalPrice": {
+            "type": "number",
+            "description": "Total price including delivery fee",
+            "example": 50.5
+          },
+          "cartItems": {
+            "description": "Items from this supplier",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItemResponseDto"
+            }
+          }
+        },
+        "required": [
+          "cartBySupplierId",
+          "supplierId",
+          "deliveryFee",
+          "subTotal",
+          "supplierTotalPrice",
+          "cartItems"
+        ]
+      },
+      "CartResponseDto": {
+        "type": "object",
+        "properties": {
+          "cartId": {
+            "type": "string",
+            "description": "Cart ID",
+            "example": "b1c2d3e4-5678-90ab-cdef-1234567890ab"
+          },
+          "buyerId": {
+            "type": "string",
+            "description": "Buyer ID",
+            "example": "y1x2w3v4-5678-90ab-cdef-1234567890ab"
+          },
+          "productsTotal": {
+            "type": "number",
+            "description": "Total of all product prices in the cart",
+            "example": 100
+          },
+          "deliveryFees": {
+            "type": "number",
+            "description": "Total delivery fees from all suppliers",
+            "example": 10
+          },
+          "cartTotal": {
+            "type": "number",
+            "description": "Total cart price (productsTotal + deliveryFees)",
+            "example": 110
+          },
+          "isBought": {
+            "type": "boolean",
+            "description": "Whether the cart has been checked out",
+            "example": false
+          },
+          "suppliers": {
+            "description": "List of suppliers with their items",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartBySupplierResponseDto"
+            }
+          }
+        },
+        "required": [
+          "cartId",
+          "buyerId",
+          "productsTotal",
+          "deliveryFees",
+          "cartTotal",
+          "isBought",
+          "suppliers"
+        ]
+      },
+      "AddCartItemDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "description": "ID of the product to add to the cart",
+            "example": "a1b2c3d4-5678-90ab-cdef-1234567890ab"
+          },
+          "supplierId": {
+            "type": "string",
+            "description": "ID of the supplier for this product",
+            "example": "f1e2d3c4-5678-90ab-cdef-1234567890ab"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity of the product to add (minimum 1)",
+            "example": 2,
+            "minimum": 1
+          }
+        },
+        "required": [
+          "productId",
+          "supplierId",
+          "quantity"
+        ]
       }
     }
   }

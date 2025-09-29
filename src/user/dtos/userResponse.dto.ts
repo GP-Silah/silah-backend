@@ -3,7 +3,7 @@ import { UserRole } from '../../enums/userRole.enum';
 
 export class UserResponseDTO {
     @ApiProperty({ example: 'clv70z13w0000unqoj4lcr8x4' })
-    id: string;
+    userId: string;
 
     @ApiProperty({ example: 'cus_13gdft5' })
     tapCustomerId: string;

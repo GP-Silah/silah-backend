@@ -59,7 +59,7 @@ export class ServiceService {
         }
 
         return {
-            id: service.id,
+            serviceId: service.id,
             supplierId: service.supplierId ?? null,
             supplier: supplierDto,
             name,

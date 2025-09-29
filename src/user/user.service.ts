@@ -35,7 +35,7 @@ export class UserService {
             ? await this.fileService.getFileUrl(user.pfpFileName)
             : '';
         return {
-            id: user.id,
+            userId: user.id,
             tapCustomerId: user.tapCustomerId,
             name: user.name,
             email: user.email,

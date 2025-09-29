@@ -7,34 +7,51 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CartResponseDto } from './dtos/cartResponse.dto';
 import { AddCartItemDto } from './dtos/addCartItem.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { TranslationService } from 'src/translation/translation.service';
 
 @Injectable()
 export class CartService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly translationService: TranslationService,
+    ) {}
 
-    private toCartResponseDto(cart: any): CartResponseDto {
+    private async toCartResponseDto(
+        cart: any,
+        targetLang: 'ar' | 'en' = 'en',
+    ): Promise<CartResponseDto> {
         return {
-            id: cart.id,
+            cartId: cart.id,
             buyerId: cart.buyerId,
             productsTotal: cart.productsTotal,
             deliveryFees: cart.deliveryFees,
             cartTotal: cart.cartTotal,
             isBought: cart.isBought,
-            suppliers: cart.suppliers.map((s: any) => ({
-                id: s.id,
-                supplierId: s.supplierId,
-                deliveryFee: s.deliveryFee,
-                subTotal: s.subTotal,
-                supplierTotalPrice: s.supplierTotalPrice,
-                cartItems: s.cartItems.map((item: any) => ({
-                    id: item.id,
-                    productId: item.productId,
-                    productName: item.product.name,
-                    productPrice: item.product.price,
-                    quantity: item.quantity,
-                    itemTotalPrice: item.itemTotalPrice,
+            suppliers: await Promise.all(
+                cart.suppliers.map(async (s: any) => ({
+                    cartBySupplierId: s.id,
+                    supplierId: s.supplierId,
+                    deliveryFee: s.deliveryFee,
+                    subTotal: s.subTotal,
+                    supplierTotalPrice: s.supplierTotalPrice,
+                    cartItems: await Promise.all(
+                        s.cartItems.map(async (item: any) => ({
+                            itemId: item.id,
+                            productId: item.productId,
+                            productName:
+                                targetLang === 'en'
+                                    ? item.product.name
+                                    : await this.translationService.translateText(
+                                          item.product.name,
+                                          targetLang,
+                                      ),
+                            productPrice: item.product.price,
+                            quantity: item.quantity,
+                            itemTotalPrice: item.itemTotalPrice,
+                        })),
+                    ),
                 })),
-            })),
+            ),
         };
     }
 
@@ -63,7 +80,7 @@ export class CartService {
         });
         if (!activeCart)
             throw new NotFoundException('No active cart for this buyer');
-        return this.toCartResponseDto(activeCart);
+        return this.toCartResponseDto(activeCart, targetLang);
     }
 
     async addItem(userId: string, dto: AddCartItemDto) {
@@ -301,7 +318,7 @@ export class CartService {
         if (!buyer) throw new NotFoundException('Buyer not found');
 
         const cart = await this.prisma.cart.findFirst({
-            where: { id: cartId, buyerId: buyer.id },
+            where: { id: cartId, buyerId: buyer.id, isDeleted: false },
         });
         if (!cart) throw new NotFoundException('Cart not found');
 
@@ -330,6 +347,18 @@ export class CartService {
         await this.prisma.cartBySupplier.delete({
             where: { id: cartBySupplier.id },
         });
+
+        // If it was the only supplier on cart delete the cart
+        const remainingSuppliers = await this.prisma.cartBySupplier.count({
+            where: { cartId },
+        });
+
+        if (remainingSuppliers === 0) {
+            await this.prisma.cart.delete({ where: { id: cartId } });
+            throw new NotFoundException(
+                'Cart is now empty and has been deleted',
+            );
+        }
 
         await this.recalculateCartTotals(cartId);
 
@@ -402,7 +431,7 @@ export class CartService {
             buyerId: buyer.id,
             cartId: cart.id,
             totalPaid: cart.cartTotal,
-            orders,
+            orders, //TODO orderResponseDto? it is optional though
         };
     }
 

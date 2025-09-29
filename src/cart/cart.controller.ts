@@ -10,6 +10,8 @@ import {
     Headers,
     Body,
     Param,
+    BadRequestException,
+    ParseIntPipe,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -21,6 +23,15 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Request } from 'express';
 import { AddCartItemDto } from './dtos/addCartItem.dto';
+import {
+    ApiDocsAddCartItem,
+    ApiDocsCheckoutCart,
+    ApiDocsDeleteCart,
+    ApiDocsGetBuyerActiveCart,
+    ApiDocsRemoveItem,
+    ApiDocsRemoveSupplierFromCart,
+    ApiDocsUpdateItemQuantity,
+} from './cart.docs';
 
 @ApiTags('Carts')
 @Controller('carts')
@@ -32,6 +43,7 @@ export class CartController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get()
+    @ApiDocsGetBuyerActiveCart()
     async getBuyerActiveCart(
         @Req() req: Request,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
@@ -48,6 +60,7 @@ export class CartController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     // auto creation when first item is added
     @Post('/items')
+    @ApiDocsAddCartItem()
     async addItem(@Req() req: Request, @Body() dto: AddCartItemDto) {
         const userId = req.tokenData!.sub;
         return this.cartService.addItem(userId, dto);
@@ -58,12 +71,19 @@ export class CartController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch(':cartId/items/:itemId')
+    @ApiDocsUpdateItemQuantity()
     async updateItemQuantity(
         @Req() req: Request,
         @Param('cartId') cartId: string,
-        @Param('itemId') itemId: number,
-        @Body() newQuantity: number,
+        @Param('itemId', ParseIntPipe) itemId: number,
+        @Body('newQuantity') newQuantity: number,
     ) {
+        console.log(typeof newQuantity, newQuantity);
+        if (!newQuantity || newQuantity < 1) {
+            throw new BadRequestException(
+                'New quantity cannot be null or less than 1',
+            );
+        }
         const userId = req.tokenData!.sub;
         return this.cartService.updateItemQuantity(
             userId,
@@ -78,6 +98,7 @@ export class CartController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':cartId/items/:itemId')
+    @ApiDocsRemoveItem()
     async removeItem(
         @Req() req: Request,
         @Param('cartId') cartId: string,
@@ -92,6 +113,7 @@ export class CartController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':cartId')
+    @ApiDocsDeleteCart()
     async deleteCart(@Req() req: Request, @Param('cartId') cartId: string) {
         const userId = req.tokenData!.sub;
         return this.cartService.deleteCart(userId, cartId);
@@ -102,6 +124,7 @@ export class CartController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':cartId/suppliers/:supplierId')
+    @ApiDocsRemoveSupplierFromCart()
     async removeSupplierFromCart(
         @Req() req: Request,
         @Param('cartId') cartId: string,
@@ -119,8 +142,8 @@ export class CartController {
     @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    // internally creates multiple orders
     @Post(':cartId/checkout')
+    @ApiDocsCheckoutCart()
     async checkoutCart(@Req() req: Request, @Param('cartId') cartId: string) {
         const userId = req.tokenData!.sub;
         return this.cartService.checkoutCart(userId, cartId);

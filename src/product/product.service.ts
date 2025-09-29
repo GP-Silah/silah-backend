@@ -60,7 +60,7 @@ export class ProductService {
         }
 
         return {
-            id: product.id,
+            productId: product.id,
             supplierId: product.supplierId ?? null,
             supplier: supplierDto,
             name,

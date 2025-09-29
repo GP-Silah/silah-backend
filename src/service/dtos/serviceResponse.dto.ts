@@ -4,7 +4,7 @@ import { ServiceAvailability } from '@prisma/client';
 
 export class ServiceResponseDto {
     @ApiProperty({ description: 'Service ID', example: 'uuid-1234' })
-    id: string;
+    serviceId: string;
 
     @ApiPropertyOptional({
         description: 'Supplier ID (null = supplier deleted his account)',

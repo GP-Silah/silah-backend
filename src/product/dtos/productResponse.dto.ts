@@ -4,7 +4,7 @@ import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';
 
 export class ProductResponseDto {
     @ApiProperty({ description: 'Product ID', example: 'uuid-1234' })
-    id: string;
+    productId: string;
 
     @ApiPropertyOptional({
         description: 'Supplier ID (null = supplier deleated his account)',
