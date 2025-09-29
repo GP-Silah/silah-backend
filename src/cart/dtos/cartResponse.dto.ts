@@ -10,6 +10,18 @@ export class CartItemResponseDto {
     })
     productId: string;
 
+    @ApiProperty({
+        description: 'Product name',
+        example: 'Hair brushes',
+    })
+    productName: string;
+
+    @ApiProperty({
+        description: 'Product price',
+        example: 25.0,
+    })
+    productPrice: number;
+
     @ApiProperty({ description: 'Quantity of the product', example: 2 })
     quantity: number;
 

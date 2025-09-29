@@ -11,13 +11,13 @@ export class DemandPredictionService {
             include: { user: true },
         });
         if (!supplier) {
-            return new NotFoundException('Supplier not found');
+            throw new NotFoundException('Supplier not found');
         }
         const product = await this.prisma.product.findFirst({
             where: { id: productId, supplierId: supplier.id, isDeleted: false }, //? make it only for products that have past sales
         });
         if (!product) {
-            return new NotFoundException('Product not found');
+            throw new NotFoundException('Product not found');
         }
         // get sales data for the product
         // send axios req to FastAPI backend
