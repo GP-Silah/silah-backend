@@ -42,11 +42,11 @@ export class CartService {
     }
 
     private async toCartResponseDto(cart: any): Promise<CartResponseDto> {
-        let targetLang;
-        const lang = cart.user.preferredLanguage.toLocaleLowerCase();
-        if (lang === 'ar' || lang === 'en') {
-            targetLang = lang;
-        }
+        // let targetLang;
+        // const lang = cart.user.preferredLanguage.toLocaleLowerCase();
+        // if (lang === 'ar' || lang === 'en') {
+        //     targetLang = lang;
+        // }
 
         return {
             cartId: cart.id,
@@ -66,13 +66,13 @@ export class CartService {
                         s.cartItems.map(async (item: any) => ({
                             itemId: item.id,
                             productId: item.productId,
-                            productName:
-                                targetLang === 'en'
-                                    ? item.product.name
-                                    : await this.translationService.translateText(
-                                          item.product.name,
-                                          targetLang,
-                                      ),
+                            // productName:
+                            //     targetLang === 'en'
+                            //         ? item.product.name
+                            //         : await this.translationService.translateText(
+                            //               item.product.name,
+                            //               targetLang,
+                            //           ),
                             productPrice: item.product.price,
                             quantity: item.quantity,
                             itemTotalPrice: item.itemTotalPrice,
@@ -89,8 +89,27 @@ export class CartService {
     }
 
     async addItem(userId: string, dto: AddCartItemDto) {
-        const { cart: activeCart, buyer } =
-            await this.getActiveCartByUserId(userId);
+        // Get the buyer first
+        const buyer = await this.prisma.buyer.findUnique({
+            where: { userId },
+        });
+        if (!buyer) throw new NotFoundException('Buyer not found');
+
+        // Try to find an active cart, create one if none exists
+        let activeCart = await this.prisma.cart.findFirst({
+            where: { buyerId: buyer.id, isBought: false, isDeleted: false },
+        });
+
+        if (!activeCart) {
+            activeCart = await this.prisma.cart.create({
+                data: {
+                    buyerId: buyer.id,
+                    productsTotal: 0,
+                    deliveryFees: 0,
+                    cartTotal: 0,
+                },
+            });
+        }
 
         // Check supplier
         const supplier = await this.prisma.supplier.findUnique({

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import axios from 'axios';
 
 @Injectable()
 export class DemandPredictionService {
@@ -20,9 +21,20 @@ export class DemandPredictionService {
             throw new NotFoundException('Product not found');
         }
         const allPastSales = await this.getDailySalesForProduct(product.id);
-        return allPastSales;
-        // send axios req to FastAPI backend
-        // return res from FastAPI
+        // Call FastAPI
+        try {
+            const response = await axios.post(
+                `${process.env.AI_BACKEND_URL}/predict`,
+                {
+                    productId: product.id,
+                    dailySales: allPastSales,
+                },
+            );
+            return response.data; // This is the prediction from FastAPI
+        } catch (err: any) {
+            console.error('FastAPI request failed:', err.message);
+            throw new Error('Failed to get prediction from FastAPI');
+        }
     }
 
     async getDailySalesForProduct(productId: string) {
@@ -38,7 +50,6 @@ export class DemandPredictionService {
         INNER JOIN "CartBySupplier" cs ON cs."cartId" = c."id"
         INNER JOIN "CartItem" ci ON ci."cartBySupplierId" = cs."id"
         WHERE ci."productId" = ${productId}
-        AND o."status" = 'COMPLETED'
         GROUP BY DATE(o."createdAt")
         ORDER BY date ASC;
         `;

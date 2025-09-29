@@ -124,6 +124,11 @@ export class AuthService {
             },
         });
         await this.userService.generateDefaultAvatar(user.email);
+        await this.prisma.buyer.create({
+            data: {
+                userId: user.id,
+            },
+        });
 
         // Generate a JWT token for email verification and send it via email
         const emailToken = this.generateEmailVerificationToken(
