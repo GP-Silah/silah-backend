@@ -89,7 +89,7 @@ export class ServiceService {
         targetLang: 'ar' | 'en',
     ): Promise<ServiceResponseDto[]> {
         const services = await this.prisma.service.findMany({
-            where: { isDeleted: false },
+            where: { isDeleted: false, isPublished: true },
             include: {
                 supplier: { include: { user: true } },
                 category: true,

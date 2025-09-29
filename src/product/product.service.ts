@@ -96,7 +96,7 @@ export class ProductService {
         targetLang: 'ar' | 'en',
     ): Promise<ProductResponseDto[]> {
         const products = await this.prisma.product.findMany({
-            where: { isDeleted: false },
+            where: { isDeleted: false, isPublished: true },
             include: {
                 supplier: { include: { user: true } },
                 category: true,
