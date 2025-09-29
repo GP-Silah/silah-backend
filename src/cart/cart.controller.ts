@@ -9,6 +9,7 @@ import {
     UseGuards,
     Headers,
     Body,
+    Param,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -57,28 +58,62 @@ export class CartController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch(':cartId/items/:itemId')
-    async updateItemQuantity() {}
+    async updateItemQuantity(
+        @Req() req: Request,
+        @Param('cartId') cartId: string,
+        @Param('itemId') itemId: number,
+        @Body() newQuantity: number,
+    ) {
+        const userId = req.tokenData!.sub;
+        return this.cartService.updateItemQuantity(
+            userId,
+            cartId,
+            itemId,
+            newQuantity,
+        );
+    }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':cartId/items/:itemId')
-    async removeItem() {}
+    async removeItem(
+        @Req() req: Request,
+        @Param('cartId') cartId: string,
+        @Param('itemId') itemId: number,
+    ) {
+        const userId = req.tokenData!.sub;
+        return this.cartService.removeItem(userId, cartId, itemId);
+    }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':cartId')
-    async clearCart() {}
+    async deleteCart(@Req() req: Request, @Param('cartId') cartId: string) {
+        const userId = req.tokenData!.sub;
+        return this.cartService.deleteCart(userId, cartId);
+    }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete(':cartId/suppliers/:supplierId')
-    async removeSupplierFromCart() {}
+    async removeSupplierFromCart(
+        @Req() req: Request,
+        @Param('cartId') cartId: string,
+        @Param('supplierId') supplierId: string,
+    ) {
+        const userId = req.tokenData!.sub;
+        return this.cartService.removeSupplierFromCart(
+            userId,
+            cartId,
+            supplierId,
+        );
+    }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
@@ -86,5 +121,8 @@ export class CartController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     // internally creates multiple orders
     @Post(':cartId/checkout')
-    async checkoutCart() {}
+    async checkoutCart(@Req() req: Request, @Param('cartId') cartId: string) {
+        const userId = req.tokenData!.sub;
+        return this.cartService.checkoutCart(userId, cartId);
+    }
 }
