@@ -20,6 +20,7 @@ import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { ServiceModule } from './service/service.module';
 import { CartModule } from './cart/cart.module';
+import { DemandPredictionModule } from './demand-prediction/demand-prediction.module';
 
 @Module({
     imports: [
@@ -43,6 +44,7 @@ import { CartModule } from './cart/cart.module';
         ProductModule,
         ServiceModule,
         CartModule,
+        DemandPredictionModule,
     ],
     controllers: [AppController, HealthController],
     providers: [
