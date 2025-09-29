@@ -246,6 +246,7 @@ model CartItem {
   itemTotalPrice   Float // product.price * quantity at time of adding
 }
 
+// =========== 📦️ ORDER ================
 model Order {
   id         String      @id @default(uuid())
   checkoutId String // same across all orders from the same checkout

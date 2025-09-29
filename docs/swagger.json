@@ -5876,37 +5876,11 @@
         ]
       }
     },
-    "/api/carts": {
+    "/api/carts/me": {
       "get": {
-        "description": "Fetches the currently active cart of the authenticated buyer. Returns details of suppliers, items, and totals. Throws 404 if no active cart exists.Supports optional language selection via header or query.",
+        "description": "Fetches the currently active cart of the authenticated buyer. Returns details of suppliers, items, and totals. Throws 404 if no active cart exists.",
         "operationId": "CartController_getBuyerActiveCart",
         "parameters": [
-          {
-            "name": "lang",
-            "required": false,
-            "in": "query",
-            "description": "Optional query param to set language (ar | en)",
-            "schema": {
-              "enum": [
-                "ar",
-                "en"
-              ],
-              "type": "string"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "description": "Optional header to set language (ar | en)",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "ar",
-                "en"
-              ]
-            }
-          },
           {
             "name": "Cookie",
             "in": "header",
@@ -6003,9 +5977,121 @@
         "tags": [
           "Carts"
         ]
+      },
+      "delete": {
+        "description": "Marks the buyer's cart as deleted. Once deleted, the cart cannot be retrieved as active.",
+        "operationId": "CartController_deleteCart",
+        "parameters": [
+          {
+            "name": "cartId",
+            "required": true,
+            "in": "path",
+            "description": "Cart ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Cart deleted successfully"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cart not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Cart not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Delete entire cart",
+        "tags": [
+          "Carts"
+        ]
       }
     },
-    "/api/carts/items": {
+    "/api/carts/me/items": {
       "post": {
         "description": "Adds a product to the buyer's active cart. If no cart exists, a new one is automatically created. Groups items by supplier.",
         "operationId": "CartController_addItem",
@@ -6132,20 +6218,11 @@
         ]
       }
     },
-    "/api/carts/{cartId}/items/{itemId}": {
+    "/api/carts/me/items/{itemId}": {
       "patch": {
         "description": "Updates the quantity of a specific item in the buyer's cart. Recalculates supplier subtotal and cart totals.",
         "operationId": "CartController_updateItemQuantity",
         "parameters": [
-          {
-            "name": "cartId",
-            "required": true,
-            "in": "path",
-            "description": "Cart ID",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "itemId",
             "required": true,
@@ -6153,6 +6230,15 @@
             "description": "Cart Item ID",
             "schema": {
               "type": "number"
+            }
+          },
+          {
+            "name": "cartId",
+            "required": true,
+            "in": "path",
+            "description": "Cart ID",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -6287,21 +6373,21 @@
         "operationId": "CartController_removeItem",
         "parameters": [
           {
-            "name": "cartId",
-            "required": true,
-            "in": "path",
-            "description": "Cart ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "itemId",
             "required": true,
             "in": "path",
             "description": "Cart Item ID",
             "schema": {
               "type": "number"
+            }
+          },
+          {
+            "name": "cartId",
+            "required": true,
+            "in": "path",
+            "description": "Cart ID",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -6402,139 +6488,25 @@
         ]
       }
     },
-    "/api/carts/{cartId}": {
-      "delete": {
-        "description": "Marks the buyer's cart as deleted. Once deleted, the cart cannot be retrieved as active.",
-        "operationId": "CartController_deleteCart",
-        "parameters": [
-          {
-            "name": "cartId",
-            "required": true,
-            "in": "path",
-            "description": "Cart ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Cart deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "message": "Cart deleted successfully"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden: You do not have access to this resource (role mismatch).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "You do not have access to this resource",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Cart not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Cart not found",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "token": []
-          }
-        ],
-        "summary": "Delete entire cart",
-        "tags": [
-          "Carts"
-        ]
-      }
-    },
-    "/api/carts/{cartId}/suppliers/{supplierId}": {
+    "/api/carts/me/suppliers/{supplierId}": {
       "delete": {
         "description": "Removes all items from a specific supplier in the cart. If the supplier is the last one, the whole cart is deleted.",
         "operationId": "CartController_removeSupplierFromCart",
         "parameters": [
           {
-            "name": "cartId",
+            "name": "supplierId",
             "required": true,
             "in": "path",
-            "description": "Cart ID",
+            "description": "Supplier ID",
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "supplierId",
+            "name": "cartId",
             "required": true,
             "in": "path",
-            "description": "Supplier ID",
+            "description": "Cart ID",
             "schema": {
               "type": "string"
             }
@@ -6648,7 +6620,7 @@
         ]
       }
     },
-    "/api/carts/{cartId}/checkout": {
+    "/api/carts/me/checkout": {
       "post": {
         "description": "Finalizes the buyer's cart by creating orders for each supplier. Marks the cart as bought and returns the checkout details. Payment integration (Tap) will be handled here.",
         "operationId": "CartController_checkoutCart",

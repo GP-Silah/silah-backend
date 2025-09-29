@@ -21,20 +21,7 @@ export function ApiDocsGetBuyerActiveCart() {
             description:
                 'Fetches the currently active cart of the authenticated buyer. ' +
                 'Returns details of suppliers, items, and totals. ' +
-                'Throws 404 if no active cart exists.' +
-                'Supports optional language selection via header or query.',
-        }),
-        ApiQuery({
-            name: 'lang',
-            required: false,
-            description: 'Optional query param to set language (ar | en)',
-            enum: ['ar', 'en'],
-        }),
-        ApiHeader({
-            name: 'accept-language',
-            required: false,
-            description: 'Optional header to set language (ar | en)',
-            enum: ['ar', 'en'],
+                'Throws 404 if no active cart exists.',
         }),
         ApiOkResponse({
             description: 'Active cart retrieved successfully',
