@@ -60,6 +60,7 @@ model Supplier {
   subscriptions SupplierSubscription[]
   products      Product[]
   services      Service[]
+  carts         CartBySupplier[] // buyer's cart is grouped based on suppliers
 }
 
 // ============ 🛂 SUBSCRIPTIONS ==============
@@ -81,6 +82,8 @@ model Buyer {
   card      Card?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  carts Cart[]
 }
 
 // ============  💳 CARD ===============
@@ -165,6 +168,8 @@ model Product {
   deletedAt             DateTime?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
+
+  cartItems CartItem[]
 }
 
 // ============ ✋ SERVICES ===============
@@ -188,6 +193,51 @@ model Service {
   deletedAt           DateTime?
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
+}
+
+// ============ 🛒 CART =================
+model Cart {
+  id        String    @id @default(uuid())
+  buyerId   String
+  buyer     Buyer     @relation(fields: [buyerId], references: [id])
+  productsTotal Float
+  deliveryFees Float
+  cartTotal Float
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  isBought  Boolean   @default(false)
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime?
+
+  // A cart can have many suppliers inside it
+  suppliers CartBySupplier[]
+}
+
+// ============ 🛒 CART BY SUPPLIER =============
+model CartBySupplier {
+  id          String   @id @default(uuid())
+  cartId      String
+  cart        Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  supplierId  String
+  supplier    Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  deliveryFee Float // of the supplier
+  subTotal    Float // sum of this supplier’s items (without delivery fee)
+  supplierTotalPrice  Float // subTotal + deliveryFee
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  cartItems CartItem[]
+}
+
+// ============ 🛒 CART ITEM =============
+model CartItem {
+  id               Int            @id @default(autoincrement())
+  cartBySupplierId String
+  cartBySupplier   CartBySupplier @relation(fields: [cartBySupplierId], references: [id], onDelete: Cascade)
+  productId        String
+  product          Product        @relation(fields: [productId], references: [id])
+  quantity         Int
+  itemTotalPrice   Float // product.price * quantity at time of adding
 }
 
 // ============  ⚔️ ENUMS ================
@@ -232,7 +282,7 @@ enum GroupPurchaseDeadline {
 
 enum ServiceAvailability {
   TWENTY_FOUR_SEVEN
-  EVERYDAY 
+  EVERYDAY
   WEEKDAYS
   WEEKENDS
   APPOINTMENT
