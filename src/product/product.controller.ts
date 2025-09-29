@@ -51,35 +51,42 @@ export class ProductController {
     @Get()
     @ApiDocsGetAllProducts()
     async getAllProducts(
+        @Req() req: Request,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
+        const userId = req.tokenData?.sub;
         const finalLang = lang || langHeader || 'en';
-        return this.productService.getAllProducts(finalLang);
+        return this.productService.getAllProducts(finalLang, userId);
     }
 
     @Get(':productId')
     @ApiDocsGetProductById()
     async getProductById(
         @Param('productId') productId: string,
+        @Req() req: Request,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
+        const userId = req.tokenData?.sub;
         const finalLang = lang || langHeader || 'en';
-        return this.productService.getProductById(productId, finalLang);
+        return this.productService.getProductById(productId, finalLang, userId);
     }
 
     @Get('supplier/:supplierId')
     @ApiDocsGetAllSupplierProducts()
     async getAllSupplierProducts(
         @Param('souplierId') supplierId: string,
+        @Req() req: Request,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
+        const userId = req.tokenData?.sub;
         const finalLang = lang || langHeader || 'en';
         return this.productService.getAllSupplierProducts(
             supplierId,
             finalLang,
+            userId,
         );
     }
 

@@ -99,8 +99,12 @@ export class ProductResponseDto {
     @ApiProperty({ description: 'Publish status', example: true })
     isPublished: boolean;
 
-    @ApiProperty({ description: 'Wishlist count', example: 10 })
-    wishlistCount: number;
+    @ApiProperty({
+        description: 'Wishlist count (only shown if supplier has PREMIUM plan)',
+        example: 10,
+        required: false,
+    })
+    wishlistCount?: number;
 
     @ApiProperty({ description: 'Average rating', example: 4.5 })
     avgRating: number;

@@ -4,10 +4,8 @@ import {
     Get,
     Patch,
     Post,
-    Query,
     Req,
     UseGuards,
-    Headers,
     Body,
     Param,
     BadRequestException,
@@ -42,16 +40,11 @@ export class CartController {
     @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Get()
+    @Get('me')
     @ApiDocsGetBuyerActiveCart()
-    async getBuyerActiveCart(
-        @Req() req: Request,
-        @Headers('accept-language') langHeader?: 'ar' | 'en',
-        @Query('lang') lang?: 'ar' | 'en',
-    ) {
-        const finalLang = lang || langHeader || 'en';
+    async getBuyerActiveCart(@Req() req: Request) {
         const userId = req.tokenData!.sub;
-        return this.cartService.getBuyerActiveCart(userId, finalLang);
+        return this.cartService.getBuyerActiveCart(userId);
     }
 
     @ApiJwtAuthGuard()
@@ -59,7 +52,7 @@ export class CartController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     // auto creation when first item is added
-    @Post('/items')
+    @Post('me/items')
     @ApiDocsAddCartItem()
     async addItem(@Req() req: Request, @Body() dto: AddCartItemDto) {
         const userId = req.tokenData!.sub;
@@ -70,11 +63,10 @@ export class CartController {
     @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Patch(':cartId/items/:itemId')
+    @Patch('me/items/:itemId')
     @ApiDocsUpdateItemQuantity()
     async updateItemQuantity(
         @Req() req: Request,
-        @Param('cartId') cartId: string,
         @Param('itemId', ParseIntPipe) itemId: number,
         @Body('newQuantity') newQuantity: number,
     ) {
@@ -85,67 +77,53 @@ export class CartController {
             );
         }
         const userId = req.tokenData!.sub;
-        return this.cartService.updateItemQuantity(
-            userId,
-            cartId,
-            itemId,
-            newQuantity,
-        );
+        return this.cartService.updateItemQuantity(userId, itemId, newQuantity);
     }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Delete(':cartId/items/:itemId')
+    @Delete('me/items/:itemId')
     @ApiDocsRemoveItem()
-    async removeItem(
-        @Req() req: Request,
-        @Param('cartId') cartId: string,
-        @Param('itemId') itemId: number,
-    ) {
+    async removeItem(@Req() req: Request, @Param('itemId') itemId: number) {
         const userId = req.tokenData!.sub;
-        return this.cartService.removeItem(userId, cartId, itemId);
+        return this.cartService.removeItem(userId, itemId);
     }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Delete(':cartId')
+    @Delete('me')
     @ApiDocsDeleteCart()
-    async deleteCart(@Req() req: Request, @Param('cartId') cartId: string) {
+    async deleteCart(@Req() req: Request) {
         const userId = req.tokenData!.sub;
-        return this.cartService.deleteCart(userId, cartId);
+        return this.cartService.deleteCart(userId);
     }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Delete(':cartId/suppliers/:supplierId')
+    @Delete('me/suppliers/:supplierId')
     @ApiDocsRemoveSupplierFromCart()
     async removeSupplierFromCart(
         @Req() req: Request,
-        @Param('cartId') cartId: string,
         @Param('supplierId') supplierId: string,
     ) {
         const userId = req.tokenData!.sub;
-        return this.cartService.removeSupplierFromCart(
-            userId,
-            cartId,
-            supplierId,
-        );
+        return this.cartService.removeSupplierFromCart(userId, supplierId);
     }
 
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Post(':cartId/checkout')
+    @Post('me/checkout')
     @ApiDocsCheckoutCart()
-    async checkoutCart(@Req() req: Request, @Param('cartId') cartId: string) {
+    async checkoutCart(@Req() req: Request) {
         const userId = req.tokenData!.sub;
-        return this.cartService.checkoutCart(userId, cartId);
+        return this.cartService.checkoutCart(userId);
     }
 }

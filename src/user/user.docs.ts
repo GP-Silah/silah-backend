@@ -13,6 +13,7 @@ import {
 } from '@nestjs/swagger';
 import { UserResponseDTO } from './dtos/userResponse.dto';
 import { UpdateUserDto } from './dtos/updateUser.dto';
+import { Languages } from '@prisma/client';
 
 export function ApiDocsGetUserByEmail() {
     return applyDecorators(
@@ -364,6 +365,28 @@ export function ApiDocsDeleteProfilePicture() {
                     statusCode: 404,
                     message: 'Profile picture not found',
                     error: 'Not Found',
+                },
+            },
+        }),
+    );
+}
+
+export function ApiDocsSwitchPreferredLanguage() {
+    return applyDecorators(
+        ApiOperation({
+            summary: 'Toggle user preferred language',
+            description:
+                "Switches the authenticated user's preferred language between English (ENG) and Arabic (ARA). " +
+                'Returns the old and new preferred language.',
+        }),
+        ApiBearerAuth(),
+        ApiOkResponse({
+            description: 'User preferred language switched successfully',
+            schema: {
+                example: {
+                    email: 'user@example.com',
+                    oldLanguage: Languages.EN,
+                    newLanguage: Languages.AR,
                 },
             },
         }),

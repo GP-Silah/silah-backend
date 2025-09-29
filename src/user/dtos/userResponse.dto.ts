@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserRole } from '../../enums/userRole.enum';
+import { Languages } from '@prisma/client';
 
 export class UserResponseDTO {
     @ApiProperty({ example: 'clv70z13w0000unqoj4lcr8x4' })
@@ -52,6 +53,9 @@ export class UserResponseDTO {
 
     @ApiProperty({ example: true })
     isEmailVerified: boolean;
+
+    @ApiProperty({ example: 'ARA', enum: Languages })
+    preferredLanguage: Languages;
 
     @ApiProperty({ example: '2025-07-04T7:31:00.000Z' })
     createdAt: Date;

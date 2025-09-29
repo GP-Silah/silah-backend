@@ -1352,6 +1352,85 @@
         ]
       }
     },
+    "/api/users/me/preferred-language": {
+      "patch": {
+        "description": "Switches the authenticated user's preferred language between English (ENG) and Arabic (ARA). Returns the old and new preferred language.",
+        "operationId": "UserController_switchPreferredLanguage",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User preferred language switched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "email": "user@example.com",
+                    "oldLanguage": "EN",
+                    "newLanguage": "AR"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Toggle user preferred language",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
     "/api/users/{id}/profile-picture": {
       "get": {
         "description": "Retrieves the URL of a user's profile picture that is stored on R2. Throws a 404 error if the user or their profile picture does not exist.",
@@ -5799,23 +5878,33 @@
     },
     "/api/carts": {
       "get": {
-        "description": "Fetches the currently active cart of the authenticated buyer. Returns details of suppliers, items, and totals. Throws 404 if no active cart exists.",
+        "description": "Fetches the currently active cart of the authenticated buyer. Returns details of suppliers, items, and totals. Throws 404 if no active cart exists.Supports optional language selection via header or query.",
         "operationId": "CartController_getBuyerActiveCart",
         "parameters": [
           {
-            "name": "accept-language",
-            "required": true,
-            "in": "header",
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Optional query param to set language (ar | en)",
             "schema": {
+              "enum": [
+                "ar",
+                "en"
+              ],
               "type": "string"
             }
           },
           {
-            "name": "lang",
-            "required": true,
-            "in": "query",
+            "name": "accept-language",
+            "in": "header",
+            "description": "Optional header to set language (ar | en)",
+            "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "ar",
+                "en"
+              ]
             }
           },
           {
@@ -6956,6 +7045,14 @@
             "type": "boolean",
             "example": true
           },
+          "preferredLanguage": {
+            "type": "string",
+            "example": "ARA",
+            "enum": [
+              "AR",
+              "EN"
+            ]
+          },
           "createdAt": {
             "format": "date-time",
             "type": "string",
@@ -6980,6 +7077,7 @@
           "pfpUrl",
           "categories",
           "isEmailVerified",
+          "preferredLanguage",
           "createdAt",
           "updatedAt"
         ]
@@ -7010,6 +7108,14 @@
           "city": {
             "type": "string",
             "example": "Riyadh"
+          },
+          "preferredLanguage": {
+            "type": "string",
+            "example": "ARA",
+            "enum": [
+              "AR",
+              "EN"
+            ]
           },
           "categories": {
             "description": "List of category IDs (use IDs, not names).",
@@ -7493,7 +7599,7 @@
           },
           "wishlistCount": {
             "type": "number",
-            "description": "Wishlist count",
+            "description": "Wishlist count (only shown if supplier has PREMIUM plan)",
             "example": 10
           },
           "avgRating": {
@@ -7544,7 +7650,6 @@
           "groupPurchasePrice",
           "groupPurchaseDuration",
           "isPublished",
-          "wishlistCount",
           "avgRating",
           "ratingsCount",
           "createdAt",
@@ -7795,8 +7900,8 @@
           },
           "wishlistCount": {
             "type": "number",
-            "description": "Wishlist count",
-            "example": 7
+            "description": "Wishlist count (only shown if supplier has PREMIUM plan)",
+            "example": 10
           },
           "avgRating": {
             "type": "number",
@@ -7840,7 +7945,6 @@
           "imagesFilesUrls",
           "serviceAvailability",
           "isPublished",
-          "wishlistCount",
           "avgRating",
           "ratingsCount",
           "createdAt",

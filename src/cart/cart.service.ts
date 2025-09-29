@@ -16,10 +16,38 @@ export class CartService {
         private readonly translationService: TranslationService,
     ) {}
 
-    private async toCartResponseDto(
-        cart: any,
-        targetLang: 'ar' | 'en' = 'en',
-    ): Promise<CartResponseDto> {
+    /** --- UTILITY: Get active cart for a buyer --- */
+    private async getActiveCartByUserId(userId: string) {
+        const buyer = await this.prisma.buyer.findUnique({
+            where: { userId },
+        });
+        if (!buyer) throw new NotFoundException('Buyer not found');
+
+        const cart = await this.prisma.cart.findFirst({
+            where: { buyerId: buyer.id, isBought: false, isDeleted: false },
+            include: {
+                suppliers: {
+                    include: {
+                        cartItems: { include: { product: true } },
+                        supplier: true,
+                    },
+                },
+            },
+        });
+
+        if (!cart)
+            throw new NotFoundException('No active cart found for this buyer');
+
+        return { cart, buyer };
+    }
+
+    private async toCartResponseDto(cart: any): Promise<CartResponseDto> {
+        let targetLang;
+        const lang = cart.user.preferredLanguage.toLocaleLowerCase();
+        if (lang === 'ar' || lang === 'en') {
+            targetLang = lang;
+        }
+
         return {
             cartId: cart.id,
             buyerId: cart.buyerId,
@@ -55,69 +83,22 @@ export class CartService {
         };
     }
 
-    async getBuyerActiveCart(
-        userId: string,
-        targetLang?: 'ar' | 'en',
-    ): Promise<CartResponseDto> {
-        const buyer = await this.prisma.buyer.findUnique({
-            where: { userId },
-        });
-        if (!buyer) throw new NotFoundException('Buyer not found');
-        const activeCart = await this.prisma.cart.findFirst({
-            where: { buyerId: buyer.id, isBought: false, isDeleted: false },
-            include: {
-                suppliers: {
-                    include: {
-                        cartItems: {
-                            include: {
-                                product: true, // we want product info
-                            },
-                        },
-                        supplier: true, // we want supplier info
-                    },
-                },
-            },
-        });
-        if (!activeCart)
-            throw new NotFoundException('No active cart for this buyer');
-        return this.toCartResponseDto(activeCart, targetLang);
+    async getBuyerActiveCart(userId: string): Promise<CartResponseDto> {
+        const { cart } = await this.getActiveCartByUserId(userId);
+        return this.toCartResponseDto(cart);
     }
 
     async addItem(userId: string, dto: AddCartItemDto) {
-        // Find the supplier
+        const { cart: activeCart, buyer } =
+            await this.getActiveCartByUserId(userId);
+
+        // Check supplier
         const supplier = await this.prisma.supplier.findUnique({
             where: { id: dto.supplierId, isDeleted: false },
         });
-        if (!supplier) {
-            throw new BadRequestException(
-                `Supplier with id ${dto.supplierId} is not found`,
-            );
-        }
+        if (!supplier) throw new BadRequestException('Supplier not found');
 
-        // Find the buyer
-        const buyer = await this.prisma.buyer.findUnique({
-            where: { userId },
-        });
-        if (!buyer) throw new NotFoundException('Buyer not found');
-
-        // Find or create active cart
-        let activeCart = await this.prisma.cart.findFirst({
-            where: { buyerId: buyer.id, isBought: false, isDeleted: false },
-        });
-
-        if (!activeCart) {
-            // Create a new cart if none exists
-            activeCart = await this.prisma.cart.create({
-                data: {
-                    buyerId: buyer.id,
-                    productsTotal: 0,
-                    deliveryFees: 0,
-                    cartTotal: 0,
-                },
-            });
-        }
-
-        // Find or create CartBySupplier (grouped by supplier)
+        // CartBySupplier
         let cartBySupplier = await this.prisma.cartBySupplier.findFirst({
             where: { cartId: activeCart.id, supplierId: supplier.id },
         });
@@ -134,7 +115,13 @@ export class CartService {
             });
         }
 
-        // Check if product already exists in this supplier's cart
+        // Product
+        const product = await this.prisma.product.findUnique({
+            where: { id: dto.productId },
+        });
+        if (!product) throw new NotFoundException('Product not found');
+
+        // CartItem
         let cartItem = await this.prisma.cartItem.findFirst({
             where: {
                 cartBySupplierId: cartBySupplier.id,
@@ -142,13 +129,7 @@ export class CartService {
             },
         });
 
-        const product = await this.prisma.product.findUnique({
-            where: { id: dto.productId },
-        });
-        if (!product) throw new NotFoundException('Product not found');
-
         if (cartItem) {
-            // Update quantity and total price
             cartItem = await this.prisma.cartItem.update({
                 where: { id: cartItem.id },
                 data: {
@@ -158,7 +139,6 @@ export class CartService {
                 },
             });
         } else {
-            // Create new cart item
             cartItem = await this.prisma.cartItem.create({
                 data: {
                     cartBySupplierId: cartBySupplier.id,
@@ -169,101 +149,31 @@ export class CartService {
             });
         }
 
-        // Update supplier subtotal and total
-        const cartItemsForSupplier = await this.prisma.cartItem.findMany({
-            where: { cartBySupplierId: cartBySupplier.id },
-        });
-        const subTotal = cartItemsForSupplier.reduce(
-            (sum, item) => sum + item.itemTotalPrice,
-            0,
-        );
-        await this.prisma.cartBySupplier.update({
-            where: { id: cartBySupplier.id },
-            data: {
-                subTotal,
-                supplierTotalPrice: subTotal + cartBySupplier.deliveryFee,
-            },
-        });
-
-        // Update cart totals
-        const cartSuppliers = await this.prisma.cartBySupplier.findMany({
-            where: { cartId: activeCart.id },
-        });
-        const productsTotal = cartSuppliers.reduce(
-            (sum, s) => sum + s.subTotal,
-            0,
-        );
-        const deliveryFees = cartSuppliers.reduce(
-            (sum, s) => sum + s.deliveryFee,
-            0,
-        );
-        const cartTotal = productsTotal + deliveryFees;
-
-        await this.prisma.cart.update({
-            where: { id: activeCart.id },
-            data: { productsTotal, deliveryFees, cartTotal },
-        });
-
-        // Fetch updated cart with all relations for DTO
-        const newCart = await this.prisma.cart.findFirst({
-            where: { id: activeCart.id },
-            include: {
-                suppliers: {
-                    include: {
-                        cartItems: {
-                            include: { product: true },
-                        },
-                        supplier: true,
-                    },
-                },
-            },
-        });
-
-        return this.toCartResponseDto(newCart!);
+        await this.recalculateCartTotals(activeCart.id);
+        const newCart = await this.getCartWithRelations(activeCart.id);
+        return this.toCartResponseDto(newCart);
     }
 
     async updateItemQuantity(
         userId: string,
-        cartId: string,
         itemId: number,
         newQuantity: number,
-    ): Promise<CartResponseDto> {
-        if (newQuantity < 1) {
+    ) {
+        if (newQuantity < 1)
             throw new BadRequestException('Quantity must be at least 1');
-        }
 
-        // Ensure cart belongs to buyer
-        const buyer = await this.prisma.buyer.findUnique({ where: { userId } });
-        if (!buyer) throw new NotFoundException('Buyer not found');
+        const { cart } = await this.getActiveCartByUserId(userId);
 
-        const cart = await this.prisma.cart.findFirst({
-            where: {
-                id: cartId,
-                buyerId: buyer.id,
-                isBought: false,
-                isDeleted: false,
-            },
-            include: {
-                suppliers: {
-                    include: {
-                        cartItems: { include: { product: true } },
-                        supplier: true,
-                    },
-                },
-            },
-        });
-        if (!cart) throw new NotFoundException('Cart not found');
-
-        // Update cart item
         const item = await this.prisma.cartItem.findUnique({
             where: { id: itemId },
-            include: { product: true, cartBySupplier: true },
+            include: { cartBySupplier: true, product: true },
         });
+
         if (!item || item.cartBySupplier.cartId !== cart.id) {
             throw new NotFoundException('Item not found in this cart');
         }
 
-        const updatedItem = await this.prisma.cartItem.update({
+        await this.prisma.cartItem.update({
             where: { id: itemId },
             data: {
                 quantity: newQuantity,
@@ -271,33 +181,25 @@ export class CartService {
             },
         });
 
-        // Recalculate totals
         await this.recalculateCartTotals(cart.id);
-
-        // Return updated cart
-        const newCart = await this.findCartWithRelations(cart.id);
-        return this.toCartResponseDto(newCart!);
+        const updatedCart = await this.getCartWithRelations(cart.id);
+        return this.toCartResponseDto(updatedCart);
     }
 
-    async removeItem(
-        userId: string,
-        cartId: string,
-        itemId: number,
-    ): Promise<CartResponseDto> {
-        const buyer = await this.prisma.buyer.findUnique({ where: { userId } });
-        if (!buyer) throw new NotFoundException('Buyer not found');
+    async removeItem(userId: string, itemId: number) {
+        const { cart } = await this.getActiveCartByUserId(userId);
 
         const cartItem = await this.prisma.cartItem.findUnique({
             where: { id: itemId },
             include: { cartBySupplier: true },
         });
-        if (!cartItem || cartItem.cartBySupplier.cartId !== cartId) {
+        if (!cartItem || cartItem.cartBySupplier.cartId !== cart.id) {
             throw new NotFoundException('Item not found in this cart');
         }
 
         await this.prisma.cartItem.delete({ where: { id: itemId } });
 
-        // If supplier has no more items, remove the supplier group
+        // If no items left for supplier, remove CartBySupplier
         const remaining = await this.prisma.cartItem.count({
             where: { cartBySupplierId: cartItem.cartBySupplierId },
         });
@@ -307,101 +209,64 @@ export class CartService {
             });
         }
 
-        await this.recalculateCartTotals(cartId);
-
-        const newCart = await this.findCartWithRelations(cartId);
-        return this.toCartResponseDto(newCart!);
+        await this.recalculateCartTotals(cart.id);
+        const newCart = await this.getCartWithRelations(cart.id);
+        return this.toCartResponseDto(newCart);
     }
 
-    async deleteCart(userId: string, cartId: string): Promise<void> {
-        const buyer = await this.prisma.buyer.findUnique({ where: { userId } });
-        if (!buyer) throw new NotFoundException('Buyer not found');
-
-        const cart = await this.prisma.cart.findFirst({
-            where: { id: cartId, buyerId: buyer.id, isDeleted: false },
-        });
-        if (!cart) throw new NotFoundException('Cart not found');
-
+    async deleteCart(userId: string): Promise<void> {
+        const { cart } = await this.getActiveCartByUserId(userId);
         await this.prisma.cart.update({
-            where: { id: cartId },
+            where: { id: cart.id },
             data: { isDeleted: true, deletedAt: new Date() },
         });
     }
 
-    async removeSupplierFromCart(
-        userId: string,
-        cartId: string,
-        supplierId: string,
-    ): Promise<CartResponseDto> {
-        const buyer = await this.prisma.buyer.findUnique({ where: { userId } });
-        if (!buyer) throw new NotFoundException('Buyer not found');
+    async removeSupplierFromCart(userId: string, supplierId: string) {
+        const { cart } = await this.getActiveCartByUserId(userId);
 
         const cartBySupplier = await this.prisma.cartBySupplier.findFirst({
-            where: { cartId, supplierId },
+            where: { cartId: cart.id, supplierId },
         });
-        if (!cartBySupplier) {
+        if (!cartBySupplier)
             throw new NotFoundException('Supplier not found in this cart');
-        }
 
-        // Cascade deletes its items due to schema
         await this.prisma.cartBySupplier.delete({
             where: { id: cartBySupplier.id },
         });
 
-        // If it was the only supplier on cart delete the cart
+        // If no suppliers left, delete cart
         const remainingSuppliers = await this.prisma.cartBySupplier.count({
-            where: { cartId },
+            where: { cartId: cart.id },
         });
-
         if (remainingSuppliers === 0) {
-            await this.prisma.cart.delete({ where: { id: cartId } });
+            await this.prisma.cart.update({
+                where: { id: cart.id },
+                data: { isDeleted: true, deletedAt: new Date() },
+            });
             throw new NotFoundException(
                 'Cart is now empty and has been deleted',
             );
         }
 
-        await this.recalculateCartTotals(cartId);
-
-        const newCart = await this.findCartWithRelations(cartId);
-        return this.toCartResponseDto(newCart!);
+        await this.recalculateCartTotals(cart.id);
+        const newCart = await this.getCartWithRelations(cart.id);
+        return this.toCartResponseDto(newCart);
     }
 
-    async checkoutCart(userId: string, cartId: string) {
-        // Step 1: find buyer
-        const buyer = await this.prisma.buyer.findUnique({ where: { userId } });
-        if (!buyer) throw new NotFoundException('Buyer not found');
+    async checkoutCart(userId: string) {
+        const { cart, buyer } = await this.getActiveCartByUserId(userId);
 
-        // Step 2: get cart (must be active)
-        const cart = await this.prisma.cart.findFirst({
-            where: {
-                id: cartId,
-                buyerId: buyer.id,
-                isBought: false,
-                isDeleted: false,
-            },
-            include: {
-                suppliers: {
-                    include: {
-                        cartItems: {
-                            include: { product: true },
-                        },
-                        supplier: true,
-                    },
-                },
-            },
-        });
-        if (!cart) throw new NotFoundException('Active cart not found');
         if (cart.suppliers.length === 0)
             throw new BadRequestException('Cart is empty');
 
-        // Step 3: generate checkoutId (groups orders from same checkout)
+        // TODO: integrate with Tap payments gateway
+
         const checkoutId = uuidv4();
 
-        // Step 4: for each supplier in the cart → create order
         const orders = await Promise.all(
             cart.suppliers.map((supplierCart) => {
-                const finalPrice = supplierCart.supplierTotalPrice; // subtotal + delivery fee
-
+                const finalPrice = supplierCart.supplierTotalPrice;
                 return this.prisma.order.create({
                     data: {
                         checkoutId,
@@ -409,37 +274,31 @@ export class CartService {
                         cartId: cart.id,
                         supplierId: supplierCart.supplierId,
                         finalPrice,
-                        // status defaults to PENDING
                     },
                 });
             }),
         );
 
-        // Step 5: mark cart as bought
         await this.prisma.cart.update({
             where: { id: cart.id },
             data: { isBought: true },
         });
 
-        // Step 6: payment integration (for the whole checkout)
-        // TODO: integrate with payment gateway (Tap)
-
-        // Step 7: return orders grouped by checkoutId
         return {
             message: 'Paid successfully',
             checkoutId,
             buyerId: buyer.id,
             cartId: cart.id,
             totalPaid: cart.cartTotal,
-            orders, //TODO orderResponseDto? it is optional though
+            orders,
         };
     }
 
-    private async recalculateCartTotals(cartId: string): Promise<void> {
+    /** --- Recalculate totals --- */
+    private async recalculateCartTotals(cartId: string) {
         const cartSuppliers = await this.prisma.cartBySupplier.findMany({
             where: { cartId },
         });
-
         const productsTotal = cartSuppliers.reduce(
             (sum, s) => sum + s.subTotal,
             0,
@@ -456,7 +315,8 @@ export class CartService {
         });
     }
 
-    private async findCartWithRelations(cartId: string) {
+    /** --- Fetch cart with relations --- */
+    private async getCartWithRelations(cartId: string) {
         return this.prisma.cart.findFirst({
             where: { id: cartId },
             include: {
@@ -466,6 +326,7 @@ export class CartService {
                         supplier: true,
                     },
                 },
+                buyer: { include: { user: true } },
             },
         });
     }

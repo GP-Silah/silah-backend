@@ -16,22 +16,23 @@ datasource db {
 
 // ============  👤 USER ================
 model User {
-  id              String   @id @default(uuid())
-  email           String   @unique
-  crn             String   @unique
-  password        String
-  name            String
-  role            UserRole @default(BUYER)
-  businessName    String
-  city            String
-  nid             String   @unique
-  agreedToTerms   Boolean  @default(true)
-  isEmailVerified Boolean  @default(false)
-  pfpFileName     String?
-  isPfpDefault    Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  tapCustomerId   String   @unique
+  id                String    @id @default(uuid())
+  tapCustomerId     String    @unique
+  email             String    @unique
+  crn               String    @unique
+  password          String
+  name              String
+  role              UserRole  @default(BUYER)
+  businessName      String
+  city              String
+  nid               String    @unique
+  agreedToTerms     Boolean   @default(true)
+  isEmailVerified   Boolean   @default(false)
+  pfpFileName       String?
+  isPfpDefault      Boolean   @default(true)
+  preferredLanguage Languages @default(EN)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   categories UserCategory[]
   supplier   Supplier?
@@ -246,17 +247,17 @@ model CartItem {
 }
 
 model Order {
-  id          String      @id @default(uuid())
-  checkoutId  String      // same across all orders from the same checkout
-  buyerId     String?
-  buyer       Buyer?      @relation(fields: [buyerId], references: [id], onDelete: SetNull)
-  cartId      String
-  cart        Cart        @relation(fields: [cartId], references: [id])
-  supplierId  String
-  supplier    Supplier    @relation(fields: [supplierId], references: [id])
-  finalPrice  Float
-  status      OrderStatus @default(PENDING)
-  createdAt   DateTime    @default(now())
+  id         String      @id @default(uuid())
+  checkoutId String // same across all orders from the same checkout
+  buyerId    String?
+  buyer      Buyer?      @relation(fields: [buyerId], references: [id], onDelete: SetNull)
+  cartId     String
+  cart       Cart        @relation(fields: [cartId], references: [id])
+  supplierId String
+  supplier   Supplier    @relation(fields: [supplierId], references: [id])
+  finalPrice Float
+  status     OrderStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
 }
 
 // ============  ⚔️ ENUMS ================
@@ -271,6 +272,11 @@ enum TokenType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
   TOKEN
+}
+
+enum Languages {
+  AR
+  EN
 }
 
 enum SupplierPlan {
