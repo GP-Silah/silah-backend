@@ -7,8 +7,6 @@ import {
     ApiNotFoundResponse,
     ApiBody,
     ApiParam,
-    ApiQuery,
-    ApiHeader,
 } from '@nestjs/swagger';
 import { CartResponseDto } from './dtos/cartResponse.dto';
 import { AddCartItemDto } from './dtos/addCartItem.dto';
@@ -19,8 +17,7 @@ export function ApiDocsGetBuyerActiveCart() {
         ApiOperation({
             summary: 'Get active cart for buyer',
             description:
-                'Fetches the currently active cart of the authenticated buyer. ' +
-                'Returns details of suppliers, items, and totals. ' +
+                'Fetches the currently active cart of the authenticated buyer, including suppliers, items, and totals. ' +
                 'Throws 404 if no active cart exists.',
         }),
         ApiOkResponse({
@@ -32,7 +29,7 @@ export function ApiDocsGetBuyerActiveCart() {
             schema: {
                 example: {
                     statusCode: 404,
-                    message: 'No active cart for this buyer',
+                    message: 'No active cart found for this buyer',
                     error: 'Not Found',
                 },
             },
@@ -46,9 +43,8 @@ export function ApiDocsAddCartItem() {
         ApiOperation({
             summary: 'Add item to cart',
             description:
-                "Adds a product to the buyer's active cart. " +
-                'If no cart exists, a new one is automatically created. ' +
-                'Groups items by supplier.',
+                "Adds a product to the buyer's active cart. If no cart exists, a new one is created. " +
+                'Items are grouped by supplier automatically.',
         }),
         ApiBody({ type: AddCartItemDto }),
         ApiOkResponse({
@@ -56,17 +52,18 @@ export function ApiDocsAddCartItem() {
             type: CartResponseDto,
         }),
         ApiBadRequestResponse({
-            description: 'Invalid supplier or input data',
+            description:
+                'Invalid supplier or input data, or requested quantity exceeds stock',
             schema: {
                 example: {
                     statusCode: 400,
-                    message: 'Supplier with id 123 not found',
+                    message: 'Supplier for this product not found',
                     error: 'Bad Request',
                 },
             },
         }),
         ApiNotFoundResponse({
-            description: 'Product or buyer not found',
+            description: 'Buyer or product not found',
             schema: {
                 example: {
                     statusCode: 404,
@@ -84,10 +81,8 @@ export function ApiDocsUpdateItemQuantity() {
         ApiOperation({
             summary: 'Update item quantity in cart',
             description:
-                "Updates the quantity of a specific item in the buyer's cart. " +
-                'Recalculates supplier subtotal and cart totals.',
+                "Updates the quantity of a specific item in the buyer's cart and recalculates totals.",
         }),
-        ApiParam({ name: 'cartId', type: String, description: 'Cart ID' }),
         ApiParam({ name: 'itemId', type: Number, description: 'Cart Item ID' }),
         ApiBody({
             schema: {
@@ -102,17 +97,17 @@ export function ApiDocsUpdateItemQuantity() {
             type: CartResponseDto,
         }),
         ApiBadRequestResponse({
-            description: 'Invalid new quantity',
+            description: 'Quantity is invalid or exceeds product stock',
             schema: {
                 example: {
                     statusCode: 400,
-                    message: 'New quantity cannot be null or less than 1',
+                    message: 'Only 5 units available in stock',
                     error: 'Bad Request',
                 },
             },
         }),
         ApiNotFoundResponse({
-            description: 'Cart or item not found',
+            description: 'Item not found in buyer cart',
             schema: {
                 example: {
                     statusCode: 404,
@@ -130,17 +125,15 @@ export function ApiDocsRemoveItem() {
         ApiOperation({
             summary: 'Remove item from cart',
             description:
-                "Deletes a specific item from the buyer's cart. " +
-                'If the supplier group has no items left, the supplier is also removed from the cart.',
+                "Deletes a specific item from the buyer's cart. Removes supplier grouping if no items remain for that supplier.",
         }),
-        ApiParam({ name: 'cartId', type: String, description: 'Cart ID' }),
         ApiParam({ name: 'itemId', type: Number, description: 'Cart Item ID' }),
         ApiOkResponse({
             description: 'Item removed successfully',
             type: CartResponseDto,
         }),
         ApiNotFoundResponse({
-            description: 'Cart or item not found',
+            description: 'Item or cart not found',
             schema: {
                 example: {
                     statusCode: 404,
@@ -158,10 +151,8 @@ export function ApiDocsDeleteCart() {
         ApiOperation({
             summary: 'Delete entire cart',
             description:
-                "Marks the buyer's cart as deleted. " +
-                'Once deleted, the cart cannot be retrieved as active.',
+                "Marks the buyer's cart as deleted. Once deleted, it cannot be retrieved as active.",
         }),
-        ApiParam({ name: 'cartId', type: String, description: 'Cart ID' }),
         ApiOkResponse({
             description: 'Cart deleted successfully',
             schema: {
@@ -169,11 +160,11 @@ export function ApiDocsDeleteCart() {
             },
         }),
         ApiNotFoundResponse({
-            description: 'Cart not found',
+            description: 'Active cart not found',
             schema: {
                 example: {
                     statusCode: 404,
-                    message: 'Cart not found',
+                    message: 'No active cart found for this buyer',
                     error: 'Not Found',
                 },
             },
@@ -187,17 +178,15 @@ export function ApiDocsRemoveSupplierFromCart() {
         ApiOperation({
             summary: 'Remove supplier (and its items) from cart',
             description:
-                'Removes all items from a specific supplier in the cart. ' +
-                'If the supplier is the last one, the whole cart is deleted.',
+                'Removes all items from a specific supplier in the cart. Deletes the cart if it was the last supplier.',
         }),
-        ApiParam({ name: 'cartId', type: String, description: 'Cart ID' }),
         ApiParam({
             name: 'supplierId',
             type: String,
             description: 'Supplier ID',
         }),
         ApiOkResponse({
-            description: 'Supplier removed successfully, updated cart returned',
+            description: 'Supplier removed successfully; updated cart returned',
             type: CartResponseDto,
         }),
         ApiNotFoundResponse({
@@ -230,11 +219,8 @@ export function ApiDocsCheckoutCart() {
         ApiOperation({
             summary: 'Checkout cart',
             description:
-                "Finalizes the buyer's cart by creating orders for each supplier. " +
-                'Marks the cart as bought and returns the checkout details. ' +
-                'Payment integration (Tap) will be handled here.',
+                "Finalizes the buyer's cart by creating orders for each supplier. Marks the cart as bought and returns checkout details.",
         }),
-        ApiParam({ name: 'cartId', type: String, description: 'Cart ID' }),
         ApiOkResponse({
             description: 'Cart checked out successfully',
             schema: {
@@ -249,13 +235,11 @@ export function ApiDocsCheckoutCart() {
                             id: 'uuid-order-1',
                             supplierId: 'uuid-supplier-id',
                             finalPrice: 150,
-                            status: 'PENDING',
                         },
                         {
                             id: 'uuid-order-2',
                             supplierId: 'uuid-supplier-id-2',
                             finalPrice: 100,
-                            status: 'PENDING',
                         },
                     ],
                 },
@@ -276,7 +260,7 @@ export function ApiDocsCheckoutCart() {
             schema: {
                 example: {
                     statusCode: 404,
-                    message: 'Active cart not found',
+                    message: 'No active cart found for this buyer',
                     error: 'Not Found',
                 },
             },

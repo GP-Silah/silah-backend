@@ -16,37 +16,11 @@ export class CartService {
         private readonly translationService: TranslationService,
     ) {}
 
-    /** --- UTILITY: Get active cart for a buyer --- */
-    private async getActiveCartByUserId(userId: string) {
-        const buyer = await this.prisma.buyer.findUnique({
-            where: { userId },
-        });
-        if (!buyer) throw new NotFoundException('Buyer not found');
-
-        const cart = await this.prisma.cart.findFirst({
-            where: { buyerId: buyer.id, isBought: false, isDeleted: false },
-            include: {
-                suppliers: {
-                    include: {
-                        cartItems: { include: { product: true } },
-                        supplier: true,
-                    },
-                },
-            },
-        });
-
-        if (!cart)
-            throw new NotFoundException('No active cart found for this buyer');
-
-        return { cart, buyer };
-    }
-
     private async toCartResponseDto(cart: any): Promise<CartResponseDto> {
-        // let targetLang;
-        // const lang = cart.user.preferredLanguage.toLocaleLowerCase();
-        // if (lang === 'ar' || lang === 'en') {
-        //     targetLang = lang;
-        // }
+        const lang = cart.user?.preferredLanguage ?? 'EN'; // default if user missing
+        const targetLang = ['ar', 'en'].includes(lang.toLowerCase())
+            ? lang.toLowerCase()
+            : 'en'; // fallback to English
 
         return {
             cartId: cart.id,
@@ -66,13 +40,13 @@ export class CartService {
                         s.cartItems.map(async (item: any) => ({
                             itemId: item.id,
                             productId: item.productId,
-                            // productName:
-                            //     targetLang === 'en'
-                            //         ? item.product.name
-                            //         : await this.translationService.translateText(
-                            //               item.product.name,
-                            //               targetLang,
-                            //           ),
+                            productName:
+                                targetLang === 'en'
+                                    ? item.product.name
+                                    : await this.translationService.translateText(
+                                          item.product.name,
+                                          targetLang,
+                                      ),
                             productPrice: item.product.price,
                             quantity: item.quantity,
                             itemTotalPrice: item.itemTotalPrice,
@@ -95,6 +69,27 @@ export class CartService {
         });
         if (!buyer) throw new NotFoundException('Buyer not found');
 
+        // Get product and supplier together
+        const product = await this.prisma.product.findUnique({
+            where: { id: dto.productId },
+            include: { supplier: true },
+        });
+
+        if (!product) throw new NotFoundException('Product not found');
+        if (!product.supplier || product.supplier.isDeleted) {
+            throw new BadRequestException(
+                'Supplier for this product not found',
+            );
+        }
+
+        if (product.stock < dto.quantity) {
+            throw new BadRequestException(
+                `Only ${product.stock} units available in stock`,
+            );
+        }
+
+        const supplier = product.supplier;
+
         // Try to find an active cart, create one if none exists
         let activeCart = await this.prisma.cart.findFirst({
             where: { buyerId: buyer.id, isBought: false, isDeleted: false },
@@ -110,12 +105,6 @@ export class CartService {
                 },
             });
         }
-
-        // Check supplier
-        const supplier = await this.prisma.supplier.findUnique({
-            where: { id: dto.supplierId, isDeleted: false },
-        });
-        if (!supplier) throw new BadRequestException('Supplier not found');
 
         // CartBySupplier
         let cartBySupplier = await this.prisma.cartBySupplier.findFirst({
@@ -133,12 +122,6 @@ export class CartService {
                 },
             });
         }
-
-        // Product
-        const product = await this.prisma.product.findUnique({
-            where: { id: dto.productId },
-        });
-        if (!product) throw new NotFoundException('Product not found');
 
         // CartItem
         let cartItem = await this.prisma.cartItem.findFirst({
@@ -190,6 +173,12 @@ export class CartService {
 
         if (!item || item.cartBySupplier.cartId !== cart.id) {
             throw new NotFoundException('Item not found in this cart');
+        }
+
+        if (item.product.stock < newQuantity) {
+            throw new BadRequestException(
+                `Only ${item.product.stock} units available in stock`,
+            );
         }
 
         await this.prisma.cartItem.update({
@@ -313,7 +302,33 @@ export class CartService {
         };
     }
 
-    /** --- Recalculate totals --- */
+    /** --- UTILITY: Get active cart for a buyer --- */
+    private async getActiveCartByUserId(userId: string) {
+        const buyer = await this.prisma.buyer.findUnique({
+            where: { userId },
+        });
+        if (!buyer) throw new NotFoundException('Buyer not found');
+
+        const cart = await this.prisma.cart.findFirst({
+            where: { buyerId: buyer.id, isBought: false, isDeleted: false },
+            include: {
+                suppliers: {
+                    include: {
+                        cartItems: { include: { product: true } },
+                        supplier: true,
+                    },
+                },
+                buyer: { include: { user: true } },
+            },
+        });
+
+        if (!cart)
+            throw new NotFoundException('No active cart found for this buyer');
+
+        return { cart, buyer };
+    }
+
+    /** --- UTILITY: Recalculate totals --- */
     private async recalculateCartTotals(cartId: string) {
         const cartSuppliers = await this.prisma.cartBySupplier.findMany({
             where: { cartId },
@@ -334,7 +349,7 @@ export class CartService {
         });
     }
 
-    /** --- Fetch cart with relations --- */
+    /** --- UTILITY: Fetch cart with relations --- */
     private async getCartWithRelations(cartId: string) {
         return this.prisma.cart.findFirst({
             where: { id: cartId },
