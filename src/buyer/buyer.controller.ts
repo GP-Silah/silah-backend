@@ -3,6 +3,8 @@ import {
     Controller,
     Delete,
     Get,
+    Param,
+    Patch,
     Post,
     Put,
     Req,
@@ -24,7 +26,9 @@ import {
     ApiDocsDeleteCurrentBuyerCard,
     ApiDocsGetCurrentBuyerCard,
     ApiDocsGetCurrentBuyerData,
+    ApiDocsGetCurrentBuyerWishlist,
     ApiDocsSaveOrReplaceCurrentBuyerCard,
+    ApiDocsToggleWishlistItem,
 } from './buyer.docs';
 
 @ApiTags('Buyers')
@@ -89,31 +93,28 @@ export class BuyerController {
         return this.buyerService.deleteCurrentBuyerCard(req.tokenData!.sub);
     }
 
-    // TODO: Come back to these after the WishlistItemDto is finalized
-    @Get('wishlist')
-    @ApiOperation({
-        deprecated: true,
-        summary: 'Not yet implemented',
-        description:
-            'This endpoint is a placeholder for future implementation and is not yet functional.',
-    })
-    async getWishlist() {}
+    @ApiJwtAuthGuard()
+    @ApiRolesGuard()
+    @Roles(UserRole.BUYER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Get('me/wishlist')
+    @ApiDocsGetCurrentBuyerWishlist()
+    async getWishlist(@Req() req: Request) {
+        const userId = req.tokenData!.sub;
+        return this.buyerService.getWishlist(userId);
+    }
 
-    @Post('wishlist/:itemId')
-    @ApiOperation({
-        deprecated: true,
-        summary: 'Not yet implemented',
-        description:
-            'This endpoint is a placeholder for future implementation and is not yet functional.',
-    })
-    async addToWishlist() {}
-
-    @Delete('wishlist/:itemId')
-    @ApiOperation({
-        deprecated: true,
-        summary: 'Not yet implemented',
-        description:
-            'This endpoint is a placeholder for future implementation and is not yet functional.',
-    })
-    async removeFromWishlist() {}
+    @ApiJwtAuthGuard()
+    @ApiRolesGuard()
+    @Roles(UserRole.BUYER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Patch('me/wishlist/:itemId')
+    @ApiDocsToggleWishlistItem()
+    async toggleWishlistItem(
+        @Req() req: Request,
+        @Param('itemId') itemId: string,
+    ) {
+        const userId = req.tokenData!.sub;
+        return this.buyerService.toggleWishlistItem(userId, itemId);
+    }
 }

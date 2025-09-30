@@ -4,13 +4,15 @@ import {
     ApiOkResponse,
     ApiNotFoundResponse,
     ApiBadRequestResponse,
-    ApiUnauthorizedResponse,
     ApiBearerAuth,
     ApiBody,
+    ApiParam,
 } from '@nestjs/swagger';
 import { BuyerResponseDto } from './dtos/buyerResponse.dto';
 import { CardDetailsDto } from './dtos/cardDetails.dto';
 import { CreateCardDto } from './dtos/createCard.dto';
+import { WishlistItemResponseDto } from './dtos/wishlistItemResponse.dto';
+import { ProductResponseDto } from 'src/product/dtos/productResponse.dto';
 
 export function ApiDocsGetCurrentBuyerData() {
     return applyDecorators(
@@ -137,6 +139,93 @@ export function ApiDocsDeleteCurrentBuyerCard() {
                     statusCode: 404,
                     message: 'No card found for this buyer',
                     error: 'Not Found',
+                },
+            },
+        }),
+    );
+}
+
+export function ApiDocsGetCurrentBuyerWishlist() {
+    return applyDecorators(
+        ApiOperation({
+            summary: 'Get current buyer wishlist',
+            description:
+                'Returns the wishlist items of the currently authenticated buyer. Each item can be a product or a service.',
+        }),
+        ApiBearerAuth(),
+        ApiOkResponse({
+            description: 'Wishlist retrieved successfully',
+            type: [WishlistItemResponseDto],
+        }),
+        ApiNotFoundResponse({
+            description: 'Buyer not found',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Buyer not found',
+                    error: 'Not Found',
+                },
+            },
+        }),
+    );
+}
+
+export function ApiDocsToggleWishlistItem() {
+    return applyDecorators(
+        ApiOperation({
+            summary: 'Toggle an item in the buyer wishlist',
+            description:
+                'Adds the item to the wishlist if it is not already there, or removes it if it exists. Returns the updated wishlist.',
+        }),
+        ApiBearerAuth(),
+        ApiParam({
+            name: 'itemId',
+            description: 'The ID of the product or service to toggle',
+            required: true,
+            type: 'string',
+        }),
+        ApiOkResponse({
+            description: 'Item successfully added or removed from wishlist',
+            schema: {
+                example: {
+                    message: 'Item added to wishlist',
+                    isAdded: true,
+                    updatedWishlist: [
+                        {
+                            itemId: '1234567890ab-cdef-1234-5678-abcdef123456',
+                            itemType: 'PRODUCT',
+                            // Note: Swagger cannot display the full DTO here
+                            // The actual response will include the complete ProductResponseDto
+                            product: 'See ProductResponseDto',
+                        },
+                        {
+                            itemId: '1234567890ab-cdef-1234-5678-abcdef654321',
+                            itemType: 'SERVICE',
+                            // Note: Swagger cannot display the full DTO here
+                            // The actual response will include the complete ServiceResponseDto
+                            service: 'See ServiceResponseDto',
+                        },
+                    ],
+                },
+            },
+        }),
+        ApiNotFoundResponse({
+            description: 'Buyer or item not found',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Item not found',
+                    error: 'Not Found',
+                },
+            },
+        }),
+        ApiBadRequestResponse({
+            description: 'Invalid itemId',
+            schema: {
+                example: {
+                    statusCode: 400,
+                    message: 'Invalid item ID format',
+                    error: 'Bad Request',
                 },
             },
         }),

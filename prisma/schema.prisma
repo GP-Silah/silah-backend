@@ -87,8 +87,9 @@ model Buyer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  carts  Cart[]
-  orders Order[]
+  carts    Cart[]
+  orders   Order[]
+  wishlist Wishlist[]
 }
 
 // ============  💳 CARD ===============
@@ -259,6 +260,18 @@ model Order {
   finalPrice Float
   status     OrderStatus @default(PENDING)
   createdAt  DateTime    @default(now())
+}
+
+// ============ ❤️ WISHLIST ==============
+model Wishlist {
+  id        String   @id @default(uuid())
+  buyerId   String
+  buyer     Buyer    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  itemId    String
+  itemType  ItemType
+  createdAt DateTime @default(now())
+
+  @@unique([buyerId, itemId, itemType])
 }
 
 // ============  ⚔️ ENUMS ================
