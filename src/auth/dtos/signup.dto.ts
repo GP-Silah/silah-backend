@@ -10,8 +10,11 @@ import {
     Matches,
     MaxLength,
     MinLength,
+    IsInt,
+    Min,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class SignupDto {
     @ApiProperty({ example: 'user@example.com' })
@@ -23,11 +26,17 @@ export class SignupDto {
         example: 'StrongPass123',
         minLength: 8,
         maxLength: 28,
+        description:
+            'Password must contain at least one uppercase, one lowercase, and one number. Special characters (@, #, !, $) are optional.',
     })
     @IsString()
     @IsNotEmpty()
     @MinLength(8, { message: 'Password must be at least 8 characters' })
     @MaxLength(28, { message: 'Password must not exceed 28 characters' })
+    @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#!$]+$/, {
+        message:
+            'Password must contain at least one uppercase, one lowercase, and one number. Only @, #, !, $ special characters are allowed.',
+    })
     password: string;
 
     @ApiProperty({ example: 'John Doe' })
@@ -64,14 +73,18 @@ export class SignupDto {
     nid: string;
 
     @ApiProperty({
-        example: ['Home & Living', 'Technical & Repair Services'],
-        type: [String],
+        description: 'List of main category IDs (must be a main category).',
+        type: Number,
+        isArray: true,
+        example: [1, 3],
     })
     @IsArray()
     @ArrayNotEmpty()
     @ArrayMinSize(1)
-    @IsString({ each: true })
-    categories: string[];
+    @Type(() => Number)
+    @IsInt({ each: true })
+    @Min(1, { each: true })
+    categories: number[];
 
     @ApiProperty({ example: true })
     @IsBoolean()

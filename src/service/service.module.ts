@@ -9,5 +9,6 @@ import { TranslationModule } from 'src/translation/translation.module';
     imports: [FileModule, SupplierModule, TranslationModule],
     controllers: [ServiceController],
     providers: [ServiceService],
+    exports: [ServiceService],
 })
 export class ServiceModule {}

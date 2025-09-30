@@ -42,6 +42,7 @@ import {
     ApiDocsUpdateProductImage,
 } from './product.docs';
 import { UpdateProductDto } from './dtos/updateProduct.dto';
+import { validateOrReject, ValidationError } from 'class-validator';
 
 @ApiTags('Products')
 @Controller('products')
@@ -51,35 +52,42 @@ export class ProductController {
     @Get()
     @ApiDocsGetAllProducts()
     async getAllProducts(
+        @Req() req: Request,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
+        const userId = req.tokenData?.sub;
         const finalLang = lang || langHeader || 'en';
-        return this.productService.getAllProducts(finalLang);
+        return this.productService.getAllProducts(finalLang, userId);
     }
 
     @Get(':productId')
     @ApiDocsGetProductById()
     async getProductById(
         @Param('productId') productId: string,
+        @Req() req: Request,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
+        const userId = req.tokenData?.sub;
         const finalLang = lang || langHeader || 'en';
-        return this.productService.getProductById(productId, finalLang);
+        return this.productService.getProductById(productId, finalLang, userId);
     }
 
     @Get('supplier/:supplierId')
     @ApiDocsGetAllSupplierProducts()
     async getAllSupplierProducts(
         @Param('souplierId') supplierId: string,
+        @Req() req: Request,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
+        const userId = req.tokenData?.sub;
         const finalLang = lang || langHeader || 'en';
         return this.productService.getAllSupplierProducts(
             supplierId,
             finalLang,
+            userId,
         );
     }
 
@@ -112,6 +120,23 @@ export class ProductController {
             dto = JSON.parse(req.body.dto);
         } catch (err) {
             throw new BadRequestException('Invalid JSON in form field');
+        }
+        // Run validation
+        try {
+            await validateOrReject(Object.assign(new CreateProductDto(), dto));
+        } catch (errors) {
+            // errors is ValidationError[]
+            const messages = (errors as ValidationError[])
+                .map((err) => {
+                    if (err.constraints) {
+                        return Object.values(err.constraints).join('; ');
+                    }
+                    return '';
+                })
+                .filter((msg) => !!msg)
+                .join('; ');
+
+            throw new BadRequestException(messages || 'Validation failed');
         }
         const userId = req.tokenData!.sub;
         return this.productService.createProduct(userId, dto, files);

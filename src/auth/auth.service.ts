@@ -64,19 +64,24 @@ export class AuthService {
     async signUp(payload: SignupDto): Promise<{ token: string }> {
         //TODO: Validate CRN through WatheqAPI; Probably at DTO level
 
-        // Validate that the recieved categories exists in DB, and convert them to IDs to store them later
+        // Validate categories: must exist & must be main (no parentCategoryId)
         const categories = await this.prisma.category.findMany({
-            where: { name: { in: payload.categories } },
+            where: {
+                id: { in: payload.categories },
+                parentCategoryId: null, // ensures only main categories
+            },
         });
+
         if (categories.length !== payload.categories.length) {
-            const foundNames = categories.map((c) => c.name);
+            const foundIds = categories.map((c) => c.id);
             const missing = payload.categories.filter(
-                (name) => !foundNames.includes(name),
+                (id) => !foundIds.includes(id),
             );
             throw new BadRequestException(
-                `These categories are invalid: ${missing.join(', ')}`,
+                `These categories are invalid or not main categories: ${missing.join(', ')}`,
             );
         }
+
         const categoryIds = categories.map((c) => c.id);
 
         // Insure that the NID, CRN, Email are unique in DB
@@ -124,6 +129,11 @@ export class AuthService {
             },
         });
         await this.userService.generateDefaultAvatar(user.email);
+        await this.prisma.buyer.create({
+            data: {
+                userId: user.id,
+            },
+        });
 
         // Generate a JWT token for email verification and send it via email
         const emailToken = this.generateEmailVerificationToken(

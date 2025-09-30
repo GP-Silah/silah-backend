@@ -39,7 +39,7 @@ export function ApiDocsSignUp() {
                                 example: {
                                     statusCode: 400,
                                     message:
-                                        'These categories are invalid: Cleaning, Laundry',
+                                        'These categories are invalid or not main categories: 33, 44',
                                     error: 'Bad Request',
                                 },
                             },
@@ -137,6 +137,7 @@ export function ApiDocsLogin() {
                 'Either "email" or "crn" must be provided, but not both.',
         }),
         ApiBody({
+            type: LoginDto,
             schema: {
                 oneOf: [
                     {

@@ -8,11 +8,13 @@ import {
     ApiParam,
     ApiQuery,
     ApiNotFoundResponse,
+    getSchemaPath,
 } from '@nestjs/swagger';
 import { SupplierResponseDto } from './dtos/supplierResponse.dto';
 import { StoreStatus, SupplierPlan, SupplierStatus } from '@prisma/client';
 import { UpdateSupplierDto } from './dtos/updateSupplier.dto';
 import { StorefrontResponseDto } from './dtos/storefrontResponse.dto';
+import { InactiveSupplierResponseDto } from './dtos/inactiveSupplierResponse.dto';
 
 export function ApiDocsGetMySupplierData() {
     return applyDecorators(
@@ -20,12 +22,18 @@ export function ApiDocsGetMySupplierData() {
         ApiOperation({
             summary: 'Get current supplier profile',
             description:
-                'Retrieves the supplier data of the authenticated user. Includes linked user information.',
+                'Retrieves the supplier data of the authenticated user. ' +
+                'Returns either full supplier data if active, or a minimal inactive DTO if the supplier is inactive.',
         }),
         ApiResponse({
             status: 200,
             description: 'Successfully retrieved supplier profile.',
-            type: SupplierResponseDto,
+            schema: {
+                oneOf: [
+                    { $ref: getSchemaPath(SupplierResponseDto) },
+                    { $ref: getSchemaPath(InactiveSupplierResponseDto) },
+                ],
+            },
         }),
         ApiNotFoundResponse({
             description: 'Supplier not found for the given user.',
@@ -51,7 +59,12 @@ export function ApiDocsGetMyStoreData() {
         ApiResponse({
             status: 200,
             description: 'Successfully retrieved supplier store data.',
-            type: StorefrontResponseDto,
+            schema: {
+                oneOf: [
+                    { $ref: getSchemaPath(StorefrontResponseDto) },
+                    { $ref: getSchemaPath(InactiveSupplierResponseDto) },
+                ],
+            },
         }),
         ApiNotFoundResponse({
             description: 'Supplier not found for the given user.',
@@ -519,7 +532,8 @@ export function ApiDocsGetAllSuppliers() {
         ApiOperation({
             summary: 'Get all suppliers',
             description:
-                'Retrieves a list of all suppliers, with optional filters by status (active/inactive) and subscription (subscribed/unsubscribed).',
+                'Retrieves a list of all suppliers, with optional filters by status (active/inactive) and subscription (subscribed/unsubscribed). ' +
+                'Each element in the list can be either a full supplier DTO if active, or minimal inactive DTO if inactive.',
         }),
         ApiQuery({
             name: 'status',
@@ -538,8 +552,15 @@ export function ApiDocsGetAllSuppliers() {
         ApiResponse({
             status: 200,
             description: 'List of suppliers retrieved successfully.',
-            type: SupplierResponseDto,
-            isArray: true,
+            schema: {
+                type: 'array',
+                items: {
+                    oneOf: [
+                        { $ref: getSchemaPath(SupplierResponseDto) },
+                        { $ref: getSchemaPath(InactiveSupplierResponseDto) },
+                    ],
+                },
+            },
         }),
     );
 }
@@ -549,7 +570,8 @@ export function ApiDocsGetSupplierDataById() {
         ApiOperation({
             summary: 'Get supplier data by ID',
             description:
-                'Retrieves full supplier data including profile, store, subscription, and favorite categories.',
+                'Retrieves full supplier data including profile, store, subscription, and favorite categories. ' +
+                'Returns either full supplier DTO if active, or minimal inactive DTO if inactive.',
         }),
         ApiParam({
             name: 'id',
@@ -559,7 +581,12 @@ export function ApiDocsGetSupplierDataById() {
         ApiResponse({
             status: 200,
             description: 'Supplier data retrieved successfully.',
-            type: SupplierResponseDto,
+            schema: {
+                oneOf: [
+                    { $ref: getSchemaPath(SupplierResponseDto) },
+                    { $ref: getSchemaPath(InactiveSupplierResponseDto) },
+                ],
+            },
         }),
         ApiNotFoundResponse({
             description: 'Supplier with the given ID not found.',
@@ -589,7 +616,12 @@ export function ApiDocsGetSupplierStoreDataById() {
         ApiResponse({
             status: 200,
             description: 'Storefront data retrieved successfully.',
-            type: StorefrontResponseDto,
+            schema: {
+                oneOf: [
+                    { $ref: getSchemaPath(StorefrontResponseDto) },
+                    { $ref: getSchemaPath(InactiveSupplierResponseDto) },
+                ],
+            },
         }),
         ApiNotFoundResponse({
             description: 'Supplier with the given ID not found.',
