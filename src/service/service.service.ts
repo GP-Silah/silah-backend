@@ -58,8 +58,13 @@ export class ServiceService {
             );
         }
 
+        let wishlistCount: number | undefined = undefined;
+        if (service.supplier?.plan === 'PREMIUM') {
+            wishlistCount = service.wishlistCount;
+        }
+
         return {
-            id: service.id,
+            serviceId: service.id,
             supplierId: service.supplierId ?? null,
             supplier: supplierDto,
             name,
@@ -74,7 +79,7 @@ export class ServiceService {
             imagesFilesUrls,
             serviceAvailability: service.serviceAvailability,
             isPublished: service.isPublished,
-            wishlistCount: service.wishlistCount,
+            ...(wishlistCount !== undefined ? { wishlistCount } : {}),
             avgRating: service.avgRating,
             ratingsCount: service.ratingsCount,
             createdAt: service.createdAt,
@@ -87,14 +92,44 @@ export class ServiceService {
 
     async getAllServices(
         targetLang: 'ar' | 'en',
+        userId?: string,
     ): Promise<ServiceResponseDto[]> {
+        let isPublishedFilter: boolean | undefined = true; // default for buyers
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { supplier: true, buyer: true },
+            });
+            if (user?.supplier) {
+                isPublishedFilter = undefined; // supplier sees all products
+            }
+        }
+
         const services = await this.prisma.service.findMany({
-            where: { isDeleted: false },
+            where: {
+                isDeleted: false,
+                ...(isPublishedFilter !== undefined
+                    ? { isPublished: isPublishedFilter }
+                    : {}),
+            },
             include: {
                 supplier: { include: { user: true } },
                 category: true,
             },
         });
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang = user.preferredLanguage.toLocaleLowerCase();
+                if (lang === 'ar' || lang === 'en') {
+                    targetLang = lang;
+                }
+            }
+        }
 
         return await Promise.all(
             services.map((service) =>
@@ -106,6 +141,7 @@ export class ServiceService {
     async getServiceById(
         serviceId: string,
         targetLang: 'ar' | 'en',
+        userId?: string,
     ): Promise<ServiceResponseDto> {
         const service = await this.prisma.service.findUnique({
             where: { id: serviceId },
@@ -119,20 +155,65 @@ export class ServiceService {
                 `Service with id ${serviceId} not found`,
             );
         }
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang = user.preferredLanguage.toLocaleLowerCase();
+                if (lang === 'ar' || lang === 'en') {
+                    targetLang = lang;
+                }
+            }
+        }
+
         return this.toServiceResponseDto(service, targetLang);
     }
 
     async getAllSupplierServices(
         supplierId: string,
         targetLang: 'ar' | 'en',
+        userId?: string,
     ): Promise<ServiceResponseDto[]> {
+        let isPublishedFilter: boolean | undefined = true; // default for buyers
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { supplier: true, buyer: true },
+            });
+            if (user?.supplier) {
+                isPublishedFilter = undefined; // supplier sees all products
+            }
+        }
+
         const services = await this.prisma.service.findMany({
-            where: { supplierId, isDeleted: false },
+            where: {
+                supplierId,
+                isDeleted: false,
+                ...(isPublishedFilter !== undefined
+                    ? { isPublished: isPublishedFilter }
+                    : {}),
+            },
             include: {
                 supplier: { include: { user: true } },
                 category: true,
             },
         });
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang = user.preferredLanguage.toLocaleLowerCase();
+                if (lang === 'ar' || lang === 'en') {
+                    targetLang = lang;
+                }
+            }
+        }
+
         return Promise.all(
             services.map((s) => this.toServiceResponseDto(s, targetLang)),
         );

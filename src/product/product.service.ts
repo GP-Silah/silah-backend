@@ -59,8 +59,13 @@ export class ProductService {
             );
         }
 
+        let wishlistCount: number | undefined = undefined;
+        if (product.supplier?.plan === 'PREMIUM') {
+            wishlistCount = product.wishlistCount;
+        }
+
         return {
-            id: product.id,
+            productId: product.id,
             supplierId: product.supplierId ?? null,
             supplier: supplierDto,
             name,
@@ -81,7 +86,7 @@ export class ProductService {
             groupPurchasePrice: product.groupPurchasePrice ?? undefined,
             groupPurchaseDuration: product.groupPurchaseDuration ?? undefined,
             isPublished: product.isPublished,
-            wishlistCount: product.wishlistCount,
+            ...(wishlistCount !== undefined ? { wishlistCount } : {}),
             avgRating: product.avgRating,
             ratingsCount: product.ratingsCount,
             createdAt: product.createdAt,
@@ -94,14 +99,44 @@ export class ProductService {
 
     async getAllProducts(
         targetLang: 'ar' | 'en',
+        userId?: string,
     ): Promise<ProductResponseDto[]> {
+        let isPublishedFilter: boolean | undefined = true; // default for buyers
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { supplier: true, buyer: true },
+            });
+            if (user?.supplier) {
+                isPublishedFilter = undefined; // supplier sees all products
+            }
+        }
+
         const products = await this.prisma.product.findMany({
-            where: { isDeleted: false },
+            where: {
+                isDeleted: false,
+                ...(isPublishedFilter !== undefined
+                    ? { isPublished: isPublishedFilter }
+                    : {}),
+            },
             include: {
                 supplier: { include: { user: true } },
                 category: true,
             },
         });
+
+        if (userId) {
+            const user = await this.prisma.user.findFirst({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang = user.preferredLanguage.toLocaleLowerCase();
+                if (lang === 'ar' || lang === 'en') {
+                    targetLang = lang;
+                }
+            }
+        }
 
         return await Promise.all(
             products.map((product) =>
@@ -113,9 +148,12 @@ export class ProductService {
     async getProductById(
         productId: string,
         targetLang: 'ar' | 'en',
+        userId?: string,
     ): Promise<ProductResponseDto> {
         const product = await this.prisma.product.findUnique({
-            where: { id: productId },
+            where: {
+                id: productId,
+            },
             include: {
                 supplier: { include: { user: true } },
                 category: true,
@@ -126,20 +164,65 @@ export class ProductService {
                 `Product with id ${productId} not found`,
             );
         }
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang = user.preferredLanguage.toLocaleLowerCase();
+                if (lang === 'ar' || lang === 'en') {
+                    targetLang = lang;
+                }
+            }
+        }
+
         return this.toProductResponseDto(product, targetLang);
     }
 
     async getAllSupplierProducts(
         supplierId: string,
         targetLang: 'ar' | 'en',
+        userId?: string,
     ): Promise<ProductResponseDto[]> {
+        let isPublishedFilter: boolean | undefined = true; // default for buyers
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { supplier: true, buyer: true },
+            });
+            if (user?.supplier) {
+                isPublishedFilter = undefined; // supplier sees all products
+            }
+        }
+
         const products = await this.prisma.product.findMany({
-            where: { supplierId, isDeleted: false },
+            where: {
+                supplierId,
+                isDeleted: false,
+                ...(isPublishedFilter !== undefined
+                    ? { isPublished: isPublishedFilter }
+                    : {}),
+            },
             include: {
                 supplier: { include: { user: true } },
                 category: true,
             },
         });
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang = user.preferredLanguage.toLocaleLowerCase();
+                if (lang === 'ar' || lang === 'en') {
+                    targetLang = lang;
+                }
+            }
+        }
+
         return Promise.all(
             products.map((p) => this.toProductResponseDto(p, targetLang)),
         );

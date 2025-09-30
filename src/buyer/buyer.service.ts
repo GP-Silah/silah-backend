@@ -5,6 +5,10 @@ import { CardDetailsDto } from './dtos/cardDetails.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 import { CreateCardDto } from './dtos/createCard.dto';
+import { WishlistItemResponseDto } from './dtos/wishlistItemResponse.dto';
+import { Buyer, Card, ItemType, User } from '@prisma/client';
+import { ProductService } from 'src/product/product.service';
+import { ServiceService } from 'src/service/service.service';
 
 @Injectable()
 export class BuyerService {
@@ -12,7 +16,33 @@ export class BuyerService {
         private readonly prisma: PrismaService,
         private readonly userService: UserService,
         private readonly tapPaymentsService: TapPaymentsService,
+        private readonly productService: ProductService,
+        private readonly serviceService: ServiceService,
     ) {}
+
+    async toBuyerResponseDto(
+        user: User,
+        buyer: Buyer & { card?: Card | null },
+    ): Promise<BuyerResponseDto> {
+        const userData = await this.userService.toUserResponseDTO(user);
+
+        const cardData: CardDetailsDto | null = buyer.card
+            ? {
+                  id: buyer.card.id,
+                  tapCardId: buyer.card.tapCardId,
+                  cardHolderName: buyer.card.cardHolderName,
+                  last4: buyer.card.last4,
+                  brand: buyer.card.brand,
+                  expMonth: buyer.card.expMonth,
+                  expYear: buyer.card.expYear,
+              }
+            : null;
+
+        return {
+            user: userData,
+            card: cardData,
+        };
+    }
 
     async getCurrentBuyerData(email: string): Promise<BuyerResponseDto> {
         const user = await this.prisma.user.findUnique({
@@ -184,5 +214,177 @@ export class BuyerService {
         });
 
         return { message: 'Card deleted successfully' };
+    }
+
+    async getWishlist(
+        userId: string,
+        targetLang?: 'ar' | 'en',
+    ): Promise<WishlistItemResponseDto[]> {
+        const buyer = await this.prisma.buyer.findUnique({ where: { userId } });
+        if (!buyer) throw new NotFoundException('Buyer not found');
+
+        const wishlistEntries = await this.prisma.wishlist.findMany({
+            where: { buyerId: buyer.id },
+        });
+
+        const result: (WishlistItemResponseDto | null)[] = await Promise.all(
+            wishlistEntries.map(async (entry) => {
+                if (entry.itemType === ItemType.PRODUCT) {
+                    const product = await this.prisma.product.findUnique({
+                        where: { id: entry.itemId },
+                        include: {
+                            category: true,
+                            supplier: { include: { user: true } },
+                        },
+                    });
+
+                    if (!product || product.isDeleted) {
+                        // auto-clean wishlist
+                        await this.prisma.wishlist.delete({
+                            where: { id: entry.id },
+                        });
+                        return null;
+                    }
+
+                    const productDto =
+                        await this.productService.toProductResponseDto(
+                            product,
+                            targetLang,
+                        );
+
+                    return {
+                        itemId: entry.itemId,
+                        itemType: ItemType.PRODUCT,
+                        product: productDto,
+                        isAvailable: product.stock > 0,
+                    };
+                } else {
+                    const service = await this.prisma.service.findUnique({
+                        where: { id: entry.itemId },
+                        include: {
+                            category: true,
+                            supplier: { include: { user: true } },
+                        },
+                    });
+
+                    if (!service || service.isDeleted) {
+                        // auto-clean wishlist
+                        await this.prisma.wishlist.delete({
+                            where: { id: entry.id },
+                        });
+                        return null;
+                    }
+
+                    const serviceDto =
+                        await this.serviceService.toServiceResponseDto(
+                            service,
+                            targetLang,
+                        );
+
+                    return {
+                        itemId: entry.itemId,
+                        itemType: ItemType.SERVICE,
+                        service: serviceDto,
+                    };
+                }
+            }),
+        );
+
+        // Filter nulls and assert type
+        return result.filter(
+            (item): item is WishlistItemResponseDto => item !== null,
+        );
+    }
+
+    async toggleWishlistItem(
+        userId: string,
+        itemId: string,
+    ): Promise<{
+        message: string;
+        isAdded: boolean;
+        updatedWishlist: WishlistItemResponseDto[];
+    }> {
+        // 1️⃣ Find the buyer
+        const buyer = await this.prisma.buyer.findUnique({ where: { userId } });
+        if (!buyer) throw new NotFoundException('Buyer not found');
+
+        // 2️⃣ Determine item type
+        let itemType: ItemType;
+        const product = await this.prisma.product.findFirst({
+            where: { id: itemId, isDeleted: false },
+        });
+        if (product) {
+            itemType = ItemType.PRODUCT;
+        } else {
+            const service = await this.prisma.service.findFirst({
+                where: { id: itemId, isDeleted: false },
+            });
+            if (service) {
+                itemType = ItemType.SERVICE;
+            } else {
+                throw new NotFoundException('Item not found');
+            }
+        }
+
+        // 3️⃣ Check if the wishlist entry exists
+        const existing = await this.prisma.wishlist.findUnique({
+            where: {
+                buyerId_itemId_itemType: {
+                    buyerId: buyer.id,
+                    itemId,
+                    itemType,
+                },
+            },
+        });
+
+        let message: string;
+        let isAdded: boolean;
+
+        if (existing) {
+            // Remove from wishlist
+            await this.prisma.wishlist.delete({ where: { id: existing.id } });
+            message = 'Item removed from wishlist';
+            isAdded = false;
+
+            // Decrement wishlist count
+            if (itemType === ItemType.PRODUCT) {
+                await this.prisma.product.update({
+                    where: { id: itemId },
+                    data: { wishlistCount: { decrement: 1 } },
+                });
+            } else {
+                await this.prisma.service.update({
+                    where: { id: itemId },
+                    data: { wishlistCount: { decrement: 1 } },
+                });
+            }
+        } else {
+            // Add to wishlist
+            await this.prisma.wishlist.create({
+                data: { buyerId: buyer.id, itemId, itemType },
+            });
+            message = 'Item added to wishlist';
+            isAdded = true;
+
+            // Increment wishlist count
+            if (itemType === ItemType.PRODUCT) {
+                await this.prisma.product.update({
+                    where: { id: itemId },
+                    data: { wishlistCount: { increment: 1 } },
+                });
+            } else {
+                await this.prisma.service.update({
+                    where: { id: itemId },
+                    data: { wishlistCount: { increment: 1 } },
+                });
+            }
+        }
+
+        // 4️⃣ Return the updated wishlist
+        return {
+            message,
+            isAdded,
+            updatedWishlist: await this.getWishlist(userId),
+        };
     }
 }

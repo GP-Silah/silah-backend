@@ -14,6 +14,7 @@ import {
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { GroupPurchaseDeadline } from '@prisma/client';
+import { IsMultipleOfCaseQuantity } from './is-multiple-of-case-quantity.validator';
 
 export class UpdateProductDto {
     @ApiPropertyOptional({ description: 'Product name', maxLength: 60 })
@@ -58,6 +59,9 @@ export class UpdateProductDto {
     @IsOptional()
     @IsInt()
     @Min(1)
+    @IsMultipleOfCaseQuantity({
+        message: 'minOrderQuantity must be a multiple of caseQuantity',
+    })
     minOrderQuantity?: number;
 
     @ApiPropertyOptional({
@@ -67,6 +71,9 @@ export class UpdateProductDto {
     @IsOptional()
     @IsInt()
     @Min(1)
+    @IsMultipleOfCaseQuantity({
+        message: 'maxOrderQuantity must be a multiple of caseQuantity',
+    })
     maxOrderQuantity?: number | null;
 
     @ApiPropertyOptional({

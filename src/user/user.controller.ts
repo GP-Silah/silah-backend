@@ -36,6 +36,7 @@ import {
     ApiDocsGetUsersProfilePicturesUrls,
     ApiDocsDeleteProfilePicture,
     ApiDocsUploadProfilePicture,
+    ApiDocsSwitchPreferredLanguage,
 } from './user.docs';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -123,6 +124,14 @@ export class UserController {
     @ApiDocsDeleteProfilePicture()
     async deleteProfilePicture(@Req() req: Request) {
         return this.userService.deleteProfilePicture(req.tokenData!.email);
+    }
+
+    @ApiJwtAuthGuard()
+    @UseGuards(JwtAuthGuard)
+    @Patch('me/preferred-language')
+    @ApiDocsSwitchPreferredLanguage()
+    async switchPreferredLanguage(@Req() req: Request) {
+        return this.userService.switchPreferredLanguage(req.tokenData!.email);
     }
 
     @Get(':id/profile-picture')

@@ -1,8 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Languages } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
     IsArray,
     IsEmail,
+    IsEnum,
     IsInt,
     IsOptional,
     IsString,
@@ -44,6 +46,11 @@ export class UpdateUserDto {
     @IsString()
     @IsOptional()
     city?: string;
+
+    @ApiPropertyOptional({ example: 'ARA', enum: Languages })
+    @IsOptional()
+    @IsEnum(Languages)
+    preferredLanguage?: Languages;
 
     @ApiPropertyOptional({
         description: 'List of category IDs (use IDs, not names).',

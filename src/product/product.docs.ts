@@ -28,7 +28,9 @@ export function ApiDocsCreateProduct() {
                     <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 3 files)</li>
                 </ul>
                 Make sure the JSON string is properly formatted.<br><br>
-                Only subcategories can be assigned to products. Main categories are invalid.`,
+                Only subcategories can be assigned to products. Main categories are invalid.<br><br>
+                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>
+                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.`,
         }),
         ApiConsumes('multipart/form-data'),
         ApiBody({
@@ -300,7 +302,9 @@ export function ApiDocsUpdateProductImage() {
             summary: 'Add a new image to an existing product',
             description: `This endpoint allows the supplier to add an additional image to an already created product.<br>
             Only the image is updated; product name, description, and other fields remain unchanged.<br>
-            Maximum 3 images per product are allowed.`,
+            Maximum 3 images per product are allowed.<br><br>
+            <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>
+            <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.`,
         }),
         ApiConsumes('multipart/form-data'),
         ApiBody({

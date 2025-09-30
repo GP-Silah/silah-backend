@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserResponseDTO } from './dtos/userResponse.dto';
-import { User } from '@prisma/client';
+import { Languages, User } from '@prisma/client';
 import { UserRole as AppUserRole } from '../enums/userRole.enum';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { AuthService } from '../auth/auth.service';
@@ -35,7 +35,7 @@ export class UserService {
             ? await this.fileService.getFileUrl(user.pfpFileName)
             : '';
         return {
-            id: user.id,
+            userId: user.id,
             tapCustomerId: user.tapCustomerId,
             name: user.name,
             email: user.email,
@@ -47,6 +47,7 @@ export class UserService {
             pfpUrl: pfpUrl || '',
             categories,
             isEmailVerified: user.isEmailVerified,
+            preferredLanguage: user.preferredLanguage,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
         };
@@ -441,6 +442,42 @@ export class UserService {
             }),
         );
         return urls;
+    }
+
+    /**
+     * Switches the preferred language of a user between English (ENG) and Arabic (ARA).
+     *
+     * This updates the `preferredLanguage` field in the database for the given user.
+     * If the user currently has English as their preferred language, it will switch to Arabic, and vice versa.
+     *
+     * @param {string} userEmail - The email of the user whose preferred language should be switched.
+     * @returns {Promise<{ email: string; oldLanguage: Languages; newLanguage: Languages }>}
+     *          An object containing the user's email, previous preferred language, and the new preferred language.
+     *
+     * @throws {NotFoundException} If the user with the given email does not exist.
+     *
+     * @example
+     * const result = await userService.switchPreferredLanguage('user@example.com');
+     */
+    async switchPreferredLanguage(userEmail: string) {
+        const user = await this.prisma.user.findUnique({
+            where: { email: userEmail },
+        });
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+        const oldLanguage: Languages = user.preferredLanguage;
+        const newLanguage: Languages =
+            oldLanguage === Languages.EN ? Languages.AR : Languages.EN;
+        await this.prisma.user.update({
+            where: { email: userEmail },
+            data: { preferredLanguage: newLanguage },
+        });
+        return {
+            email: user.email,
+            oldLanguage,
+            newLanguage,
+        };
     }
 }
 

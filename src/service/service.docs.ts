@@ -28,7 +28,9 @@ export function ApiDocsCreateService() {
                         <br>Check the Swagger-only endpoint for full schema reference.</li>
                     <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 10 files)</li>
                 </ul>
-                Only categories with <strong>usedFor=SERVICE</strong> can be assigned to services.`,
+                Only categories with <strong>usedFor=SERVICE</strong> can be assigned to services.<br><br>
+                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>
+                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.`,
         }),
         ApiConsumes('multipart/form-data'),
         ApiBody({
@@ -105,8 +107,20 @@ export function ApiDocsFakeGetCreateServiceDto() {
             deprecated: true,
             summary:
                 '⚠️ ONLY for Swagger reference: shows CreateServiceDto schema',
-            description: `⚠️ Swagger-only reference for CreateServiceDto schema. 
-            This endpoint does not exist in the real API. Check the JSON structure for 'dto' in the multipart/form-data POST /services endpoint.`,
+            description: `⚠️ IMPORTANT: This endpoint is a Swagger-only reference and does NOT exist in the real API.<br>
+            It is here solely so you can view the full CreateServiceDto schema and example in the Swagger Schemas panel.<br>
+            You cannot actually call this endpoint, doing so will return nothing if attempted.<br><br>
+            Why does this exist?<br>
+            The real "Create Service" endpoint uses multipart/form-data to accept files and a JSON string,
+            which means Swagger cannot automatically show the CreateServiceDto schema for that endpoint.<br>
+            This fake endpoint is a workaround to let you inspect the expected JSON structure, see required fields, 
+            and understand how to format your requests when sending the 'dto' field as a JSON string in the real API.<br><br>
+            Use this purely as a reference to know:<br>
+            - All required and optional fields<br>
+            - Field types and valid values<br>
+            - Example data for testing<br><br>
+            DO NOT use this in your frontend code or try to send requests to it.<br>
+            Always send product data as a JSON string in the 'dto' field of the real multipart/form-data endpoint.`,
         }),
         ApiBody({
             description: 'Fake body showing CreateServiceDto',
@@ -272,7 +286,9 @@ export function ApiDocsUpdateServiceImage() {
             summary: 'Add a new image to an existing service',
             description: `This endpoint allows the supplier to add an additional image to an already created service.<br>
             Only the image is updated; other fields remain unchanged.<br>
-            Maximum 3 images per service are allowed.`,
+            Maximum 3 images per service are allowed.<br><br>
+            <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>
+            <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.`,
         }),
         ApiConsumes('multipart/form-data'),
         ApiBody({

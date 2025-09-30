@@ -9,5 +9,6 @@ import { TranslationModule } from 'src/translation/translation.module';
     imports: [FileModule, SupplierModule, TranslationModule],
     controllers: [ProductController],
     providers: [ProductService],
+    exports: [ProductService],
 })
 export class ProductModule {}
