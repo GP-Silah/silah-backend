@@ -8,6 +8,8 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { DemandPredictionResponseDto } from './dtos/demandPredictionResponse.dto';
+import { ApiDocsGetDemandPrediction } from './demand-prediction.docs';
 
 @ApiTags('Demand Predictions')
 @Controller('demand-predictions')
@@ -21,10 +23,11 @@ export class DemandPredictionController {
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get(':productId')
+    @ApiDocsGetDemandPrediction()
     async getPredictionForProduct(
         @Param('productId') productId: string,
         @Req() req: Request,
-    ) {
+    ): Promise<DemandPredictionResponseDto> {
         const userId = req.tokenData!.sub;
         return this.demandPredictionService.getPredictionForProduct(
             productId,

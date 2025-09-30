@@ -1,6 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    HttpException,
+    HttpStatus,
+    Injectable,
+    NotFoundException,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import axios from 'axios';
+import { SupplierPlan } from '@prisma/client';
+import { DemandPredictionResponseDto } from './dtos/demandPredictionResponse.dto';
 
 @Injectable()
 export class DemandPredictionService {
@@ -11,11 +19,16 @@ export class DemandPredictionService {
             where: { userId },
             include: { user: true },
         });
-        if (!supplier) {
+        if (!supplier || supplier.isDeleted) {
             throw new NotFoundException('Supplier not found');
         }
+        if (supplier.plan === SupplierPlan.BASIC) {
+            throw new UnauthorizedException(
+                'Upgrade plan to access this feature',
+            );
+        }
         const product = await this.prisma.product.findFirst({
-            where: { id: productId, supplierId: supplier.id, isDeleted: false }, //? make it only for products that have past sales < 50 == send it warn
+            where: { id: productId, supplierId: supplier.id, isDeleted: false },
         });
         if (!product) {
             throw new NotFoundException('Product not found');
@@ -24,16 +37,40 @@ export class DemandPredictionService {
         // Call FastAPI
         try {
             const response = await axios.post(
-                `${process.env.AI_BACKEND_URL}/predict`,
+                `${process.env.AI_BACKEND_URL}/demand`,
                 {
-                    productId: product.id,
-                    dailySales: allPastSales,
+                    product_id: product.id,
+                    sales: allPastSales,
+                    months: 3, // Predict for next 3 months
                 },
             );
-            return response.data; // This is the prediction from FastAPI
+            const forecast = response.data;
+
+            // Add a lowAccuracy flag if sales history is small
+            const lowAccuracy = allPastSales.length < 50;
+
+            // Stocking recommendation (meaning how much more supplier should stock)
+            const currentStock = product.stock ?? 0;
+            const totalForecast = forecast.forecast.reduce(
+                (sum: number, f: { demand: number }) => sum + f.demand,
+                0,
+            );
+            const recommendedStock = Math.max(totalForecast - currentStock, 0);
+
+            return {
+                ...forecast,
+                lowAccuracy,
+                salesCount: allPastSales.length,
+                currentStock,
+                totalForecast,
+                recommendedStock,
+            } as DemandPredictionResponseDto;
         } catch (err: any) {
             console.error('FastAPI request failed:', err.message);
-            throw new Error('Failed to get prediction from FastAPI');
+            throw new HttpException(
+                'Failed to get prediction from AI backend',
+                HttpStatus.BAD_GATEWAY,
+            );
         }
     }
 
