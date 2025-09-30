@@ -7,5 +7,6 @@ import { TranslationModule } from 'src/translation/translation.module';
     imports: [TranslationModule],
     controllers: [CartController],
     providers: [CartService],
+    exports: [CartService],
 })
 export class CartModule {}

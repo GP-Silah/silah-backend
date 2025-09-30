@@ -91,7 +91,26 @@ How to use this on frontend:
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api/docs', app, document); // => will be lunched on http://localhost:3000/api/docs
+    document.tags = [
+        { name: 'Default' },
+        { name: 'Health' },
+        { name: 'Auth' },
+        { name: 'Users' },
+        { name: 'Buyers' },
+        { name: 'Suppliers' },
+        { name: 'Products' },
+        { name: 'Services' },
+        { name: 'Categories' },
+        { name: 'Carts' },
+        { name: 'Orders' },
+        { name: 'Demand Predictions' },
+    ];
+    SwaggerModule.setup('api/docs', app, document, {
+        swaggerOptions: {
+            tagsSorter: 'none', // don’t alphabetize
+            operationsSorter: 'alpha', // optional: keep endpoints sorted inside a tag
+        },
+    }); // => will be lunched on http://localhost:3000/api/docs
     fs.mkdirSync('./docs', { recursive: true });
     fs.writeFileSync('./docs/swagger.json', JSON.stringify(document, null, 2)); // => to create a swagger.json file that will be used to generate static files of swagger to deploy on "silah-api-docs", which is a static website "https://docs.silah.site".
 

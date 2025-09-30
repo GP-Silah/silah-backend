@@ -16,7 +16,7 @@ export class CartService {
         private readonly translationService: TranslationService,
     ) {}
 
-    private async toCartResponseDto(cart: any): Promise<CartResponseDto> {
+    async toCartResponseDto(cart: any): Promise<CartResponseDto> {
         const lang = cart.user?.preferredLanguage ?? 'EN'; // default if user missing
         const targetLang = ['ar', 'en'].includes(lang.toLowerCase())
             ? lang.toLowerCase()

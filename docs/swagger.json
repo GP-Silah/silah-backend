@@ -231,7 +231,7 @@
                     {
                       "example": {
                         "statusCode": 400,
-                        "message": "These categories are invalid: Cleaning, Laundry",
+                        "message": "These categories are invalid or not main categories: 33, 44",
                         "error": "Bad Request"
                       }
                     },
@@ -366,7 +366,8 @@
                       }
                     }
                   }
-                ]
+                ],
+                "$ref": "#/components/schemas/LoginDto"
               },
               "examples": {
                 "loginWithEmail": {
@@ -2013,52 +2014,1255 @@
         ]
       }
     },
-    "/api/buyers/wishlist": {
+    "/api/buyers/me/wishlist": {
       "get": {
-        "deprecated": true,
-        "description": "This endpoint is a placeholder for future implementation and is not yet functional.",
+        "description": "Returns the wishlist items of the currently authenticated buyer. Each item can be a product or a service.",
         "operationId": "BuyerController_getWishlist",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Wishlist retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WishlistItemResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Buyer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Buyer not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
-        "summary": "Not yet implemented",
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Get current buyer wishlist",
         "tags": [
           "Buyers"
         ]
       }
     },
-    "/api/buyers/wishlist/{itemId}": {
-      "post": {
-        "deprecated": true,
-        "description": "This endpoint is a placeholder for future implementation and is not yet functional.",
-        "operationId": "BuyerController_addToWishlist",
-        "parameters": [],
+    "/api/buyers/me/wishlist/{itemId}": {
+      "patch": {
+        "description": "Adds the item to the wishlist if it is not already there, or removes it if it exists. Returns the updated wishlist.",
+        "operationId": "BuyerController_toggleWishlistItem",
+        "parameters": [
+          {
+            "name": "itemId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the product or service to toggle",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "Item successfully added or removed from wishlist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Item added to wishlist",
+                    "isAdded": true,
+                    "updatedWishlist": [
+                      {
+                        "itemId": "1234567890ab-cdef-1234-5678-abcdef123456",
+                        "itemType": "PRODUCT",
+                        "product": "See ProductResponseDto"
+                      },
+                      {
+                        "itemId": "1234567890ab-cdef-1234-5678-abcdef654321",
+                        "itemType": "SERVICE",
+                        "service": "See ServiceResponseDto"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid itemId",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Invalid item ID format",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Buyer or item not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Item not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
-        "summary": "Not yet implemented",
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Toggle an item in the buyer wishlist",
         "tags": [
           "Buyers"
         ]
-      },
-      "delete": {
-        "deprecated": true,
-        "description": "This endpoint is a placeholder for future implementation and is not yet functional.",
-        "operationId": "BuyerController_removeFromWishlist",
-        "parameters": [],
+      }
+    },
+    "/api/products": {
+      "get": {
+        "description": "Fetches all products. Optional query or header <strong>lang</strong> can be provided to translate product name and description.\n                <ul>\n                    <li>Header: <strong>accept-language</strong></li>\n                    <li>Query: <strong>lang</strong></li>\n                </ul>\n                If no language is provided, defaults to English.",
+        "operationId": "ProductController_getAllProducts",
+        "parameters": [
+          {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify target language for translation (ar or en)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ar",
+                "en"
+              ]
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Target language for translation",
+            "schema": {
+              "enum": [
+                "ar",
+                "en"
+              ],
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "List of products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
-        "summary": "Not yet implemented",
+        "summary": "Get all products",
         "tags": [
-          "Buyers"
+          "Products"
+        ]
+      },
+      "post": {
+        "description": "<strong>IMPORTANT:</strong> This endpoint requires sending the data as <u>multipart/form-data</u>.<br>\n                <strong>Note:</strong> Because this endpoint uses multipart/form-data, Swagger cannot directly show the CreateProductDto schema here. \n                There is a separate Swagger-only endpoint (GET /swagger-products-reference/create-product-dto) where you can view the full CreateProductDto schema and example.<br><br>\n                You must send two fields:\n                <ul>\n                    <li><strong>dto</strong> (type: text) → JSON string of the product details (see example below). \n                    <br>Check the Swagger-only endpoint for full schema reference.</li>\n                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 3 files)</li>\n                </ul>\n                Make sure the JSON string is properly formatted.<br><br>\n                Only subcategories can be assigned to products. Main categories are invalid.<br><br>\n                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
+        "operationId": "ProductController_createProduct",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary",
+                      "description": "Product images. 1 to 3 images allowed, formats: PNG, JPEG, WebP, max 5MB each."
+                    }
+                  },
+                  "dto": {
+                    "type": "string",
+                    "description": "IMPORTANT: Must be a JSON string containing product details. The JSON structure should follow CreateProductDto format. Check the Swagger-only endpoint GET /swagger-products-reference/create-product-dto to see the full schema and example.",
+                    "example": "{\"name\":\"Classic Wooden Hair Brush\",\"description\":\"Durable wooden hair brush with soft bristles, designed for daily styling and gentle scalp massage.\",\"price\":24.99,\"stock\":150,\"categoryId\":21,\"caseQuantity\":12,\"minOrderQuantity\":1,\"maxOrderQuantity\":10,\"allowGroupPurchase\":true,\"minGroupOrderQuantity\":5,\"groupPurchasePrice\":19.99,\"groupPurchaseDuration\":\"FIVE_DAYS\",\"isPublished\":true}"
+                  }
+                },
+                "required": [
+                  "files",
+                  "dto"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request. Could be invalid JSON, missing fields, invalid category, or file issues.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Invalid JSON in form field OR Products must be assigned to a subcategory, not a main category OR At least one product image is required",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier or category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Create a new product",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/products/{productId}": {
+      "get": {
+        "description": "Fetches a single product by its ID. Optional query or header <strong>lang</strong> can be provided to translate product name and description.\n                <ul>\n                    <li>Header: <strong>accept-language</strong></li>\n                    <li>Query: <strong>lang</strong></li>\n                </ul>\n                If no language is provided, defaults to English.",
+        "operationId": "ProductController_getProductById",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify target language for translation (ar or en)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ar",
+                "en"
+              ]
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Target language for translation",
+            "schema": {
+              "enum": [
+                "ar",
+                "en"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Product with id 123 not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get product by ID",
+        "tags": [
+          "Products"
+        ]
+      },
+      "patch": {
+        "description": "Updates product fields (except images). Only the fields provided in the request body will be updated. Requires Supplier role.",
+        "operationId": "ProductController_updateProduct",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated product details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or invalid category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Products must be assigned to a subcategory, not a main category",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product or supplier not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Product not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Update a product",
+        "tags": [
+          "Products"
+        ]
+      },
+      "delete": {
+        "description": "Soft-deletes a product. Requires Supplier role.",
+        "operationId": "ProductController_deleteProduct",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deletion confirmation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Product deleted successfully"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product or supplier not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Product not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Delete a product",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/products/supplier/{supplierId}": {
+      "get": {
+        "description": "Fetches all products for a given supplier. Optional query or header <strong>lang</strong> can be provided to translate product name and description.\n                <ul>\n                    <li>Header: <strong>accept-language</strong></li>\n                    <li>Query: <strong>lang</strong></li>\n                </ul>\n                If no language is provided, defaults to English.",
+        "operationId": "ProductController_getAllSupplierProducts",
+        "parameters": [
+          {
+            "name": "souplierId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify target language for translation (ar or en)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ar",
+                "en"
+              ]
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Target language for translation",
+            "schema": {
+              "enum": [
+                "ar",
+                "en"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of supplier products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all products of a supplier",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/products/create-product-dto": {
+      "get": {
+        "deprecated": true,
+        "description": "⚠️ IMPORTANT: This endpoint is a Swagger-only reference and does NOT exist in the real API.<br>\n            It is here solely so you can view the full CreateProductDto schema and example in the Swagger Schemas panel.<br>\n            You cannot actually call this endpoint, doing so will return nothing if attempted.<br><br>\n            Why does this exist?<br>\n            The real \"Create Product\" endpoint uses multipart/form-data to accept files and a JSON string,\n            which means Swagger cannot automatically show the CreateProductDto schema for that endpoint.<br>\n            This fake endpoint is a workaround to let you inspect the expected JSON structure, see required fields, \n            and understand how to format your requests when sending the 'dto' field as a JSON string in the real API.<br><br>\n            Use this purely as a reference to know:<br>\n            - All required and optional fields<br>\n            - Field types and valid values<br>\n            - Example data for testing<br><br>\n            DO NOT use this in your frontend code or try to send requests to it.<br>\n            Always send product data as a JSON string in the 'dto' field of the real multipart/form-data endpoint.",
+        "operationId": "ProductController_dummy",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Fake body showing CreateProductDto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "This endpoint returns nothing"
+          }
+        },
+        "summary": "⚠️ ONLY for Swagger reference: shows CreateProductDto schema",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/products/{productId}/clone": {
+      "post": {
+        "description": "Creates a copy of an existing product. The duplicated product is unpublished by default. Requires Supplier role.",
+        "operationId": "ProductController_duplicateProduct",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Duplicated product details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Original product or supplier not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Product not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Duplicate a product",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/products/{productId}/images": {
+      "patch": {
+        "description": "This endpoint allows the supplier to add an additional image to an already created product.<br>\n            Only the image is updated; product name, description, and other fields remain unchanged.<br>\n            Maximum 3 images per product are allowed.<br><br>\n            <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n            <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
+        "operationId": "ProductController_updateProductImages",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The product image file (PNG, JPEG, WebP, max 5MB)"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The product with the newly added image is returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or maximum image limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "A maximum of 3 product images is allowed",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier or product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Product not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Add a new image to an existing product",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/products/{productId}/image/{fileName}": {
+      "delete": {
+        "description": "Deletes a single image of a product. Requires at least one image to remain. Requires Supplier role.",
+        "operationId": "ProductController_deleteProductImage",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fileName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated product details after deletion",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request (image not found or would leave product empty)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "A product must have at least one image.",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product or supplier not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Product not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Delete a specific product image",
+        "tags": [
+          "Products"
         ]
       }
     },
@@ -3533,1344 +4737,6 @@
         ]
       }
     },
-    "/api/categories": {
-      "get": {
-        "description": "Returns all categories in the system, including nested subcategories. Optionally, filter by `usedFor` (products or services).",
-        "operationId": "CategoryController_getAllCategories",
-        "parameters": [
-          {
-            "name": "usedFor",
-            "required": false,
-            "in": "query",
-            "description": "Filter categories by type",
-            "schema": {
-              "example": "products",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of all categories",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": [
-                    {
-                      "id": 1,
-                      "name": "Agricultural & Pet Supplies",
-                      "usedFor": "PRODUCT",
-                      "subcategories": [
-                        {
-                          "id": 2,
-                          "name": "Animal Feed",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        },
-                        {
-                          "id": 3,
-                          "name": "Fertilizers",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        },
-                        {
-                          "id": 4,
-                          "name": "Pet Accessories & Toys",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        },
-                        {
-                          "id": 5,
-                          "name": "Pet Food & Treats",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      "id": 20,
-                      "name": "Software & IT Solutions",
-                      "usedFor": "SERVICE",
-                      "subcategories": [
-                        {
-                          "id": 21,
-                          "name": "Web & App Development",
-                          "usedFor": "SERVICE",
-                          "parentCategory": {
-                            "id": 20,
-                            "name": "Software & IT Solutions"
-                          }
-                        },
-                        {
-                          "id": 22,
-                          "name": "IT & Cloud Services",
-                          "usedFor": "SERVICE",
-                          "parentCategory": {
-                            "id": 20,
-                            "name": "Software & IT Solutions"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get all categories",
-        "tags": [
-          "Categories"
-        ]
-      }
-    },
-    "/api/categories/main": {
-      "get": {
-        "description": "Returns only the top-level categories (no parent) in the system, optionally filtered by `usedFor`.",
-        "operationId": "CategoryController_getMainCategories",
-        "parameters": [
-          {
-            "name": "usedFor",
-            "required": false,
-            "in": "query",
-            "description": "Filter categories by type",
-            "schema": {
-              "example": "services",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of top-level categories",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": [
-                    {
-                      "id": 1,
-                      "name": "Agricultural & Pet Supplies",
-                      "usedFor": "PRODUCT",
-                      "subcategories": [
-                        {
-                          "id": 2,
-                          "name": "Animal Feed",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        },
-                        {
-                          "id": 3,
-                          "name": "Fertilizers",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        },
-                        {
-                          "id": 4,
-                          "name": "Pet Accessories & Toys",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        },
-                        {
-                          "id": 5,
-                          "name": "Pet Food & Treats",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get main (top-level) categories",
-        "tags": [
-          "Categories"
-        ]
-      }
-    },
-    "/api/categories/sub": {
-      "get": {
-        "description": "Returns only subcategories (categories that have a parent), optionally filtered by `usedFor`.",
-        "operationId": "CategoryController_getSubCategories",
-        "parameters": [
-          {
-            "name": "usedFor",
-            "required": false,
-            "in": "query",
-            "description": "Filter subcategories by type",
-            "schema": {
-              "example": "products",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of subcategories",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": [
-                    {
-                      "id": 2,
-                      "name": "Animal Feed",
-                      "usedFor": "PRODUCT",
-                      "parentCategory": {
-                        "id": 1,
-                        "name": "Agricultural & Pet Supplies"
-                      }
-                    },
-                    {
-                      "id": 3,
-                      "name": "Fertilizers",
-                      "usedFor": "PRODUCT",
-                      "parentCategory": {
-                        "id": 1,
-                        "name": "Agricultural & Pet Supplies"
-                      }
-                    },
-                    {
-                      "id": 21,
-                      "name": "Web & App Development",
-                      "usedFor": "SERVICE",
-                      "parentCategory": {
-                        "id": 20,
-                        "name": "Software & IT Solutions"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get subcategories",
-        "tags": [
-          "Categories"
-        ]
-      }
-    },
-    "/api/categories/{id}": {
-      "get": {
-        "description": "Returns a single category by its ID, including its parent category and all nested subcategories.",
-        "operationId": "CategoryController_getCategoryById",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "description": "The ID of the category to fetch",
-            "schema": {
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Category found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "id": 1,
-                    "name": "Agricultural & Pet Supplies",
-                    "usedFor": "PRODUCT",
-                    "subcategories": [
-                      {
-                        "id": 2,
-                        "name": "Animal Feed",
-                        "usedFor": "PRODUCT",
-                        "parentCategory": {
-                          "id": 1,
-                          "name": "Agricultural & Pet Supplies"
-                        }
-                      },
-                      {
-                        "id": 3,
-                        "name": "Fertilizers",
-                        "usedFor": "PRODUCT",
-                        "parentCategory": {
-                          "id": 1,
-                          "name": "Agricultural & Pet Supplies"
-                        }
-                      },
-                      {
-                        "id": 4,
-                        "name": "Pet Accessories & Toys",
-                        "usedFor": "PRODUCT",
-                        "parentCategory": {
-                          "id": 1,
-                          "name": "Agricultural & Pet Supplies"
-                        }
-                      },
-                      {
-                        "id": 5,
-                        "name": "Pet Food & Treats",
-                        "usedFor": "PRODUCT",
-                        "parentCategory": {
-                          "id": 1,
-                          "name": "Agricultural & Pet Supplies"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Category not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Category not found",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get category by ID",
-        "tags": [
-          "Categories"
-        ]
-      }
-    },
-    "/api/products": {
-      "get": {
-        "description": "Fetches all products. Optional query or header <strong>lang</strong> can be provided to translate product name and description.\n                <ul>\n                    <li>Header: <strong>accept-language</strong></li>\n                    <li>Query: <strong>lang</strong></li>\n                </ul>\n                If no language is provided, defaults to English.",
-        "operationId": "ProductController_getAllProducts",
-        "parameters": [
-          {
-            "name": "accept-language",
-            "required": false,
-            "in": "header",
-            "description": "Optional header to specify target language for translation (ar or en)",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "ar",
-                "en"
-              ]
-            }
-          },
-          {
-            "name": "lang",
-            "required": false,
-            "in": "query",
-            "description": "Target language for translation",
-            "schema": {
-              "enum": [
-                "ar",
-                "en"
-              ],
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of products",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProductResponseDto"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get all products",
-        "tags": [
-          "Products"
-        ]
-      },
-      "post": {
-        "description": "<strong>IMPORTANT:</strong> This endpoint requires sending the data as <u>multipart/form-data</u>.<br>\n                <strong>Note:</strong> Because this endpoint uses multipart/form-data, Swagger cannot directly show the CreateProductDto schema here. \n                There is a separate Swagger-only endpoint (GET /swagger-products-reference/create-product-dto) where you can view the full CreateProductDto schema and example.<br><br>\n                You must send two fields:\n                <ul>\n                    <li><strong>dto</strong> (type: text) → JSON string of the product details (see example below). \n                    <br>Check the Swagger-only endpoint for full schema reference.</li>\n                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 3 files)</li>\n                </ul>\n                Make sure the JSON string is properly formatted.<br><br>\n                Only subcategories can be assigned to products. Main categories are invalid.<br><br>\n                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
-        "operationId": "ProductController_createProduct",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "files": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "binary",
-                      "description": "Product images. 1 to 3 images allowed, formats: PNG, JPEG, WebP, max 5MB each."
-                    }
-                  },
-                  "dto": {
-                    "type": "string",
-                    "description": "IMPORTANT: Must be a JSON string containing product details. The JSON structure should follow CreateProductDto format. Check the Swagger-only endpoint GET /swagger-products-reference/create-product-dto to see the full schema and example.",
-                    "example": "{\"name\":\"Classic Wooden Hair Brush\",\"description\":\"Durable wooden hair brush with soft bristles, designed for daily styling and gentle scalp massage.\",\"price\":24.99,\"stock\":150,\"categoryId\":21,\"caseQuantity\":12,\"minOrderQuantity\":1,\"maxOrderQuantity\":10,\"allowGroupPurchase\":true,\"minGroupOrderQuantity\":5,\"groupPurchasePrice\":19.99,\"groupPurchaseDuration\":\"FIVE_DAYS\",\"isPublished\":true}"
-                  }
-                },
-                "required": [
-                  "files",
-                  "dto"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Product created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductResponseDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request. Could be invalid JSON, missing fields, invalid category, or file issues.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Invalid JSON in form field OR Products must be assigned to a subcategory, not a main category OR At least one product image is required",
-                    "error": "Bad Request"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden: You do not have access to this resource (role mismatch).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "You do not have access to this resource",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Supplier or category not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Supplier not found",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "token": []
-          }
-        ],
-        "summary": "Create a new product",
-        "tags": [
-          "Products"
-        ]
-      }
-    },
-    "/api/products/{productId}": {
-      "get": {
-        "description": "Fetches a single product by its ID. Optional query or header <strong>lang</strong> can be provided to translate product name and description.\n                <ul>\n                    <li>Header: <strong>accept-language</strong></li>\n                    <li>Query: <strong>lang</strong></li>\n                </ul>\n                If no language is provided, defaults to English.",
-        "operationId": "ProductController_getProductById",
-        "parameters": [
-          {
-            "name": "productId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "accept-language",
-            "required": false,
-            "in": "header",
-            "description": "Optional header to specify target language for translation (ar or en)",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "ar",
-                "en"
-              ]
-            }
-          },
-          {
-            "name": "lang",
-            "required": false,
-            "in": "query",
-            "description": "Target language for translation",
-            "schema": {
-              "enum": [
-                "ar",
-                "en"
-              ],
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Product details",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductResponseDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Product not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Product with id 123 not found",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get product by ID",
-        "tags": [
-          "Products"
-        ]
-      },
-      "patch": {
-        "description": "Updates product fields (except images). Only the fields provided in the request body will be updated. Requires Supplier role.",
-        "operationId": "ProductController_updateProduct",
-        "parameters": [
-          {
-            "name": "productId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateProductDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Updated product details",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductResponseDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request or invalid category",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Products must be assigned to a subcategory, not a main category",
-                    "error": "Bad Request"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden: You do not have access to this resource (role mismatch).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "You do not have access to this resource",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Product or supplier not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Product not found",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "token": []
-          }
-        ],
-        "summary": "Update a product",
-        "tags": [
-          "Products"
-        ]
-      },
-      "delete": {
-        "description": "Soft-deletes a product. Requires Supplier role.",
-        "operationId": "ProductController_deleteProduct",
-        "parameters": [
-          {
-            "name": "productId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Deletion confirmation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "message": "Product deleted successfully"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden: You do not have access to this resource (role mismatch).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "You do not have access to this resource",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Product or supplier not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Product not found",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "token": []
-          }
-        ],
-        "summary": "Delete a product",
-        "tags": [
-          "Products"
-        ]
-      }
-    },
-    "/api/products/supplier/{supplierId}": {
-      "get": {
-        "description": "Fetches all products for a given supplier. Optional query or header <strong>lang</strong> can be provided to translate product name and description.\n                <ul>\n                    <li>Header: <strong>accept-language</strong></li>\n                    <li>Query: <strong>lang</strong></li>\n                </ul>\n                If no language is provided, defaults to English.",
-        "operationId": "ProductController_getAllSupplierProducts",
-        "parameters": [
-          {
-            "name": "souplierId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "accept-language",
-            "required": false,
-            "in": "header",
-            "description": "Optional header to specify target language for translation (ar or en)",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "ar",
-                "en"
-              ]
-            }
-          },
-          {
-            "name": "lang",
-            "required": false,
-            "in": "query",
-            "description": "Target language for translation",
-            "schema": {
-              "enum": [
-                "ar",
-                "en"
-              ],
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of supplier products",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProductResponseDto"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Supplier not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Supplier not found",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get all products of a supplier",
-        "tags": [
-          "Products"
-        ]
-      }
-    },
-    "/api/products/create-product-dto": {
-      "get": {
-        "deprecated": true,
-        "description": "⚠️ IMPORTANT: This endpoint is a Swagger-only reference and does NOT exist in the real API.<br>\n            It is here solely so you can view the full CreateProductDto schema and example in the Swagger Schemas panel.<br>\n            You cannot actually call this endpoint, doing so will return nothing if attempted.<br><br>\n            Why does this exist?<br>\n            The real \"Create Product\" endpoint uses multipart/form-data to accept files and a JSON string,\n            which means Swagger cannot automatically show the CreateProductDto schema for that endpoint.<br>\n            This fake endpoint is a workaround to let you inspect the expected JSON structure, see required fields, \n            and understand how to format your requests when sending the 'dto' field as a JSON string in the real API.<br><br>\n            Use this purely as a reference to know:<br>\n            - All required and optional fields<br>\n            - Field types and valid values<br>\n            - Example data for testing<br><br>\n            DO NOT use this in your frontend code or try to send requests to it.<br>\n            Always send product data as a JSON string in the 'dto' field of the real multipart/form-data endpoint.",
-        "operationId": "ProductController_dummy",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "description": "Fake body showing CreateProductDto",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateProductDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "This endpoint returns nothing"
-          }
-        },
-        "summary": "⚠️ ONLY for Swagger reference: shows CreateProductDto schema",
-        "tags": [
-          "Products"
-        ]
-      }
-    },
-    "/api/products/{productId}/clone": {
-      "post": {
-        "description": "Creates a copy of an existing product. The duplicated product is unpublished by default. Requires Supplier role.",
-        "operationId": "ProductController_duplicateProduct",
-        "parameters": [
-          {
-            "name": "productId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Duplicated product details",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductResponseDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden: You do not have access to this resource (role mismatch).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "You do not have access to this resource",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Original product or supplier not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Product not found",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "token": []
-          }
-        ],
-        "summary": "Duplicate a product",
-        "tags": [
-          "Products"
-        ]
-      }
-    },
-    "/api/products/{productId}/images": {
-      "patch": {
-        "description": "This endpoint allows the supplier to add an additional image to an already created product.<br>\n            Only the image is updated; product name, description, and other fields remain unchanged.<br>\n            Maximum 3 images per product are allowed.<br><br>\n            <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n            <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
-        "operationId": "ProductController_updateProductImages",
-        "parameters": [
-          {
-            "name": "productId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary",
-                    "description": "The product image file (PNG, JPEG, WebP, max 5MB)"
-                  }
-                },
-                "required": [
-                  "file"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "The product with the newly added image is returned",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductResponseDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation failed or maximum image limit exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "A maximum of 3 product images is allowed",
-                    "error": "Bad Request"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden: You do not have access to this resource (role mismatch).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "You do not have access to this resource",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Supplier or product not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Product not found",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "token": []
-          }
-        ],
-        "summary": "Add a new image to an existing product",
-        "tags": [
-          "Products"
-        ]
-      }
-    },
-    "/api/products/{productId}/image/{fileName}": {
-      "delete": {
-        "description": "Deletes a single image of a product. Requires at least one image to remain. Requires Supplier role.",
-        "operationId": "ProductController_deleteProductImage",
-        "parameters": [
-          {
-            "name": "productId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "fileName",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Updated product details after deletion",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductResponseDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request (image not found or would leave product empty)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "A product must have at least one image.",
-                    "error": "Bad Request"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden: You do not have access to this resource (role mismatch).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "You do not have access to this resource",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Product or supplier not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Product not found",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "cookie": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "token": []
-          }
-        ],
-        "summary": "Delete a specific product image",
-        "tags": [
-          "Products"
-        ]
-      }
-    },
     "/api/services": {
       "get": {
         "description": "Fetches all services. Optional query or header <strong>lang</strong> can be provided to translate service name and description.\n                <ul>\n                    <li>Header: <strong>accept-language</strong></li>\n                    <li>Query: <strong>lang</strong></li>\n                </ul>\n                Defaults to English if not provided.",
@@ -5876,9 +5742,342 @@
         ]
       }
     },
+    "/api/categories": {
+      "get": {
+        "description": "Returns all categories in the system, including nested subcategories. Optionally, filter by `usedFor` (products or services).",
+        "operationId": "CategoryController_getAllCategories",
+        "parameters": [
+          {
+            "name": "usedFor",
+            "required": false,
+            "in": "query",
+            "description": "Filter categories by type",
+            "schema": {
+              "example": "products",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": 1,
+                      "name": "Agricultural & Pet Supplies",
+                      "usedFor": "PRODUCT",
+                      "subcategories": [
+                        {
+                          "id": 2,
+                          "name": "Animal Feed",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        },
+                        {
+                          "id": 3,
+                          "name": "Fertilizers",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        },
+                        {
+                          "id": 4,
+                          "name": "Pet Accessories & Toys",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        },
+                        {
+                          "id": 5,
+                          "name": "Pet Food & Treats",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": 20,
+                      "name": "Software & IT Solutions",
+                      "usedFor": "SERVICE",
+                      "subcategories": [
+                        {
+                          "id": 21,
+                          "name": "Web & App Development",
+                          "usedFor": "SERVICE",
+                          "parentCategory": {
+                            "id": 20,
+                            "name": "Software & IT Solutions"
+                          }
+                        },
+                        {
+                          "id": 22,
+                          "name": "IT & Cloud Services",
+                          "usedFor": "SERVICE",
+                          "parentCategory": {
+                            "id": 20,
+                            "name": "Software & IT Solutions"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all categories",
+        "tags": [
+          "Categories"
+        ]
+      }
+    },
+    "/api/categories/main": {
+      "get": {
+        "description": "Returns only the top-level categories (no parent) in the system, optionally filtered by `usedFor`.",
+        "operationId": "CategoryController_getMainCategories",
+        "parameters": [
+          {
+            "name": "usedFor",
+            "required": false,
+            "in": "query",
+            "description": "Filter categories by type",
+            "schema": {
+              "example": "services",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of top-level categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": 1,
+                      "name": "Agricultural & Pet Supplies",
+                      "usedFor": "PRODUCT",
+                      "subcategories": [
+                        {
+                          "id": 2,
+                          "name": "Animal Feed",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        },
+                        {
+                          "id": 3,
+                          "name": "Fertilizers",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        },
+                        {
+                          "id": 4,
+                          "name": "Pet Accessories & Toys",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        },
+                        {
+                          "id": 5,
+                          "name": "Pet Food & Treats",
+                          "usedFor": "PRODUCT",
+                          "parentCategory": {
+                            "id": 1,
+                            "name": "Agricultural & Pet Supplies"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get main (top-level) categories",
+        "tags": [
+          "Categories"
+        ]
+      }
+    },
+    "/api/categories/sub": {
+      "get": {
+        "description": "Returns only subcategories (categories that have a parent), optionally filtered by `usedFor`.",
+        "operationId": "CategoryController_getSubCategories",
+        "parameters": [
+          {
+            "name": "usedFor",
+            "required": false,
+            "in": "query",
+            "description": "Filter subcategories by type",
+            "schema": {
+              "example": "products",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of subcategories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": 2,
+                      "name": "Animal Feed",
+                      "usedFor": "PRODUCT",
+                      "parentCategory": {
+                        "id": 1,
+                        "name": "Agricultural & Pet Supplies"
+                      }
+                    },
+                    {
+                      "id": 3,
+                      "name": "Fertilizers",
+                      "usedFor": "PRODUCT",
+                      "parentCategory": {
+                        "id": 1,
+                        "name": "Agricultural & Pet Supplies"
+                      }
+                    },
+                    {
+                      "id": 21,
+                      "name": "Web & App Development",
+                      "usedFor": "SERVICE",
+                      "parentCategory": {
+                        "id": 20,
+                        "name": "Software & IT Solutions"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get subcategories",
+        "tags": [
+          "Categories"
+        ]
+      }
+    },
+    "/api/categories/{id}": {
+      "get": {
+        "description": "Returns a single category by its ID, including its parent category and all nested subcategories.",
+        "operationId": "CategoryController_getCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "description": "The ID of the category to fetch",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": 1,
+                    "name": "Agricultural & Pet Supplies",
+                    "usedFor": "PRODUCT",
+                    "subcategories": [
+                      {
+                        "id": 2,
+                        "name": "Animal Feed",
+                        "usedFor": "PRODUCT",
+                        "parentCategory": {
+                          "id": 1,
+                          "name": "Agricultural & Pet Supplies"
+                        }
+                      },
+                      {
+                        "id": 3,
+                        "name": "Fertilizers",
+                        "usedFor": "PRODUCT",
+                        "parentCategory": {
+                          "id": 1,
+                          "name": "Agricultural & Pet Supplies"
+                        }
+                      },
+                      {
+                        "id": 4,
+                        "name": "Pet Accessories & Toys",
+                        "usedFor": "PRODUCT",
+                        "parentCategory": {
+                          "id": 1,
+                          "name": "Agricultural & Pet Supplies"
+                        }
+                      },
+                      {
+                        "id": 5,
+                        "name": "Pet Food & Treats",
+                        "usedFor": "PRODUCT",
+                        "parentCategory": {
+                          "id": 1,
+                          "name": "Agricultural & Pet Supplies"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Category not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get category by ID",
+        "tags": [
+          "Categories"
+        ]
+      }
+    },
     "/api/carts/me": {
       "get": {
-        "description": "Fetches the currently active cart of the authenticated buyer. Returns details of suppliers, items, and totals. Throws 404 if no active cart exists.",
+        "description": "Fetches the currently active cart of the authenticated buyer, including suppliers, items, and totals. Throws 404 if no active cart exists.",
         "operationId": "CartController_getBuyerActiveCart",
         "parameters": [
           {
@@ -5948,7 +6147,7 @@
                 "schema": {
                   "example": {
                     "statusCode": 404,
-                    "message": "No active cart for this buyer",
+                    "message": "No active cart found for this buyer",
                     "error": "Not Found"
                   }
                 }
@@ -5979,18 +6178,9 @@
         ]
       },
       "delete": {
-        "description": "Marks the buyer's cart as deleted. Once deleted, the cart cannot be retrieved as active.",
+        "description": "Marks the buyer's cart as deleted. Once deleted, it cannot be retrieved as active.",
         "operationId": "CartController_deleteCart",
         "parameters": [
-          {
-            "name": "cartId",
-            "required": true,
-            "in": "path",
-            "description": "Cart ID",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "Cookie",
             "in": "header",
@@ -6054,13 +6244,13 @@
             }
           },
           "404": {
-            "description": "Cart not found",
+            "description": "Active cart not found",
             "content": {
               "application/json": {
                 "schema": {
                   "example": {
                     "statusCode": 404,
-                    "message": "Cart not found",
+                    "message": "No active cart found for this buyer",
                     "error": "Not Found"
                   }
                 }
@@ -6093,7 +6283,7 @@
     },
     "/api/carts/me/items": {
       "post": {
-        "description": "Adds a product to the buyer's active cart. If no cart exists, a new one is automatically created. Groups items by supplier.",
+        "description": "Adds a product to the buyer's active cart. If no cart exists, a new one is created. Items are grouped by supplier automatically.",
         "operationId": "CartController_addItem",
         "parameters": [
           {
@@ -6128,13 +6318,13 @@
             }
           },
           "400": {
-            "description": "Invalid supplier or input data",
+            "description": "Invalid supplier or input data, or requested quantity exceeds stock",
             "content": {
               "application/json": {
                 "schema": {
                   "example": {
                     "statusCode": 400,
-                    "message": "Supplier with id 123 not found",
+                    "message": "Supplier for this product not found",
                     "error": "Bad Request"
                   }
                 }
@@ -6181,7 +6371,7 @@
             }
           },
           "404": {
-            "description": "Product or buyer not found",
+            "description": "Buyer or product not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -6220,7 +6410,7 @@
     },
     "/api/carts/me/items/{itemId}": {
       "patch": {
-        "description": "Updates the quantity of a specific item in the buyer's cart. Recalculates supplier subtotal and cart totals.",
+        "description": "Updates the quantity of a specific item in the buyer's cart and recalculates totals.",
         "operationId": "CartController_updateItemQuantity",
         "parameters": [
           {
@@ -6230,15 +6420,6 @@
             "description": "Cart Item ID",
             "schema": {
               "type": "number"
-            }
-          },
-          {
-            "name": "cartId",
-            "required": true,
-            "in": "path",
-            "description": "Cart ID",
-            "schema": {
-              "type": "string"
             }
           },
           {
@@ -6279,13 +6460,13 @@
             }
           },
           "400": {
-            "description": "Invalid new quantity",
+            "description": "Quantity is invalid or exceeds product stock",
             "content": {
               "application/json": {
                 "schema": {
                   "example": {
                     "statusCode": 400,
-                    "message": "New quantity cannot be null or less than 1",
+                    "message": "Only 5 units available in stock",
                     "error": "Bad Request"
                   }
                 }
@@ -6332,7 +6513,7 @@
             }
           },
           "404": {
-            "description": "Cart or item not found",
+            "description": "Item not found in buyer cart",
             "content": {
               "application/json": {
                 "schema": {
@@ -6369,7 +6550,7 @@
         ]
       },
       "delete": {
-        "description": "Deletes a specific item from the buyer's cart. If the supplier group has no items left, the supplier is also removed from the cart.",
+        "description": "Deletes a specific item from the buyer's cart. Removes supplier grouping if no items remain for that supplier.",
         "operationId": "CartController_removeItem",
         "parameters": [
           {
@@ -6379,15 +6560,6 @@
             "description": "Cart Item ID",
             "schema": {
               "type": "number"
-            }
-          },
-          {
-            "name": "cartId",
-            "required": true,
-            "in": "path",
-            "description": "Cart ID",
-            "schema": {
-              "type": "string"
             }
           },
           {
@@ -6451,7 +6623,7 @@
             }
           },
           "404": {
-            "description": "Cart or item not found",
+            "description": "Item or cart not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -6490,7 +6662,7 @@
     },
     "/api/carts/me/suppliers/{supplierId}": {
       "delete": {
-        "description": "Removes all items from a specific supplier in the cart. If the supplier is the last one, the whole cart is deleted.",
+        "description": "Removes all items from a specific supplier in the cart. Deletes the cart if it was the last supplier.",
         "operationId": "CartController_removeSupplierFromCart",
         "parameters": [
           {
@@ -6498,15 +6670,6 @@
             "required": true,
             "in": "path",
             "description": "Supplier ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "cartId",
-            "required": true,
-            "in": "path",
-            "description": "Cart ID",
             "schema": {
               "type": "string"
             }
@@ -6523,7 +6686,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Supplier removed successfully, updated cart returned",
+            "description": "Supplier removed successfully; updated cart returned",
             "content": {
               "application/json": {
                 "schema": {
@@ -6622,18 +6785,9 @@
     },
     "/api/carts/me/checkout": {
       "post": {
-        "description": "Finalizes the buyer's cart by creating orders for each supplier. Marks the cart as bought and returns the checkout details. Payment integration (Tap) will be handled here.",
+        "description": "Finalizes the buyer's cart by creating orders for each supplier. Marks the cart as bought and returns checkout details.",
         "operationId": "CartController_checkoutCart",
         "parameters": [
-          {
-            "name": "cartId",
-            "required": true,
-            "in": "path",
-            "description": "Cart ID",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "Cookie",
             "in": "header",
@@ -6660,14 +6814,12 @@
                       {
                         "id": "uuid-order-1",
                         "supplierId": "uuid-supplier-id",
-                        "finalPrice": 150,
-                        "status": "PENDING"
+                        "finalPrice": 150
                       },
                       {
                         "id": "uuid-order-2",
                         "supplierId": "uuid-supplier-id-2",
-                        "finalPrice": 100,
-                        "status": "PENDING"
+                        "finalPrice": 100
                       }
                     ]
                   }
@@ -6735,7 +6887,7 @@
                 "schema": {
                   "example": {
                     "statusCode": 404,
-                    "message": "Active cart not found",
+                    "message": "No active cart found for this buyer",
                     "error": "Not Found"
                   }
                 }
@@ -6766,12 +6918,105 @@
         ]
       }
     },
-    "/api/demand-predictions/{productId}": {
+    "/api/orders/me": {
       "get": {
-        "operationId": "DemandPredictionController_getPredictionForProduct",
+        "description": "Fetches orders for the authenticated user. \n                <ul>\n                    <li>If user role is <strong>BUYER</strong>, returns orders placed by the buyer.</li>\n                    <li>If user role is <strong>SUPPLIER</strong>, returns orders received by the supplier.</li>\n                </ul>",
+        "operationId": "OrderController_getMyOrders",
         "parameters": [
           {
-            "name": "productId",
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of orders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found or orders not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Get my orders",
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/api/orders/{orderId}": {
+      "get": {
+        "description": "Fetches a single order by its ID. Only accessible by the buyer or supplier related to the order.",
+        "operationId": "OrderController_getOrderById",
+        "parameters": [
+          {
+            "name": "orderId",
             "required": true,
             "in": "path",
             "schema": {
@@ -6789,6 +7034,155 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Order details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found for this user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Order not found for this buyer",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Get order by ID",
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/api/orders/{orderId}/status": {
+      "patch": {
+        "description": "Allows a supplier to update the status of an order. \n                <strong>Suppliers cannot set status to COMPLETED.</strong>",
+        "operationId": "OrderController_updateOrderStatus",
+        "parameters": [
+          {
+            "name": "orderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newStatus": {
+                    "type": "string",
+                    "enum": [
+                      "PENDING",
+                      "PROCESSING",
+                      "SHIPPED"
+                    ],
+                    "description": "New order status (cannot be COMPLETED)",
+                    "example": "PROCESSING"
+                  }
+                },
+                "required": [
+                  "newStatus"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Order status updated successfully",
+                    "newStatus": "PROCESSING"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status or not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Invalid order status. Valid statuses: PENDING, PROCESSING, SHIPPED",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -6827,9 +7221,26 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Order or supplier not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Order not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
+          {
+            "bearer": []
+          },
           {
             "cookie": []
           },
@@ -6843,6 +7254,259 @@
             "token": []
           }
         ],
+        "summary": "Update order status",
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/api/orders/{orderId}/confirm-delivery": {
+      "patch": {
+        "description": "Allows a buyer to confirm the delivery of their order. \n                Status will be updated to <strong>COMPLETED</strong>.",
+        "operationId": "OrderController_confirmDelivery",
+        "parameters": [
+          {
+            "name": "orderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delivery confirmed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Order delivery confirmed successfully",
+                    "newStatus": "COMPLETED"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order or buyer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Order not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Confirm delivery",
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/api/demand-predictions/{productId}": {
+      "get": {
+        "description": "Generates a 3-month sales forecast for a specific product using Prophet (via the AI backend). Requires the supplier to be authenticated and subscribed to a plan higher than BASIC. Returns monthly demand predictions, forecast accuracy indicators, and a stocking recommendation.",
+        "operationId": "DemandPredictionController_getPredictionForProduct",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "ID of the product to generate demand prediction for",
+            "schema": {
+              "example": "uuid-product-id",
+              "type": "string"
+            }
+          },
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Demand prediction generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemandPredictionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier or product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 404,
+                        "message": "Supplier not found",
+                        "error": "Not Found"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 404,
+                        "message": "Product not found",
+                        "error": "Not Found"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "AI backend failed to return prediction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 502,
+                    "message": "Failed to get prediction from AI backend",
+                    "error": "Bad Gateway"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Get demand prediction for a product",
         "tags": [
           "Demand Predictions"
         ]
@@ -6855,7 +7519,44 @@
     "version": "1.0",
     "contact": {}
   },
-  "tags": [],
+  "tags": [
+    {
+      "name": "Default"
+    },
+    {
+      "name": "Health"
+    },
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "Users"
+    },
+    {
+      "name": "Buyers"
+    },
+    {
+      "name": "Suppliers"
+    },
+    {
+      "name": "Products"
+    },
+    {
+      "name": "Services"
+    },
+    {
+      "name": "Categories"
+    },
+    {
+      "name": "Carts"
+    },
+    {
+      "name": "Orders"
+    },
+    {
+      "name": "Demand Predictions"
+    }
+  ],
   "servers": [],
   "components": {
     "securitySchemes": {
@@ -6905,13 +7606,14 @@
             "example": "0987654321"
           },
           "categories": {
+            "description": "List of main category IDs (must be a main category).",
             "example": [
-              "Home & Living",
-              "Technical & Repair Services"
+              1,
+              3
             ],
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "number"
             }
           },
           "agreedToTerms": {
@@ -6929,6 +7631,40 @@
           "nid",
           "categories",
           "agreedToTerms"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email address (optional if CRN is provided)",
+            "example": "user@example.com",
+            "format": "email"
+          },
+          "crn": {
+            "type": "string",
+            "description": "User CRN number (10 digits, optional if email is provided)",
+            "example": "1234567890",
+            "pattern": "^\\d{10}$"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password (8 to 28 characters)",
+            "example": "P@ssw0rd123",
+            "minLength": 8,
+            "maxLength": 28
+          },
+          "emailOrCrnCheck": {
+            "type": "boolean",
+            "description": "Internal field to validate that either email or CRN is provided",
+            "example": true,
+            "readOnly": true
+          }
+        },
+        "required": [
+          "password",
+          "emailOrCrnCheck"
         ]
       },
       "ResetPasswordDto": {
@@ -7324,135 +8060,6 @@
           "plan"
         ]
       },
-      "UpdateSupplierDto": {
-        "type": "object",
-        "properties": {
-          "storeStatus": {
-            "type": "string",
-            "enum": [
-              "OPEN",
-              "CLOSED"
-            ],
-            "description": "Current status of the supplier store",
-            "example": "OPEN"
-          },
-          "storeClosedMsg": {
-            "type": "string",
-            "description": "Custom message displayed when the store is closed",
-            "example": "We are closed for Eid holidays."
-          },
-          "storeBio": {
-            "type": "string",
-            "description": "Short bio or description of the store",
-            "example": "We specialize in handmade bakery items."
-          },
-          "deliveryFees": {
-            "type": "number",
-            "description": "Delivery fees charged by the supplier",
-            "example": 15.5
-          }
-        },
-        "required": [
-          "storeStatus"
-        ]
-      },
-      "StorefrontResponseDto": {
-        "type": "object",
-        "properties": {
-          "supplierId": {
-            "type": "string",
-            "description": "Supplier unique ID",
-            "example": "uuid-1234"
-          },
-          "supplierName": {
-            "type": "string",
-            "description": "Supplier display name",
-            "example": "John Doe"
-          },
-          "supplierEmail": {
-            "type": "string",
-            "description": "Supplier email",
-            "example": "john@gmail.com"
-          },
-          "businessName": {
-            "type": "string",
-            "description": "Business name of the user",
-            "example": "John Bakery"
-          },
-          "city": {
-            "type": "string",
-            "description": "City of the user",
-            "example": "Riyadh"
-          },
-          "storeStatus": {
-            "type": "string",
-            "enum": [
-              "OPEN",
-              "CLOSED"
-            ],
-            "description": "Current store status",
-            "example": "OPEN"
-          },
-          "storeClosedMsg": {
-            "type": "string",
-            "description": "Message displayed if the store is closed",
-            "example": "We are closed for Eid holidays."
-          },
-          "storeBio": {
-            "type": "string",
-            "description": "Short bio or description of the store",
-            "example": "We specialize in handmade bakery items."
-          },
-          "storeBannerFileName": {
-            "type": "string",
-            "description": "File name of the store banner image in R2 bucket",
-            "example": "banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png"
-          },
-          "storeBannerFileUrl": {
-            "type": "string",
-            "description": "Signed URL from R2. Signed URLs expire 1 hour after creation.",
-            "example": "https://cdn.example.com/banners/banner123.png",
-            "format": "uri"
-          },
-          "deliveryFees": {
-            "type": "number",
-            "description": "Delivery fees charged by the supplier",
-            "example": 15.5
-          },
-          "avgRating": {
-            "type": "number",
-            "description": "Average rating of the supplier",
-            "example": 4.5
-          },
-          "ratingsCount": {
-            "type": "number",
-            "description": "Number of ratings received",
-            "example": 23
-          },
-          "supplierStatus": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE"
-            ],
-            "description": "Current status of the supplier account",
-            "example": "ACTIVE"
-          }
-        },
-        "required": [
-          "supplierId",
-          "supplierName",
-          "supplierEmail",
-          "businessName",
-          "city",
-          "storeStatus",
-          "storeClosedMsg",
-          "deliveryFees",
-          "avgRating",
-          "ratingsCount",
-          "supplierStatus"
-        ]
-      },
       "ProductResponseDto": {
         "type": "object",
         "properties": {
@@ -7630,6 +8237,184 @@
           "deletedAt"
         ]
       },
+      "ServiceResponseDto": {
+        "type": "object",
+        "properties": {
+          "serviceId": {
+            "type": "string",
+            "description": "Service ID",
+            "example": "uuid-1234"
+          },
+          "supplierId": {
+            "type": "object",
+            "description": "Supplier ID (null = supplier deleted his account)",
+            "example": "uuid-5678"
+          },
+          "supplier": {
+            "description": "Supplier details (null if the supplier deleted his account)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SupplierResponseDto"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "description": "Service name",
+            "example": "Home Cleaning"
+          },
+          "description": {
+            "type": "string",
+            "description": "Service description",
+            "example": "Professional deep cleaning service for apartments and houses"
+          },
+          "price": {
+            "type": "number",
+            "description": "Price",
+            "example": 150
+          },
+          "isPriceNegotiable": {
+            "type": "boolean",
+            "description": "Indicates if the price is negotiable",
+            "example": true
+          },
+          "category": {
+            "type": "object",
+            "description": "Category info"
+          },
+          "imagesFilesNames": {
+            "description": "Service images filenames",
+            "example": [
+              "cleaning1.jpg",
+              "cleaning2.jpg"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "imagesFilesUrls": {
+            "example": [
+              "https://gp-silah.d025be9440ae5eb8295c69a36497276a.r2.cloudflarestorage.com/gp-silah/service1.jpeg?..."
+            ],
+            "description": "Signed URLs from R2. Signed URLs expire 1 hour after creation.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "serviceAvailability": {
+            "type": "string",
+            "description": "Availability details of the service",
+            "example": "WEEKENDS",
+            "enum": [
+              "TWENTY_FOUR_SEVEN",
+              "EVERYDAY",
+              "WEEKDAYS",
+              "WEEKENDS",
+              "APPOINTMENT"
+            ]
+          },
+          "isPublished": {
+            "type": "boolean",
+            "description": "Publish status",
+            "example": true
+          },
+          "wishlistCount": {
+            "type": "number",
+            "description": "Wishlist count (only shown if supplier has PREMIUM plan)",
+            "example": 10
+          },
+          "avgRating": {
+            "type": "number",
+            "description": "Average rating",
+            "example": 4.8
+          },
+          "ratingsCount": {
+            "type": "number",
+            "description": "Ratings count",
+            "example": 25
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Last update timestamp"
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "description": "Indicates if the service is soft-deleted",
+            "example": false
+          },
+          "deletedAt": {
+            "type": "object",
+            "description": "Timestamp when the service was soft-deleted (null if not deleted)",
+            "nullable": true
+          }
+        },
+        "required": [
+          "serviceId",
+          "name",
+          "description",
+          "price",
+          "isPriceNegotiable",
+          "category",
+          "imagesFilesNames",
+          "imagesFilesUrls",
+          "serviceAvailability",
+          "isPublished",
+          "avgRating",
+          "ratingsCount",
+          "createdAt",
+          "updatedAt",
+          "isDeleted",
+          "deletedAt"
+        ]
+      },
+      "WishlistItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "The ID of the wishlist item (which is the id of the product or service)",
+            "example": "d4f2a1b0-1234-5678-9abc-1234567890ab"
+          },
+          "itemType": {
+            "type": "string",
+            "description": "The type of the item in the wishlist",
+            "enum": [
+              "PRODUCT",
+              "SERVICE"
+            ],
+            "example": "PRODUCT"
+          },
+          "product": {
+            "description": "The product details, present only if itemType is PRODUCT",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProductResponseDto"
+              }
+            ]
+          },
+          "service": {
+            "description": "The service details, present only if itemType is SERVICE",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServiceResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "itemId",
+          "itemType"
+        ]
+      },
       "CreateProductDto": {
         "type": "object",
         "properties": {
@@ -7786,143 +8571,133 @@
           }
         }
       },
-      "ServiceResponseDto": {
+      "UpdateSupplierDto": {
         "type": "object",
         "properties": {
-          "serviceId": {
+          "storeStatus": {
             "type": "string",
-            "description": "Service ID",
-            "example": "uuid-1234"
-          },
-          "supplierId": {
-            "type": "object",
-            "description": "Supplier ID (null = supplier deleted his account)",
-            "example": "uuid-5678"
-          },
-          "supplier": {
-            "description": "Supplier details (null if the supplier deleted his account)",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SupplierResponseDto"
-              }
-            ]
-          },
-          "name": {
-            "type": "string",
-            "description": "Service name",
-            "example": "Home Cleaning"
-          },
-          "description": {
-            "type": "string",
-            "description": "Service description",
-            "example": "Professional deep cleaning service for apartments and houses"
-          },
-          "price": {
-            "type": "number",
-            "description": "Price",
-            "example": 150
-          },
-          "isPriceNegotiable": {
-            "type": "boolean",
-            "description": "Indicates if the price is negotiable",
-            "example": true
-          },
-          "category": {
-            "type": "object",
-            "description": "Category info"
-          },
-          "imagesFilesNames": {
-            "description": "Service images filenames",
-            "example": [
-              "cleaning1.jpg",
-              "cleaning2.jpg"
-            ],
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "imagesFilesUrls": {
-            "example": [
-              "https://gp-silah.d025be9440ae5eb8295c69a36497276a.r2.cloudflarestorage.com/gp-silah/service1.jpeg?..."
-            ],
-            "description": "Signed URLs from R2. Signed URLs expire 1 hour after creation.",
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uri"
-            }
-          },
-          "serviceAvailability": {
-            "type": "string",
-            "description": "Availability details of the service",
-            "example": "WEEKENDS",
             "enum": [
-              "TWENTY_FOUR_SEVEN",
-              "EVERYDAY",
-              "WEEKDAYS",
-              "WEEKENDS",
-              "APPOINTMENT"
-            ]
+              "OPEN",
+              "CLOSED"
+            ],
+            "description": "Current status of the supplier store",
+            "example": "OPEN"
           },
-          "isPublished": {
-            "type": "boolean",
-            "description": "Publish status",
-            "example": true
-          },
-          "wishlistCount": {
-            "type": "number",
-            "description": "Wishlist count (only shown if supplier has PREMIUM plan)",
-            "example": 10
-          },
-          "avgRating": {
-            "type": "number",
-            "description": "Average rating",
-            "example": 4.8
-          },
-          "ratingsCount": {
-            "type": "number",
-            "description": "Ratings count",
-            "example": 25
-          },
-          "createdAt": {
-            "format": "date-time",
+          "storeClosedMsg": {
             "type": "string",
-            "description": "Creation timestamp"
+            "description": "Custom message displayed when the store is closed",
+            "example": "We are closed for Eid holidays."
           },
-          "updatedAt": {
-            "format": "date-time",
+          "storeBio": {
             "type": "string",
-            "description": "Last update timestamp"
+            "description": "Short bio or description of the store",
+            "example": "We specialize in handmade bakery items."
           },
-          "isDeleted": {
-            "type": "boolean",
-            "description": "Indicates if the service is soft-deleted",
-            "example": false
-          },
-          "deletedAt": {
-            "type": "object",
-            "description": "Timestamp when the service was soft-deleted (null if not deleted)",
-            "nullable": true
+          "deliveryFees": {
+            "type": "number",
+            "description": "Delivery fees charged by the supplier",
+            "example": 15.5
           }
         },
         "required": [
-          "serviceId",
-          "name",
-          "description",
-          "price",
-          "isPriceNegotiable",
-          "category",
-          "imagesFilesNames",
-          "imagesFilesUrls",
-          "serviceAvailability",
-          "isPublished",
+          "storeStatus"
+        ]
+      },
+      "StorefrontResponseDto": {
+        "type": "object",
+        "properties": {
+          "supplierId": {
+            "type": "string",
+            "description": "Supplier unique ID",
+            "example": "uuid-1234"
+          },
+          "supplierName": {
+            "type": "string",
+            "description": "Supplier display name",
+            "example": "John Doe"
+          },
+          "supplierEmail": {
+            "type": "string",
+            "description": "Supplier email",
+            "example": "john@gmail.com"
+          },
+          "businessName": {
+            "type": "string",
+            "description": "Business name of the user",
+            "example": "John Bakery"
+          },
+          "city": {
+            "type": "string",
+            "description": "City of the user",
+            "example": "Riyadh"
+          },
+          "storeStatus": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "CLOSED"
+            ],
+            "description": "Current store status",
+            "example": "OPEN"
+          },
+          "storeClosedMsg": {
+            "type": "string",
+            "description": "Message displayed if the store is closed",
+            "example": "We are closed for Eid holidays."
+          },
+          "storeBio": {
+            "type": "string",
+            "description": "Short bio or description of the store",
+            "example": "We specialize in handmade bakery items."
+          },
+          "storeBannerFileName": {
+            "type": "string",
+            "description": "File name of the store banner image in R2 bucket",
+            "example": "banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png"
+          },
+          "storeBannerFileUrl": {
+            "type": "string",
+            "description": "Signed URL from R2. Signed URLs expire 1 hour after creation.",
+            "example": "https://cdn.example.com/banners/banner123.png",
+            "format": "uri"
+          },
+          "deliveryFees": {
+            "type": "number",
+            "description": "Delivery fees charged by the supplier",
+            "example": 15.5
+          },
+          "avgRating": {
+            "type": "number",
+            "description": "Average rating of the supplier",
+            "example": 4.5
+          },
+          "ratingsCount": {
+            "type": "number",
+            "description": "Number of ratings received",
+            "example": 23
+          },
+          "supplierStatus": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "description": "Current status of the supplier account",
+            "example": "ACTIVE"
+          }
+        },
+        "required": [
+          "supplierId",
+          "supplierName",
+          "supplierEmail",
+          "businessName",
+          "city",
+          "storeStatus",
+          "storeClosedMsg",
+          "deliveryFees",
           "avgRating",
           "ratingsCount",
-          "createdAt",
-          "updatedAt",
-          "isDeleted",
-          "deletedAt"
+          "supplierStatus"
         ]
       },
       "CreateServiceDto": {
@@ -8174,11 +8949,6 @@
             "description": "ID of the product to add to the cart",
             "example": "a1b2c3d4-5678-90ab-cdef-1234567890ab"
           },
-          "supplierId": {
-            "type": "string",
-            "description": "ID of the supplier for this product",
-            "example": "f1e2d3c4-5678-90ab-cdef-1234567890ab"
-          },
           "quantity": {
             "type": "number",
             "description": "Quantity of the product to add (minimum 1)",
@@ -8188,8 +8958,127 @@
         },
         "required": [
           "productId",
-          "supplierId",
           "quantity"
+        ]
+      },
+      "OrderResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the order."
+          },
+          "checkoutId": {
+            "type": "string",
+            "description": "Identifier for the checkout session.<br>\n        Since a buyer can have items from multiple suppliers in a single cart, \n        each supplier will generate a separate order, but all share the same checkoutId."
+          },
+          "buyerId": {
+            "type": "string",
+            "description": "The ID of the buyer who placed this order. Nullable if the buyer account is deleted or unavailable."
+          },
+          "cartId": {
+            "type": "string",
+            "description": "The ID of the cart from which this order was created. Useful for tracing back to the original cart items and totals."
+          },
+          "supplierId": {
+            "type": "string",
+            "description": "The ID of the supplier fulfilling this order. Each order is tied to a single supplier even if multiple suppliers were in the cart."
+          },
+          "finalPrice": {
+            "type": "number",
+            "description": "The final price of this order. This includes the total cost of the items from the supplier plus any delivery fees."
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the order. Values can be PENDING, PROCESSING, SHIPPED, or COMPLETED.",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "SHIPPED",
+              "COMPLETED"
+            ]
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the order was created. Useful for order history, tracking, and reporting."
+          },
+          "items": {
+            "description": "The items included in this order, with their details such as product info, quantity, and total price for each item.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItemResponseDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "checkoutId",
+          "buyerId",
+          "cartId",
+          "supplierId",
+          "finalPrice",
+          "status",
+          "createdAt",
+          "items"
+        ]
+      },
+      "ForecastMonthDto": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "example": "2025-01",
+            "description": "The forecasted month in YYYY-MM format"
+          },
+          "demand": {
+            "type": "number",
+            "example": 120,
+            "description": "Total predicted demand for this month"
+          }
+        },
+        "required": [
+          "month",
+          "demand"
+        ]
+      },
+      "DemandPredictionResponseDto": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "example": "123",
+            "description": "ID of the product being forecasted"
+          },
+          "forecast": {
+            "description": "List of monthly demand predictions for the requested horizon",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ForecastMonthDto"
+            }
+          },
+          "lowAccuracy": {
+            "type": "boolean",
+            "example": false,
+            "description": "Indicates if the prediction accuracy is low (true when sales history < 50 days)"
+          },
+          "salesCount": {
+            "type": "number",
+            "example": 42,
+            "description": "Total number of days of past sales data used in training"
+          },
+          "recommendedStock": {
+            "type": "number",
+            "example": 210,
+            "description": "How many additional units supplier should stock to meet forecasted demand"
+          }
+        },
+        "required": [
+          "product_id",
+          "forecast",
+          "lowAccuracy",
+          "salesCount",
+          "recommendedStock"
         ]
       }
     }

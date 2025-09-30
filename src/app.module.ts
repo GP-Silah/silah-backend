@@ -21,6 +21,8 @@ import { ProductModule } from './product/product.module';
 import { ServiceModule } from './service/service.module';
 import { CartModule } from './cart/cart.module';
 import { DemandPredictionModule } from './demand-prediction/demand-prediction.module';
+import { OrderModule } from './order/order.module';
+import { TranslationModule } from './translation/translation.module';
 
 @Module({
     imports: [
@@ -33,17 +35,19 @@ import { DemandPredictionModule } from './demand-prediction/demand-prediction.mo
         ]),
         ScheduleModule.forRoot(),
         ConfigModule.forRoot({ isGlobal: true }),
-        AuthModule,
-        UserModule,
         PrismaModule,
-        BuyerModule,
         FileModule,
         TapPaymentsModule,
+        TranslationModule,
+        AuthModule,
+        UserModule,
+        BuyerModule,
         SupplierModule,
         CategoryModule,
         ProductModule,
         ServiceModule,
         CartModule,
+        OrderModule,
         DemandPredictionModule,
     ],
     controllers: [AppController, HealthController],
