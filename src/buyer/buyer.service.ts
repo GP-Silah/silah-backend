@@ -238,7 +238,13 @@ export class BuyerService {
                         },
                     });
 
-                    if (!product) return null;
+                    if (!product || product.isDeleted) {
+                        // auto-clean wishlist
+                        await this.prisma.wishlist.delete({
+                            where: { id: entry.id },
+                        });
+                        return null;
+                    }
 
                     const productDto =
                         await this.productService.toProductResponseDto(
@@ -250,6 +256,7 @@ export class BuyerService {
                         itemId: entry.itemId,
                         itemType: ItemType.PRODUCT,
                         product: productDto,
+                        isAvailable: product.stock > 0,
                     };
                 } else {
                     const service = await this.prisma.service.findUnique({
@@ -260,7 +267,13 @@ export class BuyerService {
                         },
                     });
 
-                    if (!service) return null;
+                    if (!service || service.isDeleted) {
+                        // auto-clean wishlist
+                        await this.prisma.wishlist.delete({
+                            where: { id: entry.id },
+                        });
+                        return null;
+                    }
 
                     const serviceDto =
                         await this.serviceService.toServiceResponseDto(
@@ -297,14 +310,14 @@ export class BuyerService {
 
         // 2️⃣ Determine item type
         let itemType: ItemType;
-        const product = await this.prisma.product.findUnique({
-            where: { id: itemId },
+        const product = await this.prisma.product.findFirst({
+            where: { id: itemId, isDeleted: false },
         });
         if (product) {
             itemType = ItemType.PRODUCT;
         } else {
-            const service = await this.prisma.service.findUnique({
-                where: { id: itemId },
+            const service = await this.prisma.service.findFirst({
+                where: { id: itemId, isDeleted: false },
             });
             if (service) {
                 itemType = ItemType.SERVICE;
