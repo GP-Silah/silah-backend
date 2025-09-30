@@ -33,24 +33,34 @@ export class CartService {
                 cart.suppliers.map(async (s: any) => ({
                     cartBySupplierId: s.id,
                     supplierId: s.supplierId,
-                    deliveryFee: s.deliveryFee,
+                    deliveryFee: s.supplier?.deliveryFees ?? 0,
                     subTotal: s.subTotal,
                     supplierTotalPrice: s.supplierTotalPrice,
                     cartItems: await Promise.all(
-                        s.cartItems.map(async (item: any) => ({
-                            itemId: item.id,
-                            productId: item.productId,
-                            productName:
+                        s.cartItems.map(async (item: any) => {
+                            // Translate product name if needed
+                            const productName =
                                 targetLang === 'en'
                                     ? item.product.name
                                     : await this.translationService.translateText(
                                           item.product.name,
                                           targetLang,
-                                      ),
-                            productPrice: item.product.price,
-                            quantity: item.quantity,
-                            itemTotalPrice: item.itemTotalPrice,
-                        })),
+                                      );
+
+                            // --- mark out-of-stock items ---
+                            const isAvailable =
+                                item.product.stock >= item.quantity;
+
+                            return {
+                                cartItemId: item.id,
+                                productId: item.productId,
+                                productName,
+                                productPrice: item.product.price,
+                                quantity: item.quantity,
+                                itemTotalPrice: item.itemTotalPrice,
+                                isAvailable,
+                            };
+                        }),
                     ),
                 })),
             ),
@@ -88,6 +98,26 @@ export class CartService {
             );
         }
 
+        // --- Validate quantity against case quantity and min/max order quantities ---
+        if (dto.quantity % product.caseQuantity !== 0) {
+            throw new BadRequestException(
+                `Quantity must be in multiples of ${product.caseQuantity}`,
+            );
+        }
+        if (dto.quantity < product.minOrderQuantity) {
+            throw new BadRequestException(
+                `Quantity must be at least the minimum order quantity: ${product.minOrderQuantity}`,
+            );
+        }
+        if (
+            product.maxOrderQuantity &&
+            dto.quantity > product.maxOrderQuantity
+        ) {
+            throw new BadRequestException(
+                `Quantity must not exceed the maximum order quantity: ${product.maxOrderQuantity}`,
+            );
+        }
+
         const supplier = product.supplier;
 
         // Try to find an active cart, create one if none exists
@@ -106,11 +136,10 @@ export class CartService {
             });
         }
 
-        // CartBySupplier
+        // Get or create CartBySupplier
         let cartBySupplier = await this.prisma.cartBySupplier.findFirst({
             where: { cartId: activeCart.id, supplierId: supplier.id },
         });
-
         if (!cartBySupplier) {
             cartBySupplier = await this.prisma.cartBySupplier.create({
                 data: {
@@ -123,7 +152,7 @@ export class CartService {
             });
         }
 
-        // CartItem
+        // Add or update CartItem
         let cartItem = await this.prisma.cartItem.findFirst({
             where: {
                 cartBySupplierId: cartBySupplier.id,
@@ -151,7 +180,25 @@ export class CartService {
             });
         }
 
+        // Recalculate CartBySupplier totals immediately
+        const newSubTotalAgg = await this.prisma.cartItem.aggregate({
+            _sum: { itemTotalPrice: true },
+            where: { cartBySupplierId: cartBySupplier.id },
+        });
+        const newSubTotal = newSubTotalAgg._sum.itemTotalPrice ?? 0;
+
+        // Recalculate CartBySupplier totals
+        await this.prisma.cartBySupplier.update({
+            where: { id: cartBySupplier.id },
+            data: {
+                subTotal: newSubTotal,
+                supplierTotalPrice: newSubTotal + (supplier?.deliveryFees ?? 0),
+            },
+        });
+
+        // Recalculate overall cart totals
         await this.recalculateCartTotals(activeCart.id);
+
         const newCart = await this.getCartWithRelations(activeCart.id);
         return this.toCartResponseDto(newCart);
     }
@@ -168,7 +215,14 @@ export class CartService {
 
         const item = await this.prisma.cartItem.findUnique({
             where: { id: itemId },
-            include: { cartBySupplier: true, product: true },
+            include: {
+                product: true,
+                cartBySupplier: {
+                    include: {
+                        supplier: true,
+                    },
+                },
+            },
         });
 
         if (!item || item.cartBySupplier.cartId !== cart.id) {
@@ -181,6 +235,27 @@ export class CartService {
             );
         }
 
+        // --- Validate new quantity against case quantity and min/max ---
+        if (newQuantity % item.product.caseQuantity !== 0) {
+            throw new BadRequestException(
+                `Quantity must be in multiples of ${item.product.caseQuantity}`,
+            );
+        }
+        if (newQuantity < item.product.minOrderQuantity) {
+            throw new BadRequestException(
+                `Quantity must be at least the minimum order quantity: ${item.product.minOrderQuantity}`,
+            );
+        }
+        if (
+            item.product.maxOrderQuantity &&
+            newQuantity > item.product.maxOrderQuantity
+        ) {
+            throw new BadRequestException(
+                `Quantity must not exceed the maximum order quantity: ${item.product.maxOrderQuantity}`,
+            );
+        }
+
+        // Update item
         await this.prisma.cartItem.update({
             where: { id: itemId },
             data: {
@@ -189,7 +264,28 @@ export class CartService {
             },
         });
 
+        const cartBySupplier = item.cartBySupplier;
+
+        // Recalculate CartBySupplier totals
+        const newSubTotalAgg = await this.prisma.cartItem.aggregate({
+            _sum: { itemTotalPrice: true },
+            where: { cartBySupplierId: cartBySupplier.id },
+        });
+        const newSubTotal = newSubTotalAgg._sum.itemTotalPrice ?? 0;
+
+        // Recalculate CartBySupplier totals
+        await this.prisma.cartBySupplier.update({
+            where: { id: cartBySupplier.id },
+            data: {
+                subTotal: newSubTotal,
+                supplierTotalPrice:
+                    newSubTotal + (cartBySupplier.supplier?.deliveryFees ?? 0),
+            },
+        });
+
+        // Recalculate overall cart totals
         await this.recalculateCartTotals(cart.id);
+
         const updatedCart = await this.getCartWithRelations(cart.id);
         return this.toCartResponseDto(updatedCart);
     }
@@ -222,12 +318,15 @@ export class CartService {
         return this.toCartResponseDto(newCart);
     }
 
-    async deleteCart(userId: string): Promise<void> {
+    async deleteCart(userId: string): Promise<{ message: string }> {
         const { cart } = await this.getActiveCartByUserId(userId);
         await this.prisma.cart.update({
             where: { id: cart.id },
             data: { isDeleted: true, deletedAt: new Date() },
         });
+        return {
+            message: 'Cart deleted successfully',
+        };
     }
 
     async removeSupplierFromCart(userId: string, supplierId: string) {
@@ -267,6 +366,17 @@ export class CartService {
 
         if (cart.suppliers.length === 0)
             throw new BadRequestException('Cart is empty');
+
+        // --- check all items for stock before creating orders ---
+        for (const supplierCart of cart.suppliers) {
+            for (const item of supplierCart.cartItems) {
+                if (item.product.stock < item.quantity) {
+                    throw new BadRequestException(
+                        `Product "${item.product.name}" is out of stock. Remove it from the cart to proceed.`,
+                    );
+                }
+            }
+        }
 
         // TODO: integrate with Tap payments gateway
 
@@ -330,15 +440,18 @@ export class CartService {
 
     /** --- UTILITY: Recalculate totals --- */
     private async recalculateCartTotals(cartId: string) {
+        // Fetch cartBySupplier along with the supplier row
         const cartSuppliers = await this.prisma.cartBySupplier.findMany({
             where: { cartId },
+            include: { supplier: true },
         });
+
         const productsTotal = cartSuppliers.reduce(
             (sum, s) => sum + s.subTotal,
             0,
         );
         const deliveryFees = cartSuppliers.reduce(
-            (sum, s) => sum + s.deliveryFee,
+            (sum, s) => sum + (s.supplier?.deliveryFees ?? 0),
             0,
         );
         const cartTotal = productsTotal + deliveryFees;
@@ -347,6 +460,19 @@ export class CartService {
             where: { id: cartId },
             data: { productsTotal, deliveryFees, cartTotal },
         });
+
+        // Also update each cartBySupplier total price correctly
+        await Promise.all(
+            cartSuppliers.map(async (s) => {
+                await this.prisma.cartBySupplier.update({
+                    where: { id: s.id },
+                    data: {
+                        supplierTotalPrice:
+                            s.subTotal + (s.supplier?.deliveryFees ?? 0),
+                    },
+                });
+            }),
+        );
     }
 
     /** --- UTILITY: Fetch cart with relations --- */

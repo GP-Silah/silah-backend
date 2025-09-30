@@ -10,5 +10,6 @@ import { ServiceModule } from 'src/service/service.module';
     imports: [UserModule, TapPaymentsModule, ProductModule, ServiceModule],
     controllers: [BuyerController],
     providers: [BuyerService],
+    exports: [BuyerService],
 })
 export class BuyerModule {}

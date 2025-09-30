@@ -41,6 +41,7 @@ import {
     ApiDocsUpdateMySupplierData,
     ApiDocsUpdateStoreBanner,
 } from './supplier.docs';
+import { InactiveSupplierResponseDto } from './dtos/inactiveSupplierResponse.dto';
 
 @ApiTags('Suppliers')
 @Controller('suppliers')
@@ -186,7 +187,7 @@ export class SupplierController {
     async getAllSuppliers(
         @Query('status') status?: 'active' | 'inactive',
         @Query('subscription') subscription?: 'subscribed' | 'unsubscribed',
-    ): Promise<SupplierResponseDto[]> {
+    ): Promise<(SupplierResponseDto | InactiveSupplierResponseDto)[]> {
         return this.supplierService.getAllSuppliers(status, subscription);
     }
 

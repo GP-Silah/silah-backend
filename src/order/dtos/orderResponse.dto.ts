@@ -1,6 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { OrderStatus } from '@prisma/client';
+import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
+import { Buyer, OrderStatus } from '@prisma/client';
 import { CartItemResponseDto } from '../../cart/dtos/cartResponse.dto';
+import { BuyerResponseDto } from 'src/buyer/dtos/buyerResponse.dto';
+import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';
+import { ProductResponseDto } from 'src/product/dtos/productResponse.dto';
+import { InactiveSupplierResponseDto } from 'src/supplier/dtos/inactiveSupplierResponse.dto';
 
 export class OrderResponseDto {
     @ApiProperty({ description: 'Unique identifier of the order.' })
@@ -56,4 +60,25 @@ export class OrderResponseDto {
         type: [CartItemResponseDto],
     })
     items: CartItemResponseDto[];
+
+    @ApiProperty({
+        description: 'Buyer info for this order',
+        type: BuyerResponseDto,
+    })
+    buyer: BuyerResponseDto | null;
+
+    @ApiProperty({
+        description: 'Supplier info for this order',
+        oneOf: [
+            { $ref: getSchemaPath(SupplierResponseDto) },
+            { $ref: getSchemaPath(InactiveSupplierResponseDto) },
+        ],
+    })
+    supplier: SupplierResponseDto | InactiveSupplierResponseDto | null;
+
+    @ApiProperty({
+        description: 'List of products in this order',
+        type: [ProductResponseDto],
+    })
+    products: ProductResponseDto[];
 }

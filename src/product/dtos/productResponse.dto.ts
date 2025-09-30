@@ -1,5 +1,10 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+    ApiProperty,
+    ApiPropertyOptional,
+    getSchemaPath,
+} from '@nestjs/swagger';
 import { GroupPurchaseDeadline } from '@prisma/client';
+import { InactiveSupplierResponseDto } from 'src/supplier/dtos/inactiveSupplierResponse.dto';
 import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';
 
 export class ProductResponseDto {
@@ -14,10 +19,14 @@ export class ProductResponseDto {
 
     @ApiPropertyOptional({
         description:
-            'Supplier details (null if the supplier deleted his account)',
-        type: SupplierResponseDto,
+            'Supplier details (null if the supplier deleted their account)',
+        oneOf: [
+            { $ref: getSchemaPath(SupplierResponseDto) },
+            { $ref: getSchemaPath(InactiveSupplierResponseDto) },
+        ],
+        nullable: true,
     })
-    supplier?: SupplierResponseDto | null;
+    supplier?: SupplierResponseDto | InactiveSupplierResponseDto | null;
 
     @ApiProperty({
         description: 'Product name',

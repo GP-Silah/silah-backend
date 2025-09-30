@@ -53,13 +53,47 @@ export function ApiDocsAddCartItem() {
         }),
         ApiBadRequestResponse({
             description:
-                'Invalid supplier or input data, or requested quantity exceeds stock',
+                'Invalid supplier, input data, stock, or quantity not following case/min/max rules',
             schema: {
-                example: {
-                    statusCode: 400,
-                    message: 'Supplier for this product not found',
-                    error: 'Bad Request',
-                },
+                oneOf: [
+                    {
+                        example: {
+                            statusCode: 400,
+                            message: 'Supplier for this product not found',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message: 'Only 5 units available in stock',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message: 'Quantity must be in multiples of 5',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Quantity must be at least the minimum order quantity: 10',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Quantity must not exceed the maximum order quantity: 20',
+                            error: 'Bad Request',
+                        },
+                    },
+                ],
             },
         }),
         ApiNotFoundResponse({
@@ -81,7 +115,7 @@ export function ApiDocsUpdateItemQuantity() {
         ApiOperation({
             summary: 'Update item quantity in cart',
             description:
-                "Updates the quantity of a specific item in the buyer's cart and recalculates totals.",
+                "Updates the quantity of a specific item in the buyer's cart and recalculates totals. New quantity must follow product's case quantity, minimum order, and maximum order constraints.",
         }),
         ApiParam({ name: 'itemId', type: Number, description: 'Cart Item ID' }),
         ApiBody({
@@ -97,13 +131,48 @@ export function ApiDocsUpdateItemQuantity() {
             type: CartResponseDto,
         }),
         ApiBadRequestResponse({
-            description: 'Quantity is invalid or exceeds product stock',
+            description:
+                'Invalid supplier, input data, stock, or quantity not following case/min/max rules',
             schema: {
-                example: {
-                    statusCode: 400,
-                    message: 'Only 5 units available in stock',
-                    error: 'Bad Request',
-                },
+                oneOf: [
+                    {
+                        example: {
+                            statusCode: 400,
+                            message: 'Supplier for this product not found',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message: 'Only 5 units available in stock',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message: 'Quantity must be in multiples of 5',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Quantity must be at least the minimum order quantity: 10',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Quantity must not exceed the maximum order quantity: 20',
+                            error: 'Bad Request',
+                        },
+                    },
+                ],
             },
         }),
         ApiNotFoundResponse({
@@ -251,6 +320,17 @@ export function ApiDocsCheckoutCart() {
                 example: {
                     statusCode: 400,
                     message: 'Cart is empty',
+                    error: 'Bad Request',
+                },
+            },
+        }),
+        ApiBadRequestResponse({
+            description: 'Out-of-stock products in cart',
+            schema: {
+                example: {
+                    statusCode: 400,
+                    message:
+                        'Product "Wireless Headphones" is out of stock. Remove it from the cart to proceed.',
                     error: 'Bad Request',
                 },
             },

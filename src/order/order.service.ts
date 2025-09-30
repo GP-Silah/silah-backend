@@ -11,28 +11,48 @@ import {
     CartResponseDto,
 } from 'src/cart/dtos/cartResponse.dto';
 import { OrderStatus } from '@prisma/client';
+import { BuyerService } from 'src/buyer/buyer.service';
+import { SupplierService } from 'src/supplier/supplier.service';
+import { ProductService } from 'src/product/product.service';
 
 @Injectable()
 export class OrderService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly cartService: CartService,
+        private readonly buyerService: BuyerService,
+        private readonly supplierService: SupplierService,
+        private readonly productService: ProductService,
     ) {}
 
     async toOrderResponseDto(order: any): Promise<OrderResponseDto> {
-        // Get the full cart info for this order
+        // Convert the cart into your standard DTO
         const cartDto: CartResponseDto =
             await this.cartService.toCartResponseDto(order.cart);
 
-        // Find the supplier in the cart that matches this order
+        // Get the supplier slice inside the cart
         const supplierInCart = cartDto.suppliers.find(
             (s) => s.supplierId === order.supplierId,
         );
 
-        // Map supplier's cart items to CartItemResponseDto
+        // Extract cart items belonging to this supplier
         const items: CartItemResponseDto[] = supplierInCart
             ? supplierInCart.cartItems
             : [];
+
+        // Collect products from those items
+        const products = await Promise.all(
+            items.map(async (i) => {
+                const product = await this.prisma.product.findUnique({
+                    where: { id: i.productId },
+                    include: {
+                        supplier: { include: { user: true } },
+                        category: true,
+                    },
+                });
+                return this.productService.toProductResponseDto(product!);
+            }),
+        );
 
         return {
             id: order.id,
@@ -44,6 +64,24 @@ export class OrderService {
             status: order.status,
             createdAt: order.createdAt,
             items,
+
+            // Properly mapped buyer
+            buyer: order.buyer
+                ? await this.buyerService.toBuyerResponseDto(
+                      order.buyer.user, // pass the related user
+                      order.buyer, // pass the buyer entity itself
+                  )
+                : null,
+
+            // Properly mapped supplier
+            supplier: order.supplier
+                ? await this.supplierService.toSupplierResponseDTO(
+                      order.supplier.user, // user relation
+                      order.supplier, // supplier entity
+                  )
+                : null,
+
+            products,
         };
     }
 
@@ -78,6 +116,8 @@ export class OrderService {
         const orders = await this.prisma.order.findMany({
             where: whereCondition,
             include: {
+                buyer: true,
+                supplier: true,
                 cart: {
                     include: {
                         suppliers: {
@@ -115,19 +155,20 @@ export class OrderService {
         const order = await this.prisma.order.findUnique({
             where: { id: orderId },
             include: {
+                buyer: { include: { user: true } },
+                supplier: { include: { user: true } },
                 cart: {
                     include: {
                         suppliers: {
                             include: {
-                                cartItems: {
-                                    include: { product: true },
-                                },
+                                cartItems: { include: { product: true } },
                             },
                         },
                     },
                 },
             },
         });
+
         if (!order) throw new NotFoundException('Order not found');
 
         // Check if the user is authorized to view this order

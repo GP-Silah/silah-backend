@@ -8,6 +8,8 @@ import * as cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as fs from 'fs';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { SupplierResponseDto } from './supplier/dtos/supplierResponse.dto';
+import { InactiveSupplierResponseDto } from './supplier/dtos/inactiveSupplierResponse.dto';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -90,7 +92,9 @@ How to use this on frontend:
         )
         .build();
 
-    const document = SwaggerModule.createDocument(app, config);
+    const document = SwaggerModule.createDocument(app, config, {
+        extraModels: [SupplierResponseDto, InactiveSupplierResponseDto], // extraModels is crucial when using $ref in oneOf, anyOf, or allOf.
+    });
     document.tags = [
         { name: 'Default' },
         { name: 'Health' },

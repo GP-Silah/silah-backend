@@ -3268,7 +3268,7 @@
     },
     "/api/suppliers/me": {
       "get": {
-        "description": "Retrieves the supplier data of the authenticated user. Includes linked user information.",
+        "description": "Retrieves the supplier data of the authenticated user. Returns either full supplier data if active, or a minimal inactive DTO if the supplier is inactive.",
         "operationId": "SupplierController_getSupplierData",
         "parameters": [
           {
@@ -3287,7 +3287,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SupplierResponseDto"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SupplierResponseDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/InactiveSupplierResponseDto"
+                    }
+                  ]
                 }
               }
             }
@@ -3480,7 +3487,7 @@
     },
     "/api/suppliers/me/store": {
       "get": {
-        "description": "Retrieves the supplier data of the authenticated user. Includes linked user information.",
+        "description": "Retrieves the supplier data of the authenticated user. Returns either full supplier data if active, or a minimal inactive DTO if the supplier is inactive.",
         "operationId": "SupplierController_updateSupplierStoreData",
         "parameters": [
           {
@@ -3499,7 +3506,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SupplierResponseDto"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SupplierResponseDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/InactiveSupplierResponseDto"
+                    }
+                  ]
                 }
               }
             }
@@ -4590,7 +4604,7 @@
     },
     "/api/suppliers": {
       "get": {
-        "description": "Retrieves a list of all suppliers, with optional filters by status (active/inactive) and subscription (subscribed/unsubscribed).",
+        "description": "Retrieves a list of all suppliers, with optional filters by status (active/inactive) and subscription (subscribed/unsubscribed). Each element in the list can be either a full supplier DTO if active, or minimal inactive DTO if inactive.",
         "operationId": "SupplierController_getAllSuppliers",
         "parameters": [
           {
@@ -4628,7 +4642,14 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SupplierResponseDto"
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/SupplierResponseDto"
+                      },
+                      {
+                        "$ref": "#/components/schemas/InactiveSupplierResponseDto"
+                      }
+                    ]
                   }
                 }
               }
@@ -4643,7 +4664,7 @@
     },
     "/api/suppliers/{id}": {
       "get": {
-        "description": "Retrieves full supplier data including profile, store, subscription, and favorite categories.",
+        "description": "Retrieves full supplier data including profile, store, subscription, and favorite categories. Returns either full supplier DTO if active, or minimal inactive DTO if inactive.",
         "operationId": "SupplierController_getSupplierDataById",
         "parameters": [
           {
@@ -4663,7 +4684,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SupplierResponseDto"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SupplierResponseDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/InactiveSupplierResponseDto"
+                    }
+                  ]
                 }
               }
             }
@@ -4711,7 +4739,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StorefrontResponseDto"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/StorefrontResponseDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/InactiveSupplierResponseDto"
+                    }
+                  ]
                 }
               }
             }
@@ -6318,15 +6353,47 @@
             }
           },
           "400": {
-            "description": "Invalid supplier or input data, or requested quantity exceeds stock",
+            "description": "Invalid supplier, input data, stock, or quantity not following case/min/max rules",
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Supplier for this product not found",
-                    "error": "Bad Request"
-                  }
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Supplier for this product not found",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Only 5 units available in stock",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Quantity must be in multiples of 5",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Quantity must be at least the minimum order quantity: 10",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Quantity must not exceed the maximum order quantity: 20",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -6410,7 +6477,7 @@
     },
     "/api/carts/me/items/{itemId}": {
       "patch": {
-        "description": "Updates the quantity of a specific item in the buyer's cart and recalculates totals.",
+        "description": "Updates the quantity of a specific item in the buyer's cart and recalculates totals. New quantity must follow product's case quantity, minimum order, and maximum order constraints.",
         "operationId": "CartController_updateItemQuantity",
         "parameters": [
           {
@@ -6460,15 +6527,47 @@
             }
           },
           "400": {
-            "description": "Quantity is invalid or exceeds product stock",
+            "description": "Invalid supplier, input data, stock, or quantity not following case/min/max rules",
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Only 5 units available in stock",
-                    "error": "Bad Request"
-                  }
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Supplier for this product not found",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Only 5 units available in stock",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Quantity must be in multiples of 5",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Quantity must be at least the minimum order quantity: 10",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Quantity must not exceed the maximum order quantity: 20",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -6828,13 +6927,13 @@
             }
           },
           "400": {
-            "description": "Cart is empty",
+            "description": "Out-of-stock products in cart",
             "content": {
               "application/json": {
                 "schema": {
                   "example": {
                     "statusCode": 400,
-                    "message": "Cart is empty",
+                    "message": "Product \"Wireless Headphones\" is out of stock. Remove it from the cart to proceed.",
                     "error": "Bad Request"
                   }
                 }
@@ -7583,7 +7682,8 @@
             "type": "string",
             "example": "StrongPass123",
             "minLength": 8,
-            "maxLength": 28
+            "maxLength": 28,
+            "description": "Password must contain at least one uppercase, one lowercase, and one number. Special characters (@, #, !, $) are optional."
           },
           "name": {
             "type": "string",
@@ -7926,140 +8026,6 @@
           "cardId"
         ]
       },
-      "SupplierResponseDto": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "$ref": "#/components/schemas/UserResponseDTO"
-          },
-          "supplierId": {
-            "type": "string",
-            "description": "Supplier unique ID",
-            "example": "uuid-1234"
-          },
-          "supplierName": {
-            "type": "string",
-            "description": "Supplier display name",
-            "example": "John Doe"
-          },
-          "supplierEmail": {
-            "type": "string",
-            "description": "Supplier email",
-            "example": "john@gmail.com"
-          },
-          "businessName": {
-            "type": "string",
-            "description": "Business name of the user",
-            "example": "John Bakery"
-          },
-          "city": {
-            "type": "string",
-            "description": "City of the user",
-            "example": "Riyadh"
-          },
-          "storeStatus": {
-            "type": "string",
-            "enum": [
-              "OPEN",
-              "CLOSED"
-            ],
-            "description": "Current store status",
-            "example": "OPEN"
-          },
-          "storeClosedMsg": {
-            "type": "string",
-            "description": "Message displayed if the store is closed",
-            "example": "We are closed for Eid holidays."
-          },
-          "storeBio": {
-            "type": "string",
-            "description": "Short bio or description of the store",
-            "example": "We specialize in handmade bakery items."
-          },
-          "storeBannerFileName": {
-            "type": "string",
-            "description": "File name of the store banner image in R2 bucket",
-            "example": "banner123-6963ac71-3e92-441d-badd-a57b4a99b2e5.png"
-          },
-          "storeBannerFileUrl": {
-            "type": "string",
-            "description": "Signed URL from R2. Signed URLs expire 1 hour after creation.",
-            "example": "https://cdn.example.com/banners/banner123.png",
-            "format": "uri"
-          },
-          "deliveryFees": {
-            "type": "number",
-            "description": "Delivery fees charged by the supplier",
-            "example": 15.5
-          },
-          "avgRating": {
-            "type": "number",
-            "description": "Average rating of the supplier",
-            "example": 4.5
-          },
-          "ratingsCount": {
-            "type": "number",
-            "description": "Number of ratings received",
-            "example": 23
-          },
-          "usedFreeTrail": {
-            "type": "boolean",
-            "description": "Indicates if the supplier used the free trial",
-            "example": true
-          },
-          "supplierStatus": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE"
-            ],
-            "description": "Current status of the supplier account",
-            "example": "ACTIVE"
-          },
-          "plan": {
-            "type": "string",
-            "enum": [
-              "BASIC",
-              "PREMIUM"
-            ],
-            "description": "Current plan of the supplier",
-            "example": "PREMIUM"
-          },
-          "favoriteCategories": {
-            "description": "List of favorite categories (only subcategories) for quick access",
-            "example": [
-              {
-                "id": 16,
-                "name": "Animal Feed"
-              },
-              {
-                "id": 33,
-                "name": "Jewelry & Watches"
-              }
-            ],
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
-          }
-        },
-        "required": [
-          "user",
-          "supplierId",
-          "supplierName",
-          "supplierEmail",
-          "businessName",
-          "city",
-          "storeStatus",
-          "storeClosedMsg",
-          "deliveryFees",
-          "avgRating",
-          "ratingsCount",
-          "usedFreeTrail",
-          "supplierStatus",
-          "plan"
-        ]
-      },
       "ProductResponseDto": {
         "type": "object",
         "properties": {
@@ -8074,12 +8040,16 @@
             "example": "uuid-5678"
           },
           "supplier": {
-            "description": "Supplier details (null if the supplier deleted his account)",
-            "allOf": [
+            "description": "Supplier details (null if the supplier deleted their account)",
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/SupplierResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/InactiveSupplierResponseDto"
               }
-            ]
+            ],
+            "nullable": true
           },
           "name": {
             "type": "string",
@@ -8251,12 +8221,16 @@
             "example": "uuid-5678"
           },
           "supplier": {
-            "description": "Supplier details (null if the supplier deleted his account)",
-            "allOf": [
+            "description": "Supplier details (null if the supplier deleted their account)",
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/SupplierResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/InactiveSupplierResponseDto"
               }
-            ]
+            ],
+            "nullable": true
           },
           "name": {
             "type": "string",
@@ -8452,12 +8426,12 @@
           },
           "minOrderQuantity": {
             "type": "number",
-            "description": "Minimum order quantity (default = 1)",
-            "example": 5
+            "description": "Minimum order quantity",
+            "example": 10
           },
           "maxOrderQuantity": {
             "type": "object",
-            "description": "Maximum order quantity (null = unlimited)",
+            "description": "Maximum order quantity",
             "example": 50
           },
           "allowGroupPurchase": {
@@ -8603,9 +8577,12 @@
           "storeStatus"
         ]
       },
-      "StorefrontResponseDto": {
+      "SupplierResponseDto": {
         "type": "object",
         "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserResponseDTO"
+          },
           "supplierId": {
             "type": "string",
             "description": "Supplier unique ID",
@@ -8676,6 +8653,11 @@
             "description": "Number of ratings received",
             "example": 23
           },
+          "usedFreeTrail": {
+            "type": "boolean",
+            "description": "Indicates if the supplier used the free trial",
+            "example": true
+          },
           "supplierStatus": {
             "type": "string",
             "enum": [
@@ -8684,9 +8666,36 @@
             ],
             "description": "Current status of the supplier account",
             "example": "ACTIVE"
+          },
+          "plan": {
+            "type": "string",
+            "enum": [
+              "BASIC",
+              "PREMIUM"
+            ],
+            "description": "Current plan of the supplier",
+            "example": "PREMIUM"
+          },
+          "favoriteCategories": {
+            "description": "List of favorite categories (only subcategories) for quick access",
+            "example": [
+              {
+                "id": 16,
+                "name": "Animal Feed"
+              },
+              {
+                "id": 33,
+                "name": "Jewelry & Watches"
+              }
+            ],
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
           }
         },
         "required": [
+          "user",
           "supplierId",
           "supplierName",
           "supplierEmail",
@@ -8697,7 +8706,9 @@
           "deliveryFees",
           "avgRating",
           "ratingsCount",
-          "supplierStatus"
+          "usedFreeTrail",
+          "supplierStatus",
+          "plan"
         ]
       },
       "CreateServiceDto": {
@@ -8805,7 +8816,7 @@
       "CartItemResponseDto": {
         "type": "object",
         "properties": {
-          "itemId": {
+          "cartItemId": {
             "type": "number",
             "description": "Cart item ID",
             "example": 1
@@ -8834,15 +8845,21 @@
             "type": "number",
             "description": "Total price for this item (price * quantity)",
             "example": 50.5
+          },
+          "isAvailable": {
+            "type": "boolean",
+            "description": "Whether the product is currently available (stock >= quantity)",
+            "example": true
           }
         },
         "required": [
-          "itemId",
+          "cartItemId",
           "productId",
           "productName",
           "productPrice",
           "quantity",
-          "itemTotalPrice"
+          "itemTotalPrice",
+          "isAvailable"
         ]
       },
       "CartBySupplierResponseDto": {
@@ -9009,6 +9026,32 @@
             "items": {
               "$ref": "#/components/schemas/CartItemResponseDto"
             }
+          },
+          "buyer": {
+            "description": "Buyer info for this order",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BuyerResponseDto"
+              }
+            ]
+          },
+          "supplier": {
+            "description": "Supplier info for this order",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SupplierResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/InactiveSupplierResponseDto"
+              }
+            ]
+          },
+          "products": {
+            "description": "List of products in this order",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductResponseDto"
+            }
           }
         },
         "required": [
@@ -9020,7 +9063,10 @@
           "finalPrice",
           "status",
           "createdAt",
-          "items"
+          "items",
+          "buyer",
+          "supplier",
+          "products"
         ]
       },
       "ForecastMonthDto": {
@@ -9079,6 +9125,53 @@
           "lowAccuracy",
           "salesCount",
           "recommendedStock"
+        ]
+      },
+      "InactiveSupplierResponseDto": {
+        "type": "object",
+        "properties": {
+          "supplierId": {
+            "type": "string",
+            "description": "Supplier unique ID",
+            "example": "uuid-1234"
+          },
+          "supplierName": {
+            "type": "string",
+            "description": "Supplier display name",
+            "example": "John Doe"
+          },
+          "businessName": {
+            "type": "string",
+            "description": "Business name of the user",
+            "example": "John Bakery"
+          },
+          "city": {
+            "type": "string",
+            "description": "City of the user",
+            "example": "Riyadh"
+          },
+          "supplierStatus": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "description": "Current status of the supplier account",
+            "example": "INACTIVE"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message explaining why supplier information is limited (inactive account).",
+            "example": "This supplier is inactive and cannot be accessed until they renew their subscription."
+          }
+        },
+        "required": [
+          "supplierId",
+          "supplierName",
+          "businessName",
+          "city",
+          "supplierStatus",
+          "message"
         ]
       }
     }

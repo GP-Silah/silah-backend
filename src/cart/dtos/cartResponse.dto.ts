@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CartItemResponseDto {
     @ApiProperty({ description: 'Cart item ID', example: 1 })
-    itemId: number;
+    cartItemId: number;
 
     @ApiProperty({
         description: 'Product ID',
@@ -30,6 +30,13 @@ export class CartItemResponseDto {
         example: 50.5,
     })
     itemTotalPrice: number;
+
+    @ApiProperty({
+        description:
+            'Whether the product is currently available (stock >= quantity)',
+        example: true,
+    })
+    isAvailable: boolean;
 }
 
 export class CartBySupplierResponseDto {

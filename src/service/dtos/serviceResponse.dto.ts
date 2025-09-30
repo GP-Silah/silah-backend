@@ -1,6 +1,11 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+    ApiProperty,
+    ApiPropertyOptional,
+    getSchemaPath,
+} from '@nestjs/swagger';
 import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';
 import { ServiceAvailability } from '@prisma/client';
+import { InactiveSupplierResponseDto } from 'src/supplier/dtos/inactiveSupplierResponse.dto';
 
 export class ServiceResponseDto {
     @ApiProperty({ description: 'Service ID', example: 'uuid-1234' })
@@ -14,10 +19,14 @@ export class ServiceResponseDto {
 
     @ApiPropertyOptional({
         description:
-            'Supplier details (null if the supplier deleted his account)',
-        type: SupplierResponseDto,
+            'Supplier details (null if the supplier deleted their account)',
+        oneOf: [
+            { $ref: getSchemaPath(SupplierResponseDto) },
+            { $ref: getSchemaPath(InactiveSupplierResponseDto) },
+        ],
+        nullable: true,
     })
-    supplier?: SupplierResponseDto | null;
+    supplier?: SupplierResponseDto | InactiveSupplierResponseDto | null;
 
     @ApiProperty({ description: 'Service name', example: 'Home Cleaning' })
     name: string;

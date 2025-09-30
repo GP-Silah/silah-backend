@@ -6,7 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 import { CreateCardDto } from './dtos/createCard.dto';
 import { WishlistItemResponseDto } from './dtos/wishlistItemResponse.dto';
-import { ItemType } from '@prisma/client';
+import { Buyer, Card, ItemType, User } from '@prisma/client';
 import { ProductService } from 'src/product/product.service';
 import { ServiceService } from 'src/service/service.service';
 
@@ -19,6 +19,30 @@ export class BuyerService {
         private readonly productService: ProductService,
         private readonly serviceService: ServiceService,
     ) {}
+
+    async toBuyerResponseDto(
+        user: User,
+        buyer: Buyer & { card?: Card | null },
+    ): Promise<BuyerResponseDto> {
+        const userData = await this.userService.toUserResponseDTO(user);
+
+        const cardData: CardDetailsDto | null = buyer.card
+            ? {
+                  id: buyer.card.id,
+                  tapCardId: buyer.card.tapCardId,
+                  cardHolderName: buyer.card.cardHolderName,
+                  last4: buyer.card.last4,
+                  brand: buyer.card.brand,
+                  expMonth: buyer.card.expMonth,
+                  expYear: buyer.card.expYear,
+              }
+            : null;
+
+        return {
+            user: userData,
+            card: cardData,
+        };
+    }
 
     async getCurrentBuyerData(email: string): Promise<BuyerResponseDto> {
         const user = await this.prisma.user.findUnique({
