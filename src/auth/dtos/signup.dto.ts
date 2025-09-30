@@ -10,8 +10,11 @@ import {
     Matches,
     MaxLength,
     MinLength,
+    IsInt,
+    Min,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class SignupDto {
     @ApiProperty({ example: 'user@example.com' })
@@ -64,14 +67,18 @@ export class SignupDto {
     nid: string;
 
     @ApiProperty({
-        example: ['Home & Living', 'Technical & Repair Services'],
-        type: [String],
+        description: 'List of main category IDs (must be a main category).',
+        type: Number,
+        isArray: true,
+        example: [1, 3],
     })
     @IsArray()
     @ArrayNotEmpty()
     @ArrayMinSize(1)
-    @IsString({ each: true })
-    categories: string[];
+    @Type(() => Number)
+    @IsInt({ each: true })
+    @Min(1, { each: true })
+    categories: number[];
 
     @ApiProperty({ example: true })
     @IsBoolean()
