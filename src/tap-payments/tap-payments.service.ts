@@ -86,6 +86,7 @@ export class TapPaymentsService {
             first_name: string;
             email: string;
         },
+        redirectUrl: string,
         amount: number = 1,
         currency: string = 'SAR',
     ) {
@@ -109,7 +110,7 @@ export class TapPaymentsService {
                     merchant: { id: process.env.TAP_MERCHANT_ID },
                     source: { id: tokenId },
                     // post: { url: 'http://your_website.com/post_url' },
-                    redirect: { url: 'https://example.com/no-redirect' }, // redirect URL required by Tap, but we made it dummy because we don't want actual redirection
+                    redirect: { url: redirectUrl }, // redirect URL required by Tap to redirect after 3DS (OTP step)
                 },
                 {
                     headers: {
@@ -123,6 +124,36 @@ export class TapPaymentsService {
         } catch (err: any) {
             console.error(err.response?.data || err.message);
             throw new Error('Failed to create charge in Tap');
+        }
+    }
+
+    /**
+     * Retrieves a charge from Tap Payments by chargeId.
+     *
+     * @param {string} chargeId - The Tap charge ID (chg_xxx).
+     * @returns {Promise<any>} The charge object from Tap.
+     *
+     * @throws {Error} Throws an error if the request fails.
+     *
+     * @example
+     * const charge = await tapService.getCharge('chg_TS50A42252049msSJ23MV8k170');
+     * console.log(charge.status); // "CAPTURED" | "AUTHORIZED" | "FAILED"
+     */
+    async getCharge(chargeId: string) {
+        try {
+            const response = await axios.get(
+                `https://api.tap.company/v2/charges/${chargeId}`,
+                {
+                    headers: {
+                        accept: 'application/json',
+                        Authorization: `Bearer ${process.env.TAP_SECRET_KEY}`,
+                    },
+                },
+            );
+            return response.data;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error(`Failed to fetch charge ${chargeId} from Tap`);
         }
     }
 

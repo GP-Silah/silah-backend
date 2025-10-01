@@ -1,10 +1,14 @@
 import { UserService } from 'src/user/user.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { BuyerResponseDto } from './dtos/buyerResponse.dto';
 import { CardDetailsDto } from './dtos/cardDetails.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
-import { CreateCardDto } from './dtos/createCard.dto';
+import { CreateCardStep1Dto, CreateCardStep2Dto } from './dtos/createCard.dto';
 import { WishlistItemResponseDto } from './dtos/wishlistItemResponse.dto';
 import { Buyer, Card, ItemType, User } from '@prisma/client';
 import { ProductService } from 'src/product/product.service';
@@ -104,23 +108,18 @@ export class BuyerService {
         } as CardDetailsDto;
     }
 
-    async saveOrReplaceCurrentBuyerCard(
+    // STEP 1: initiate charge & redirect to OTP
+    async saveOrReplaceCurrentBuyerCardStep1(
         userId: string,
-        createCardDto: CreateCardDto,
+        dto: CreateCardStep1Dto,
     ) {
-        // Find user
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
-            include: {
-                buyer: { include: { card: true } },
-            },
+            include: { buyer: { include: { card: true } } },
         });
+        if (!user) throw new NotFoundException('User not found');
 
-        if (!user) {
-            throw new NotFoundException('User not found');
-        }
-
-        // Auto-create Buyer if missing
+        // Auto-create buyer
         let buyer = user.buyer;
         if (!buyer) {
             buyer = await this.prisma.buyer.create({
@@ -129,51 +128,73 @@ export class BuyerService {
             });
         }
 
-        const existingCard = buyer.card;
-
-        if (existingCard) {
-            // Delete from Tap
+        // Delete existing card (Tap + DB)
+        if (buyer.card) {
             await this.tapPaymentsService.deleteCard(
                 user.tapCustomerId,
-                existingCard.tapCardId,
+                buyer.card.tapCardId,
             );
-            // Delete from DB
-            await this.prisma.card.delete({
-                where: { id: existingCard.id },
+            await this.prisma.card.delete({ where: { id: buyer.card.id } });
+        }
+
+        // Create charge
+        const charge = await this.tapPaymentsService.createCharge(
+            dto.tokenId,
+            { first_name: user.name, email: user.email },
+            dto.redirectUrl,
+        );
+
+        return {
+            transactionUrl: charge.transaction.url,
+            chargeId: charge.id, // frontend must store this
+        };
+    }
+
+    // STEP 2: after redirect, verify charge + save card
+    async saveOrReplaceCurrentBuyerCardStep2(
+        userId: string,
+        dto: CreateCardStep2Dto,
+    ) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { buyer: { include: { card: true } } },
+        });
+        if (!user) throw new NotFoundException('User not found');
+
+        let buyer = user.buyer;
+        if (!buyer) {
+            buyer = await this.prisma.buyer.create({
+                data: { userId: user.id },
+                include: { card: true },
             });
         }
 
-        console.log('Creating card in Tap with token:', createCardDto.tokenId);
-        // Create a minimal charge to save the card
-        const charge = await this.tapPaymentsService.createCharge(
-            createCardDto.tokenId,
-            {
-                first_name: user.name,
-                email: user.email,
-            },
-        );
-        console.log('Charge created:', charge.id);
-        console.log(charge);
+        // 1. Verify charge succeeded
+        const charge = await this.tapPaymentsService.getCharge(dto.chargeId);
+        if (!charge || !['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
+            throw new BadRequestException(
+                `Charge ${dto.chargeId} not successful. Status: ${charge?.status}`,
+            );
+        }
 
-        console.log('Creating card in Tap with card:', createCardDto.cardId);
-        // Fetch full card info from Tap using token
-        const cardInfo = await this.tapPaymentsService.getCard(
-            user.tapCustomerId,
-            createCardDto.cardId,
-        );
+        // 2. Safely extract saved card from charge
+        const card = charge.card || charge.payment_agreement?.contract;
+        if (!card) {
+            throw new BadRequestException(
+                'No card information found in the charge. Maybe payment failed or method is not a card.',
+            );
+        }
 
-        // Save non-sensitive info in DB
+        // 3. Save in DB directly from charge.card
         const savedCard = await this.prisma.card.create({
             data: {
-                tapCardId: cardInfo.id,
-                brand: cardInfo.brand,
-                last4: cardInfo.last_four,
-                expMonth: cardInfo.exp_month,
-                expYear: cardInfo.exp_year,
-                cardHolderName: cardInfo.name,
-                buyer: {
-                    connect: { id: buyer.id },
-                },
+                tapCardId: card.id,
+                brand: card.brand,
+                last4: card.last_four || card.last4,
+                expMonth: card.expiry?.month || card.exp_month,
+                expYear: card.expiry?.year || card.exp_year,
+                cardHolderName: card.name,
+                buyer: { connect: { id: buyer.id } },
             },
         });
 
@@ -187,7 +208,7 @@ export class BuyerService {
                 brand: savedCard.brand,
                 expMonth: savedCard.expMonth,
                 expYear: savedCard.expYear,
-            } as CardDetailsDto,
+            },
         };
     }
 

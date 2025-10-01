@@ -1774,8 +1774,8 @@
         ]
       },
       "put": {
-        "description": "Creates or replaces the authenticated buyer's card using Tap tokenization.<br>If a card already exists, it will be deleted from Tap and replaced with the new one.",
-        "operationId": "BuyerController_saveOrReplaceCurrentBuyerCard",
+        "description": "**Step 1 of the two-step flow to save a buyer card using Tap:**<br><br>This endpoint creates a temporary charge and redirects the user to complete 3D Secure verification (OTP). If the buyer already has a card, it will be deleted from Tap and replaced with the new one. The response includes a `chargeId` and a `transactionUrl` which must be stored by the frontend to complete Step 2.<br><br>⚠️ **Important:** When testing, always use Tap's [test card values](https://developers.tap.company/reference/testing-cards). Live cards should only be used in production.<br><br>Step 1 must be followed by Step 2 (`PUT /api/buyers/me/card/confirm`) to verify the charge and save the card information in the database.",
+        "operationId": "BuyerController_saveOrReplaceCurrentBuyerCardStep1",
         "parameters": [
           {
             "name": "Cookie",
@@ -1789,39 +1789,31 @@
         ],
         "requestBody": {
           "required": true,
-          "description": "Card details provided from Tap tokenization",
+          "description": "Card details provided from Tap tokenization (tokenId and redirect URL)",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCardDto"
+                "$ref": "#/components/schemas/CreateCardStep1Dto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Card saved successfully",
+            "description": "Charge created successfully, redirect user to complete 3D Secure",
             "content": {
               "application/json": {
                 "schema": {
                   "example": {
-                    "message": "Card saved successfully",
-                    "card": {
-                      "id": "f1a2b3c4-d5e6-7890-ab12-34567890cdef",
-                      "tapCardId": "card_abc123xyz",
-                      "cardHolderName": "Norah Alqahtani",
-                      "last4": "4242",
-                      "brand": "Visa",
-                      "expMonth": 12,
-                      "expYear": 2028
-                    }
+                    "transactionUrl": "https://secure.tap.company/checkout/...",
+                    "chargeId": "chg_TS05A0820250903Ma230110749"
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid input data",
+            "description": "Invalid Tap token or input data",
             "content": {
               "application/json": {
                 "schema": {
@@ -1905,7 +1897,7 @@
             "token": []
           }
         ],
-        "summary": "Save or replace current buyer card",
+        "summary": "Initiate card save or replacement for buyer",
         "tags": [
           "Buyers"
         ]
@@ -2009,6 +2001,145 @@
           }
         ],
         "summary": "Delete current buyer card",
+        "tags": [
+          "Buyers"
+        ]
+      }
+    },
+    "/api/buyers/me/card/confirm": {
+      "put": {
+        "description": "**Two-step flow for saving a buyer card using Tap:**<br><br>**Step 1:** Call the `PUT /api/buyers/me/card` endpoint with a Tap token and redirect URL. This creates a temporary charge and redirects the user to complete 3D Secure verification (OTP). The response contains a `chargeId` which must be kept for step 2.<br><br>**Step 2:** After the user completes the 3D Secure step, Tap redirects back to your frontend `redirect_url` with `tap_id` (chargeId). Your frontend then calls this endpoint (`PUT /api/buyers/me/card/confirm`) with that `chargeId`. The backend will verify the charge status and extract the saved card details directly from the charge object. The card information is then stored in the database for future charges.<br><br>⚠️ **Important:** When testing, make sure to use Tap's [test card values](https://developers.tap.company/reference/testing-cards) for generating tokens and performing charges. Live cards should only be used in production.<br><br>These two endpoints are connected: step 1 initiates the card save and step 2 completes it.",
+        "operationId": "BuyerController_saveOrReplaceCurrentBuyerCardStep2",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Charge ID returned from Tap after 3D Secure redirect",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCardStep2Dto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Card saved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Card saved successfully",
+                    "card": {
+                      "id": "f1a2b3c4-d5e6-7890-ab12-34567890cdef",
+                      "tapCardId": "card_TS35A62593XRcF16R9F720",
+                      "cardHolderName": "TESTER FIVE",
+                      "last4": "1019",
+                      "brand": "VISA",
+                      "expMonth": 1,
+                      "expYear": 2039
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Charge not successful or no card found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "No card information found in the charge. Maybe payment failed or method is not a card.",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Confirm and save buyer card after Tap redirect",
         "tags": [
           "Buyers"
         ]
@@ -7967,14 +8098,14 @@
             "example": "Visa"
           },
           "expMonth": {
-            "type": "number",
+            "type": "string",
             "description": "Expiration month of the card (1-12)",
             "example": 12
           },
           "expYear": {
-            "type": "number",
-            "description": "Expiration year of the card (4-digit)",
-            "example": 2028
+            "type": "string",
+            "description": "Expiration year of the card",
+            "example": 31
           }
         },
         "required": [
@@ -8007,7 +8138,7 @@
           "card"
         ]
       },
-      "CreateCardDto": {
+      "CreateCardStep1Dto": {
         "type": "object",
         "properties": {
           "tokenId": {
@@ -8015,15 +8146,28 @@
             "description": "Tap token id received from the frontend after card tokenization process (using Tap's Card SDK)",
             "example": "tok_TS57A39251831Q2B15Ro8l180"
           },
-          "cardId": {
+          "redirectUrl": {
             "type": "string",
-            "description": "Tap card id received from the frontend after card tokenization process (using Tap's Card SDK)",
-            "example": "card_TS50A42252049msSJ23MV8k170"
+            "description": "Frontend redirect URL where the user will be sent after completing the OTP/3DS flow",
+            "example": "https://yourapp.com/payment/callback or http://localhost:5137/payment/callback in testing environment"
           }
         },
         "required": [
           "tokenId",
-          "cardId"
+          "redirectUrl"
+        ]
+      },
+      "CreateCardStep2Dto": {
+        "type": "object",
+        "properties": {
+          "chargeId": {
+            "type": "string",
+            "description": "Charge id returned in Step 1 (to validate status before saving card)",
+            "example": "chg_TS50A42252049msSJ23MV8k170"
+          }
+        },
+        "required": [
+          "chargeId"
         ]
       },
       "ProductResponseDto": {
