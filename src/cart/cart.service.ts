@@ -8,12 +8,14 @@ import { CartResponseDto } from './dtos/cartResponse.dto';
 import { AddCartItemDto } from './dtos/addCartItem.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { TranslationService } from 'src/translation/translation.service';
+import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 
 @Injectable()
 export class CartService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly translationService: TranslationService,
+        private readonly tapPaymentsService: TapPaymentsService,
     ) {}
 
     async toCartResponseDto(cart: any): Promise<CartResponseDto> {
@@ -378,44 +380,73 @@ export class CartService {
             }
         }
 
-        // TODO: integrate with Tap payments gateway
+        if (buyer.card == null) {
+            throw new BadRequestException('No saved card found for this buyer');
+        }
 
-        const checkoutId = uuidv4();
+        console.log(buyer);
 
-        const orders = await Promise.all(
-            cart.suppliers.map((supplierCart) => {
-                const finalPrice = supplierCart.supplierTotalPrice;
-                return this.prisma.order.create({
-                    data: {
-                        checkoutId,
-                        buyerId: buyer.id,
-                        cartId: cart.id,
-                        supplierId: supplierCart.supplierId,
-                        finalPrice,
-                    },
-                });
-            }),
+        // pay through tap with saved card
+        const charge = await this.tapPaymentsService.payWithSavedCard(
+            buyer.user.tapCustomerId,
+            buyer.card.tapTokenId,
+            buyer.card.tapCardId,
+            cart.cartTotal, // use major units, NOT multiplied by 100
+            'http://localhost:5137/payment/cart/callback', //TODO: real redirect URL
         );
 
-        await this.prisma.cart.update({
-            where: { id: cart.id },
-            data: { isBought: true },
-        });
+        // if charge is waiting for 3DS → send frontend the redirect URL
+        if (charge.status === 'INITIATED' && charge.transaction?.url) {
+            return {
+                message: 'Redirect for authentication',
+                redirectUrl: charge.transaction.url,
+                chargeId: charge.id,
+            };
+        }
 
-        return {
-            message: 'Paid successfully',
-            checkoutId,
-            buyerId: buyer.id,
-            cartId: cart.id,
-            totalPaid: cart.cartTotal,
-            orders,
-        };
+        // otherwise, if captured/authorized → finish checkout
+        if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
+            const checkoutId = uuidv4();
+            const orders = await Promise.all(
+                cart.suppliers.map((supplierCart) => {
+                    const finalPrice = supplierCart.supplierTotalPrice;
+                    return this.prisma.order.create({
+                        data: {
+                            checkoutId,
+                            buyerId: buyer.id,
+                            cartId: cart.id,
+                            supplierId: supplierCart.supplierId,
+                            finalPrice,
+                        },
+                    });
+                }),
+            );
+
+            await this.prisma.cart.update({
+                where: { id: cart.id },
+                data: { isBought: true },
+            });
+
+            return {
+                message: 'Paid successfully',
+                checkoutId,
+                buyerId: buyer.id,
+                cartId: cart.id,
+                totalPaid: cart.cartTotal,
+                orders,
+            };
+        }
+
+        throw new BadRequestException(
+            `Payment failed. Charge status: ${charge.status}`,
+        );
     }
 
     /** --- UTILITY: Get active cart for a buyer --- */
     private async getActiveCartByUserId(userId: string) {
         const buyer = await this.prisma.buyer.findUnique({
             where: { userId },
+            include: { user: true, card: true },
         });
         if (!buyer) throw new NotFoundException('Buyer not found');
 

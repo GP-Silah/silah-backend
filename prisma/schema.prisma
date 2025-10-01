@@ -95,6 +95,7 @@ model Buyer {
 // ============  💳 CARD ===============
 model Card {
   id             String   @id @default(uuid())
+  tapTokenId     String   @unique
   tapCardId      String   @unique
   buyerId        String   @unique
   buyer          Buyer    @relation(fields: [buyerId], references: [id], onDelete: Cascade)

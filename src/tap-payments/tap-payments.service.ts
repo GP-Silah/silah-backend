@@ -1,3 +1,4 @@
+import { tap } from 'rxjs';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
@@ -82,10 +83,7 @@ export class TapPaymentsService {
      */
     async createCharge(
         tokenId: string,
-        customerData: {
-            first_name: string;
-            email: string;
-        },
+        tapCustomerId: string,
         redirectUrl: string,
         amount: number = 1,
         currency: string = 'SAR',
@@ -106,7 +104,7 @@ export class TapPaymentsService {
                     //     transaction: `txn_${Date.now()}`,
                     //     order: `ord_${Date.now()}`,
                     // },
-                    customer: customerData,
+                    customer: { id: tapCustomerId },
                     merchant: { id: process.env.TAP_MERCHANT_ID },
                     source: { id: tokenId },
                     // post: { url: 'http://your_website.com/post_url' },
@@ -202,6 +200,56 @@ export class TapPaymentsService {
         } catch (err: any) {
             console.error(err.response?.data || err.message);
             throw new Error('Failed to delete card from Tap');
+        }
+    }
+
+    /**
+     * Charges a saved card in Tap Payments.
+     *
+     * @param {string} tapCustomerId - Tap customer ID (cus_xxx)
+     * @param {string} tapCardId - Tap saved card ID (card_xxx)
+     * @param {number} amount - Amount in minor units (e.g., 100 = 1.00 SAR)
+     * @param {string} [currency='SAR'] - Currency code
+     * @param {string} redirectUrl - Redirect URL after 3DS authentication
+     *
+     * @returns {Promise<Object>} Tap charge object
+     */
+    async payWithSavedCard(
+        tapCustomerId: string,
+        tapTokenId: string, // token associated with the saved card
+        tapCardId: string,
+        amount: number,
+        redirectUrl: string,
+        currency: string = 'SAR',
+    ) {
+        try {
+            const response = await axios.post(
+                'https://api.tap.company/v2/charges/',
+                {
+                    amount, // must already be in minor units
+                    currency,
+                    customer_initiated: true,
+                    threeDSecure: true,
+                    description: 'Cart payment',
+                    customer: { id: tapCustomerId },
+                    source: {
+                        id: tapTokenId,
+                    },
+                    redirect: { url: redirectUrl }, // REQUIRED for 3DS
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${process.env.TAP_SECRET_KEY}`,
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                },
+            );
+
+            return response.data;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error('Failed to charge saved card');
         }
     }
 }
