@@ -204,6 +204,46 @@ export class TapPaymentsService {
     }
 
     /**
+     * Creates a payment token from a saved card in Tap Payments.
+     *
+     * @param {string} tapCustomerId - Tap customer ID (cus_xxx)
+     * @param {string} tapCardId - Tap saved card ID (card_xxx)
+     * @param {string} [clientIp='127.0.0.1'] - Client IP address (for fraud checks)
+     *
+     * @returns {Promise<Object>} Tap token object
+     */
+    async createTokenFromSavedCard(
+        tapCustomerId: string,
+        tapCardId: string,
+        clientIp: string = '127.0.0.1',
+    ) {
+        try {
+            const response = await axios.post(
+                'https://api.tap.company/v2/tokens/',
+                {
+                    saved_card: {
+                        card_id: tapCardId,
+                        customer_id: tapCustomerId,
+                    },
+                    client_ip: clientIp,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${process.env.TAP_SECRET_KEY}`,
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                },
+            );
+
+            return response.data;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error('Failed to create token from saved card');
+        }
+    }
+
+    /**
      * Charges a saved card in Tap Payments.
      *
      * @param {string} tapCustomerId - Tap customer ID (cus_xxx)
@@ -216,7 +256,7 @@ export class TapPaymentsService {
      */
     async payWithSavedCard(
         tapCustomerId: string,
-        tapTokenId: string, // token associated with the saved card
+        tokenId: string, // int here? tbh better
         tapCardId: string,
         amount: number,
         redirectUrl: string,
@@ -233,7 +273,7 @@ export class TapPaymentsService {
                     description: 'Cart payment',
                     customer: { id: tapCustomerId },
                     source: {
-                        id: tapTokenId,
+                        id: tokenId,
                     },
                     redirect: { url: redirectUrl }, // REQUIRED for 3DS
                 },

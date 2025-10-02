@@ -133,7 +133,7 @@ silah_backend    | 🚀 Server running on http://localhost:3000
 
 #### 6. Verify Everything Works
 
-- **API:** `http://localhost:3000/`
+- **API:** `http://localhost:3000/api`
 - **Health Check:** `http://localhost:3000/api/health`
 - **API Documentation:** `http://localhost:3000/api/docs`
 

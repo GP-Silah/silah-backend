@@ -7015,7 +7015,7 @@
     },
     "/api/carts/me/checkout": {
       "post": {
-        "description": "Finalizes the buyer's cart by creating orders for each supplier. Marks the cart as bought and returns checkout details.",
+        "description": "Finalizes the buyer's cart by creating a Tap Payments token from the saved card, charging the card, and creating orders for each supplier. Marks the cart as bought and returns checkout details. If 3DS authentication is required, returns the redirect URL and charge ID.",
         "operationId": "CartController_checkoutCart",
         "parameters": [
           {
@@ -7028,31 +7028,30 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutCartDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Cart checked out successfully",
+            "description": "Cart checked out successfully or 3DS redirect required",
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "message": "Paid successfully",
-                    "checkoutId": "uuid-checkout-id",
-                    "buyerId": "uuid-buyer-id",
-                    "cartId": "uuid-cart-id",
-                    "totalPaid": 250,
-                    "orders": [
-                      {
-                        "id": "uuid-order-1",
-                        "supplierId": "uuid-supplier-id",
-                        "finalPrice": 150
-                      },
-                      {
-                        "id": "uuid-order-2",
-                        "supplierId": "uuid-supplier-id-2",
-                        "finalPrice": 100
-                      }
-                    ]
-                  }
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CartResponseDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CheckoutRedirectDto"
+                    }
+                  ]
                 }
               }
             }
@@ -9122,6 +9121,16 @@
           "quantity"
         ]
       },
+      "CheckoutCartDto": {
+        "type": "object",
+        "properties": {
+          "chargeId": {
+            "type": "string",
+            "description": "Existing chargeId to confirm payment instead of creating a new one",
+            "example": "chg_TS00022120250302grEG302115114"
+          }
+        }
+      },
       "OrderResponseDto": {
         "type": "object",
         "properties": {
@@ -9316,6 +9325,31 @@
           "city",
           "supplierStatus",
           "message"
+        ]
+      },
+      "CheckoutRedirectDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message indicating 3DS authentication is required",
+            "example": "Redirect for authentication"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "description": "URL where the buyer should be redirected for 3DS authentication",
+            "example": "https://tap.company/3ds/redirect"
+          },
+          "chargeId": {
+            "type": "string",
+            "description": "Tap charge ID for this transaction",
+            "example": "chg_TK12GF345W843R"
+          }
+        },
+        "required": [
+          "message",
+          "redirectUrl",
+          "chargeId"
         ]
       }
     }

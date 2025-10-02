@@ -9,6 +9,7 @@ import { AddCartItemDto } from './dtos/addCartItem.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { TranslationService } from 'src/translation/translation.service';
 import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
+import { CheckoutCartDto } from './dtos/checkoutCart.dto';
 
 @Injectable()
 export class CartService {
@@ -363,13 +364,14 @@ export class CartService {
         return this.toCartResponseDto(newCart);
     }
 
-    async checkoutCart(userId: string) {
+    async checkoutCart(userId: string, dto: CheckoutCartDto) {
         const { cart, buyer } = await this.getActiveCartByUserId(userId);
 
-        if (cart.suppliers.length === 0)
+        if (cart.suppliers.length === 0) {
             throw new BadRequestException('Cart is empty');
+        }
 
-        // --- check all items for stock before creating orders ---
+        // --- check stock before proceeding ---
         for (const supplierCart of cart.suppliers) {
             for (const item of supplierCart.cartItems) {
                 if (item.product.stock < item.quantity) {
@@ -380,22 +382,67 @@ export class CartService {
             }
         }
 
-        if (buyer.card == null) {
+        if (!buyer.card) {
             throw new BadRequestException('No saved card found for this buyer');
         }
 
-        console.log(buyer);
+        // --- Path 1: Confirm existing charge if chargeId is provided ---
+        if (dto.chargeId) {
+            const charge = await this.tapPaymentsService.getCharge(
+                dto.chargeId,
+            );
 
-        // pay through tap with saved card
-        const charge = await this.tapPaymentsService.payWithSavedCard(
+            if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
+                const checkoutId = uuidv4();
+
+                const orders = await Promise.all(
+                    cart.suppliers.map((supplierCart) =>
+                        this.prisma.order.create({
+                            data: {
+                                checkoutId,
+                                buyerId: buyer.id,
+                                cartId: cart.id,
+                                supplierId: supplierCart.supplierId,
+                                finalPrice: supplierCart.supplierTotalPrice,
+                            },
+                        }),
+                    ),
+                );
+
+                await this.prisma.cart.update({
+                    where: { id: cart.id },
+                    data: { isBought: true },
+                });
+
+                return {
+                    message: 'Paid successfully',
+                    checkoutId,
+                    buyerId: buyer.id,
+                    cartId: cart.id,
+                    totalPaid: cart.cartTotal,
+                    orders,
+                };
+            }
+
+            throw new BadRequestException(
+                `Charge not successful yet. Status: ${charge.status}`,
+            );
+        }
+
+        // --- Path 2: Create new charge if no chargeId ---
+        const token = await this.tapPaymentsService.createTokenFromSavedCard(
             buyer.user.tapCustomerId,
-            buyer.card.tapTokenId,
             buyer.card.tapCardId,
-            cart.cartTotal, // use major units, NOT multiplied by 100
-            'http://localhost:5137/payment/cart/callback', //TODO: real redirect URL
         );
 
-        // if charge is waiting for 3DS → send frontend the redirect URL
+        const charge = await this.tapPaymentsService.payWithSavedCard(
+            buyer.user.tapCustomerId,
+            token.id,
+            buyer.card.tapCardId,
+            cart.cartTotal, // major units
+            'http://localhost:5137/payment/cart/callback', // TODO: real redirect URL
+        );
+
         if (charge.status === 'INITIATED' && charge.transaction?.url) {
             return {
                 message: 'Redirect for authentication',
@@ -404,22 +451,21 @@ export class CartService {
             };
         }
 
-        // otherwise, if captured/authorized → finish checkout
         if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
             const checkoutId = uuidv4();
+
             const orders = await Promise.all(
-                cart.suppliers.map((supplierCart) => {
-                    const finalPrice = supplierCart.supplierTotalPrice;
-                    return this.prisma.order.create({
+                cart.suppliers.map((supplierCart) =>
+                    this.prisma.order.create({
                         data: {
                             checkoutId,
                             buyerId: buyer.id,
                             cartId: cart.id,
                             supplierId: supplierCart.supplierId,
-                            finalPrice,
+                            finalPrice: supplierCart.supplierTotalPrice,
                         },
-                    });
-                }),
+                    }),
+                ),
             );
 
             await this.prisma.cart.update({

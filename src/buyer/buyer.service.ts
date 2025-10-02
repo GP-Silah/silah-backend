@@ -190,7 +190,6 @@ export class BuyerService {
         const savedCard = await this.prisma.card.create({
             data: {
                 tapCardId: card.id,
-                tapTokenId: card.token,
                 brand: card.brand,
                 last4: card.last_four || card.last4,
                 expMonth: card.expiry?.month || card.exp_month,
