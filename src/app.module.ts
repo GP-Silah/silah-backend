@@ -23,6 +23,8 @@ import { CartModule } from './cart/cart.module';
 import { DemandPredictionModule } from './demand-prediction/demand-prediction.module';
 import { OrderModule } from './order/order.module';
 import { TranslationModule } from './translation/translation.module';
+import { SmartSearchModule } from './smart-search/smart-search.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
     imports: [
@@ -49,6 +51,8 @@ import { TranslationModule } from './translation/translation.module';
         CartModule,
         OrderModule,
         DemandPredictionModule,
+        SmartSearchModule,
+        SearchModule,
     ],
     controllers: [AppController, HealthController],
     providers: [

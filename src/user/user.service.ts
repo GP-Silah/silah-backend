@@ -106,28 +106,6 @@ export class UserService {
     }
 
     /**
-     * Searches for users by name using a case-insensitive partial match.
-     * @param {string} name - The name or partial name to search for.
-     * @throws {BadRequestException} If the name parameter is empty.
-     * @throws {NotFoundException} If no users match the search criteria.
-     * @returns {Promise<UserResponseDTO[]>} A list of matching users in DTO format.
-     */
-    async getUserByName(name: string): Promise<UserResponseDTO[]> {
-        if (!name || name.trim() === '') {
-            throw new BadRequestException('Name parameter is required');
-        }
-        const users = await this.prisma.user.findMany({
-            where: { name: { contains: name, mode: 'insensitive' } },
-        });
-        if (users.length === 0) {
-            throw new NotFoundException(
-                `No users found matching name: ${name}`,
-            );
-        }
-        return Promise.all(users.map((user) => this.toUserResponseDTO(user)));
-    }
-
-    /**
      * Retrieves the current user's data by their ID.
      * @param {string} id - The ID of the user to retrieve.
      * @throws {NotFoundException} If the user is not found.
