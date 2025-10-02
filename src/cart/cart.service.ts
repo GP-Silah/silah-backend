@@ -371,7 +371,7 @@ export class CartService {
             throw new BadRequestException('Cart is empty');
         }
 
-        // --- check stock before proceeding ---
+        // --- Check stock before proceeding ---
         for (const supplierCart of cart.suppliers) {
             for (const item of supplierCart.cartItems) {
                 if (item.product.stock < item.quantity) {
@@ -395,9 +395,10 @@ export class CartService {
             if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
                 const checkoutId = uuidv4();
 
+                // Create orders + reduce stock
                 const orders = await Promise.all(
-                    cart.suppliers.map((supplierCart) =>
-                        this.prisma.order.create({
+                    cart.suppliers.map(async (supplierCart) => {
+                        const order = await this.prisma.order.create({
                             data: {
                                 checkoutId,
                                 buyerId: buyer.id,
@@ -405,8 +406,23 @@ export class CartService {
                                 supplierId: supplierCart.supplierId,
                                 finalPrice: supplierCart.supplierTotalPrice,
                             },
-                        }),
-                    ),
+                        });
+
+                        // Reduce stock for each product in the supplier cart
+                        await Promise.all(
+                            supplierCart.cartItems.map((item) =>
+                                this.prisma.product.update({
+                                    where: { id: item.product.id },
+                                    data: {
+                                        stock:
+                                            item.product.stock - item.quantity,
+                                    },
+                                }),
+                            ),
+                        );
+
+                        return order;
+                    }),
                 );
 
                 await this.prisma.cart.update({
@@ -443,6 +459,7 @@ export class CartService {
             'http://localhost:5137/payment/cart/callback', // TODO: real redirect URL
         );
 
+        // --- Redirect for 3DS if necessary ---
         if (charge.status === 'INITIATED' && charge.transaction?.url) {
             return {
                 message: 'Redirect for authentication',
@@ -451,12 +468,13 @@ export class CartService {
             };
         }
 
+        // --- Complete checkout if charge captured/authorized ---
         if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
             const checkoutId = uuidv4();
 
             const orders = await Promise.all(
-                cart.suppliers.map((supplierCart) =>
-                    this.prisma.order.create({
+                cart.suppliers.map(async (supplierCart) => {
+                    const order = await this.prisma.order.create({
                         data: {
                             checkoutId,
                             buyerId: buyer.id,
@@ -464,8 +482,22 @@ export class CartService {
                             supplierId: supplierCart.supplierId,
                             finalPrice: supplierCart.supplierTotalPrice,
                         },
-                    }),
-                ),
+                    });
+
+                    // Reduce stock for each product
+                    await Promise.all(
+                        supplierCart.cartItems.map((item) =>
+                            this.prisma.product.update({
+                                where: { id: item.product.id },
+                                data: {
+                                    stock: item.product.stock - item.quantity,
+                                },
+                            }),
+                        ),
+                    );
+
+                    return order;
+                }),
             );
 
             await this.prisma.cart.update({
