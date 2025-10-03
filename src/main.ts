@@ -10,8 +10,9 @@ import * as fs from 'fs';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { SupplierResponseDto } from './supplier/dtos/supplierResponse.dto';
 import { InactiveSupplierResponseDto } from './supplier/dtos/inactiveSupplierResponse.dto';
-import { CartResponseDto } from './cart/dtos/cartResponse.dto';
 import { CheckoutRedirectDto } from './cart/dtos/checkoutRedirect.dto';
+import { ProductResponseDto } from './product/dtos/productResponse.dto';
+import { ServiceResponseDto } from './service/dtos/serviceResponse.dto';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -99,6 +100,8 @@ How to use this on frontend:
             SupplierResponseDto,
             InactiveSupplierResponseDto,
             CheckoutRedirectDto,
+            ProductResponseDto,
+            ServiceResponseDto,
         ], // extraModels is crucial when using $ref in oneOf, anyOf, or allOf.
     });
     document.tags = [
