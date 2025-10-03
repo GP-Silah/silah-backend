@@ -4,7 +4,13 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { Category, Product, Supplier, User } from '@prisma/client';
+import {
+    Category,
+    Product,
+    Supplier,
+    SupplierPlan,
+    User,
+} from '@prisma/client';
 import { ProductResponseDto } from './dtos/productResponse.dto';
 import { FileService } from 'src/file/file.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -20,6 +26,22 @@ export class ProductService {
         private readonly supplierService: SupplierService,
         private readonly translationService: TranslationService,
     ) {}
+
+    STOCK_THRESHOLDS = {
+        VERY_LOW: 5, // less than 5 units → VERY LOW
+        LOW: 10, // 5–9 units → LOW
+        AVERAGE: 30, // 10–29 units → AVERAGE
+        GOOD: Infinity, // 30+ units → GOOD
+    };
+
+    private getStockStatus(
+        stock: number,
+    ): 'VERY LOW' | 'LOW' | 'AVERAGE' | 'GOOD' {
+        if (stock < this.STOCK_THRESHOLDS.VERY_LOW) return 'VERY LOW';
+        if (stock < this.STOCK_THRESHOLDS.LOW) return 'LOW';
+        if (stock < this.STOCK_THRESHOLDS.AVERAGE) return 'AVERAGE';
+        return 'GOOD';
+    }
 
     async toProductResponseDto(
         product: Product & {
@@ -86,6 +108,7 @@ export class ProductService {
             groupPurchasePrice: product.groupPurchasePrice ?? undefined,
             groupPurchaseDuration: product.groupPurchaseDuration ?? undefined,
             isPublished: product.isPublished,
+            stockStatus: this.getStockStatus(product.stock),
             ...(wishlistCount !== undefined ? { wishlistCount } : {}),
             avgRating: product.avgRating,
             ratingsCount: product.ratingsCount,
@@ -239,6 +262,23 @@ export class ProductService {
         });
         if (!supplier) {
             throw new NotFoundException('Supplier not found');
+        }
+
+        // Enforce product limit for BASIC plan
+        if (supplier.plan === SupplierPlan.BASIC) {
+            const activeProductsCount = await this.prisma.product.count({
+                where: {
+                    supplierId: supplier.id,
+                    isDeleted: false,
+                },
+            });
+
+            const MAX_BASIC_PRODUCTS = 10;
+            if (activeProductsCount >= MAX_BASIC_PRODUCTS) {
+                throw new BadRequestException(
+                    `Basic plan suppliers can only list up to ${MAX_BASIC_PRODUCTS} products. You already have ${activeProductsCount}.`,
+                );
+            }
         }
 
         // 2. Validate image count (1–3)

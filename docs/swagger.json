@@ -889,71 +889,6 @@
         ]
       }
     },
-    "/api/users/name": {
-      "get": {
-        "description": "Returns a list of users that match the provided name.",
-        "operationId": "UserController_getUserByName",
-        "parameters": [
-          {
-            "name": "name",
-            "required": true,
-            "in": "query",
-            "description": "Name (or partial name) to search users by",
-            "schema": {
-              "example": "Sarah",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Users found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserResponseDTO"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Name parameter is required",
-                    "error": "Bad Request"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "No users found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "No users found with the name",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Search users by name",
-        "tags": [
-          "Users"
-        ]
-      }
-    },
     "/api/users/me": {
       "get": {
         "description": "Returns the currently authenticated user's data.",
@@ -2499,15 +2434,26 @@
             }
           },
           "400": {
-            "description": "Invalid request. Could be invalid JSON, missing fields, invalid category, or file issues.",
+            "description": "Invalid request. Could be invalid JSON, missing fields, invalid category, file issues, or BASIC plan product limit exceeded.",
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Invalid JSON in form field OR Products must be assigned to a subcategory, not a main category OR At least one product image is required",
-                    "error": "Bad Request"
-                  }
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Invalid JSON in form field OR Products must be assigned to a subcategory, not a main category OR At least one product image is required",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Basic plan suppliers can only list up to 10 products. You already have 10.",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -3721,6 +3667,109 @@
           }
         ],
         "summary": "Get current supplier profile",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
+    "/api/suppliers/me/stock-levels": {
+      "get": {
+        "description": "Retrieves the stock levels for all products of the authenticated supplier. Products are grouped into stock levels: VERY_LOW, LOW, AVERAGE, and GOOD. Each group contains a count of products and the list of product details including ID, name, and current stock.",
+        "operationId": "SupplierController_getStockLevels",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stock levels retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockLevelsResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found for the given user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Get supplier stock levels",
         "tags": [
           "Suppliers"
         ]
@@ -4956,7 +5005,7 @@
         ]
       },
       "post": {
-        "description": "<strong>IMPORTANT:</strong> This endpoint requires sending the data as <u>multipart/form-data</u>.<br>\n                <strong>Note:</strong> Because this endpoint uses multipart/form-data, Swagger cannot directly show the CreateServiceDto schema here. \n                There is a separate Swagger-only endpoint (GET /create-service-dto) where you can view the full CreateServiceDto schema and example.<br><br>\n                You must send two fields:\n                <ul>\n                    <li><strong>dto</strong> (type: text) → JSON string of the service details (see example below). \n                        <br>Check the Swagger-only endpoint for full schema reference.</li>\n                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 10 files)</li>\n                </ul>\n                Only categories with <strong>usedFor=SERVICE</strong> can be assigned to services.<br><br>\n                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
+        "description": "<strong>IMPORTANT:</strong> This endpoint requires sending the data as <u>multipart/form-data</u>.<br>\n                <strong>Note:</strong> Because this endpoint uses multipart/form-data, Swagger cannot directly show the CreateServiceDto schema here. \n                There is a separate Swagger-only endpoint (GET /create-service-dto) where you can view the full CreateServiceDto schema and example.<br><br>\n                You must send two fields:\n                <ul>\n                    <li><strong>dto</strong> (type: text) → JSON string of the service details (see example below). \n                        <br>Check the Swagger-only endpoint for full schema reference.</li>\n                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 3 files)</li>\n                </ul>\n                Only categories with <strong>usedFor=SERVICE</strong> can be assigned to services.<br><br>\n                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         "operationId": "ServiceController_createService",
         "parameters": [
           {
@@ -4981,7 +5030,7 @@
                     "items": {
                       "type": "string",
                       "format": "binary",
-                      "description": "Service images. 1 to 10 images allowed, formats: PNG, JPEG, WebP, max 5MB each."
+                      "description": "Service images. 1 to 3 images allowed, formats: PNG, JPEG, WebP, max 5MB each."
                     }
                   },
                   "dto": {
@@ -5010,15 +5059,26 @@
             }
           },
           "400": {
-            "description": "Invalid request (JSON, category, or file issues)",
+            "description": "Invalid request (JSON, category, file issues, or BASIC plan limit exceeded)",
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Invalid JSON in form field OR Category not valid for services OR At least one service image is required",
-                    "error": "Bad Request"
-                  }
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Invalid JSON in form field OR Category not valid for services OR At least one service image is required",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Basic plan suppliers can only list up to 3 services. You already have 3.",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -7605,7 +7665,7 @@
     },
     "/api/demand-predictions/{productId}": {
       "get": {
-        "description": "Generates a 3-month sales forecast for a specific product using Prophet (via the AI backend). Requires the supplier to be authenticated and subscribed to a plan higher than BASIC. Returns monthly demand predictions, forecast accuracy indicators, and a stocking recommendation.",
+        "description": "Generates a 3-month sales forecast for a specific product using Prophet (via the AI backend). Requires the supplier to be authenticated and subscribed to a plan higher than BASIC. Returns monthly demand predictions, forecast accuracy indicators, and a stocking recommendation. If the product has fewer than the minimum required sales days, a Bad Request error is returned.",
         "operationId": "DemandPredictionController_getPredictionForProduct",
         "parameters": [
           {
@@ -7635,6 +7695,20 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DemandPredictionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not enough sales data to generate a forecast",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Not enough sales data to forecast. Minimum 10 sales days required, found 3.",
+                    "error": "Bad Request"
+                  }
                 }
               }
             }
@@ -7740,6 +7814,215 @@
           "Demand Predictions"
         ]
       }
+    },
+    "/api/smart-search/{itemId}/similar": {
+      "get": {
+        "operationId": "SmartSearchController_getSimilarItems",
+        "parameters": [
+          {
+            "name": "itemId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Smart Search"
+        ]
+      }
+    },
+    "/api/search/users": {
+      "get": {
+        "description": "Returns a list of users that match the provided name.",
+        "operationId": "SearchController_searchUsers",
+        "parameters": [
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Name (or partial name) to search users by",
+            "schema": {
+              "example": "Sarah",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Users found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponseDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No users found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No users found with the name",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Search users by name",
+        "tags": [
+          "Search"
+        ]
+      }
+    },
+    "/api/search/suppliers": {
+      "get": {
+        "operationId": "SearchController_searchSuppliers",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "businessName",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Search"
+        ]
+      }
+    },
+    "/api/search/products": {
+      "get": {
+        "operationId": "SearchController_searchProducts",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subcategory",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Search"
+        ]
+      }
+    },
+    "/api/search/services": {
+      "get": {
+        "operationId": "SearchController_searchServices",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subcategory",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Search"
+        ]
+      }
+    },
+    "/api/search/chats": {
+      "get": {
+        "deprecated": true,
+        "description": "This endpoint is a placeholder and not implemented yet.",
+        "operationId": "SearchController_searchChats",
+        "parameters": [
+          {
+            "name": "query",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Not implemented yet",
+        "tags": [
+          "Search"
+        ]
+      }
     }
   },
   "info": {
@@ -7768,13 +8051,19 @@
       "name": "Suppliers"
     },
     {
+      "name": "Categories"
+    },
+    {
       "name": "Products"
     },
     {
       "name": "Services"
     },
     {
-      "name": "Categories"
+      "name": "Search"
+    },
+    {
+      "name": "Smart Search"
     },
     {
       "name": "Carts"
@@ -8289,6 +8578,17 @@
             "description": "Publish status",
             "example": true
           },
+          "stockStatus": {
+            "type": "string",
+            "description": "Stock level of the product",
+            "enum": [
+              "VERY LOW",
+              "LOW",
+              "AVERAGE",
+              "GOOD"
+            ],
+            "example": "LOW"
+          },
           "wishlistCount": {
             "type": "number",
             "description": "Wishlist count (only shown if supplier has PREMIUM plan)",
@@ -8342,6 +8642,7 @@
           "groupPurchasePrice",
           "groupPurchaseDuration",
           "isPublished",
+          "stockStatus",
           "avgRating",
           "ratingsCount",
           "createdAt",
@@ -9244,6 +9545,16 @@
       "DemandPredictionResponseDto": {
         "type": "object",
         "properties": {
+          "productName": {
+            "type": "string",
+            "example": "Candle Holder",
+            "description": "Name of the product being forecasted"
+          },
+          "productFirstImageFileUrl": {
+            "type": "string",
+            "example": "https://cdn.example.com/images/abc.jpg",
+            "description": "URL of the first image of the product"
+          },
           "product_id": {
             "type": "string",
             "example": "123",
@@ -9273,6 +9584,8 @@
           }
         },
         "required": [
+          "productName",
+          "productFirstImageFileUrl",
           "product_id",
           "forecast",
           "lowAccuracy",

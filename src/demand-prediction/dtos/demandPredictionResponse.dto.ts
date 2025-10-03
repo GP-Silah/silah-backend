@@ -16,6 +16,18 @@ export class ForecastMonthDto {
 
 export class DemandPredictionResponseDto {
     @ApiProperty({
+        example: 'Candle Holder',
+        description: 'Name of the product being forecasted',
+    })
+    productName: string;
+
+    @ApiProperty({
+        example: 'https://cdn.example.com/images/abc.jpg',
+        description: 'URL of the first image of the product',
+    })
+    productFirstImageFileUrl: string;
+
+    @ApiProperty({
         example: '123',
         description: 'ID of the product being forecasted',
     })

@@ -88,14 +88,26 @@ export function ApiDocsCreateProduct() {
         }),
         ApiBadRequestResponse({
             description:
-                'Invalid request. Could be invalid JSON, missing fields, invalid category, or file issues.',
+                'Invalid request. Could be invalid JSON, missing fields, invalid category, file issues, or BASIC plan product limit exceeded.',
             schema: {
-                example: {
-                    statusCode: 400,
-                    message:
-                        'Invalid JSON in form field OR Products must be assigned to a subcategory, not a main category OR At least one product image is required',
-                    error: 'Bad Request',
-                },
+                oneOf: [
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Invalid JSON in form field OR Products must be assigned to a subcategory, not a main category OR At least one product image is required',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Basic plan suppliers can only list up to 10 products. You already have 10.',
+                            error: 'Bad Request',
+                        },
+                    },
+                ],
             },
         }),
         ApiNotFoundResponse({

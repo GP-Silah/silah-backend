@@ -17,6 +17,10 @@ import { FileService } from 'src/file/file.service';
 import { UserService } from 'src/user/user.service';
 import { StorefrontResponseDto } from './dtos/storefrontResponse.dto';
 import { InactiveSupplierResponseDto } from './dtos/inactiveSupplierResponse.dto';
+import {
+    StockLevelsResponseDto,
+    StockProductDto,
+} from './dtos/stockLevelsResponse.dto';
 
 @Injectable()
 export class SupplierService {
@@ -287,6 +291,76 @@ export class SupplierService {
             throw new NotFoundException(`Supplier with id ${userId} not found`);
         }
         return this.toStorefrontResponseDTO(supplier.user, supplier);
+    }
+
+    async getStockLevels(userId: string): Promise<StockLevelsResponseDto> {
+        // Fetch supplier
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+
+        if (!supplier) {
+            throw new NotFoundException('Supplier not found');
+        }
+
+        // Fetch all non-deleted products for this supplier
+        const products = await this.prisma.product.findMany({
+            where: { supplierId: supplier.id, isDeleted: false },
+            select: { id: true, name: true, stock: true },
+        });
+
+        // Initialize groups
+        const overview: Record<string, StockProductDto[]> = {
+            VERY_LOW: [],
+            LOW: [],
+            AVERAGE: [],
+            GOOD: [],
+        };
+
+        // Define thresholds
+        const STOCK_THRESHOLDS = {
+            VERY_LOW: 5,
+            LOW: 10,
+            AVERAGE: 30,
+            GOOD: Infinity,
+        };
+
+        // Assign products to stock groups
+        products.forEach((p) => {
+            const stock = p.stock;
+            const productDto: StockProductDto = {
+                productId: p.id,
+                name: p.name,
+                stock,
+            };
+
+            if (stock < STOCK_THRESHOLDS.VERY_LOW)
+                overview.VERY_LOW.push(productDto);
+            else if (stock < STOCK_THRESHOLDS.LOW)
+                overview.LOW.push(productDto);
+            else if (stock < STOCK_THRESHOLDS.AVERAGE)
+                overview.AVERAGE.push(productDto);
+            else overview.GOOD.push(productDto);
+        });
+
+        // Build StockGroupDto objects for each group
+        const response: StockLevelsResponseDto = {
+            supplierId: supplier.id,
+            overview: {
+                VERY_LOW: {
+                    count: overview.VERY_LOW.length,
+                    products: overview.VERY_LOW,
+                },
+                LOW: { count: overview.LOW.length, products: overview.LOW },
+                AVERAGE: {
+                    count: overview.AVERAGE.length,
+                    products: overview.AVERAGE,
+                },
+                GOOD: { count: overview.GOOD.length, products: overview.GOOD },
+            },
+        };
+
+        return response;
     }
 
     async updateSupplierData(userId: string, dto: UpdateSupplierDto) {

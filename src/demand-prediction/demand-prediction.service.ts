@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     HttpException,
     HttpStatus,
     Injectable,
@@ -9,10 +10,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import axios from 'axios';
 import { SupplierPlan } from '@prisma/client';
 import { DemandPredictionResponseDto } from './dtos/demandPredictionResponse.dto';
+import { FileService } from 'src/file/file.service';
 
 @Injectable()
 export class DemandPredictionService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly fileService: FileService,
+    ) {}
 
     async getPredictionForProduct(productId: string, userId: string) {
         const supplier = await this.prisma.supplier.findUnique({
@@ -34,6 +39,20 @@ export class DemandPredictionService {
             throw new NotFoundException('Product not found');
         }
         const allPastSales = await this.getDailySalesForProduct(product.id);
+
+        // Count days with actual sales
+        const salesDaysCount = allPastSales.filter(
+            (s) => s.quantity > 0,
+        ).length;
+
+        // Check for minimum sales threshold
+        const MIN_SALES = 10;
+        if (salesDaysCount < MIN_SALES) {
+            throw new BadRequestException(
+                `Not enough sales data to forecast. Minimum ${MIN_SALES} sales days required, found ${salesDaysCount}.`,
+            );
+        }
+
         // Call FastAPI
         try {
             const response = await axios.post(
@@ -58,6 +77,11 @@ export class DemandPredictionService {
             const recommendedStock = Math.max(totalForecast - currentStock, 0);
 
             return {
+                productName: product.name,
+                productFirstImageFileUrl: this.fileService.getFileUrl(
+                    product.imagesFilesNames[0],
+                ),
+                product_id: product.id,
                 ...forecast,
                 lowAccuracy,
                 salesCount: allPastSales.length,

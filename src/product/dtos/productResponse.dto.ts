@@ -109,6 +109,13 @@ export class ProductResponseDto {
     isPublished: boolean;
 
     @ApiProperty({
+        description: 'Stock level of the product',
+        enum: ['VERY LOW', 'LOW', 'AVERAGE', 'GOOD'],
+        example: 'LOW',
+    })
+    stockStatus: 'VERY LOW' | 'LOW' | 'AVERAGE' | 'GOOD';
+
+    @ApiProperty({
         description: 'Wishlist count (only shown if supplier has PREMIUM plan)',
         example: 10,
         required: false,
