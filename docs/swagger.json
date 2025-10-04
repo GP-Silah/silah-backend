@@ -2510,6 +2510,20 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "Failed to generate embedding for the product (coming from FastAPI backend). **But the product is still created successfully.**",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 502,
+                    "message": "Failed to generate embedding for item",
+                    "error": "Bad Gateway"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2711,6 +2725,20 @@
                     "statusCode": 404,
                     "message": "Product not found",
                     "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Failed to generate embedding for the product (coming from FastAPI backend). **But the product is still updated successfully.**",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 502,
+                    "message": "Failed to generate embedding for item",
+                    "error": "Bad Gateway"
                   }
                 }
               }
@@ -4952,6 +4980,30 @@
         ]
       }
     },
+    "/api/smart-search": {
+      "post": {
+        "operationId": "SmartSearchController_getSimilarItems",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmartSearchRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Smart Search"
+        ]
+      }
+    },
     "/api/services": {
       "get": {
         "description": "Fetches all services. Optional query or header <strong>lang</strong> can be provided to translate service name and description.\n                <ul>\n                    <li>Header: <strong>accept-language</strong></li>\n                    <li>Query: <strong>lang</strong></li>\n                </ul>\n                Defaults to English if not provided.",
@@ -5131,6 +5183,20 @@
                     "statusCode": 404,
                     "message": "Supplier not found",
                     "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Failed to generate embedding for the service (coming from FastAPI backend). **But the service is still created successfully.**",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 502,
+                    "message": "Failed to generate embedding for item",
+                    "error": "Bad Gateway"
                   }
                 }
               }
@@ -5336,6 +5402,20 @@
                     "statusCode": 404,
                     "message": "Service not found",
                     "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Failed to generate embedding for the service (coming from FastAPI backend). **But the service is still updated successfully.**",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 502,
+                    "message": "Failed to generate embedding for item",
+                    "error": "Bad Gateway"
                   }
                 }
               }
@@ -7815,30 +7895,6 @@
         ]
       }
     },
-    "/api/smart-search": {
-      "post": {
-        "operationId": "SmartSearchController_getSimilarItems",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SmartSearchRequestDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Smart Search"
-        ]
-      }
-    },
     "/api/search/users": {
       "get": {
         "description": "Returns a list of users that match the provided name.",
@@ -9156,6 +9212,21 @@
           "plan"
         ]
       },
+      "SmartSearchRequestDto": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "ID of an existing item (product or service) to find similar alternatives",
+            "example": "ferew32-gr45-dfg5-34g5-34g53"
+          },
+          "text": {
+            "type": "string",
+            "description": "Name of the item to search by (required if no itemId is provided)",
+            "example": "Wooden Brush"
+          }
+        }
+      },
       "CreateServiceDto": {
         "type": "object",
         "properties": {
@@ -9593,40 +9664,6 @@
           "salesCount",
           "recommendedStock"
         ]
-      },
-      "SmartSearchRequestDto": {
-        "type": "object",
-        "properties": {
-          "itemId": {
-            "type": "string",
-            "description": "ID of an existing item (product or service) to find similar alternatives",
-            "example": "ferew32-gr45-dfg5-34g5-34g53"
-          },
-          "itemName": {
-            "type": "string",
-            "description": "Name of the item to search by (required if no itemId is provided)",
-            "example": "Wooden Brush"
-          },
-          "itemDescription": {
-            "type": "string",
-            "description": "Optional description of the item to improve similarity matching",
-            "example": "A brown wooden brush for cleaning shoes"
-          },
-          "itemType": {
-            "type": "string",
-            "description": "Type of item being searched",
-            "enum": [
-              "PRODUCT",
-              "SERVICE"
-            ],
-            "example": "PRODUCT"
-          },
-          "categoryId": {
-            "type": "number",
-            "description": "Optional category ID to limit search within a category",
-            "example": 12
-          }
-        }
       },
       "InactiveSupplierResponseDto": {
         "type": "object",
