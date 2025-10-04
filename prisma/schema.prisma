@@ -201,6 +201,18 @@ model Service {
   updatedAt           DateTime            @updatedAt
 }
 
+// =========== 🔖 ITEM EMBEDDING ==========
+model ItemEmbedding {
+  id        String   @id @default(uuid())
+  itemId    String
+  itemType  ItemType
+  embedding Float[] // array of numbers representing the vector
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([itemId, itemType]) // each item has exactly one embedding
+}
+
 // ============ 🛒 CART =================
 model Cart {
   id            String    @id @default(uuid())

@@ -9,6 +9,7 @@ import {
     ApiBadRequestResponse,
     ApiQuery,
     ApiHeader,
+    ApiBadGatewayResponse,
 } from '@nestjs/swagger';
 import { ServiceResponseDto } from './dtos/serviceResponse.dto';
 import { CreateServiceDto } from './dtos/createService.dto';
@@ -108,6 +109,17 @@ export function ApiDocsCreateService() {
                     statusCode: 404,
                     message: 'Supplier not found',
                     error: 'Not Found',
+                },
+            },
+        }),
+        ApiBadGatewayResponse({
+            description:
+                'Failed to generate embedding for the service (coming from FastAPI backend). **But the service is still created successfully.**',
+            schema: {
+                example: {
+                    statusCode: 502,
+                    message: 'Failed to generate embedding for item',
+                    error: 'Bad Gateway',
                 },
             },
         }),
@@ -285,6 +297,17 @@ export function ApiDocsUpdateService() {
                     statusCode: 404,
                     message: 'Service not found',
                     error: 'Not Found',
+                },
+            },
+        }),
+        ApiBadGatewayResponse({
+            description:
+                'Failed to generate embedding for the service (coming from FastAPI backend). **But the service is still updated successfully.**',
+            schema: {
+                example: {
+                    statusCode: 502,
+                    message: 'Failed to generate embedding for item',
+                    error: 'Bad Gateway',
                 },
             },
         }),

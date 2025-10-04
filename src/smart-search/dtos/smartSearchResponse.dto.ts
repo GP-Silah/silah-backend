@@ -4,6 +4,12 @@ import { ServiceResponseDto } from 'src/service/dtos/serviceResponse.dto';
 
 export class SmartSearchResponseDto {
     @ApiProperty({
+        description: 'The text used by the backend for this smart search',
+        example: 'Organic Honey 500g',
+    })
+    text: string;
+
+    @ApiProperty({
         description: 'The matched item (product or service)',
         oneOf: [
             { $ref: getSchemaPath(ProductResponseDto) },
@@ -13,8 +19,9 @@ export class SmartSearchResponseDto {
     item: ProductResponseDto | ServiceResponseDto;
 
     @ApiProperty({
-        description: 'Cosine similarity score between 0 and 1',
-        example: 0.87,
+        description:
+            'Ranking position among the top results (1 = most similar)',
+        example: 1,
     })
-    similarityScore: number;
+    rank: number;
 }

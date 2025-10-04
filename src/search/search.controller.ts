@@ -16,16 +16,24 @@ export class SearchController {
 
     @Get('suppliers')
     async searchSuppliers(
-        @Query('name') name: string,
-        @Query('businessName') businessName: string,
-    ) {}
+        @Query('name') name?: string,
+        @Query('businessName') businessName?: string,
+    ) {
+        return this.searchService.searchSuppliers(name, businessName);
+    }
 
     @Get('products')
     async searchProducts(
-        @Query('name') name: string,
-        @Query('category') categoryId: string,
-        @Query('subcategory') subCategoryId: string,
-    ) {}
+        @Query('name') name?: string,
+        @Query('category') categoryId?: number,
+        @Query('subcategory') subCategoryId?: number,
+    ) {
+        return this.searchService.searchProducts(
+            name,
+            categoryId,
+            subCategoryId,
+        );
+    }
 
     @Get('services')
     async searchServices(

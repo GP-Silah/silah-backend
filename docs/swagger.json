@@ -7815,21 +7815,22 @@
         ]
       }
     },
-    "/api/smart-search/{itemId}/similar": {
-      "get": {
+    "/api/smart-search": {
+      "post": {
         "operationId": "SmartSearchController_getSimilarItems",
-        "parameters": [
-          {
-            "name": "itemId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmartSearchRequestDto"
+              }
             }
           }
-        ],
+        },
         "responses": {
-          "200": {
+          "201": {
             "description": ""
           }
         },
@@ -7937,7 +7938,7 @@
             "required": true,
             "in": "query",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           },
           {
@@ -7945,7 +7946,7 @@
             "required": true,
             "in": "query",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -9592,6 +9593,40 @@
           "salesCount",
           "recommendedStock"
         ]
+      },
+      "SmartSearchRequestDto": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "ID of an existing item (product or service) to find similar alternatives",
+            "example": "ferew32-gr45-dfg5-34g5-34g53"
+          },
+          "itemName": {
+            "type": "string",
+            "description": "Name of the item to search by (required if no itemId is provided)",
+            "example": "Wooden Brush"
+          },
+          "itemDescription": {
+            "type": "string",
+            "description": "Optional description of the item to improve similarity matching",
+            "example": "A brown wooden brush for cleaning shoes"
+          },
+          "itemType": {
+            "type": "string",
+            "description": "Type of item being searched",
+            "enum": [
+              "PRODUCT",
+              "SERVICE"
+            ],
+            "example": "PRODUCT"
+          },
+          "categoryId": {
+            "type": "number",
+            "description": "Optional category ID to limit search within a category",
+            "example": 12
+          }
+        }
       },
       "InactiveSupplierResponseDto": {
         "type": "object",

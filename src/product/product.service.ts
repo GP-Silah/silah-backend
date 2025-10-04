@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import {
     Category,
+    ItemType,
     Product,
     Supplier,
     SupplierPlan,
@@ -17,6 +18,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dtos/createProduct.dto';
 import { UpdateProductDto } from './dtos/updateProduct.dto';
 import { TranslationService } from 'src/translation/translation.service';
+import { SmartSearchService } from 'src/smart-search/smart-search.service';
 
 @Injectable()
 export class ProductService {
@@ -25,6 +27,7 @@ export class ProductService {
         private readonly fileService: FileService,
         private readonly supplierService: SupplierService,
         private readonly translationService: TranslationService,
+        private readonly smartSearchService: SmartSearchService,
     ) {}
 
     STOCK_THRESHOLDS = {
@@ -351,6 +354,15 @@ export class ProductService {
             },
         });
 
+        // 7. Generate embedding
+        await this.smartSearchService.generateAndStoreEmbedding({
+            itemId: fullProduct!.id,
+            itemType: ItemType.PRODUCT,
+            name: fullProduct!.name,
+            description: fullProduct!.description,
+            categoryName: fullProduct!.category!.name,
+        });
+
         return this.toProductResponseDto(fullProduct!);
     }
 
@@ -400,6 +412,26 @@ export class ProductService {
                 category: true,
             },
         });
+
+        // 4. Duplicate embedding
+        const originalEmbedding = await this.prisma.itemEmbedding.findUnique({
+            where: {
+                itemId_itemType: {
+                    itemId: originalProduct.id,
+                    itemType: ItemType.PRODUCT,
+                },
+            },
+        });
+
+        if (originalEmbedding) {
+            await this.prisma.itemEmbedding.create({
+                data: {
+                    itemId: fullDuplicatedProduct!.id,
+                    itemType: ItemType.PRODUCT,
+                    embedding: originalEmbedding.embedding,
+                },
+            });
+        }
 
         return this.toProductResponseDto(fullDuplicatedProduct!);
     }
@@ -459,6 +491,15 @@ export class ProductService {
                 supplier: { include: { user: true } },
                 category: true,
             },
+        });
+
+        // 6. Update embedding
+        await this.smartSearchService.generateAndStoreEmbedding({
+            itemId: fullProduct!.id,
+            itemType: ItemType.PRODUCT,
+            name: fullProduct!.name,
+            description: fullProduct!.description,
+            categoryName: fullProduct!.category!.name,
         });
 
         return this.toProductResponseDto(fullProduct!);

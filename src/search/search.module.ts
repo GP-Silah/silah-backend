@@ -4,17 +4,10 @@ import { SearchController } from './search.controller';
 import { ProductModule } from 'src/product/product.module';
 import { ServiceModule } from 'src/service/service.module';
 import { SupplierModule } from 'src/supplier/supplier.module';
-import { BuyerModule } from 'src/buyer/buyer.module';
 import { UserModule } from 'src/user/user.module';
 
 @Module({
-    imports: [
-        ProductModule,
-        ServiceModule,
-        UserModule,
-        SupplierModule,
-        BuyerModule,
-    ],
+    imports: [ProductModule, ServiceModule, UserModule, SupplierModule],
     controllers: [SearchController],
     providers: [SearchService],
 })

@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import {
     Category,
+    ItemType,
     Service,
     Supplier,
     SupplierPlan,
@@ -17,6 +18,7 @@ import { TranslationService } from 'src/translation/translation.service';
 import { ServiceResponseDto } from './dtos/serviceResponse.dto';
 import { CreateServiceDto } from './dtos/createService.dto';
 import { UpdateServiceDto } from './dtos/updateService.dto';
+import { SmartSearchService } from 'src/smart-search/smart-search.service';
 
 @Injectable()
 export class ServiceService {
@@ -25,6 +27,7 @@ export class ServiceService {
         private readonly fileService: FileService,
         private readonly supplierService: SupplierService,
         private readonly translationService: TranslationService,
+        private readonly smartSearchService: SmartSearchService,
     ) {}
 
     async toServiceResponseDto(
@@ -312,6 +315,15 @@ export class ServiceService {
             },
         });
 
+        // 7. Generate embedding
+        await this.smartSearchService.generateAndStoreEmbedding({
+            itemId: fullService!.id,
+            itemType: ItemType.SERVICE,
+            name: fullService!.name,
+            description: fullService!.description,
+            categoryName: fullService!.category?.name ?? '',
+        });
+
         return this.toServiceResponseDto(fullService!);
     }
 
@@ -355,6 +367,26 @@ export class ServiceService {
                 category: true,
             },
         });
+
+        // 4. Duplicate embedding
+        const originalEmbedding = await this.prisma.itemEmbedding.findUnique({
+            where: {
+                itemId_itemType: {
+                    itemId: originalService.id,
+                    itemType: ItemType.SERVICE,
+                },
+            },
+        });
+
+        if (originalEmbedding) {
+            await this.prisma.itemEmbedding.create({
+                data: {
+                    itemId: fullDuplicatedService!.id,
+                    itemType: ItemType.SERVICE,
+                    embedding: originalEmbedding.embedding,
+                },
+            });
+        }
 
         return this.toServiceResponseDto(fullDuplicatedService!);
     }
@@ -414,6 +446,15 @@ export class ServiceService {
                 supplier: { include: { user: true } },
                 category: true,
             },
+        });
+
+        // 6. Update embedding
+        await this.smartSearchService.generateAndStoreEmbedding({
+            itemId: fullService!.id,
+            itemType: ItemType.SERVICE,
+            name: fullService!.name,
+            description: fullService!.description,
+            categoryName: fullService!.category?.name ?? '',
         });
 
         return this.toServiceResponseDto(fullService!);
