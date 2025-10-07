@@ -118,6 +118,7 @@ How to use this on frontend:
         { name: 'Smart Search' },
         { name: 'Carts' },
         { name: 'Orders' },
+        { name: 'Invoices' },
         { name: 'Demand Predictions' },
     ];
     SwaggerModule.setup('api/docs', app, document, {
