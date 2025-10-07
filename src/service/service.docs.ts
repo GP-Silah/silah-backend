@@ -9,6 +9,7 @@ import {
     ApiBadRequestResponse,
     ApiQuery,
     ApiHeader,
+    ApiBadGatewayResponse,
 } from '@nestjs/swagger';
 import { ServiceResponseDto } from './dtos/serviceResponse.dto';
 import { CreateServiceDto } from './dtos/createService.dto';
@@ -26,7 +27,7 @@ export function ApiDocsCreateService() {
                 <ul>
                     <li><strong>dto</strong> (type: text) → JSON string of the service details (see example below). 
                         <br>Check the Swagger-only endpoint for full schema reference.</li>
-                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 10 files)</li>
+                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 3 files)</li>
                 </ul>
                 Only categories with <strong>usedFor=SERVICE</strong> can be assigned to services.<br><br>
                 <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>
@@ -43,7 +44,7 @@ export function ApiDocsCreateService() {
                             type: 'string',
                             format: 'binary',
                             description:
-                                'Service images. 1 to 10 images allowed, formats: PNG, JPEG, WebP, max 5MB each.',
+                                'Service images. 1 to 3 images allowed, formats: PNG, JPEG, WebP, max 5MB each.',
                         },
                     },
                     dto: {
@@ -78,14 +79,27 @@ export function ApiDocsCreateService() {
             type: ServiceResponseDto,
         }),
         ApiBadRequestResponse({
-            description: 'Invalid request (JSON, category, or file issues)',
+            description:
+                'Invalid request (JSON, category, file issues, or BASIC plan limit exceeded)',
             schema: {
-                example: {
-                    statusCode: 400,
-                    message:
-                        'Invalid JSON in form field OR Category not valid for services OR At least one service image is required',
-                    error: 'Bad Request',
-                },
+                oneOf: [
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Invalid JSON in form field OR Category not valid for services OR At least one service image is required',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Basic plan suppliers can only list up to 3 services. You already have 3.',
+                            error: 'Bad Request',
+                        },
+                    },
+                ],
             },
         }),
         ApiNotFoundResponse({
@@ -95,6 +109,17 @@ export function ApiDocsCreateService() {
                     statusCode: 404,
                     message: 'Supplier not found',
                     error: 'Not Found',
+                },
+            },
+        }),
+        ApiBadGatewayResponse({
+            description:
+                'Failed to generate embedding for the service (coming from FastAPI backend). **But the service is still created successfully.**',
+            schema: {
+                example: {
+                    statusCode: 502,
+                    message: 'Failed to generate embedding for item',
+                    error: 'Bad Gateway',
                 },
             },
         }),
@@ -272,6 +297,17 @@ export function ApiDocsUpdateService() {
                     statusCode: 404,
                     message: 'Service not found',
                     error: 'Not Found',
+                },
+            },
+        }),
+        ApiBadGatewayResponse({
+            description:
+                'Failed to generate embedding for the service (coming from FastAPI backend). **But the service is still updated successfully.**',
+            schema: {
+                example: {
+                    statusCode: 502,
+                    message: 'Failed to generate embedding for item',
+                    error: 'Bad Gateway',
                 },
             },
         }),

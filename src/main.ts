@@ -10,6 +10,9 @@ import * as fs from 'fs';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { SupplierResponseDto } from './supplier/dtos/supplierResponse.dto';
 import { InactiveSupplierResponseDto } from './supplier/dtos/inactiveSupplierResponse.dto';
+import { CheckoutRedirectDto } from './cart/dtos/checkoutRedirect.dto';
+import { ProductResponseDto } from './product/dtos/productResponse.dto';
+import { ServiceResponseDto } from './service/dtos/serviceResponse.dto';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -93,7 +96,13 @@ How to use this on frontend:
         .build();
 
     const document = SwaggerModule.createDocument(app, config, {
-        extraModels: [SupplierResponseDto, InactiveSupplierResponseDto], // extraModels is crucial when using $ref in oneOf, anyOf, or allOf.
+        extraModels: [
+            SupplierResponseDto,
+            InactiveSupplierResponseDto,
+            CheckoutRedirectDto,
+            ProductResponseDto,
+            ServiceResponseDto,
+        ], // extraModels is crucial when using $ref in oneOf, anyOf, or allOf.
     });
     document.tags = [
         { name: 'Default' },
@@ -102,9 +111,11 @@ How to use this on frontend:
         { name: 'Users' },
         { name: 'Buyers' },
         { name: 'Suppliers' },
+        { name: 'Categories' },
         { name: 'Products' },
         { name: 'Services' },
-        { name: 'Categories' },
+        { name: 'Search' },
+        { name: 'Smart Search' },
         { name: 'Carts' },
         { name: 'Orders' },
         { name: 'Demand Predictions' },

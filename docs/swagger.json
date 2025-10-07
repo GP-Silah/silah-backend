@@ -889,71 +889,6 @@
         ]
       }
     },
-    "/api/users/name": {
-      "get": {
-        "description": "Returns a list of users that match the provided name.",
-        "operationId": "UserController_getUserByName",
-        "parameters": [
-          {
-            "name": "name",
-            "required": true,
-            "in": "query",
-            "description": "Name (or partial name) to search users by",
-            "schema": {
-              "example": "Sarah",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Users found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserResponseDTO"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Name parameter is required",
-                    "error": "Bad Request"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "No users found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "No users found with the name",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Search users by name",
-        "tags": [
-          "Users"
-        ]
-      }
-    },
     "/api/users/me": {
       "get": {
         "description": "Returns the currently authenticated user's data.",
@@ -1774,8 +1709,8 @@
         ]
       },
       "put": {
-        "description": "Creates or replaces the authenticated buyer's card using Tap tokenization.<br>If a card already exists, it will be deleted from Tap and replaced with the new one.",
-        "operationId": "BuyerController_saveOrReplaceCurrentBuyerCard",
+        "description": "**Step 1 of the two-step flow to save a buyer card using Tap:**<br><br>This endpoint creates a temporary charge and redirects the user to complete 3D Secure verification (OTP). If the buyer already has a card, it will be deleted from Tap and replaced with the new one. The response includes a `chargeId` and a `transactionUrl` which must be stored by the frontend to complete Step 2.<br><br>⚠️ **Important:** When testing, always use Tap's [test card values](https://developers.tap.company/reference/testing-cards). Live cards should only be used in production.<br><br>Step 1 must be followed by Step 2 (`PUT /api/buyers/me/card/confirm`) to verify the charge and save the card information in the database.",
+        "operationId": "BuyerController_saveOrReplaceCurrentBuyerCardStep1",
         "parameters": [
           {
             "name": "Cookie",
@@ -1789,39 +1724,31 @@
         ],
         "requestBody": {
           "required": true,
-          "description": "Card details provided from Tap tokenization",
+          "description": "Card details provided from Tap tokenization (tokenId and redirect URL)",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCardDto"
+                "$ref": "#/components/schemas/CreateCardStep1Dto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Card saved successfully",
+            "description": "Charge created successfully, redirect user to complete 3D Secure",
             "content": {
               "application/json": {
                 "schema": {
                   "example": {
-                    "message": "Card saved successfully",
-                    "card": {
-                      "id": "f1a2b3c4-d5e6-7890-ab12-34567890cdef",
-                      "tapCardId": "card_abc123xyz",
-                      "cardHolderName": "Norah Alqahtani",
-                      "last4": "4242",
-                      "brand": "Visa",
-                      "expMonth": 12,
-                      "expYear": 2028
-                    }
+                    "transactionUrl": "https://secure.tap.company/checkout/...",
+                    "chargeId": "chg_TS05A0820250903Ma230110749"
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid input data",
+            "description": "Invalid Tap token or input data",
             "content": {
               "application/json": {
                 "schema": {
@@ -1905,7 +1832,7 @@
             "token": []
           }
         ],
-        "summary": "Save or replace current buyer card",
+        "summary": "Initiate card save or replacement for buyer",
         "tags": [
           "Buyers"
         ]
@@ -2009,6 +1936,145 @@
           }
         ],
         "summary": "Delete current buyer card",
+        "tags": [
+          "Buyers"
+        ]
+      }
+    },
+    "/api/buyers/me/card/confirm": {
+      "put": {
+        "description": "**Two-step flow for saving a buyer card using Tap:**<br><br>**Step 1:** Call the `PUT /api/buyers/me/card` endpoint with a Tap token and redirect URL. This creates a temporary charge and redirects the user to complete 3D Secure verification (OTP). The response contains a `chargeId` which must be kept for step 2.<br><br>**Step 2:** After the user completes the 3D Secure step, Tap redirects back to your frontend `redirect_url` with `tap_id` (chargeId). Your frontend then calls this endpoint (`PUT /api/buyers/me/card/confirm`) with that `chargeId`. The backend will verify the charge status and extract the saved card details directly from the charge object. The card information is then stored in the database for future charges.<br><br>⚠️ **Important:** When testing, make sure to use Tap's [test card values](https://developers.tap.company/reference/testing-cards) for generating tokens and performing charges. Live cards should only be used in production.<br><br>These two endpoints are connected: step 1 initiates the card save and step 2 completes it.",
+        "operationId": "BuyerController_saveOrReplaceCurrentBuyerCardStep2",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Charge ID returned from Tap after 3D Secure redirect",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCardStep2Dto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Card saved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Card saved successfully",
+                    "card": {
+                      "id": "f1a2b3c4-d5e6-7890-ab12-34567890cdef",
+                      "tapCardId": "card_TS35A62593XRcF16R9F720",
+                      "cardHolderName": "TESTER FIVE",
+                      "last4": "1019",
+                      "brand": "VISA",
+                      "expMonth": 1,
+                      "expYear": 2039
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Charge not successful or no card found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "No card information found in the charge. Maybe payment failed or method is not a card.",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Confirm and save buyer card after Tap redirect",
         "tags": [
           "Buyers"
         ]
@@ -2368,15 +2434,26 @@
             }
           },
           "400": {
-            "description": "Invalid request. Could be invalid JSON, missing fields, invalid category, or file issues.",
+            "description": "Invalid request. Could be invalid JSON, missing fields, invalid category, file issues, or BASIC plan product limit exceeded.",
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Invalid JSON in form field OR Products must be assigned to a subcategory, not a main category OR At least one product image is required",
-                    "error": "Bad Request"
-                  }
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Invalid JSON in form field OR Products must be assigned to a subcategory, not a main category OR At least one product image is required",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Basic plan suppliers can only list up to 10 products. You already have 10.",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -2429,6 +2506,20 @@
                     "statusCode": 404,
                     "message": "Supplier not found",
                     "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Failed to generate embedding for the product (coming from FastAPI backend). **But the product is still created successfully.**",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 502,
+                    "message": "Failed to generate embedding for item",
+                    "error": "Bad Gateway"
                   }
                 }
               }
@@ -2634,6 +2725,20 @@
                     "statusCode": 404,
                     "message": "Product not found",
                     "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Failed to generate embedding for the product (coming from FastAPI backend). **But the product is still updated successfully.**",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 502,
+                    "message": "Failed to generate embedding for item",
+                    "error": "Bad Gateway"
                   }
                 }
               }
@@ -3590,6 +3695,109 @@
           }
         ],
         "summary": "Get current supplier profile",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
+    "/api/suppliers/me/stock-levels": {
+      "get": {
+        "description": "Retrieves the stock levels for all products of the authenticated supplier. Products are grouped into stock levels: VERY_LOW, LOW, AVERAGE, and GOOD. Each group contains a count of products and the list of product details including ID, name, and current stock.",
+        "operationId": "SupplierController_getStockLevels",
+        "parameters": [
+          {
+            "name": "Cookie",
+            "in": "header",
+            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stock levels retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockLevelsResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found for the given user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "token": []
+          }
+        ],
+        "summary": "Get supplier stock levels",
         "tags": [
           "Suppliers"
         ]
@@ -4772,6 +4980,30 @@
         ]
       }
     },
+    "/api/smart-search": {
+      "post": {
+        "operationId": "SmartSearchController_getSimilarItems",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmartSearchRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Smart Search"
+        ]
+      }
+    },
     "/api/services": {
       "get": {
         "description": "Fetches all services. Optional query or header <strong>lang</strong> can be provided to translate service name and description.\n                <ul>\n                    <li>Header: <strong>accept-language</strong></li>\n                    <li>Query: <strong>lang</strong></li>\n                </ul>\n                Defaults to English if not provided.",
@@ -4825,7 +5057,7 @@
         ]
       },
       "post": {
-        "description": "<strong>IMPORTANT:</strong> This endpoint requires sending the data as <u>multipart/form-data</u>.<br>\n                <strong>Note:</strong> Because this endpoint uses multipart/form-data, Swagger cannot directly show the CreateServiceDto schema here. \n                There is a separate Swagger-only endpoint (GET /create-service-dto) where you can view the full CreateServiceDto schema and example.<br><br>\n                You must send two fields:\n                <ul>\n                    <li><strong>dto</strong> (type: text) → JSON string of the service details (see example below). \n                        <br>Check the Swagger-only endpoint for full schema reference.</li>\n                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 10 files)</li>\n                </ul>\n                Only categories with <strong>usedFor=SERVICE</strong> can be assigned to services.<br><br>\n                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
+        "description": "<strong>IMPORTANT:</strong> This endpoint requires sending the data as <u>multipart/form-data</u>.<br>\n                <strong>Note:</strong> Because this endpoint uses multipart/form-data, Swagger cannot directly show the CreateServiceDto schema here. \n                There is a separate Swagger-only endpoint (GET /create-service-dto) where you can view the full CreateServiceDto schema and example.<br><br>\n                You must send two fields:\n                <ul>\n                    <li><strong>dto</strong> (type: text) → JSON string of the service details (see example below). \n                        <br>Check the Swagger-only endpoint for full schema reference.</li>\n                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 3 files)</li>\n                </ul>\n                Only categories with <strong>usedFor=SERVICE</strong> can be assigned to services.<br><br>\n                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         "operationId": "ServiceController_createService",
         "parameters": [
           {
@@ -4850,7 +5082,7 @@
                     "items": {
                       "type": "string",
                       "format": "binary",
-                      "description": "Service images. 1 to 10 images allowed, formats: PNG, JPEG, WebP, max 5MB each."
+                      "description": "Service images. 1 to 3 images allowed, formats: PNG, JPEG, WebP, max 5MB each."
                     }
                   },
                   "dto": {
@@ -4879,15 +5111,26 @@
             }
           },
           "400": {
-            "description": "Invalid request (JSON, category, or file issues)",
+            "description": "Invalid request (JSON, category, file issues, or BASIC plan limit exceeded)",
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Invalid JSON in form field OR Category not valid for services OR At least one service image is required",
-                    "error": "Bad Request"
-                  }
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Invalid JSON in form field OR Category not valid for services OR At least one service image is required",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Basic plan suppliers can only list up to 3 services. You already have 3.",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -4940,6 +5183,20 @@
                     "statusCode": 404,
                     "message": "Supplier not found",
                     "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Failed to generate embedding for the service (coming from FastAPI backend). **But the service is still created successfully.**",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 502,
+                    "message": "Failed to generate embedding for item",
+                    "error": "Bad Gateway"
                   }
                 }
               }
@@ -5145,6 +5402,20 @@
                     "statusCode": 404,
                     "message": "Service not found",
                     "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Failed to generate embedding for the service (coming from FastAPI backend). **But the service is still updated successfully.**",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 502,
+                    "message": "Failed to generate embedding for item",
+                    "error": "Bad Gateway"
                   }
                 }
               }
@@ -6884,7 +7155,7 @@
     },
     "/api/carts/me/checkout": {
       "post": {
-        "description": "Finalizes the buyer's cart by creating orders for each supplier. Marks the cart as bought and returns checkout details.",
+        "description": "Finalizes the buyer's cart by creating a Tap Payments token from the saved card, charging the card, and creating orders for each supplier. Marks the cart as bought and returns checkout details. If 3DS authentication is required, returns the redirect URL and charge ID.",
         "operationId": "CartController_checkoutCart",
         "parameters": [
           {
@@ -6897,31 +7168,30 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutCartDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Cart checked out successfully",
+            "description": "Cart checked out successfully or 3DS redirect required",
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "message": "Paid successfully",
-                    "checkoutId": "uuid-checkout-id",
-                    "buyerId": "uuid-buyer-id",
-                    "cartId": "uuid-cart-id",
-                    "totalPaid": 250,
-                    "orders": [
-                      {
-                        "id": "uuid-order-1",
-                        "supplierId": "uuid-supplier-id",
-                        "finalPrice": 150
-                      },
-                      {
-                        "id": "uuid-order-2",
-                        "supplierId": "uuid-supplier-id-2",
-                        "finalPrice": 100
-                      }
-                    ]
-                  }
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CartResponseDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CheckoutRedirectDto"
+                    }
+                  ]
                 }
               }
             }
@@ -7475,7 +7745,7 @@
     },
     "/api/demand-predictions/{productId}": {
       "get": {
-        "description": "Generates a 3-month sales forecast for a specific product using Prophet (via the AI backend). Requires the supplier to be authenticated and subscribed to a plan higher than BASIC. Returns monthly demand predictions, forecast accuracy indicators, and a stocking recommendation.",
+        "description": "Generates a 3-month sales forecast for a specific product using Prophet (via the AI backend). Requires the supplier to be authenticated and subscribed to a plan higher than BASIC. Returns monthly demand predictions, forecast accuracy indicators, and a stocking recommendation. If the product has fewer than the minimum required sales days, a Bad Request error is returned.",
         "operationId": "DemandPredictionController_getPredictionForProduct",
         "parameters": [
           {
@@ -7505,6 +7775,20 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DemandPredictionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not enough sales data to generate a forecast",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Not enough sales data to forecast. Minimum 10 sales days required, found 3.",
+                    "error": "Bad Request"
+                  }
                 }
               }
             }
@@ -7610,6 +7894,250 @@
           "Demand Predictions"
         ]
       }
+    },
+    "/api/search/users": {
+      "get": {
+        "description": "Performs fuzzy and full-text search on user names and returns matching users.",
+        "operationId": "SearchController_searchUsers",
+        "parameters": [
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Full or partial user name to search for",
+            "schema": {
+              "example": "Sarah",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of matching users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponseDTO"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Search users by name",
+        "tags": [
+          "Search"
+        ]
+      }
+    },
+    "/api/search/suppliers": {
+      "get": {
+        "description": "Returns a list of suppliers whose name or business name partially matches the query. Supports fuzzy and full-text search.",
+        "operationId": "SearchController_searchSuppliers",
+        "parameters": [
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Supplier user name (optional)",
+            "schema": {
+              "example": "Shahad",
+              "type": "string"
+            }
+          },
+          {
+            "name": "businessName",
+            "required": false,
+            "in": "query",
+            "description": "Supplier business name (optional)",
+            "schema": {
+              "example": "ShahadSaad001",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of matching suppliers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SupplierResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Search suppliers by name or business name",
+        "tags": [
+          "Search"
+        ]
+      }
+    },
+    "/api/search/products": {
+      "get": {
+        "description": "\nPerforms fuzzy search on product names and allows filtering by:\n- **Main category** or **subcategory**\n- **Minimum** and/or **maximum price**\n\nReturned products are only those that are **published** and **not deleted**.\n",
+        "operationId": "SearchController_searchProducts",
+        "parameters": [
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Product name or part of it (optional)",
+            "schema": {
+              "example": "Wooden Brush",
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Main category ID (optional)",
+            "schema": {
+              "example": "1",
+              "type": "string"
+            }
+          },
+          {
+            "name": "subcategory",
+            "required": false,
+            "in": "query",
+            "description": "Subcategory ID (optional)",
+            "schema": {
+              "example": "5",
+              "type": "string"
+            }
+          },
+          {
+            "name": "minPrice",
+            "required": false,
+            "in": "query",
+            "description": "Minimum product price (SAR, optional)",
+            "schema": {
+              "example": "10",
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxPrice",
+            "required": false,
+            "in": "query",
+            "description": "Maximum product price (SAR, optional)",
+            "schema": {
+              "example": "100",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of matching products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Search products by name, category, or price range",
+        "tags": [
+          "Search"
+        ]
+      }
+    },
+    "/api/search/services": {
+      "get": {
+        "description": "Performs fuzzy search on service names and filters by main or subcategory. Returns only published and active services.",
+        "operationId": "SearchController_searchServices",
+        "parameters": [
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Service name or part of it (optional)",
+            "schema": {
+              "example": "Makeup",
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Main category ID (optional)",
+            "schema": {
+              "example": "2",
+              "type": "string"
+            }
+          },
+          {
+            "name": "subcategory",
+            "required": false,
+            "in": "query",
+            "description": "Subcategory ID (optional)",
+            "schema": {
+              "example": "4",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of matching services",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Search services by name or category",
+        "tags": [
+          "Search"
+        ]
+      }
+    },
+    "/api/search/chats": {
+      "get": {
+        "deprecated": true,
+        "description": "This endpoint is a placeholder and not implemented yet.",
+        "operationId": "SearchController_searchChats",
+        "parameters": [
+          {
+            "name": "query",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Not implemented yet",
+        "tags": [
+          "Search"
+        ]
+      }
     }
   },
   "info": {
@@ -7638,13 +8166,19 @@
       "name": "Suppliers"
     },
     {
+      "name": "Categories"
+    },
+    {
       "name": "Products"
     },
     {
       "name": "Services"
     },
     {
-      "name": "Categories"
+      "name": "Search"
+    },
+    {
+      "name": "Smart Search"
     },
     {
       "name": "Carts"
@@ -7967,14 +8501,14 @@
             "example": "Visa"
           },
           "expMonth": {
-            "type": "number",
+            "type": "string",
             "description": "Expiration month of the card (1-12)",
             "example": 12
           },
           "expYear": {
-            "type": "number",
-            "description": "Expiration year of the card (4-digit)",
-            "example": 2028
+            "type": "string",
+            "description": "Expiration year of the card",
+            "example": 31
           }
         },
         "required": [
@@ -8007,7 +8541,7 @@
           "card"
         ]
       },
-      "CreateCardDto": {
+      "CreateCardStep1Dto": {
         "type": "object",
         "properties": {
           "tokenId": {
@@ -8015,15 +8549,28 @@
             "description": "Tap token id received from the frontend after card tokenization process (using Tap's Card SDK)",
             "example": "tok_TS57A39251831Q2B15Ro8l180"
           },
-          "cardId": {
+          "redirectUrl": {
             "type": "string",
-            "description": "Tap card id received from the frontend after card tokenization process (using Tap's Card SDK)",
-            "example": "card_TS50A42252049msSJ23MV8k170"
+            "description": "Frontend redirect URL where the user will be sent after completing the OTP/3DS flow",
+            "example": "https://yourapp.com/payment/callback or http://localhost:5137/payment/callback in testing environment"
           }
         },
         "required": [
           "tokenId",
-          "cardId"
+          "redirectUrl"
+        ]
+      },
+      "CreateCardStep2Dto": {
+        "type": "object",
+        "properties": {
+          "chargeId": {
+            "type": "string",
+            "description": "Charge id returned in Step 1 (to validate status before saving card)",
+            "example": "chg_TS50A42252049msSJ23MV8k170"
+          }
+        },
+        "required": [
+          "chargeId"
         ]
       },
       "ProductResponseDto": {
@@ -8146,6 +8693,17 @@
             "description": "Publish status",
             "example": true
           },
+          "stockStatus": {
+            "type": "string",
+            "description": "Stock level of the product",
+            "enum": [
+              "VERY LOW",
+              "LOW",
+              "AVERAGE",
+              "GOOD"
+            ],
+            "example": "LOW"
+          },
           "wishlistCount": {
             "type": "number",
             "description": "Wishlist count (only shown if supplier has PREMIUM plan)",
@@ -8199,6 +8757,7 @@
           "groupPurchasePrice",
           "groupPurchaseDuration",
           "isPublished",
+          "stockStatus",
           "avgRating",
           "ratingsCount",
           "createdAt",
@@ -8711,6 +9270,21 @@
           "plan"
         ]
       },
+      "SmartSearchRequestDto": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "ID of an existing item (product or service) to find similar alternatives",
+            "example": "ferew32-gr45-dfg5-34g5-34g53"
+          },
+          "text": {
+            "type": "string",
+            "description": "Name of the item to search by (required if no itemId is provided)",
+            "example": "Wooden Brush"
+          }
+        }
+      },
       "CreateServiceDto": {
         "type": "object",
         "properties": {
@@ -8978,6 +9552,16 @@
           "quantity"
         ]
       },
+      "CheckoutCartDto": {
+        "type": "object",
+        "properties": {
+          "chargeId": {
+            "type": "string",
+            "description": "Existing chargeId to confirm payment instead of creating a new one",
+            "example": "chg_TS00022120250302grEG302115114"
+          }
+        }
+      },
       "OrderResponseDto": {
         "type": "object",
         "properties": {
@@ -9091,6 +9675,16 @@
       "DemandPredictionResponseDto": {
         "type": "object",
         "properties": {
+          "productName": {
+            "type": "string",
+            "example": "Candle Holder",
+            "description": "Name of the product being forecasted"
+          },
+          "productFirstImageFileUrl": {
+            "type": "string",
+            "example": "https://cdn.example.com/images/abc.jpg",
+            "description": "URL of the first image of the product"
+          },
           "product_id": {
             "type": "string",
             "example": "123",
@@ -9120,6 +9714,8 @@
           }
         },
         "required": [
+          "productName",
+          "productFirstImageFileUrl",
           "product_id",
           "forecast",
           "lowAccuracy",
@@ -9172,6 +9768,31 @@
           "city",
           "supplierStatus",
           "message"
+        ]
+      },
+      "CheckoutRedirectDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message indicating 3DS authentication is required",
+            "example": "Redirect for authentication"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "description": "URL where the buyer should be redirected for 3DS authentication",
+            "example": "https://tap.company/3ds/redirect"
+          },
+          "chargeId": {
+            "type": "string",
+            "description": "Tap charge ID for this transaction",
+            "example": "chg_TK12GF345W843R"
+          }
+        },
+        "required": [
+          "message",
+          "redirectUrl",
+          "chargeId"
         ]
       }
     }

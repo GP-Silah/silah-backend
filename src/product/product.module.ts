@@ -4,9 +4,10 @@ import { ProductService } from './product.service';
 import { ProductController } from './product.controller';
 import { SupplierModule } from 'src/supplier/supplier.module';
 import { TranslationModule } from 'src/translation/translation.module';
+import { SmartSearchModule } from 'src/smart-search/smart-search.module';
 
 @Module({
-    imports: [FileModule, SupplierModule, TranslationModule],
+    imports: [FileModule, SupplierModule, TranslationModule, SmartSearchModule],
     controllers: [ProductController],
     providers: [ProductService],
     exports: [ProductService],

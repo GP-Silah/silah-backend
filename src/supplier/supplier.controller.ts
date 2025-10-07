@@ -31,6 +31,7 @@ import {
     ApiDocsGetAllSuppliers,
     ApiDocsGetFavoriteCategories,
     ApiDocsGetMySupplierData,
+    ApiDocsGetStockLevels,
     ApiDocsGetStoreBanner,
     ApiDocsGetSupplierDataById,
     ApiDocsGetSupplierPlan,
@@ -68,6 +69,17 @@ export class SupplierController {
     async updateSupplierStoreData(@Req() req: Request) {
         const userId = req.tokenData!.sub;
         return this.supplierService.getSupplierStoreData(userId);
+    }
+
+    @ApiJwtAuthGuard()
+    @ApiRolesGuard()
+    @Roles(UserRole.SUPPLIER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Get('me/stock-levels')
+    @ApiDocsGetStockLevels()
+    async getStockLevels(@Req() req: Request) {
+        const userId = req.tokenData!.sub;
+        return this.supplierService.getStockLevels(userId);
     }
 
     @ApiJwtAuthGuard()

@@ -5,13 +5,12 @@ import {
     Get,
     Param,
     Patch,
-    Post,
     Put,
     Req,
     UseGuards,
 } from '@nestjs/common';
 import { BuyerService } from './buyer.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { BuyerResponseDto } from './dtos/buyerResponse.dto';
 import { CardDetailsDto } from './dtos/cardDetails.dto';
 import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.docs';
@@ -20,14 +19,15 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/enums/userRole.enum';
 import { Request } from 'express';
-import { CreateCardDto } from './dtos/createCard.dto';
+import { CreateCardStep1Dto, CreateCardStep2Dto } from './dtos/createCard.dto';
 import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
 import {
     ApiDocsDeleteCurrentBuyerCard,
     ApiDocsGetCurrentBuyerCard,
     ApiDocsGetCurrentBuyerData,
     ApiDocsGetCurrentBuyerWishlist,
-    ApiDocsSaveOrReplaceCurrentBuyerCard,
+    ApiDocsSaveOrReplaceCurrentBuyerCardStep1,
+    ApiDocsSaveOrReplaceCurrentBuyerCardStep2,
     ApiDocsToggleWishlistItem,
 } from './buyer.docs';
 
@@ -72,12 +72,28 @@ export class BuyerController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('me/card')
-    @ApiDocsSaveOrReplaceCurrentBuyerCard()
-    async saveOrReplaceCurrentBuyerCard(
-        @Req() req: any,
-        @Body() body: CreateCardDto,
+    @ApiDocsSaveOrReplaceCurrentBuyerCardStep1()
+    async saveOrReplaceCurrentBuyerCardStep1(
+        @Req() req: Request,
+        @Body() body: CreateCardStep1Dto,
     ) {
-        return await this.buyerService.saveOrReplaceCurrentBuyerCard(
+        return await this.buyerService.saveOrReplaceCurrentBuyerCardStep1(
+            req.tokenData!.sub,
+            body,
+        );
+    }
+
+    @ApiJwtAuthGuard()
+    @ApiRolesGuard()
+    @Roles(UserRole.BUYER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Put('me/card/confirm')
+    @ApiDocsSaveOrReplaceCurrentBuyerCardStep2()
+    async saveOrReplaceCurrentBuyerCardStep2(
+        @Req() req: Request,
+        @Body() body: CreateCardStep2Dto,
+    ) {
+        return await this.buyerService.saveOrReplaceCurrentBuyerCardStep2(
             req.tokenData!.sub,
             body,
         );

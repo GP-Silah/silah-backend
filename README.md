@@ -133,7 +133,7 @@ silah_backend    | 🚀 Server running on http://localhost:3000
 
 #### 6. Verify Everything Works
 
-- **API:** `http://localhost:3000/`
+- **API:** `http://localhost:3000/api`
 - **Health Check:** `http://localhost:3000/api/health`
 - **API Documentation:** `http://localhost:3000/api/docs`
 
@@ -157,7 +157,16 @@ CREATE DATABASE silah_dev OWNER silah_user;
 CREATE DATABASE silah_test OWNER silah_user;
 GRANT ALL PRIVILEGES ON DATABASE silah_dev TO silah_user;
 GRANT ALL PRIVILEGES ON DATABASE silah_test TO silah_user;
+
+# (Optional) Enable fuzzy search with pg_trgm extension
+\c silah_dev
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+\c silah_test
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
 ```
+
+**Note:** The `pg_trgm` extension is optional. Only enable it if you want typo-tolerant search in users, products, or suppliers.
 
 #### 5. Set Up Prisma and Database
 

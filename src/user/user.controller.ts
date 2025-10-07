@@ -12,7 +12,6 @@ import {
     UploadedFile,
     BadRequestException,
     Logger,
-    Query,
     ParseFilePipe,
     MaxFileSizeValidator,
     FileTypeValidator,
@@ -29,7 +28,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
     ApiDocsGetUserByCrn,
     ApiDocsGetUserByEmail,
-    ApiDocsGetUserByName,
     ApiDocsGetCurrentUserData,
     ApiDocsUpdateCurrentUserData,
     ApiDocsGetUserProfilePicture,
@@ -59,17 +57,6 @@ export class UserController {
         @Param('crn', new ParseCrnPipe()) crn: string,
     ): Promise<UserResponseDTO> {
         return this.userService.getUserByCRN(crn);
-    }
-
-    @Get('name')
-    @ApiDocsGetUserByName()
-    async getUserByName(
-        @Query('name') name: string,
-    ): Promise<UserResponseDTO[]> {
-        if (!name || name.trim() === '') {
-            throw new BadRequestException('Name parameter is required');
-        }
-        return this.userService.getUserByName(name);
     }
 
     @ApiJwtAuthGuard()

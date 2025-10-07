@@ -5,8 +5,9 @@ import {
     ApiOkResponse,
     ApiNotFoundResponse,
     ApiUnauthorizedResponse,
-    ApiParam,
+    ApiBadRequestResponse,
     ApiBadGatewayResponse,
+    ApiParam,
 } from '@nestjs/swagger';
 import { DemandPredictionResponseDto } from './dtos/demandPredictionResponse.dto';
 
@@ -18,7 +19,8 @@ export function ApiDocsGetDemandPrediction() {
             description:
                 'Generates a 3-month sales forecast for a specific product using Prophet (via the AI backend). ' +
                 'Requires the supplier to be authenticated and subscribed to a plan higher than BASIC. ' +
-                'Returns monthly demand predictions, forecast accuracy indicators, and a stocking recommendation.',
+                'Returns monthly demand predictions, forecast accuracy indicators, and a stocking recommendation. ' +
+                'If the product has fewer than the minimum required sales days, a Bad Request error is returned.',
         }),
         ApiParam({
             name: 'productId',
@@ -58,6 +60,17 @@ export function ApiDocsGetDemandPrediction() {
                     statusCode: 401,
                     message: 'Upgrade plan to access this feature',
                     error: 'Unauthorized',
+                },
+            },
+        }),
+        ApiBadRequestResponse({
+            description: 'Not enough sales data to generate a forecast',
+            schema: {
+                example: {
+                    statusCode: 400,
+                    message:
+                        'Not enough sales data to forecast. Minimum 10 sales days required, found 3.',
+                    error: 'Bad Request',
                 },
             },
         }),

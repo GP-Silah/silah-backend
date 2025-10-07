@@ -8,12 +8,15 @@ import { CartResponseDto } from './dtos/cartResponse.dto';
 import { AddCartItemDto } from './dtos/addCartItem.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { TranslationService } from 'src/translation/translation.service';
+import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
+import { CheckoutCartDto } from './dtos/checkoutCart.dto';
 
 @Injectable()
 export class CartService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly translationService: TranslationService,
+        private readonly tapPaymentsService: TapPaymentsService,
     ) {}
 
     async toCartResponseDto(cart: any): Promise<CartResponseDto> {
@@ -361,13 +364,14 @@ export class CartService {
         return this.toCartResponseDto(newCart);
     }
 
-    async checkoutCart(userId: string) {
+    async checkoutCart(userId: string, dto: CheckoutCartDto) {
         const { cart, buyer } = await this.getActiveCartByUserId(userId);
 
-        if (cart.suppliers.length === 0)
+        if (cart.suppliers.length === 0) {
             throw new BadRequestException('Cart is empty');
+        }
 
-        // --- check all items for stock before creating orders ---
+        // --- Check stock before proceeding ---
         for (const supplierCart of cart.suppliers) {
             for (const item of supplierCart.cartItems) {
                 if (item.product.stock < item.quantity) {
@@ -378,44 +382,149 @@ export class CartService {
             }
         }
 
-        // TODO: integrate with Tap payments gateway
+        if (!buyer.card) {
+            throw new BadRequestException('No saved card found for this buyer');
+        }
 
-        const checkoutId = uuidv4();
+        // --- Path 1: Confirm existing charge if chargeId is provided ---
+        if (dto.chargeId) {
+            const charge = await this.tapPaymentsService.getCharge(
+                dto.chargeId,
+            );
 
-        const orders = await Promise.all(
-            cart.suppliers.map((supplierCart) => {
-                const finalPrice = supplierCart.supplierTotalPrice;
-                return this.prisma.order.create({
-                    data: {
-                        checkoutId,
-                        buyerId: buyer.id,
-                        cartId: cart.id,
-                        supplierId: supplierCart.supplierId,
-                        finalPrice,
-                    },
+            if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
+                const checkoutId = uuidv4();
+
+                // Create orders + reduce stock
+                const orders = await Promise.all(
+                    cart.suppliers.map(async (supplierCart) => {
+                        const order = await this.prisma.order.create({
+                            data: {
+                                checkoutId,
+                                buyerId: buyer.id,
+                                cartId: cart.id,
+                                supplierId: supplierCart.supplierId,
+                                finalPrice: supplierCart.supplierTotalPrice,
+                            },
+                        });
+
+                        // Reduce stock for each product in the supplier cart
+                        await Promise.all(
+                            supplierCart.cartItems.map((item) =>
+                                this.prisma.product.update({
+                                    where: { id: item.product.id },
+                                    data: {
+                                        stock:
+                                            item.product.stock - item.quantity,
+                                    },
+                                }),
+                            ),
+                        );
+
+                        return order;
+                    }),
+                );
+
+                await this.prisma.cart.update({
+                    where: { id: cart.id },
+                    data: { isBought: true },
                 });
-            }),
+
+                return {
+                    message: 'Paid successfully',
+                    checkoutId,
+                    buyerId: buyer.id,
+                    cartId: cart.id,
+                    totalPaid: cart.cartTotal,
+                    orders,
+                };
+            }
+
+            throw new BadRequestException(
+                `Charge not successful yet. Status: ${charge.status}`,
+            );
+        }
+
+        // --- Path 2: Create new charge if no chargeId ---
+        const token = await this.tapPaymentsService.createTokenFromSavedCard(
+            buyer.user.tapCustomerId,
+            buyer.card.tapCardId,
         );
 
-        await this.prisma.cart.update({
-            where: { id: cart.id },
-            data: { isBought: true },
-        });
+        const charge = await this.tapPaymentsService.payWithSavedCard(
+            buyer.user.tapCustomerId,
+            token.id,
+            buyer.card.tapCardId,
+            cart.cartTotal, // major units
+            'http://localhost:5137/payment/cart/callback', // TODO: real redirect URL
+        );
 
-        return {
-            message: 'Paid successfully',
-            checkoutId,
-            buyerId: buyer.id,
-            cartId: cart.id,
-            totalPaid: cart.cartTotal,
-            orders,
-        };
+        // --- Redirect for 3DS if necessary ---
+        if (charge.status === 'INITIATED' && charge.transaction?.url) {
+            return {
+                message: 'Redirect for authentication',
+                redirectUrl: charge.transaction.url,
+                chargeId: charge.id,
+            };
+        }
+
+        // --- Complete checkout if charge captured/authorized ---
+        if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
+            const checkoutId = uuidv4();
+
+            const orders = await Promise.all(
+                cart.suppliers.map(async (supplierCart) => {
+                    const order = await this.prisma.order.create({
+                        data: {
+                            checkoutId,
+                            buyerId: buyer.id,
+                            cartId: cart.id,
+                            supplierId: supplierCart.supplierId,
+                            finalPrice: supplierCart.supplierTotalPrice,
+                        },
+                    });
+
+                    // Reduce stock for each product
+                    await Promise.all(
+                        supplierCart.cartItems.map((item) =>
+                            this.prisma.product.update({
+                                where: { id: item.product.id },
+                                data: {
+                                    stock: item.product.stock - item.quantity,
+                                },
+                            }),
+                        ),
+                    );
+
+                    return order;
+                }),
+            );
+
+            await this.prisma.cart.update({
+                where: { id: cart.id },
+                data: { isBought: true },
+            });
+
+            return {
+                message: 'Paid successfully',
+                checkoutId,
+                buyerId: buyer.id,
+                cartId: cart.id,
+                totalPaid: cart.cartTotal,
+                orders,
+            };
+        }
+
+        throw new BadRequestException(
+            `Payment failed. Charge status: ${charge.status}`,
+        );
     }
 
     /** --- UTILITY: Get active cart for a buyer --- */
     private async getActiveCartByUserId(userId: string) {
         const buyer = await this.prisma.buyer.findUnique({
             where: { userId },
+            include: { user: true, card: true },
         });
         if (!buyer) throw new NotFoundException('Buyer not found');
 

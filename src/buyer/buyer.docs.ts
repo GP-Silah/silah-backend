@@ -10,7 +10,7 @@ import {
 } from '@nestjs/swagger';
 import { BuyerResponseDto } from './dtos/buyerResponse.dto';
 import { CardDetailsDto } from './dtos/cardDetails.dto';
-import { CreateCardDto } from './dtos/createCard.dto';
+import { CreateCardStep1Dto, CreateCardStep2Dto } from './dtos/createCard.dto';
 import { WishlistItemResponseDto } from './dtos/wishlistItemResponse.dto';
 import { ProductResponseDto } from 'src/product/dtos/productResponse.dto';
 
@@ -63,18 +63,79 @@ export function ApiDocsGetCurrentBuyerCard() {
     );
 }
 
-export function ApiDocsSaveOrReplaceCurrentBuyerCard() {
+export function ApiDocsSaveOrReplaceCurrentBuyerCardStep1() {
     return applyDecorators(
         ApiOperation({
-            summary: 'Save or replace current buyer card',
+            summary: 'Initiate card save or replacement for buyer',
             description:
-                "Creates or replaces the authenticated buyer's card using Tap tokenization.<br>" +
-                'If a card already exists, it will be deleted from Tap and replaced with the new one.',
+                `**Step 1 of the two-step flow to save a buyer card using Tap:**<br><br>` +
+                `This endpoint creates a temporary charge and redirects the user to complete 3D Secure verification (OTP). ` +
+                `If the buyer already has a card, it will be deleted from Tap and replaced with the new one. ` +
+                `The response includes a \`chargeId\` and a \`transactionUrl\` which must be stored by the frontend to complete Step 2.<br><br>` +
+                `⚠️ **Important:** When testing, always use Tap's [test card values](https://developers.tap.company/reference/testing-cards). ` +
+                `Live cards should only be used in production.<br><br>` +
+                `Step 1 must be followed by Step 2 (\`PUT /api/buyers/me/card/confirm\`) to verify the charge and save the card information in the database.`,
         }),
         ApiBearerAuth(),
         ApiBody({
-            description: 'Card details provided from Tap tokenization',
-            type: CreateCardDto,
+            description:
+                'Card details provided from Tap tokenization (tokenId and redirect URL)',
+            type: CreateCardStep1Dto,
+        }),
+        ApiOkResponse({
+            description:
+                'Charge created successfully, redirect user to complete 3D Secure',
+            schema: {
+                example: {
+                    transactionUrl: 'https://secure.tap.company/checkout/...',
+                    chargeId: 'chg_TS05A0820250903Ma230110749',
+                },
+            },
+        }),
+        ApiBadRequestResponse({
+            description: 'Invalid Tap token or input data',
+            schema: {
+                example: {
+                    statusCode: 400,
+                    message: 'Invalid Tap token',
+                    error: 'Bad Request',
+                },
+            },
+        }),
+        ApiNotFoundResponse({
+            description: 'User not found',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'User not found',
+                    error: 'Not Found',
+                },
+            },
+        }),
+    );
+}
+
+export function ApiDocsSaveOrReplaceCurrentBuyerCardStep2() {
+    return applyDecorators(
+        ApiOperation({
+            summary: 'Confirm and save buyer card after Tap redirect',
+            description:
+                `**Two-step flow for saving a buyer card using Tap:**<br><br>` +
+                `**Step 1:** Call the \`PUT /api/buyers/me/card\` endpoint with a Tap token and redirect URL. ` +
+                `This creates a temporary charge and redirects the user to complete 3D Secure verification (OTP). ` +
+                `The response contains a \`chargeId\` which must be kept for step 2.<br><br>` +
+                `**Step 2:** After the user completes the 3D Secure step, Tap redirects back to your frontend \`redirect_url\` with \`tap_id\` (chargeId). ` +
+                `Your frontend then calls this endpoint (\`PUT /api/buyers/me/card/confirm\`) with that \`chargeId\`. ` +
+                `The backend will verify the charge status and extract the saved card details directly from the charge object. ` +
+                `The card information is then stored in the database for future charges.<br><br>` +
+                `⚠️ **Important:** When testing, make sure to use Tap's [test card values](https://developers.tap.company/reference/testing-cards) for generating tokens and performing charges. ` +
+                `Live cards should only be used in production.<br><br>` +
+                `These two endpoints are connected: step 1 initiates the card save and step 2 completes it.`,
+        }),
+        ApiBearerAuth(),
+        ApiBody({
+            description: 'Charge ID returned from Tap after 3D Secure redirect',
+            type: CreateCardStep2Dto,
         }),
         ApiOkResponse({
             description: 'Card saved successfully',
@@ -83,22 +144,23 @@ export function ApiDocsSaveOrReplaceCurrentBuyerCard() {
                     message: 'Card saved successfully',
                     card: {
                         id: 'f1a2b3c4-d5e6-7890-ab12-34567890cdef',
-                        tapCardId: 'card_abc123xyz',
-                        cardHolderName: 'Norah Alqahtani',
-                        last4: '4242',
-                        brand: 'Visa',
-                        expMonth: 12,
-                        expYear: 2028,
+                        tapCardId: 'card_TS35A62593XRcF16R9F720',
+                        cardHolderName: 'TESTER FIVE',
+                        last4: '1019',
+                        brand: 'VISA',
+                        expMonth: 1,
+                        expYear: 2039,
                     },
                 },
             },
         }),
         ApiBadRequestResponse({
-            description: 'Invalid input data',
+            description: 'Charge not successful or no card found',
             schema: {
                 example: {
                     statusCode: 400,
-                    message: 'Invalid Tap token',
+                    message:
+                        'No card information found in the charge. Maybe payment failed or method is not a card.',
                     error: 'Bad Request',
                 },
             },

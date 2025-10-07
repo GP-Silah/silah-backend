@@ -7,9 +7,11 @@ import {
     ApiNotFoundResponse,
     ApiBody,
     ApiParam,
+    getSchemaPath,
 } from '@nestjs/swagger';
 import { CartResponseDto } from './dtos/cartResponse.dto';
 import { AddCartItemDto } from './dtos/addCartItem.dto';
+import { CheckoutRedirectDto } from './dtos/checkoutRedirect.dto';
 
 export function ApiDocsGetBuyerActiveCart() {
     return applyDecorators(
@@ -288,30 +290,17 @@ export function ApiDocsCheckoutCart() {
         ApiOperation({
             summary: 'Checkout cart',
             description:
-                "Finalizes the buyer's cart by creating orders for each supplier. Marks the cart as bought and returns checkout details.",
+                "Finalizes the buyer's cart by creating a Tap Payments token from the saved card, charging the card, and creating orders for each supplier. Marks the cart as bought and returns checkout details. " +
+                'If 3DS authentication is required, returns the redirect URL and charge ID.',
         }),
         ApiOkResponse({
-            description: 'Cart checked out successfully',
+            description:
+                'Cart checked out successfully or 3DS redirect required',
             schema: {
-                example: {
-                    message: 'Paid successfully',
-                    checkoutId: 'uuid-checkout-id',
-                    buyerId: 'uuid-buyer-id',
-                    cartId: 'uuid-cart-id',
-                    totalPaid: 250,
-                    orders: [
-                        {
-                            id: 'uuid-order-1',
-                            supplierId: 'uuid-supplier-id',
-                            finalPrice: 150,
-                        },
-                        {
-                            id: 'uuid-order-2',
-                            supplierId: 'uuid-supplier-id-2',
-                            finalPrice: 100,
-                        },
-                    ],
-                },
+                oneOf: [
+                    { $ref: getSchemaPath(CartResponseDto) }, // Already captured/authorized path
+                    { $ref: getSchemaPath(CheckoutRedirectDto) }, // 3DS redirect path
+                ],
             },
         }),
         ApiBadRequestResponse({

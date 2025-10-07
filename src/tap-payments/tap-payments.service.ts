@@ -1,3 +1,4 @@
+import { tap } from 'rxjs';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
@@ -82,10 +83,8 @@ export class TapPaymentsService {
      */
     async createCharge(
         tokenId: string,
-        customerData: {
-            first_name: string;
-            email: string;
-        },
+        tapCustomerId: string,
+        redirectUrl: string,
         amount: number = 1,
         currency: string = 'SAR',
     ) {
@@ -105,11 +104,11 @@ export class TapPaymentsService {
                     //     transaction: `txn_${Date.now()}`,
                     //     order: `ord_${Date.now()}`,
                     // },
-                    customer: customerData,
+                    customer: { id: tapCustomerId },
                     merchant: { id: process.env.TAP_MERCHANT_ID },
                     source: { id: tokenId },
                     // post: { url: 'http://your_website.com/post_url' },
-                    redirect: { url: 'https://example.com/no-redirect' }, // redirect URL required by Tap, but we made it dummy because we don't want actual redirection
+                    redirect: { url: redirectUrl }, // redirect URL required by Tap to redirect after 3DS (OTP step)
                 },
                 {
                     headers: {
@@ -123,6 +122,36 @@ export class TapPaymentsService {
         } catch (err: any) {
             console.error(err.response?.data || err.message);
             throw new Error('Failed to create charge in Tap');
+        }
+    }
+
+    /**
+     * Retrieves a charge from Tap Payments by chargeId.
+     *
+     * @param {string} chargeId - The Tap charge ID (chg_xxx).
+     * @returns {Promise<any>} The charge object from Tap.
+     *
+     * @throws {Error} Throws an error if the request fails.
+     *
+     * @example
+     * const charge = await tapService.getCharge('chg_TS50A42252049msSJ23MV8k170');
+     * console.log(charge.status); // "CAPTURED" | "AUTHORIZED" | "FAILED"
+     */
+    async getCharge(chargeId: string) {
+        try {
+            const response = await axios.get(
+                `https://api.tap.company/v2/charges/${chargeId}`,
+                {
+                    headers: {
+                        accept: 'application/json',
+                        Authorization: `Bearer ${process.env.TAP_SECRET_KEY}`,
+                    },
+                },
+            );
+            return response.data;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error(`Failed to fetch charge ${chargeId} from Tap`);
         }
     }
 
@@ -171,6 +200,96 @@ export class TapPaymentsService {
         } catch (err: any) {
             console.error(err.response?.data || err.message);
             throw new Error('Failed to delete card from Tap');
+        }
+    }
+
+    /**
+     * Creates a payment token from a saved card in Tap Payments.
+     *
+     * @param {string} tapCustomerId - Tap customer ID (cus_xxx)
+     * @param {string} tapCardId - Tap saved card ID (card_xxx)
+     * @param {string} [clientIp='127.0.0.1'] - Client IP address (for fraud checks)
+     *
+     * @returns {Promise<Object>} Tap token object
+     */
+    async createTokenFromSavedCard(
+        tapCustomerId: string,
+        tapCardId: string,
+        clientIp: string = '127.0.0.1',
+    ) {
+        try {
+            const response = await axios.post(
+                'https://api.tap.company/v2/tokens/',
+                {
+                    saved_card: {
+                        card_id: tapCardId,
+                        customer_id: tapCustomerId,
+                    },
+                    client_ip: clientIp,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${process.env.TAP_SECRET_KEY}`,
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                },
+            );
+
+            return response.data;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error('Failed to create token from saved card');
+        }
+    }
+
+    /**
+     * Charges a saved card in Tap Payments.
+     *
+     * @param {string} tapCustomerId - Tap customer ID (cus_xxx)
+     * @param {string} tapCardId - Tap saved card ID (card_xxx)
+     * @param {number} amount - Amount in minor units (e.g., 100 = 1.00 SAR)
+     * @param {string} [currency='SAR'] - Currency code
+     * @param {string} redirectUrl - Redirect URL after 3DS authentication
+     *
+     * @returns {Promise<Object>} Tap charge object
+     */
+    async payWithSavedCard(
+        tapCustomerId: string,
+        tokenId: string, // int here? tbh better
+        tapCardId: string,
+        amount: number,
+        redirectUrl: string,
+        currency: string = 'SAR',
+    ) {
+        try {
+            const response = await axios.post(
+                'https://api.tap.company/v2/charges/',
+                {
+                    amount, // must already be in minor units
+                    currency,
+                    customer_initiated: true,
+                    threeDSecure: true,
+                    description: 'Cart payment',
+                    customer: { id: tapCustomerId },
+                    source: {
+                        id: tokenId,
+                    },
+                    redirect: { url: redirectUrl }, // REQUIRED for 3DS
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${process.env.TAP_SECRET_KEY}`,
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                },
+            );
+
+            return response.data;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error('Failed to charge saved card');
         }
     }
 }
