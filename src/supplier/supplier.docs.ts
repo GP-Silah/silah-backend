@@ -15,6 +15,7 @@ import { StoreStatus, SupplierPlan, SupplierStatus } from '@prisma/client';
 import { UpdateSupplierDto } from './dtos/updateSupplier.dto';
 import { StorefrontResponseDto } from './dtos/storefrontResponse.dto';
 import { InactiveSupplierResponseDto } from './dtos/inactiveSupplierResponse.dto';
+import { StockLevelsResponseDto } from './dtos/stockLevelsResponse.dto';
 
 export function ApiDocsGetMySupplierData() {
     return applyDecorators(
@@ -72,6 +73,36 @@ export function ApiDocsGetMyStoreData() {
                 example: {
                     statusCode: 404,
                     message: 'Supplier with id 9932-we432 not found',
+                    error: 'Not Found',
+                },
+            },
+        }),
+    );
+}
+
+export function ApiDocsGetStockLevels() {
+    return applyDecorators(
+        ApiBearerAuth(),
+        ApiOperation({
+            summary: 'Get supplier stock levels',
+            description:
+                'Retrieves the stock levels for all products of the authenticated supplier. ' +
+                'Products are grouped into stock levels: VERY_LOW, LOW, AVERAGE, and GOOD. ' +
+                'Each group contains a count of products and the list of product details including ID, name, and current stock.',
+        }),
+        ApiResponse({
+            status: 200,
+            description: 'Stock levels retrieved successfully.',
+            schema: {
+                $ref: getSchemaPath(StockLevelsResponseDto),
+            },
+        }),
+        ApiNotFoundResponse({
+            description: 'Supplier not found for the given user.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Supplier not found',
                     error: 'Not Found',
                 },
             },

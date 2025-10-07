@@ -30,6 +30,7 @@ import {
     ApiDocsRemoveSupplierFromCart,
     ApiDocsUpdateItemQuantity,
 } from './cart.docs';
+import { CheckoutCartDto } from './dtos/checkoutCart.dto';
 
 @ApiTags('Carts')
 @Controller('carts')
@@ -122,8 +123,8 @@ export class CartController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('me/checkout')
     @ApiDocsCheckoutCart()
-    async checkoutCart(@Req() req: Request) {
+    async checkoutCart(@Req() req: Request, @Body() dto: CheckoutCartDto) {
         const userId = req.tokenData!.sub;
-        return this.cartService.checkoutCart(userId);
+        return this.cartService.checkoutCart(userId, dto);
     }
 }

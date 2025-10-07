@@ -9,6 +9,7 @@ import {
     ApiBadRequestResponse,
     ApiQuery,
     ApiHeader,
+    ApiBadGatewayResponse,
 } from '@nestjs/swagger';
 import { ProductResponseDto } from './dtos/productResponse.dto';
 import { CreateProductDto } from './dtos/createProduct.dto';
@@ -88,14 +89,26 @@ export function ApiDocsCreateProduct() {
         }),
         ApiBadRequestResponse({
             description:
-                'Invalid request. Could be invalid JSON, missing fields, invalid category, or file issues.',
+                'Invalid request. Could be invalid JSON, missing fields, invalid category, file issues, or BASIC plan product limit exceeded.',
             schema: {
-                example: {
-                    statusCode: 400,
-                    message:
-                        'Invalid JSON in form field OR Products must be assigned to a subcategory, not a main category OR At least one product image is required',
-                    error: 'Bad Request',
-                },
+                oneOf: [
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Invalid JSON in form field OR Products must be assigned to a subcategory, not a main category OR At least one product image is required',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Basic plan suppliers can only list up to 10 products. You already have 10.',
+                            error: 'Bad Request',
+                        },
+                    },
+                ],
             },
         }),
         ApiNotFoundResponse({
@@ -105,6 +118,17 @@ export function ApiDocsCreateProduct() {
                     statusCode: 404,
                     message: 'Supplier not found',
                     error: 'Not Found',
+                },
+            },
+        }),
+        ApiBadGatewayResponse({
+            description:
+                'Failed to generate embedding for the product (coming from FastAPI backend). **But the product is still created successfully.**',
+            schema: {
+                example: {
+                    statusCode: 502,
+                    message: 'Failed to generate embedding for item',
+                    error: 'Bad Gateway',
                 },
             },
         }),
@@ -289,6 +313,17 @@ export function ApiDocsUpdateProduct() {
                     statusCode: 404,
                     message: 'Product not found',
                     error: 'Not Found',
+                },
+            },
+        }),
+        ApiBadGatewayResponse({
+            description:
+                'Failed to generate embedding for the product (coming from FastAPI backend). **But the product is still updated successfully.**',
+            schema: {
+                example: {
+                    statusCode: 502,
+                    message: 'Failed to generate embedding for item',
+                    error: 'Bad Gateway',
                 },
             },
         }),
