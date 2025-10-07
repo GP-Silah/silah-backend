@@ -51,35 +51,42 @@ export class ServiceController {
     @Get()
     @ApiDocsGetAllServices()
     async getAllServices(
+        @Req() req: Request,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
+        const userId = req.tokenData?.sub;
         const finalLang = lang || langHeader || 'en';
-        return this.serviceService.getAllServices(finalLang);
+        return this.serviceService.getAllServices(finalLang, userId);
     }
 
     @Get(':serviceId')
     @ApiDocsGetServiceById()
     async getServiceById(
         @Param('serviceId') serviceId: string,
+        @Req() req: Request,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
+        const userId = req.tokenData?.sub;
         const finalLang = lang || langHeader || 'en';
-        return this.serviceService.getServiceById(serviceId, finalLang);
+        return this.serviceService.getServiceById(serviceId, finalLang, userId);
     }
 
     @Get('supplier/:supplierId')
     @ApiDocsGetAllSupplierServices()
     async getAllSupplierServices(
         @Param('souplierId') supplierId: string,
+        @Req() req: Request,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
+        const userId = req.tokenData?.sub;
         const finalLang = lang || langHeader || 'en';
         return this.serviceService.getAllSupplierServices(
             supplierId,
             finalLang,
+            userId
         );
     }
 

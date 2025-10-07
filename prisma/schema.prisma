@@ -16,22 +16,23 @@ datasource db {
 
 // ============  👤 USER ================
 model User {
-  id              String   @id @default(uuid())
-  email           String   @unique
-  crn             String   @unique
-  password        String
-  name            String
-  role            UserRole @default(BUYER)
-  businessName    String
-  city            String
-  nid             String   @unique
-  agreedToTerms   Boolean  @default(true)
-  isEmailVerified Boolean  @default(false)
-  pfpFileName     String?
-  isPfpDefault    Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  tapCustomerId   String   @unique
+  id                String    @id @default(uuid())
+  tapCustomerId     String    @unique
+  email             String    @unique
+  crn               String    @unique
+  password          String
+  name              String
+  role              UserRole  @default(BUYER)
+  businessName      String
+  city              String
+  nid               String    @unique
+  agreedToTerms     Boolean   @default(true)
+  isEmailVerified   Boolean   @default(false)
+  pfpFileName       String?
+  isPfpDefault      Boolean   @default(true)
+  preferredLanguage Languages @default(EN)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   categories UserCategory[]
   supplier   Supplier?
@@ -55,11 +56,15 @@ model Supplier {
   ratingsCount        Int            @default(0)
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
+  isDeleted           Boolean        @default(false)
+  deletedAt           DateTime?
 
   categories    SupplierFavoriteCategory[]
   subscriptions SupplierSubscription[]
   products      Product[]
   services      Service[]
+  cartGroups    CartBySupplier[] // buyer's cart is grouped based on suppliers
+  ordersRecived Order[]
 }
 
 // ============ 🛂 SUBSCRIPTIONS ==============
@@ -81,6 +86,10 @@ model Buyer {
   card      Card?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  carts    Cart[]
+  orders   Order[]
+  wishlist Wishlist[]
 }
 
 // ============  💳 CARD ===============
@@ -92,8 +101,8 @@ model Card {
   cardHolderName String
   last4          String
   brand          String
-  expMonth       Int
-  expYear        Int
+  expMonth       String
+  expYear        String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
@@ -165,6 +174,8 @@ model Product {
   deletedAt             DateTime?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
+
+  cartItems CartItem[]
 }
 
 // ============ ✋ SERVICES ===============
@@ -190,6 +201,91 @@ model Service {
   updatedAt           DateTime            @updatedAt
 }
 
+// =========== 🔖 ITEM EMBEDDING ==========
+model ItemEmbedding {
+  id        String   @id @default(uuid())
+  itemId    String
+  itemType  ItemType
+  embedding Float[] // array of numbers representing the vector
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([itemId, itemType]) // each item has exactly one embedding
+}
+
+// ============ 🛒 CART =================
+model Cart {
+  id            String    @id @default(uuid())
+  buyerId       String
+  buyer         Buyer     @relation(fields: [buyerId], references: [id])
+  productsTotal Float
+  deliveryFees  Float
+  cartTotal     Float
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  isBought      Boolean   @default(false)
+  isDeleted     Boolean   @default(false)
+  deletedAt     DateTime?
+
+  orders    Order[]
+  // A cart can have many suppliers inside it
+  suppliers CartBySupplier[]
+}
+
+// ============ 🛒 CART BY SUPPLIER =============
+model CartBySupplier {
+  id                 String   @id @default(uuid())
+  cartId             String
+  cart               Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  supplierId         String
+  supplier           Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  deliveryFee        Float // of the supplier
+  subTotal           Float // sum of this supplier’s items (without delivery fee)
+  supplierTotalPrice Float // subTotal + deliveryFee
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  cartItems CartItem[]
+}
+
+// ============ 🛒 CART ITEM =============
+model CartItem {
+  id               Int            @id @default(autoincrement())
+  cartBySupplierId String
+  cartBySupplier   CartBySupplier @relation(fields: [cartBySupplierId], references: [id], onDelete: Cascade)
+  productId        String
+  product          Product        @relation(fields: [productId], references: [id])
+  quantity         Int
+  itemTotalPrice   Float // product.price * quantity at time of adding
+}
+
+// =========== 📦️ ORDER ================
+model Order {
+  id         String      @id @default(uuid())
+  checkoutId String // same across all orders from the same checkout
+  buyerId    String?
+  buyer      Buyer?      @relation(fields: [buyerId], references: [id], onDelete: SetNull)
+  cartId     String
+  cart       Cart        @relation(fields: [cartId], references: [id])
+  supplierId String
+  supplier   Supplier    @relation(fields: [supplierId], references: [id])
+  finalPrice Float
+  status     OrderStatus @default(PENDING)
+  createdAt  DateTime    @default(now())
+}
+
+// ============ ❤️ WISHLIST ==============
+model Wishlist {
+  id        String   @id @default(uuid())
+  buyerId   String
+  buyer     Buyer    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  itemId    String
+  itemType  ItemType
+  createdAt DateTime @default(now())
+
+  @@unique([buyerId, itemId, itemType])
+}
+
 // ============  ⚔️ ENUMS ================
 
 enum UserRole {
@@ -202,6 +298,11 @@ enum TokenType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
   TOKEN
+}
+
+enum Languages {
+  AR
+  EN
 }
 
 enum SupplierPlan {
@@ -232,8 +333,15 @@ enum GroupPurchaseDeadline {
 
 enum ServiceAvailability {
   TWENTY_FOUR_SEVEN
-  EVERYDAY 
+  EVERYDAY
   WEEKDAYS
   WEEKENDS
   APPOINTMENT
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  COMPLETED
 }

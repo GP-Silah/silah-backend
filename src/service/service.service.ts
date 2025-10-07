@@ -3,7 +3,14 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { Category, Service, Supplier, User } from '@prisma/client';
+import {
+    Category,
+    ItemType,
+    Service,
+    Supplier,
+    SupplierPlan,
+    User,
+} from '@prisma/client';
 import { FileService } from 'src/file/file.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SupplierService } from 'src/supplier/supplier.service';
@@ -11,6 +18,7 @@ import { TranslationService } from 'src/translation/translation.service';
 import { ServiceResponseDto } from './dtos/serviceResponse.dto';
 import { CreateServiceDto } from './dtos/createService.dto';
 import { UpdateServiceDto } from './dtos/updateService.dto';
+import { SmartSearchService } from 'src/smart-search/smart-search.service';
 
 @Injectable()
 export class ServiceService {
@@ -19,6 +27,7 @@ export class ServiceService {
         private readonly fileService: FileService,
         private readonly supplierService: SupplierService,
         private readonly translationService: TranslationService,
+        private readonly smartSearchService: SmartSearchService,
     ) {}
 
     async toServiceResponseDto(
@@ -58,8 +67,13 @@ export class ServiceService {
             );
         }
 
+        let wishlistCount: number | undefined = undefined;
+        if (service.supplier?.plan === 'PREMIUM') {
+            wishlistCount = service.wishlistCount;
+        }
+
         return {
-            id: service.id,
+            serviceId: service.id,
             supplierId: service.supplierId ?? null,
             supplier: supplierDto,
             name,
@@ -74,7 +88,7 @@ export class ServiceService {
             imagesFilesUrls,
             serviceAvailability: service.serviceAvailability,
             isPublished: service.isPublished,
-            wishlistCount: service.wishlistCount,
+            ...(wishlistCount !== undefined ? { wishlistCount } : {}),
             avgRating: service.avgRating,
             ratingsCount: service.ratingsCount,
             createdAt: service.createdAt,
@@ -87,14 +101,44 @@ export class ServiceService {
 
     async getAllServices(
         targetLang: 'ar' | 'en',
+        userId?: string,
     ): Promise<ServiceResponseDto[]> {
+        let isPublishedFilter: boolean | undefined = true; // default for buyers
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { supplier: true, buyer: true },
+            });
+            if (user?.supplier) {
+                isPublishedFilter = undefined; // supplier sees all products
+            }
+        }
+
         const services = await this.prisma.service.findMany({
-            where: { isDeleted: false },
+            where: {
+                isDeleted: false,
+                ...(isPublishedFilter !== undefined
+                    ? { isPublished: isPublishedFilter }
+                    : {}),
+            },
             include: {
                 supplier: { include: { user: true } },
                 category: true,
             },
         });
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang = user.preferredLanguage.toLocaleLowerCase();
+                if (lang === 'ar' || lang === 'en') {
+                    targetLang = lang;
+                }
+            }
+        }
 
         return await Promise.all(
             services.map((service) =>
@@ -106,6 +150,7 @@ export class ServiceService {
     async getServiceById(
         serviceId: string,
         targetLang: 'ar' | 'en',
+        userId?: string,
     ): Promise<ServiceResponseDto> {
         const service = await this.prisma.service.findUnique({
             where: { id: serviceId },
@@ -119,20 +164,65 @@ export class ServiceService {
                 `Service with id ${serviceId} not found`,
             );
         }
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang = user.preferredLanguage.toLocaleLowerCase();
+                if (lang === 'ar' || lang === 'en') {
+                    targetLang = lang;
+                }
+            }
+        }
+
         return this.toServiceResponseDto(service, targetLang);
     }
 
     async getAllSupplierServices(
         supplierId: string,
         targetLang: 'ar' | 'en',
+        userId?: string,
     ): Promise<ServiceResponseDto[]> {
+        let isPublishedFilter: boolean | undefined = true; // default for buyers
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { supplier: true, buyer: true },
+            });
+            if (user?.supplier) {
+                isPublishedFilter = undefined; // supplier sees all products
+            }
+        }
+
         const services = await this.prisma.service.findMany({
-            where: { supplierId, isDeleted: false },
+            where: {
+                supplierId,
+                isDeleted: false,
+                ...(isPublishedFilter !== undefined
+                    ? { isPublished: isPublishedFilter }
+                    : {}),
+            },
             include: {
                 supplier: { include: { user: true } },
                 category: true,
             },
         });
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang = user.preferredLanguage.toLocaleLowerCase();
+                if (lang === 'ar' || lang === 'en') {
+                    targetLang = lang;
+                }
+            }
+        }
+
         return Promise.all(
             services.map((s) => this.toServiceResponseDto(s, targetLang)),
         );
@@ -151,15 +241,33 @@ export class ServiceService {
             throw new NotFoundException('Supplier not found');
         }
 
+        // Enforce service limit for BASIC plan
+        if (supplier.plan === SupplierPlan.BASIC) {
+            // Count existing active services
+            const activeServicesCount = await this.prisma.service.count({
+                where: {
+                    supplierId: supplier.id,
+                    isDeleted: false,
+                },
+            });
+
+            const MAX_BASIC_SERVICES = 3;
+            if (activeServicesCount >= MAX_BASIC_SERVICES) {
+                throw new BadRequestException(
+                    `Basic plan suppliers can only list up to ${MAX_BASIC_SERVICES} services. You already have ${activeServicesCount}.`,
+                );
+            }
+        }
+
         // 2. Validate image count (1–10 for services)
         if (!files || files.length === 0) {
             throw new BadRequestException(
                 'At least one service image is required',
             );
         }
-        if (files.length > 10) {
+        if (files.length > 3) {
             throw new BadRequestException(
-                'A maximum of 10 service images is allowed',
+                'A maximum of 3 service images is allowed',
             );
         }
 
@@ -207,6 +315,15 @@ export class ServiceService {
             },
         });
 
+        // 7. Generate embedding
+        await this.smartSearchService.generateAndStoreEmbedding({
+            itemId: fullService!.id,
+            itemType: ItemType.SERVICE,
+            name: fullService!.name,
+            description: fullService!.description,
+            categoryName: fullService!.category?.name ?? '',
+        });
+
         return this.toServiceResponseDto(fullService!);
     }
 
@@ -250,6 +367,26 @@ export class ServiceService {
                 category: true,
             },
         });
+
+        // 4. Duplicate embedding
+        const originalEmbedding = await this.prisma.itemEmbedding.findUnique({
+            where: {
+                itemId_itemType: {
+                    itemId: originalService.id,
+                    itemType: ItemType.SERVICE,
+                },
+            },
+        });
+
+        if (originalEmbedding) {
+            await this.prisma.itemEmbedding.create({
+                data: {
+                    itemId: fullDuplicatedService!.id,
+                    itemType: ItemType.SERVICE,
+                    embedding: originalEmbedding.embedding,
+                },
+            });
+        }
 
         return this.toServiceResponseDto(fullDuplicatedService!);
     }
@@ -309,6 +446,15 @@ export class ServiceService {
                 supplier: { include: { user: true } },
                 category: true,
             },
+        });
+
+        // 6. Update embedding
+        await this.smartSearchService.generateAndStoreEmbedding({
+            itemId: fullService!.id,
+            itemType: ItemType.SERVICE,
+            name: fullService!.name,
+            description: fullService!.description,
+            categoryName: fullService!.category?.name ?? '',
         });
 
         return this.toServiceResponseDto(fullService!);

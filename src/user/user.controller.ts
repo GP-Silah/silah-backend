@@ -12,7 +12,6 @@ import {
     UploadedFile,
     BadRequestException,
     Logger,
-    Query,
     ParseFilePipe,
     MaxFileSizeValidator,
     FileTypeValidator,
@@ -29,13 +28,13 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
     ApiDocsGetUserByCrn,
     ApiDocsGetUserByEmail,
-    ApiDocsGetUserByName,
     ApiDocsGetCurrentUserData,
     ApiDocsUpdateCurrentUserData,
     ApiDocsGetUserProfilePicture,
     ApiDocsGetUsersProfilePicturesUrls,
     ApiDocsDeleteProfilePicture,
     ApiDocsUploadProfilePicture,
+    ApiDocsSwitchPreferredLanguage,
 } from './user.docs';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -58,17 +57,6 @@ export class UserController {
         @Param('crn', new ParseCrnPipe()) crn: string,
     ): Promise<UserResponseDTO> {
         return this.userService.getUserByCRN(crn);
-    }
-
-    @Get('name')
-    @ApiDocsGetUserByName()
-    async getUserByName(
-        @Query('name') name: string,
-    ): Promise<UserResponseDTO[]> {
-        if (!name || name.trim() === '') {
-            throw new BadRequestException('Name parameter is required');
-        }
-        return this.userService.getUserByName(name);
     }
 
     @ApiJwtAuthGuard()
@@ -123,6 +111,14 @@ export class UserController {
     @ApiDocsDeleteProfilePicture()
     async deleteProfilePicture(@Req() req: Request) {
         return this.userService.deleteProfilePicture(req.tokenData!.email);
+    }
+
+    @ApiJwtAuthGuard()
+    @UseGuards(JwtAuthGuard)
+    @Patch('me/preferred-language')
+    @ApiDocsSwitchPreferredLanguage()
+    async switchPreferredLanguage(@Req() req: Request) {
+        return this.userService.switchPreferredLanguage(req.tokenData!.email);
     }
 
     @Get(':id/profile-picture')

@@ -9,6 +9,7 @@ import {
     ApiBadRequestResponse,
     ApiQuery,
     ApiHeader,
+    ApiBadGatewayResponse,
 } from '@nestjs/swagger';
 import { ProductResponseDto } from './dtos/productResponse.dto';
 import { CreateProductDto } from './dtos/createProduct.dto';
@@ -28,7 +29,9 @@ export function ApiDocsCreateProduct() {
                     <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 3 files)</li>
                 </ul>
                 Make sure the JSON string is properly formatted.<br><br>
-                Only subcategories can be assigned to products. Main categories are invalid.`,
+                Only subcategories can be assigned to products. Main categories are invalid.<br><br>
+                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>
+                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.`,
         }),
         ApiConsumes('multipart/form-data'),
         ApiBody({
@@ -86,14 +89,26 @@ export function ApiDocsCreateProduct() {
         }),
         ApiBadRequestResponse({
             description:
-                'Invalid request. Could be invalid JSON, missing fields, invalid category, or file issues.',
+                'Invalid request. Could be invalid JSON, missing fields, invalid category, file issues, or BASIC plan product limit exceeded.',
             schema: {
-                example: {
-                    statusCode: 400,
-                    message:
-                        'Invalid JSON in form field OR Products must be assigned to a subcategory, not a main category OR At least one product image is required',
-                    error: 'Bad Request',
-                },
+                oneOf: [
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Invalid JSON in form field OR Products must be assigned to a subcategory, not a main category OR At least one product image is required',
+                            error: 'Bad Request',
+                        },
+                    },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Basic plan suppliers can only list up to 10 products. You already have 10.',
+                            error: 'Bad Request',
+                        },
+                    },
+                ],
             },
         }),
         ApiNotFoundResponse({
@@ -103,6 +118,17 @@ export function ApiDocsCreateProduct() {
                     statusCode: 404,
                     message: 'Supplier not found',
                     error: 'Not Found',
+                },
+            },
+        }),
+        ApiBadGatewayResponse({
+            description:
+                'Failed to generate embedding for the product (coming from FastAPI backend). **But the product is still created successfully.**',
+            schema: {
+                example: {
+                    statusCode: 502,
+                    message: 'Failed to generate embedding for item',
+                    error: 'Bad Gateway',
                 },
             },
         }),
@@ -290,6 +316,17 @@ export function ApiDocsUpdateProduct() {
                 },
             },
         }),
+        ApiBadGatewayResponse({
+            description:
+                'Failed to generate embedding for the product (coming from FastAPI backend). **But the product is still updated successfully.**',
+            schema: {
+                example: {
+                    statusCode: 502,
+                    message: 'Failed to generate embedding for item',
+                    error: 'Bad Gateway',
+                },
+            },
+        }),
     );
 }
 
@@ -300,7 +337,9 @@ export function ApiDocsUpdateProductImage() {
             summary: 'Add a new image to an existing product',
             description: `This endpoint allows the supplier to add an additional image to an already created product.<br>
             Only the image is updated; product name, description, and other fields remain unchanged.<br>
-            Maximum 3 images per product are allowed.`,
+            Maximum 3 images per product are allowed.<br><br>
+            <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>
+            <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.`,
         }),
         ApiConsumes('multipart/form-data'),
         ApiBody({

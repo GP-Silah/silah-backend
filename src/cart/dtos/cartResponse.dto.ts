@@ -2,13 +2,25 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CartItemResponseDto {
     @ApiProperty({ description: 'Cart item ID', example: 1 })
-    id: number;
+    cartItemId: number;
 
     @ApiProperty({
         description: 'Product ID',
         example: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
     })
     productId: string;
+
+    @ApiProperty({
+        description: 'Product name',
+        example: 'Hair brushes',
+    })
+    productName: string;
+
+    @ApiProperty({
+        description: 'Product price',
+        example: 25.0,
+    })
+    productPrice: number;
 
     @ApiProperty({ description: 'Quantity of the product', example: 2 })
     quantity: number;
@@ -18,6 +30,13 @@ export class CartItemResponseDto {
         example: 50.5,
     })
     itemTotalPrice: number;
+
+    @ApiProperty({
+        description:
+            'Whether the product is currently available (stock >= quantity)',
+        example: true,
+    })
+    isAvailable: boolean;
 }
 
 export class CartBySupplierResponseDto {
@@ -25,7 +44,7 @@ export class CartBySupplierResponseDto {
         description: 'CartBySupplier ID',
         example: 'f1e2d3c4-5678-90ab-cdef-1234567890ab',
     })
-    id: string;
+    cartBySupplierId: string;
 
     @ApiProperty({
         description: 'Supplier ID',
@@ -61,7 +80,7 @@ export class CartResponseDto {
         description: 'Cart ID',
         example: 'b1c2d3e4-5678-90ab-cdef-1234567890ab',
     })
-    id: string;
+    cartId: string;
 
     @ApiProperty({
         description: 'Buyer ID',

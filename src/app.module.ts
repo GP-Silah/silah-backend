@@ -19,6 +19,12 @@ import { SupplierModule } from './supplier/supplier.module';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { ServiceModule } from './service/service.module';
+import { CartModule } from './cart/cart.module';
+import { DemandPredictionModule } from './demand-prediction/demand-prediction.module';
+import { OrderModule } from './order/order.module';
+import { TranslationModule } from './translation/translation.module';
+import { SmartSearchModule } from './smart-search/smart-search.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
     imports: [
@@ -31,16 +37,22 @@ import { ServiceModule } from './service/service.module';
         ]),
         ScheduleModule.forRoot(),
         ConfigModule.forRoot({ isGlobal: true }),
-        AuthModule,
-        UserModule,
         PrismaModule,
-        BuyerModule,
         FileModule,
         TapPaymentsModule,
+        TranslationModule,
+        AuthModule,
+        UserModule,
+        BuyerModule,
         SupplierModule,
         CategoryModule,
         ProductModule,
         ServiceModule,
+        CartModule,
+        OrderModule,
+        DemandPredictionModule,
+        SmartSearchModule,
+        SearchModule,
     ],
     controllers: [AppController, HealthController],
     providers: [

@@ -11,14 +11,6 @@ export class AddCartItemDto {
     productId: string;
 
     @ApiProperty({
-        description: 'ID of the supplier for this product',
-        example: 'f1e2d3c4-5678-90ab-cdef-1234567890ab',
-    })
-    @IsString()
-    @IsUUID()
-    supplierId: string;
-
-    @ApiProperty({
         description: 'Quantity of the product to add (minimum 1)',
         example: 2,
         minimum: 1,

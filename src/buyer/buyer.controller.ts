@@ -3,13 +3,14 @@ import {
     Controller,
     Delete,
     Get,
-    Post,
+    Param,
+    Patch,
     Put,
     Req,
     UseGuards,
 } from '@nestjs/common';
 import { BuyerService } from './buyer.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { BuyerResponseDto } from './dtos/buyerResponse.dto';
 import { CardDetailsDto } from './dtos/cardDetails.dto';
 import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.docs';
@@ -18,13 +19,16 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/enums/userRole.enum';
 import { Request } from 'express';
-import { CreateCardDto } from './dtos/createCard.dto';
+import { CreateCardStep1Dto, CreateCardStep2Dto } from './dtos/createCard.dto';
 import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
 import {
     ApiDocsDeleteCurrentBuyerCard,
     ApiDocsGetCurrentBuyerCard,
     ApiDocsGetCurrentBuyerData,
-    ApiDocsSaveOrReplaceCurrentBuyerCard,
+    ApiDocsGetCurrentBuyerWishlist,
+    ApiDocsSaveOrReplaceCurrentBuyerCardStep1,
+    ApiDocsSaveOrReplaceCurrentBuyerCardStep2,
+    ApiDocsToggleWishlistItem,
 } from './buyer.docs';
 
 @ApiTags('Buyers')
@@ -68,12 +72,28 @@ export class BuyerController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('me/card')
-    @ApiDocsSaveOrReplaceCurrentBuyerCard()
-    async saveOrReplaceCurrentBuyerCard(
-        @Req() req: any,
-        @Body() body: CreateCardDto,
+    @ApiDocsSaveOrReplaceCurrentBuyerCardStep1()
+    async saveOrReplaceCurrentBuyerCardStep1(
+        @Req() req: Request,
+        @Body() body: CreateCardStep1Dto,
     ) {
-        return await this.buyerService.saveOrReplaceCurrentBuyerCard(
+        return await this.buyerService.saveOrReplaceCurrentBuyerCardStep1(
+            req.tokenData!.sub,
+            body,
+        );
+    }
+
+    @ApiJwtAuthGuard()
+    @ApiRolesGuard()
+    @Roles(UserRole.BUYER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Put('me/card/confirm')
+    @ApiDocsSaveOrReplaceCurrentBuyerCardStep2()
+    async saveOrReplaceCurrentBuyerCardStep2(
+        @Req() req: Request,
+        @Body() body: CreateCardStep2Dto,
+    ) {
+        return await this.buyerService.saveOrReplaceCurrentBuyerCardStep2(
             req.tokenData!.sub,
             body,
         );
@@ -89,31 +109,28 @@ export class BuyerController {
         return this.buyerService.deleteCurrentBuyerCard(req.tokenData!.sub);
     }
 
-    // TODO: Come back to these after the WishlistItemDto is finalized
-    @Get('wishlist')
-    @ApiOperation({
-        deprecated: true,
-        summary: 'Not yet implemented',
-        description:
-            'This endpoint is a placeholder for future implementation and is not yet functional.',
-    })
-    async getWishlist() {}
+    @ApiJwtAuthGuard()
+    @ApiRolesGuard()
+    @Roles(UserRole.BUYER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Get('me/wishlist')
+    @ApiDocsGetCurrentBuyerWishlist()
+    async getWishlist(@Req() req: Request) {
+        const userId = req.tokenData!.sub;
+        return this.buyerService.getWishlist(userId);
+    }
 
-    @Post('wishlist/:itemId')
-    @ApiOperation({
-        deprecated: true,
-        summary: 'Not yet implemented',
-        description:
-            'This endpoint is a placeholder for future implementation and is not yet functional.',
-    })
-    async addToWishlist() {}
-
-    @Delete('wishlist/:itemId')
-    @ApiOperation({
-        deprecated: true,
-        summary: 'Not yet implemented',
-        description:
-            'This endpoint is a placeholder for future implementation and is not yet functional.',
-    })
-    async removeFromWishlist() {}
+    @ApiJwtAuthGuard()
+    @ApiRolesGuard()
+    @Roles(UserRole.BUYER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Patch('me/wishlist/:itemId')
+    @ApiDocsToggleWishlistItem()
+    async toggleWishlistItem(
+        @Req() req: Request,
+        @Param('itemId') itemId: string,
+    ) {
+        const userId = req.tokenData!.sub;
+        return this.buyerService.toggleWishlistItem(userId, itemId);
+    }
 }

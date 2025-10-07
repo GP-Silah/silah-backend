@@ -1,10 +1,15 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+    ApiProperty,
+    ApiPropertyOptional,
+    getSchemaPath,
+} from '@nestjs/swagger';
 import { GroupPurchaseDeadline } from '@prisma/client';
+import { InactiveSupplierResponseDto } from 'src/supplier/dtos/inactiveSupplierResponse.dto';
 import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';
 
 export class ProductResponseDto {
     @ApiProperty({ description: 'Product ID', example: 'uuid-1234' })
-    id: string;
+    productId: string;
 
     @ApiPropertyOptional({
         description: 'Supplier ID (null = supplier deleated his account)',
@@ -14,10 +19,14 @@ export class ProductResponseDto {
 
     @ApiPropertyOptional({
         description:
-            'Supplier details (null if the supplier deleted his account)',
-        type: SupplierResponseDto,
+            'Supplier details (null if the supplier deleted their account)',
+        oneOf: [
+            { $ref: getSchemaPath(SupplierResponseDto) },
+            { $ref: getSchemaPath(InactiveSupplierResponseDto) },
+        ],
+        nullable: true,
     })
-    supplier?: SupplierResponseDto | null;
+    supplier?: SupplierResponseDto | InactiveSupplierResponseDto | null;
 
     @ApiProperty({
         description: 'Product name',
@@ -99,8 +108,19 @@ export class ProductResponseDto {
     @ApiProperty({ description: 'Publish status', example: true })
     isPublished: boolean;
 
-    @ApiProperty({ description: 'Wishlist count', example: 10 })
-    wishlistCount: number;
+    @ApiProperty({
+        description: 'Stock level of the product',
+        enum: ['VERY LOW', 'LOW', 'AVERAGE', 'GOOD'],
+        example: 'LOW',
+    })
+    stockStatus: 'VERY LOW' | 'LOW' | 'AVERAGE' | 'GOOD';
+
+    @ApiProperty({
+        description: 'Wishlist count (only shown if supplier has PREMIUM plan)',
+        example: 10,
+        required: false,
+    })
+    wishlistCount?: number;
 
     @ApiProperty({ description: 'Average rating', example: 4.5 })
     avgRating: number;

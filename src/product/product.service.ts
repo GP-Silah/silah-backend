@@ -4,13 +4,21 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { Category, Product, Supplier, User } from '@prisma/client';
+import {
+    Category,
+    ItemType,
+    Product,
+    Supplier,
+    SupplierPlan,
+    User,
+} from '@prisma/client';
 import { ProductResponseDto } from './dtos/productResponse.dto';
 import { FileService } from 'src/file/file.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dtos/createProduct.dto';
 import { UpdateProductDto } from './dtos/updateProduct.dto';
 import { TranslationService } from 'src/translation/translation.service';
+import { SmartSearchService } from 'src/smart-search/smart-search.service';
 
 @Injectable()
 export class ProductService {
@@ -19,7 +27,24 @@ export class ProductService {
         private readonly fileService: FileService,
         private readonly supplierService: SupplierService,
         private readonly translationService: TranslationService,
+        private readonly smartSearchService: SmartSearchService,
     ) {}
+
+    STOCK_THRESHOLDS = {
+        VERY_LOW: 5, // less than 5 units → VERY LOW
+        LOW: 10, // 5–9 units → LOW
+        AVERAGE: 30, // 10–29 units → AVERAGE
+        GOOD: Infinity, // 30+ units → GOOD
+    };
+
+    private getStockStatus(
+        stock: number,
+    ): 'VERY LOW' | 'LOW' | 'AVERAGE' | 'GOOD' {
+        if (stock < this.STOCK_THRESHOLDS.VERY_LOW) return 'VERY LOW';
+        if (stock < this.STOCK_THRESHOLDS.LOW) return 'LOW';
+        if (stock < this.STOCK_THRESHOLDS.AVERAGE) return 'AVERAGE';
+        return 'GOOD';
+    }
 
     async toProductResponseDto(
         product: Product & {
@@ -59,8 +84,13 @@ export class ProductService {
             );
         }
 
+        let wishlistCount: number | undefined = undefined;
+        if (product.supplier?.plan === 'PREMIUM') {
+            wishlistCount = product.wishlistCount;
+        }
+
         return {
-            id: product.id,
+            productId: product.id,
             supplierId: product.supplierId ?? null,
             supplier: supplierDto,
             name,
@@ -81,7 +111,8 @@ export class ProductService {
             groupPurchasePrice: product.groupPurchasePrice ?? undefined,
             groupPurchaseDuration: product.groupPurchaseDuration ?? undefined,
             isPublished: product.isPublished,
-            wishlistCount: product.wishlistCount,
+            stockStatus: this.getStockStatus(product.stock),
+            ...(wishlistCount !== undefined ? { wishlistCount } : {}),
             avgRating: product.avgRating,
             ratingsCount: product.ratingsCount,
             createdAt: product.createdAt,
@@ -94,14 +125,44 @@ export class ProductService {
 
     async getAllProducts(
         targetLang: 'ar' | 'en',
+        userId?: string,
     ): Promise<ProductResponseDto[]> {
+        let isPublishedFilter: boolean | undefined = true; // default for buyers
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { supplier: true, buyer: true },
+            });
+            if (user?.supplier) {
+                isPublishedFilter = undefined; // supplier sees all products
+            }
+        }
+
         const products = await this.prisma.product.findMany({
-            where: { isDeleted: false },
+            where: {
+                isDeleted: false,
+                ...(isPublishedFilter !== undefined
+                    ? { isPublished: isPublishedFilter }
+                    : {}),
+            },
             include: {
                 supplier: { include: { user: true } },
                 category: true,
             },
         });
+
+        if (userId) {
+            const user = await this.prisma.user.findFirst({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang = user.preferredLanguage.toLocaleLowerCase();
+                if (lang === 'ar' || lang === 'en') {
+                    targetLang = lang;
+                }
+            }
+        }
 
         return await Promise.all(
             products.map((product) =>
@@ -113,9 +174,12 @@ export class ProductService {
     async getProductById(
         productId: string,
         targetLang: 'ar' | 'en',
+        userId?: string,
     ): Promise<ProductResponseDto> {
         const product = await this.prisma.product.findUnique({
-            where: { id: productId },
+            where: {
+                id: productId,
+            },
             include: {
                 supplier: { include: { user: true } },
                 category: true,
@@ -126,20 +190,65 @@ export class ProductService {
                 `Product with id ${productId} not found`,
             );
         }
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang = user.preferredLanguage.toLocaleLowerCase();
+                if (lang === 'ar' || lang === 'en') {
+                    targetLang = lang;
+                }
+            }
+        }
+
         return this.toProductResponseDto(product, targetLang);
     }
 
     async getAllSupplierProducts(
         supplierId: string,
         targetLang: 'ar' | 'en',
+        userId?: string,
     ): Promise<ProductResponseDto[]> {
+        let isPublishedFilter: boolean | undefined = true; // default for buyers
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { supplier: true, buyer: true },
+            });
+            if (user?.supplier) {
+                isPublishedFilter = undefined; // supplier sees all products
+            }
+        }
+
         const products = await this.prisma.product.findMany({
-            where: { supplierId, isDeleted: false },
+            where: {
+                supplierId,
+                isDeleted: false,
+                ...(isPublishedFilter !== undefined
+                    ? { isPublished: isPublishedFilter }
+                    : {}),
+            },
             include: {
                 supplier: { include: { user: true } },
                 category: true,
             },
         });
+
+        if (userId) {
+            const user = await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang = user.preferredLanguage.toLocaleLowerCase();
+                if (lang === 'ar' || lang === 'en') {
+                    targetLang = lang;
+                }
+            }
+        }
+
         return Promise.all(
             products.map((p) => this.toProductResponseDto(p, targetLang)),
         );
@@ -156,6 +265,23 @@ export class ProductService {
         });
         if (!supplier) {
             throw new NotFoundException('Supplier not found');
+        }
+
+        // Enforce product limit for BASIC plan
+        if (supplier.plan === SupplierPlan.BASIC) {
+            const activeProductsCount = await this.prisma.product.count({
+                where: {
+                    supplierId: supplier.id,
+                    isDeleted: false,
+                },
+            });
+
+            const MAX_BASIC_PRODUCTS = 10;
+            if (activeProductsCount >= MAX_BASIC_PRODUCTS) {
+                throw new BadRequestException(
+                    `Basic plan suppliers can only list up to ${MAX_BASIC_PRODUCTS} products. You already have ${activeProductsCount}.`,
+                );
+            }
         }
 
         // 2. Validate image count (1–3)
@@ -228,6 +354,15 @@ export class ProductService {
             },
         });
 
+        // 7. Generate embedding
+        await this.smartSearchService.generateAndStoreEmbedding({
+            itemId: fullProduct!.id,
+            itemType: ItemType.PRODUCT,
+            name: fullProduct!.name,
+            description: fullProduct!.description,
+            categoryName: fullProduct!.category!.name,
+        });
+
         return this.toProductResponseDto(fullProduct!);
     }
 
@@ -277,6 +412,26 @@ export class ProductService {
                 category: true,
             },
         });
+
+        // 4. Duplicate embedding
+        const originalEmbedding = await this.prisma.itemEmbedding.findUnique({
+            where: {
+                itemId_itemType: {
+                    itemId: originalProduct.id,
+                    itemType: ItemType.PRODUCT,
+                },
+            },
+        });
+
+        if (originalEmbedding) {
+            await this.prisma.itemEmbedding.create({
+                data: {
+                    itemId: fullDuplicatedProduct!.id,
+                    itemType: ItemType.PRODUCT,
+                    embedding: originalEmbedding.embedding,
+                },
+            });
+        }
 
         return this.toProductResponseDto(fullDuplicatedProduct!);
     }
@@ -336,6 +491,15 @@ export class ProductService {
                 supplier: { include: { user: true } },
                 category: true,
             },
+        });
+
+        // 6. Update embedding
+        await this.smartSearchService.generateAndStoreEmbedding({
+            itemId: fullProduct!.id,
+            itemType: ItemType.PRODUCT,
+            name: fullProduct!.name,
+            description: fullProduct!.description,
+            categoryName: fullProduct!.category!.name,
         });
 
         return this.toProductResponseDto(fullProduct!);

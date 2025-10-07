@@ -35,11 +35,11 @@ export class CardDetailsDto {
         description: 'Expiration month of the card (1-12)',
         example: 12,
     })
-    expMonth: number;
+    expMonth: string;
 
     @ApiProperty({
-        description: 'Expiration year of the card (4-digit)',
-        example: 2028,
+        description: 'Expiration year of the card',
+        example: 31,
     })
-    expYear: number;
+    expYear: string;
 }

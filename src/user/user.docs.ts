@@ -13,6 +13,7 @@ import {
 } from '@nestjs/swagger';
 import { UserResponseDTO } from './dtos/userResponse.dto';
 import { UpdateUserDto } from './dtos/updateUser.dto';
+import { Languages } from '@prisma/client';
 
 export function ApiDocsGetUserByEmail() {
     return applyDecorators(
@@ -65,46 +66,6 @@ export function ApiDocsGetUserByCrn() {
                 example: {
                     statusCode: 404,
                     message: 'User not found',
-                    error: 'Not Found',
-                },
-            },
-        }),
-    );
-}
-export function ApiDocsGetUserByName() {
-    return applyDecorators(
-        ApiOperation({
-            summary: 'Search users by name',
-            description:
-                'Returns a list of users that match the provided name.',
-        }),
-        ApiQuery({
-            name: 'name',
-            type: String,
-            description: 'Name (or partial name) to search users by',
-            example: 'Sarah',
-            required: true,
-        }),
-        ApiOkResponse({
-            description: 'Users found',
-            type: [UserResponseDTO],
-        }),
-        ApiBadRequestResponse({
-            description: 'Invalid input data',
-            schema: {
-                example: {
-                    statusCode: 400,
-                    message: 'Name parameter is required',
-                    error: 'Bad Request',
-                },
-            },
-        }),
-        ApiNotFoundResponse({
-            description: 'No users found',
-            schema: {
-                example: {
-                    statusCode: 404,
-                    message: 'No users found with the name',
                     error: 'Not Found',
                 },
             },
@@ -364,6 +325,28 @@ export function ApiDocsDeleteProfilePicture() {
                     statusCode: 404,
                     message: 'Profile picture not found',
                     error: 'Not Found',
+                },
+            },
+        }),
+    );
+}
+
+export function ApiDocsSwitchPreferredLanguage() {
+    return applyDecorators(
+        ApiOperation({
+            summary: 'Toggle user preferred language',
+            description:
+                "Switches the authenticated user's preferred language between English (ENG) and Arabic (ARA). " +
+                'Returns the old and new preferred language.',
+        }),
+        ApiBearerAuth(),
+        ApiOkResponse({
+            description: 'User preferred language switched successfully',
+            schema: {
+                example: {
+                    email: 'user@example.com',
+                    oldLanguage: Languages.EN,
+                    newLanguage: Languages.AR,
                 },
             },
         }),

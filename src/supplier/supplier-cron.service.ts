@@ -13,23 +13,19 @@ export class SupplierCronService {
     async handleSupplierPlans() {
         this.logger.debug('Running supplier plan check cron job...');
 
-        // 1. Find all suppliers who used free trial
+        // 1. Find all suppliers who used free trial and are on PREMIUM
         const suppliers = await this.prisma.supplier.findMany({
-            where: { usedFreeTrail: true },
+            where: { usedFreeTrail: true, plan: SupplierPlan.PREMIUM },
             include: { subscriptions: true },
         });
 
         const today = new Date();
 
         for (const supplier of suppliers) {
-            // 2. Find the subscription that represents the free trial
+            // 2. Find the free trial subscription
             const trialSubscription = supplier.subscriptions.find(
-                (s) =>
-                    s.startDate &&
-                    s.endDate &&
-                    supplier.plan === SupplierPlan.PREMIUM,
+                (s) => s.startDate && s.endDate,
             );
-
             if (!trialSubscription) continue;
 
             const daysSinceTrialStart =
@@ -38,12 +34,12 @@ export class SupplierCronService {
 
             if (daysSinceTrialStart < 30) continue; // still in trial
 
-            // TODO: Replace with actual counts from products/services tables
-            const productCount = 0; // await this.countSupplierProducts(supplier.id);
-            const serviceCount = 0; // await this.countSupplierServices(supplier.id);
+            // 3. Count products and services for this supplier
+            const productCount = await this.countSupplierProducts(supplier.id);
+            const serviceCount = await this.countSupplierServices(supplier.id);
 
+            // 4. Apply downgrade logic
             if (productCount <= 10 && serviceCount <= 3) {
-                // Downgrade plan to BASIC if within limits
                 await this.prisma.supplier.update({
                     where: { id: supplier.id },
                     data: {
@@ -55,7 +51,6 @@ export class SupplierCronService {
                     `Supplier ${supplier.id} downgraded to BASIC plan (within limits).`,
                 );
             } else {
-                // Exceeded limits → inactive
                 await this.prisma.supplier.update({
                     where: { id: supplier.id },
                     data: {
@@ -64,7 +59,7 @@ export class SupplierCronService {
                     },
                 });
                 this.logger.debug(
-                    `Supplier ${supplier.id} exceeded limits → set to INACTIVE and BASIC plan.`,
+                    `Supplier ${supplier.id} exceeded limits → downgraded to BASIC and set INACTIVE.`,
                 );
             }
         }
@@ -72,9 +67,15 @@ export class SupplierCronService {
         this.logger.debug('Supplier plan check cron job completed.');
     }
 
-    // TODO: Implement these methods when products/services tables exist
-    /*
-    private async countSupplierProducts(supplierId: string): Promise<number> {}
-    private async countSupplierServices(supplierId: string): Promise<number> {}
-    */
+    private async countSupplierProducts(supplierId: string): Promise<number> {
+        return this.prisma.product.count({
+            where: { supplierId, isDeleted: false },
+        });
+    }
+
+    private async countSupplierServices(supplierId: string): Promise<number> {
+        return this.prisma.service.count({
+            where: { supplierId, isDeleted: false },
+        });
+    }
 }

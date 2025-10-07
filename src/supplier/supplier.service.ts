@@ -16,6 +16,11 @@ import { SupplierResponseDto } from './dtos/supplierResponse.dto';
 import { FileService } from 'src/file/file.service';
 import { UserService } from 'src/user/user.service';
 import { StorefrontResponseDto } from './dtos/storefrontResponse.dto';
+import { InactiveSupplierResponseDto } from './dtos/inactiveSupplierResponse.dto';
+import {
+    StockLevelsResponseDto,
+    StockProductDto,
+} from './dtos/stockLevelsResponse.dto';
 
 @Injectable()
 export class SupplierService {
@@ -26,22 +31,36 @@ export class SupplierService {
     ) {}
 
     /**
-     * Converts Prisma User and Supplier models into a SupplierResponseDto.
+     * Converts Prisma User and Supplier models into either:
+     *  - SupplierResponseDto (if ACTIVE)
+     *  - InactiveSupplierResponseDto (if not ACTIVE)
      *
      * @param {User} user - The user object from the database.
      * @param {Supplier} supplier - The supplier object from the database.
-     * @returns {Promise<SupplierResponseDto>} A supplier DTO formatted for responses.
+     * @returns {Promise<SupplierResponseDto | InactiveSupplierResponseDto>}
      */
     async toSupplierResponseDTO(
         user: User,
         supplier: Supplier,
-    ): Promise<SupplierResponseDto> {
-        // Fetch categories the supplier has marked as favorite
+    ): Promise<SupplierResponseDto | InactiveSupplierResponseDto> {
+        // If supplier is NOT active → return minimal inactive DTO
+        if (supplier.status !== SupplierStatus.ACTIVE) {
+            return {
+                supplierId: supplier.id,
+                supplierName: user.name,
+                businessName: user.businessName,
+                city: user.city,
+                supplierStatus: supplier.status,
+                message:
+                    'This supplier is inactive and cannot be accessed until they renew their subscription.',
+            } as InactiveSupplierResponseDto;
+        }
+
+        // Active suppliers → return full DTO
         const favoriteCategories = await this.getSupplierFavoriteCategories(
             user.id,
         );
 
-        // Fetch signed file URL for banner if one exists
         const bannerUrl = supplier.storeBannerFileName
             ? await this.fileService.getFileUrl(supplier.storeBannerFileName)
             : '';
@@ -67,21 +86,36 @@ export class SupplierService {
             supplierStatus: supplier.status,
             plan: supplier.plan,
             favoriteCategories,
-        };
+        } as SupplierResponseDto;
     }
 
     /**
-     * Converts Prisma User and Supplier models into a StorefrontResponseDto.
+     * Converts Prisma User and Supplier models into either:
+     *  - SupplierResponseDto (if ACTIVE)
+     *  - InactiveSupplierResponseDto (if not ACTIVE)
      *
      * @param {User} user - The user object from the database.
      * @param {Supplier} supplier - The supplier object from the database.
-     * @returns {Promise<StorefrontResponseDto>} A storefront DTO formatted for responses.
+     * @returns {Promise<SupplierResponseDto | InactiveSupplierResponseDto>}
      */
     async toStorefrontResponseDTO(
         user: User,
         supplier: Supplier,
-    ): Promise<StorefrontResponseDto> {
-        // Fetch signed file URL for banner if one exists
+    ): Promise<SupplierResponseDto | InactiveSupplierResponseDto> {
+        // If supplier is NOT active → return minimal inactive DTO
+        if (supplier.status !== SupplierStatus.ACTIVE) {
+            return {
+                supplierId: supplier.id,
+                supplierName: user.name,
+                businessName: user.businessName,
+                city: user.city,
+                supplierStatus: supplier.status,
+                message:
+                    'This supplier is inactive and cannot be accessed until they renew their subscription.',
+            } as InactiveSupplierResponseDto;
+        }
+
+        // Active suppliers → return full storefront DTO
         const bannerUrl = supplier.storeBannerFileName
             ? await this.fileService.getFileUrl(supplier.storeBannerFileName)
             : '';
@@ -103,7 +137,7 @@ export class SupplierService {
             avgRating: supplier.avgRating,
             ratingsCount: supplier.ratingsCount,
             supplierStatus: supplier.status,
-        };
+        } as SupplierResponseDto;
     }
 
     /**
@@ -231,9 +265,11 @@ export class SupplierService {
      * Retrieves a supplier data including linked user info.
      * @param {string} id - The supplier ID.
      * @throws {NotFoundException} If the supplier with the given ID is not found.
-     * @returns {Promise<SupplierResponseDto>} The supplier DTO formatted for responses.
+     * @returns {Promise<SupplierResponseDto | InactiveSupplierResponseDto>} The supplier DTO formatted for responses.
      */
-    async getSupplierData(userId: string): Promise<SupplierResponseDto> {
+    async getSupplierData(
+        userId: string,
+    ): Promise<SupplierResponseDto | InactiveSupplierResponseDto> {
         const supplier = await this.prisma.supplier.findUnique({
             where: { userId },
             include: { user: true }, // because we need user fields
@@ -244,7 +280,9 @@ export class SupplierService {
         return this.toSupplierResponseDTO(supplier.user, supplier);
     }
 
-    async getSupplierStoreData(userId: string): Promise<StorefrontResponseDto> {
+    async getSupplierStoreData(
+        userId: string,
+    ): Promise<StorefrontResponseDto | InactiveSupplierResponseDto> {
         const supplier = await this.prisma.supplier.findUnique({
             where: { userId },
             include: { user: true }, // because we need user fields
@@ -253,6 +291,76 @@ export class SupplierService {
             throw new NotFoundException(`Supplier with id ${userId} not found`);
         }
         return this.toStorefrontResponseDTO(supplier.user, supplier);
+    }
+
+    async getStockLevels(userId: string): Promise<StockLevelsResponseDto> {
+        // Fetch supplier
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+
+        if (!supplier) {
+            throw new NotFoundException('Supplier not found');
+        }
+
+        // Fetch all non-deleted products for this supplier
+        const products = await this.prisma.product.findMany({
+            where: { supplierId: supplier.id, isDeleted: false },
+            select: { id: true, name: true, stock: true },
+        });
+
+        // Initialize groups
+        const overview: Record<string, StockProductDto[]> = {
+            VERY_LOW: [],
+            LOW: [],
+            AVERAGE: [],
+            GOOD: [],
+        };
+
+        // Define thresholds
+        const STOCK_THRESHOLDS = {
+            VERY_LOW: 5,
+            LOW: 10,
+            AVERAGE: 30,
+            GOOD: Infinity,
+        };
+
+        // Assign products to stock groups
+        products.forEach((p) => {
+            const stock = p.stock;
+            const productDto: StockProductDto = {
+                productId: p.id,
+                name: p.name,
+                stock,
+            };
+
+            if (stock < STOCK_THRESHOLDS.VERY_LOW)
+                overview.VERY_LOW.push(productDto);
+            else if (stock < STOCK_THRESHOLDS.LOW)
+                overview.LOW.push(productDto);
+            else if (stock < STOCK_THRESHOLDS.AVERAGE)
+                overview.AVERAGE.push(productDto);
+            else overview.GOOD.push(productDto);
+        });
+
+        // Build StockGroupDto objects for each group
+        const response: StockLevelsResponseDto = {
+            supplierId: supplier.id,
+            overview: {
+                VERY_LOW: {
+                    count: overview.VERY_LOW.length,
+                    products: overview.VERY_LOW,
+                },
+                LOW: { count: overview.LOW.length, products: overview.LOW },
+                AVERAGE: {
+                    count: overview.AVERAGE.length,
+                    products: overview.AVERAGE,
+                },
+                GOOD: { count: overview.GOOD.length, products: overview.GOOD },
+            },
+        };
+
+        return response;
     }
 
     async updateSupplierData(userId: string, dto: UpdateSupplierDto) {
@@ -335,7 +443,7 @@ export class SupplierService {
     async getAllSuppliers(
         status?: 'active' | 'inactive',
         subscription?: 'subscribed' | 'unsubscribed',
-    ): Promise<SupplierResponseDto[]> {
+    ): Promise<(SupplierResponseDto | InactiveSupplierResponseDto)[]> {
         const where: any = {};
 
         // Filter by supplier status
@@ -369,7 +477,9 @@ export class SupplierService {
         );
     }
 
-    async getSupplierDataById(id: string): Promise<SupplierResponseDto> {
+    async getSupplierDataById(
+        id: string,
+    ): Promise<SupplierResponseDto | InactiveSupplierResponseDto> {
         const supplier = await this.prisma.supplier.findUnique({
             where: { id },
             include: { user: true }, // because we need user fields
@@ -380,7 +490,9 @@ export class SupplierService {
         return this.toSupplierResponseDTO(supplier.user, supplier);
     }
 
-    async getSupplierStoreDataById(id: string): Promise<StorefrontResponseDto> {
+    async getSupplierStoreDataById(
+        id: string,
+    ): Promise<StorefrontResponseDto | InactiveSupplierResponseDto> {
         const supplier = await this.prisma.supplier.findUnique({
             where: { id },
             include: { user: true }, // because we need user fields
