@@ -7897,14 +7897,14 @@
     },
     "/api/search/users": {
       "get": {
-        "description": "Returns a list of users that match the provided name.",
+        "description": "Performs fuzzy and full-text search on user names and returns matching users.",
         "operationId": "SearchController_searchUsers",
         "parameters": [
           {
             "name": "name",
             "required": false,
             "in": "query",
-            "description": "Name (or partial name) to search users by",
+            "description": "Full or partial user name to search for",
             "schema": {
               "example": "Sarah",
               "type": "string"
@@ -7913,27 +7913,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Users found",
+            "description": "List of matching users",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/UserResponseDTO"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "No users found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "No users found with the name",
-                    "error": "Not Found"
                   }
                 }
               }
@@ -7948,30 +7934,46 @@
     },
     "/api/search/suppliers": {
       "get": {
+        "description": "Returns a list of suppliers whose name or business name partially matches the query. Supports fuzzy and full-text search.",
         "operationId": "SearchController_searchSuppliers",
         "parameters": [
           {
             "name": "name",
-            "required": true,
+            "required": false,
             "in": "query",
+            "description": "Supplier user name (optional)",
             "schema": {
+              "example": "Shahad",
               "type": "string"
             }
           },
           {
             "name": "businessName",
-            "required": true,
+            "required": false,
             "in": "query",
+            "description": "Supplier business name (optional)",
             "schema": {
+              "example": "ShahadSaad001",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "List of matching suppliers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SupplierResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Search suppliers by name or business name",
         "tags": [
           "Search"
         ]
@@ -7979,38 +7981,76 @@
     },
     "/api/search/products": {
       "get": {
+        "description": "\nPerforms fuzzy search on product names and allows filtering by:\n- **Main category** or **subcategory**\n- **Minimum** and/or **maximum price**\n\nReturned products are only those that are **published** and **not deleted**.\n",
         "operationId": "SearchController_searchProducts",
         "parameters": [
           {
             "name": "name",
-            "required": true,
+            "required": false,
             "in": "query",
+            "description": "Product name or part of it (optional)",
             "schema": {
+              "example": "Wooden Brush",
               "type": "string"
             }
           },
           {
             "name": "category",
-            "required": true,
+            "required": false,
             "in": "query",
+            "description": "Main category ID (optional)",
             "schema": {
-              "type": "number"
+              "example": "1",
+              "type": "string"
             }
           },
           {
             "name": "subcategory",
-            "required": true,
+            "required": false,
             "in": "query",
+            "description": "Subcategory ID (optional)",
             "schema": {
-              "type": "number"
+              "example": "5",
+              "type": "string"
+            }
+          },
+          {
+            "name": "minPrice",
+            "required": false,
+            "in": "query",
+            "description": "Minimum product price (SAR, optional)",
+            "schema": {
+              "example": "10",
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxPrice",
+            "required": false,
+            "in": "query",
+            "description": "Maximum product price (SAR, optional)",
+            "schema": {
+              "example": "100",
+              "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "List of matching products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Search products by name, category, or price range",
         "tags": [
           "Search"
         ]
@@ -8018,38 +8058,56 @@
     },
     "/api/search/services": {
       "get": {
+        "description": "Performs fuzzy search on service names and filters by main or subcategory. Returns only published and active services.",
         "operationId": "SearchController_searchServices",
         "parameters": [
           {
             "name": "name",
-            "required": true,
+            "required": false,
             "in": "query",
+            "description": "Service name or part of it (optional)",
             "schema": {
+              "example": "Makeup",
               "type": "string"
             }
           },
           {
             "name": "category",
-            "required": true,
+            "required": false,
             "in": "query",
+            "description": "Main category ID (optional)",
             "schema": {
+              "example": "2",
               "type": "string"
             }
           },
           {
             "name": "subcategory",
-            "required": true,
+            "required": false,
             "in": "query",
+            "description": "Subcategory ID (optional)",
             "schema": {
+              "example": "4",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "List of matching services",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Search services by name or category",
         "tags": [
           "Search"
         ]

@@ -5,6 +5,7 @@ import { ProductService } from 'src/product/product.service';
 import { ServiceService } from 'src/service/service.service';
 import { SupplierService } from 'src/supplier/supplier.service';
 import { UserService } from 'src/user/user.service';
+import { query } from 'winston';
 
 @Injectable()
 export class SearchService {
@@ -163,126 +164,157 @@ export class SearchService {
 
     async searchProducts(
         name?: string,
-        categoryId?: number,
-        subCategoryId?: number,
+        mainCategoryId?: string,
+        subCategoryId?: string,
+        minPrice: string = '1',
+        maxPrice?: string,
     ) {
-        let subCategoryIds: number[] | undefined;
+        // Convert query params safely
+        const mainId = mainCategoryId ? Number(mainCategoryId) : undefined;
+        const subId = subCategoryId ? Number(subCategoryId) : undefined;
+        const minPriceAsNumber =
+            minPrice && Number(minPrice) > 0 ? Number(minPrice) : undefined;
+        const maxPriceAsNumber =
+            maxPrice && Number(maxPrice) > 0 ? Number(maxPrice) : undefined;
 
-        if (categoryId) {
-            // get subcategories under the main category
-            const subCategories = await this.prisma.category.findMany({
-                where: { parentCategoryId: categoryId },
+        // Sanitize name
+        let q = name?.trim()?.replace(/'/g, "''") ?? '';
+        if (q.length > 100) q = q.substring(0, 100);
+
+        // 1. Build base where
+        const whereClause: any = {
+            isDeleted: false,
+            isPublished: true,
+        };
+
+        // 2. Handle category filters
+        if (mainId && !subId) {
+            const subs = await this.prisma.category.findMany({
+                where: { parentCategoryId: mainId },
                 select: { id: true },
             });
-            subCategoryIds = subCategories.map((c) => c.id);
-            if (subCategoryIds.length === 0) {
-                // main category has no subcategories → no products
-                return [];
-            }
-        } else if (subCategoryId) {
-            subCategoryIds = [subCategoryId];
+            if (!subs.length) return [];
+            whereClause.categoryId = { in: subs.map((s) => s.id) };
+        } else if (subId) {
+            const exists = await this.prisma.category.findUnique({
+                where: { id: subId },
+                select: { id: true },
+            });
+            if (!exists) return [];
+            whereClause.categoryId = subId;
         }
 
-        // Build SQL WHERE filters dynamically
-        const filters: string[] = [];
-        const params: any[] = [];
+        // 3. Fuzzy search
+        let productIds: string[] = [];
+        if (q) {
+            const query = `
+                SELECT "id", similarity("name", '${q}') AS sim
+                FROM "Product"
+                WHERE "isDeleted" = false
+                AND "isPublished" = true
+                AND similarity("name", '${q}') > 0.1
+                ORDER BY sim DESC
+                LIMIT 50;
+            `;
 
-        if (name?.trim()) {
-            filters.push(
-                `(to_tsvector('english', p.name) @@ plainto_tsquery('english', $${params.length + 1}) OR p.name % $${params.length + 1})`,
-            );
-            params.push(name);
+            const fuzzyRows =
+                await this.prisma.$queryRawUnsafe<{ id: string }[]>(query);
+            productIds = fuzzyRows.map((r) => r.id);
+            if (!productIds.length) return [];
+            whereClause.id = { in: productIds };
         }
 
-        if (subCategoryIds) {
-            filters.push(`p."categoryId" = ANY($${params.length + 1}::int[])`);
-            params.push(subCategoryIds);
-        }
+        // 4. Apply price filterss
+        whereClause.price = {
+            ...(minPriceAsNumber !== undefined
+                ? { gte: minPriceAsNumber }
+                : {}),
+            ...(maxPriceAsNumber !== undefined
+                ? { lte: maxPriceAsNumber }
+                : {}),
+        };
 
-        const whereClause = filters.length
-            ? `WHERE ${filters.join(' AND ')}`
-            : '';
+        // 5. Fetch products
+        let products = await this.prisma.product.findMany({
+            where: whereClause,
+            include: { supplier: { include: { user: true } }, category: true },
+        });
 
-        const query = `
-        SELECT
-            p.*,
-            c.id AS "categoryId",
-            c.name AS "categoryName",
-            s.id AS "supplierId",
-            s."userId" AS "supplierUserId",
-            s."status" AS "supplierStatus",
-            s."plan" AS "supplierPlan",
-            s."isStoreClosed",
-            s."storeClosedMsg",
-            s."storeBio",
-            s."storeBannerFileName",
-            s."deliveryFees",
-            s."avgRating" AS "supplierAvgRating",
-            s."ratingsCount" AS "supplierRatingsCount",
-            s."usedFreeTrail",
-            u.id AS "userId",
-            u."tapCustomerId",
-            u.name AS "userName",
-            u.email AS "userEmail",
-            u."businessName" AS "userBusinessName",
-            u.role AS "userRole",
-            u.city AS "userCity",
-            u."pfpFileName" AS "userPfpFileName",
-            u."isEmailVerified" AS "userIsEmailVerified",
-            u."preferredLanguage" AS "userPreferredLanguage",
-            u."createdAt" AS "userCreatedAt",
-            u."updatedAt" AS "userUpdatedAt"
-        FROM "Product" p
-        JOIN "Category" c ON c.id = p."categoryId"
-        LEFT JOIN "Supplier" s ON s.id = p."supplierId"
-        LEFT JOIN "User" u ON u.id = s."userId"
-        ${whereClause}
-        ORDER BY ${name ? `ts_rank(to_tsvector('english', p.name), plainto_tsquery('english', $1)) DESC, similarity(p.name, $1) DESC` : 'p."createdAt" DESC'};
-    `;
+        if (!products.length) return [];
 
-        const products = await this.prisma.$queryRawUnsafe<any[]>(
-            query,
-            ...params,
-        );
-
+        // 6. Map to DTOs
         return Promise.all(
-            products.map((row: any) => {
-                const product = {
-                    ...row,
-                    category: { id: row.categoryId, name: row.categoryName },
-                    supplier: row.supplierId
-                        ? {
-                              id: row.supplierId,
-                              userId: row.supplierUserId,
-                              status: row.supplierStatus,
-                              plan: row.supplierPlan,
-                              isStoreClosed: row.isStoreClosed,
-                              storeClosedMsg: row.storeClosedMsg,
-                              storeBio: row.storeBio,
-                              storeBannerFileName: row.storeBannerFileName,
-                              deliveryFees: row.deliveryFees,
-                              avgRating: row.supplierAvgRating,
-                              ratingsCount: row.supplierRatingsCount,
-                              usedFreeTrail: row.usedFreeTrail,
-                              user: {
-                                  id: row.userId,
-                                  tapCustomerId: row.tapCustomerId,
-                                  name: row.userName,
-                                  email: row.userEmail,
-                                  businessName: row.userBusinessName,
-                                  role: row.userRole,
-                                  city: row.userCity,
-                                  pfpFileName: row.userPfpFileName,
-                                  isEmailVerified: row.userIsEmailVerified,
-                                  preferredLanguage: row.userPreferredLanguage,
-                                  createdAt: row.userCreatedAt,
-                                  updatedAt: row.userUpdatedAt,
-                              },
-                          }
-                        : null,
-                };
-                return this.productService.toProductResponseDto(product);
-            }),
+            products.map((p) => this.productService.toProductResponseDto(p)),
+        );
+    }
+
+    async searchServices(
+        name?: string,
+        mainCategoryId?: string,
+        subCategoryId?: string,
+    ) {
+        // Convert query params safely
+        const mainId = mainCategoryId ? Number(mainCategoryId) : undefined;
+        const subId = subCategoryId ? Number(subCategoryId) : undefined;
+
+        // Sanitize name
+        let q = name?.trim()?.replace(/'/g, "''") ?? '';
+        if (q.length > 100) q = q.substring(0, 100);
+
+        // 1. Build base where
+        const whereClause: any = {
+            isDeleted: false,
+            isPublished: true,
+        };
+
+        // 2. Handle category filters
+        if (mainId && !subId) {
+            const subs = await this.prisma.category.findMany({
+                where: { parentCategoryId: mainId },
+                select: { id: true },
+            });
+            if (!subs.length) return [];
+            whereClause.categoryId = { in: subs.map((s) => s.id) };
+        } else if (subId) {
+            const exists = await this.prisma.category.findUnique({
+                where: { id: subId },
+                select: { id: true },
+            });
+            if (!exists) return [];
+            whereClause.categoryId = subId;
+        }
+
+        // 3. Fuzzy search
+        let servicesIds: string[] = [];
+        if (q) {
+            const query = `
+                SELECT "id", similarity("name", '${q}') AS sim
+                FROM "Service"
+                WHERE "isDeleted" = false
+                AND "isPublished" = true
+                AND similarity("name", '${q}') > 0.1
+                ORDER BY sim DESC
+                LIMIT 50;
+            `;
+
+            const fuzzyRows =
+                await this.prisma.$queryRawUnsafe<{ id: string }[]>(query);
+            servicesIds = fuzzyRows.map((r) => r.id);
+            if (!servicesIds.length) return [];
+            whereClause.id = { in: servicesIds };
+        }
+
+        // 4. Fetch services
+        let services = await this.prisma.service.findMany({
+            where: whereClause,
+            include: { supplier: { include: { user: true } }, category: true },
+        });
+
+        if (!services.length) return [];
+
+        // 5. Map to DTOs
+        return Promise.all(
+            services.map((s) => this.serviceService.toServiceResponseDto(s)),
         );
     }
 }

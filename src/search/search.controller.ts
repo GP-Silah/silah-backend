@@ -1,7 +1,12 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { SearchService } from './search.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ApiDocsGetSearchUsers } from './search.docs';
+import {
+    ApiDocsGetSearchProducts,
+    ApiDocsGetSearchServices,
+    ApiDocsGetSearchSuppliers,
+    ApiDocsGetSearchUsers,
+} from './search.docs';
 
 @ApiTags('Search')
 @Controller('search')
@@ -15,6 +20,7 @@ export class SearchController {
     }
 
     @Get('suppliers')
+    @ApiDocsGetSearchSuppliers()
     async searchSuppliers(
         @Query('name') name?: string,
         @Query('businessName') businessName?: string,
@@ -23,24 +29,36 @@ export class SearchController {
     }
 
     @Get('products')
+    @ApiDocsGetSearchProducts()
     async searchProducts(
         @Query('name') name?: string,
-        @Query('category') categoryId?: number,
-        @Query('subcategory') subCategoryId?: number,
+        @Query('category') categoryId?: string,
+        @Query('subcategory') subCategoryId?: string,
+        @Query('minPrice') minPrice?: string,
+        @Query('maxPrice') maxPrice?: string,
     ) {
         return this.searchService.searchProducts(
             name,
             categoryId,
             subCategoryId,
+            minPrice,
+            maxPrice,
         );
     }
 
     @Get('services')
+    @ApiDocsGetSearchServices()
     async searchServices(
-        @Query('name') name: string,
-        @Query('category') categoryId: string,
-        @Query('subcategory') subCategoryId: string,
-    ) {}
+        @Query('name') name?: string,
+        @Query('category') categoryId?: string,
+        @Query('subcategory') subCategoryId?: string,
+    ) {
+        return this.searchService.searchServices(
+            name,
+            categoryId,
+            subCategoryId,
+        );
+    }
 
     //TODO: chats srarch
     @Get('chats')
