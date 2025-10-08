@@ -65,6 +65,8 @@ model Supplier {
   services      Service[]
   cartGroups    CartBySupplier[] // buyer's cart is grouped based on suppliers
   ordersRecived Order[]
+  preInvoicces  PreInvoice[]
+  invoices      Invoice[]
 }
 
 // ============ 🛂 SUBSCRIPTIONS ==============
@@ -87,9 +89,11 @@ model Buyer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  carts    Cart[]
-  orders   Order[]
-  wishlist Wishlist[]
+  carts       Cart[]
+  orders      Order[]
+  wishlist    Wishlist[]
+  preInvoices PreInvoice[]
+  invoices    Invoice[]
 }
 
 // ============  💳 CARD ===============
@@ -175,7 +179,9 @@ model Product {
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 
-  cartItems CartItem[]
+  cartItems    CartItem[]
+  invoiceItems InvoiceItem[]
+  preInoivces  PreInvoice[]
 }
 
 // ============ ✋ SERVICES ===============
@@ -199,6 +205,8 @@ model Service {
   deletedAt           DateTime?
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
+
+  invoiceItems InvoiceItem[]
 }
 
 // =========== 🔖 ITEM EMBEDDING ==========
@@ -261,17 +269,73 @@ model CartItem {
 
 // =========== 📦️ ORDER ================
 model Order {
-  id         String      @id @default(uuid())
-  checkoutId String // same across all orders from the same checkout
-  buyerId    String?
-  buyer      Buyer?      @relation(fields: [buyerId], references: [id], onDelete: SetNull)
-  cartId     String
-  cart       Cart        @relation(fields: [cartId], references: [id])
-  supplierId String
-  supplier   Supplier    @relation(fields: [supplierId], references: [id])
-  finalPrice Float
-  status     OrderStatus @default(PENDING)
-  createdAt  DateTime    @default(now())
+  id          String      @id @default(uuid())
+  tapChargeId String // same across all orders from the same checkout
+  buyerId     String?
+  buyer       Buyer?      @relation(fields: [buyerId], references: [id], onDelete: SetNull)
+  cartId      String
+  cart        Cart        @relation(fields: [cartId], references: [id])
+  supplierId  String
+  supplier    Supplier    @relation(fields: [supplierId], references: [id])
+  finalPrice  Float
+  status      OrderStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+}
+
+// ============ 🧾 INVOICE ===============
+model Invoice {
+  id                    String                @id @default(uuid())
+  buyerId               String?
+  buyer                 Buyer?                @relation(fields: [buyerId], references: [id], onDelete: SetNull)
+  supplierId            String?
+  supplier              Supplier?             @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  deliveryDate          DateTime
+  termsOfPayment        InvoiceTermsOfPayment
+  upfrontAmount         Float?
+  tapChargeIdForUpfront String?
+  tapChargeId           String? // can be null if invoice just created or partially paid
+  uponDeliveryAmount    Float 
+  amount                Float
+  notesAndTerms         String?
+  status                InvoiceStatus         @default(PENDING)
+  createdAt             DateTime              @default(now())
+
+  items      InvoiceItem[]
+  preInvoice PreInvoice? // if created from a preinvoice
+}
+
+// ============ 🧾 INVOICE ITEM ===============
+model InvoiceItem {
+  id                 Int      @id @default(autoincrement())
+  invoiceId          String // how is the relation
+  invoice            Invoice  @relation(fields: [invoiceId], references: [id])
+  name               String   @db.VarChar(60)
+  description        String   @db.VarChar(100)
+  agreedDetails      String   @db.VarChar(100)
+  quantity           Int
+  unitPrice          Float
+  priceBasedQuantity Float // price * quantity
+  relatedServiceId   String?
+  relatedService     Service? @relation(fields: [relatedServiceId], references: [id], onDelete: SetNull)
+  relatedProductId   String?
+  relatedProduct     Product? @relation(fields: [relatedProductId], references: [id], onDelete: SetNull)
+}
+
+// ============ 🧾 PRE-INVOICE ===============
+model PreInvoice {
+  id              String           @id @default(uuid())
+  invoiceId       String?          @unique
+  invoice         Invoice?         @relation(fields: [invoiceId], references: [id])
+  groupPurchaseId String? //TODO: link with groups later
+  buyerId         String?
+  buyer           Buyer?           @relation(fields: [buyerId], references: [id], onDelete: SetNull)
+  supplierId      String?
+  supplier        Supplier?        @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  productId       String?
+  product         Product?         @relation(fields: [productId], references: [id], onDelete: SetNull)
+  amount          Float //TODO: price_based_quantity at Group_Purchase_Bueyrs + delivery fees when linked with groups later
+  status          PreInvoiceStatus @default(PENDING)
+  createdAt       DateTime         @default(now())
 }
 
 // ============ ❤️ WISHLIST ==============
@@ -344,4 +408,23 @@ enum OrderStatus {
   PROCESSING
   SHIPPED
   COMPLETED
+}
+
+enum PreInvoiceStatus {
+  PENDING
+  FAILED
+  SUCCESSFUL
+}
+
+enum InvoiceStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  FULLY_PAID
+  PARTIALLY_PAID
+}
+
+enum InvoiceTermsOfPayment {
+  PARTIAL
+  FULL
 }

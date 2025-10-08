@@ -8187,6 +8187,9 @@
       "name": "Orders"
     },
     {
+      "name": "Invoices"
+    },
+    {
       "name": "Demand Predictions"
     }
   ],

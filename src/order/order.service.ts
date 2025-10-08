@@ -56,7 +56,7 @@ export class OrderService {
 
         return {
             id: order.id,
-            checkoutId: order.checkoutId,
+            tapChargeId: order.tapChargeId,
             buyerId: order.buyerId ?? undefined,
             cartId: order.cartId,
             supplierId: order.supplierId,

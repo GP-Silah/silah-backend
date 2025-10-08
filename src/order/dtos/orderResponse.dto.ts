@@ -11,11 +11,16 @@ export class OrderResponseDto {
     id: string;
 
     @ApiProperty({
-        description: `Identifier for the checkout session.<br>
-        Since a buyer can have items from multiple suppliers in a single cart, 
-        each supplier will generate a separate order, but all share the same checkoutId.`,
+        description: `Unique identifier for the Tap Payments charge session.<br><br>
+            When a buyer proceeds to checkout, all items in their cart that belong to the same supplier 
+            are grouped into a single order. However, multiple orders (one per supplier) can still 
+            originate from the same checkout session.<br><br>
+            The <code>tapChargeId</code> serves as a shared reference linking all orders 
+            created during that checkout flow, allowing the system to trace which orders 
+            were generated from the same payment attempt.`,
+        example: 'chg_x8q3x9l7z5w2y1v0',
     })
-    checkoutId: string;
+    tapChargeId: string;
 
     @ApiProperty({
         description:

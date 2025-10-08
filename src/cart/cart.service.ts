@@ -393,14 +393,12 @@ export class CartService {
             );
 
             if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
-                const checkoutId = uuidv4();
-
                 // Create orders + reduce stock
                 const orders = await Promise.all(
                     cart.suppliers.map(async (supplierCart) => {
                         const order = await this.prisma.order.create({
                             data: {
-                                checkoutId,
+                                tapChargeId: charge.id,
                                 buyerId: buyer.id,
                                 cartId: cart.id,
                                 supplierId: supplierCart.supplierId,
@@ -432,7 +430,7 @@ export class CartService {
 
                 return {
                     message: 'Paid successfully',
-                    checkoutId,
+                    tapChargeId: charge.id,
                     buyerId: buyer.id,
                     cartId: cart.id,
                     totalPaid: cart.cartTotal,
@@ -470,13 +468,11 @@ export class CartService {
 
         // --- Complete checkout if charge captured/authorized ---
         if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
-            const checkoutId = uuidv4();
-
             const orders = await Promise.all(
                 cart.suppliers.map(async (supplierCart) => {
                     const order = await this.prisma.order.create({
                         data: {
-                            checkoutId,
+                            tapChargeId: charge.id,
                             buyerId: buyer.id,
                             cartId: cart.id,
                             supplierId: supplierCart.supplierId,
@@ -507,7 +503,7 @@ export class CartService {
 
             return {
                 message: 'Paid successfully',
-                checkoutId,
+                tapChargeId: charge.id,
                 buyerId: buyer.id,
                 cartId: cart.id,
                 totalPaid: cart.cartTotal,
