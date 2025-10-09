@@ -210,6 +210,13 @@ export class InvoiceResponseDto {
     items: InvoiceItemDto[];
 
     @ApiProperty({
+        description: 'Pre-invoice that was upgraded to this invoice, if any.',
+        type: PreInvoiceResponseDto,
+        required: false,
+    })
+    preInvoice?: PreInvoiceResponseDto;
+
+    @ApiProperty({
         description: 'Total amount for this invoice (sum of all items).',
         example: 1000.0,
     })

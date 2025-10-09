@@ -5,6 +5,7 @@ import {
     Get,
     Param,
     Patch,
+    Query,
     Req,
     UseGuards,
 } from '@nestjs/common';
@@ -34,9 +35,22 @@ export class OrderController {
     @UseGuards(JwtAuthGuard)
     @Get('me')
     @ApiDocsGetMyOrders()
-    async getMyOrders(@Req() req: Request) {
+    async getMyOrders(
+        @Req() req: Request,
+        @Query('status') status?: string, // lower case?
+    ) {
+        if (status) {
+            const normalized = status.toUpperCase();
+            const validStatuses = Object.values(OrderStatus);
+            if (!validStatuses.includes(normalized as OrderStatus)) {
+                throw new BadRequestException(
+                    `Invalid order status: ${status}`,
+                );
+            }
+            status = normalized as OrderStatus;
+        }
         const userId = req.tokenData!.sub;
-        return this.orderService.getMyOrders(userId);
+        return this.orderService.getMyOrders(userId, status as OrderStatus);
     }
 
     @ApiJwtAuthGuard()

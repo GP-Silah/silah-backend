@@ -85,14 +85,17 @@ export class OrderService {
         };
     }
 
-    async getMyOrders(userId: string): Promise<OrderResponseDto[]> {
+    async getMyOrders(
+        userId: string,
+        status?: OrderStatus,
+    ): Promise<OrderResponseDto[]> {
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
             include: { buyer: true, supplier: true },
         });
         if (!user) throw new NotFoundException('User not found');
 
-        let whereCondition = {};
+        let whereCondition: any = {};
 
         if (user.role === 'BUYER') {
             if (!user.buyer) throw new NotFoundException('Buyer not found');
@@ -110,6 +113,11 @@ export class OrderService {
             throw new BadRequestException(
                 'Orders not found for this user role',
             );
+        }
+
+        // Apply status filter only if valid
+        if (status) {
+            whereCondition.status;
         }
 
         // Fetch orders including cart and cart items
