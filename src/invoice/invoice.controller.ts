@@ -23,7 +23,7 @@ import { InvoiceStatus } from '@prisma/client';
 import { CreateInvoiceDto } from './dtos/createInvoice.dto';
 
 @ApiTags('Invoices')
-@Controller('invoice')
+@Controller('invoices')
 export class InvoiceController {
     constructor(private readonly invoiceService: InvoiceService) {}
 
@@ -80,14 +80,16 @@ export class InvoiceController {
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post()
-    async createInvoice(@Body() dto: CreateInvoiceDto) {}
+    async createInvoice(@Body() dto: CreateInvoiceDto) {
+        return this.invoiceService.createInvoice(dto);
+    }
 
     //TODO: when groups are done
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Post(':groupId/pre-invoice')
+    @Post(':groupId')
     async createPreInvoice(
         @Req() req: Request,
         @Param('groupId') groupId: string,
@@ -125,7 +127,6 @@ export class InvoiceController {
         );
     }
 
-    // here we care about the related items and product id in case of group so the user can review them later and we can analytics them
     @ApiJwtAuthGuard()
     @ApiRolesGuard()
     @Roles(UserRole.BUYER)
@@ -133,5 +134,6 @@ export class InvoiceController {
     @Post('me/:id/pay')
     async payInvoice(@Req() req: Request, @Param('id') id: string) {
         const userId = req.tokenData!.sub;
+        return this.invoiceService.payInvoice(userId, id);
     }
 }

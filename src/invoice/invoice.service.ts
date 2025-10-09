@@ -1,3 +1,4 @@
+import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 import {
     BadRequestException,
     Injectable,
@@ -25,6 +26,7 @@ export class InvoiceService {
         private readonly supplierService: SupplierService,
         private readonly productService: ProductService,
         private readonly serviceService: ServiceService,
+        private readonly tapPaymentService: TapPaymentsService,
     ) {}
 
     async toInvoiceResponseDto(
@@ -160,8 +162,8 @@ export class InvoiceService {
                     supplier: { include: { user: true } },
                     items: {
                         include: {
-                            relatedProduct: true,
-                            relatedService: true,
+                            relatedProduct: { include: { category: true } },
+                            relatedService: { include: { category: true } },
                         },
                     },
                 },
@@ -245,8 +247,8 @@ export class InvoiceService {
                 supplier: { include: { user: true } },
                 items: {
                     include: {
-                        relatedProduct: true,
-                        relatedService: true,
+                        relatedProduct: { include: { category: true } },
+                        relatedService: { include: { category: true } },
                     },
                 },
             },
@@ -293,8 +295,11 @@ export class InvoiceService {
                 let relatedService: any = null;
 
                 if (item.relatedProductId) {
-                    relatedProduct = await this.prisma.product.findUnique({
-                        where: { id: item.relatedProductId },
+                    relatedProduct = await this.prisma.product.findFirst({
+                        where: {
+                            id: item.relatedProductId,
+                            supplierId: supplier.id,
+                        },
                     });
                     if (!relatedProduct)
                         throw new BadRequestException(
@@ -303,8 +308,11 @@ export class InvoiceService {
                 }
 
                 if (item.relatedServiceId) {
-                    relatedService = await this.prisma.service.findUnique({
-                        where: { id: item.relatedServiceId },
+                    relatedService = await this.prisma.service.findFirst({
+                        where: {
+                            id: item.relatedServiceId,
+                            supplierId: supplier.id,
+                        },
                     });
                     if (!relatedService)
                         throw new BadRequestException(
@@ -325,14 +333,46 @@ export class InvoiceService {
             }),
         );
 
-        // Calculate total amount
+        // Calculate total amount based on items
         const itemsTotal = itemsData.reduce(
             (sum, item) => sum + item.priceBasedQuantity,
             0,
         );
-        const totalAmount =
-            itemsTotal +
-            (dto.termsOfPayment === 'FULL' ? 0 : (dto.upfrontAmount ?? 0));
+
+        const totalAmount = itemsTotal;
+        const upfrontAmount = dto.upfrontAmount ?? 0;
+
+        // Validate upfront amount
+        if (upfrontAmount > totalAmount) {
+            throw new BadRequestException(
+                'Upfront amount cannot exceed the total invoice amount.',
+            );
+        }
+
+        // Business rule: limit upfront %
+        const MAX_UPFRONT_PERCENT = 0.3;
+        const maxAllowedUpfront = totalAmount * MAX_UPFRONT_PERCENT;
+
+        if (upfrontAmount > maxAllowedUpfront) {
+            throw new BadRequestException(
+                `Upfront amount cannot exceed ${MAX_UPFRONT_PERCENT * 100}% of total (${maxAllowedUpfront.toFixed(
+                    2,
+                )}).`,
+            );
+        }
+
+        // Compute upon-delivery amount
+        let uponDeliveryAmount: number;
+        if (dto.termsOfPayment === 'FULL') {
+            uponDeliveryAmount = 0;
+        } else {
+            uponDeliveryAmount = totalAmount - upfrontAmount;
+        }
+
+        // Final consistency check
+        if (uponDeliveryAmount + upfrontAmount !== totalAmount) {
+            throw new BadRequestException('Amounts do not add up to total.');
+        }
 
         // Create the invoice
         const invoice = await this.prisma.invoice.create({
@@ -342,7 +382,7 @@ export class InvoiceService {
                 deliveryDate: new Date(dto.deliveryDate),
                 termsOfPayment: dto.termsOfPayment,
                 upfrontAmount: dto.upfrontAmount ?? null,
-                uponDeliveryAmount: dto.uponDeliveryAmount,
+                uponDeliveryAmount: uponDeliveryAmount,
                 notesAndTerms: dto.notesAndTerms ?? null,
                 amount: totalAmount,
                 items: {
@@ -354,8 +394,8 @@ export class InvoiceService {
                 supplier: { include: { user: true } },
                 items: {
                     include: {
-                        relatedProduct: true,
-                        relatedService: true,
+                        relatedProduct: { include: { category: true } },
+                        relatedService: { include: { category: true } },
                     },
                 },
             },
@@ -408,8 +448,8 @@ export class InvoiceService {
                 supplier: { include: { user: true } },
                 items: {
                     include: {
-                        relatedProduct: true,
-                        relatedService: true,
+                        relatedProduct: { include: { category: true } },
+                        relatedService: { include: { category: true } },
                     },
                 },
             },
@@ -421,5 +461,113 @@ export class InvoiceService {
         )) as InvoiceResponseDto;
     }
 
-    async payInvoice() { }
+    async payInvoice(userId: string, id: string) {
+        // --- 1. Verify invoice exists and belongs to the buyer ---
+        const invoice = await this.prisma.invoice.findUnique({
+            where: { id },
+            include: {
+                buyer: { include: { user: true, card: true } },
+                invoiceItems: { include: { product: true } },
+            },
+        });
+
+        if (!invoice) throw new NotFoundException('Invoice not found');
+        if (invoice.buyer.userId !== userId)
+            throw new ForbiddenException(
+                'You are not allowed to pay this invoice',
+            );
+        if (invoice.isPaid)
+            throw new BadRequestException('Invoice already paid');
+
+        if (!['ACCEPTED', 'PARTIALLY_PAID'].includes(invoice.status))
+            throw new BadRequestException(
+                'Invoice must be accepted or partially paid to proceed with payment',
+            );
+
+        const buyer = invoice.buyer;
+
+        // --- 2. Validate buyer payment info ---
+        if (!buyer.card)
+            throw new BadRequestException('No saved card found for this buyer');
+        if (!buyer.user.tapCustomerId)
+            throw new BadRequestException('Missing Tap customer ID');
+
+        // --- 3. Calculate totals (like checkoutCart) ---
+        const itemsTotal = invoice.invoiceItems.reduce(
+            (sum, item) => sum + item.quantity * item.product.price,
+            0,
+        );
+
+        const deliveryFees =
+            invoice.deliveryFees ??
+            invoice.invoiceItems.reduce(
+                (sum, item) =>
+                    sum + (item.product?.supplier?.deliveryFees ?? 0),
+                0,
+            );
+
+        const totalAmount = itemsTotal + deliveryFees;
+
+        // --- 4. Create Tap charge ---
+        const token = await this.tapPaymentsService.createTokenFromSavedCard(
+            buyer.user.tapCustomerId,
+            buyer.card.tapCardId,
+        );
+
+        const charge = await this.tapPaymentsService.payWithSavedCard(
+            buyer.user.tapCustomerId,
+            token.id,
+            buyer.card.tapCardId,
+            totalAmount,
+            'http://localhost:5137/payment/invoice/callback', // TODO: replace with real callback URL
+        );
+
+        // --- 5. Redirect for 3DS if needed ---
+        if (charge.status === 'INITIATED' && charge.transaction?.url) {
+            return {
+                message: 'Redirect for authentication',
+                redirectUrl: charge.transaction.url,
+                chargeId: charge.id,
+            };
+        }
+
+        // --- 6. Confirm successful charge ---
+        if (!['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
+            throw new BadRequestException(
+                `Payment failed. Charge status: ${charge.status}`,
+            );
+        }
+
+        // --- 7. Mark invoice as paid & reduce stock ---
+        await this.prisma.$transaction(async (tx) => {
+            // reduce product stock
+            for (const item of invoice.invoiceItems) {
+                await tx.product.update({
+                    where: { id: item.product.id },
+                    data: { stock: item.product.stock - item.quantity },
+                });
+            }
+
+            // mark invoice as paid
+            await tx.invoice.update({
+                where: { id: invoice.id },
+                data: {
+                    isPaid: true,
+                    status: 'PAID',
+                    tapChargeId: charge.id,
+                    totalPaid: totalAmount,
+                    paidAt: new Date(),
+                },
+            });
+        });
+
+        // --- 8. Return summary ---
+        return {
+            message: 'Invoice paid successfully',
+            tapChargeId: charge.id,
+            buyerId: buyer.id,
+            invoiceId: invoice.id,
+            totalPaid: totalAmount,
+        };
+    }
 }

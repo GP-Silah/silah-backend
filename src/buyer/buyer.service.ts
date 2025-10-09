@@ -44,6 +44,7 @@ export class BuyerService {
             : null;
 
         return {
+            buyerId: buyer.id,
             user: userData,
             card: cardData,
         };
@@ -55,7 +56,7 @@ export class BuyerService {
             where: { email },
             include: {
                 buyer: {
-                    select: {
+                    include: {
                         card: true,
                     },
                 },
@@ -75,6 +76,7 @@ export class BuyerService {
               }
             : null;
         return {
+            buyerId: user?.buyer?.id,
             user: userData,
             card: cardData ?? null,
         } as BuyerResponseDto;
@@ -85,7 +87,7 @@ export class BuyerService {
             where: { email },
             include: {
                 buyer: {
-                    select: {
+                    include: {
                         card: true,
                     },
                 },

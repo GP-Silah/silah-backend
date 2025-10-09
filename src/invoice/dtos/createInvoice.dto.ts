@@ -12,6 +12,9 @@ import {
     ValidatorConstraintInterface,
     ValidationArguments,
     Validate,
+    ValidationOptions,
+    registerDecorator,
+    ValidateIf,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { InvoiceTermsOfPayment } from '@prisma/client';
@@ -32,6 +35,27 @@ export class EitherProductOrServiceConstraint
     defaultMessage() {
         return 'Each invoice item must reference either a product or a service, not both.';
     }
+}
+
+export function IsFutureDate(validationOptions?: ValidationOptions) {
+    return function (object: Object, propertyName: string) {
+        registerDecorator({
+            name: 'isFutureDate',
+            target: object.constructor,
+            propertyName,
+            options: validationOptions,
+            validator: {
+                validate(value: any, args: ValidationArguments) {
+                    const date = new Date(value);
+                    const now = new Date();
+                    return date > now; // must be strictly in the future
+                },
+                defaultMessage(args: ValidationArguments) {
+                    return `${args.property} must be a future date`;
+                },
+            },
+        });
+    };
 }
 
 export class CreateInvoiceItemDto {
@@ -109,6 +133,7 @@ export class CreateInvoiceDto {
         example: '2025-10-08',
     })
     @IsDateString()
+    @IsFutureDate({ message: 'Delivery date must be in the future' })
     deliveryDate: string;
 
     @ApiProperty({
@@ -119,19 +144,13 @@ export class CreateInvoiceDto {
     termsOfPayment: InvoiceTermsOfPayment;
 
     @ApiProperty({
-        description: 'Upfront payment amount (if applicable).',
+        description:
+            'Upfront payment amount (required only when termsOfPayment = PARTIAL).',
         required: false,
     })
-    @IsOptional()
+    @ValidateIf((o) => o.termsOfPayment === InvoiceTermsOfPayment.PARTIAL)
     @IsNumber()
     upfrontAmount?: number;
-
-    @ApiProperty({
-        description: 'Amount due upon delivery.',
-        example: 250.75,
-    })
-    @IsNumber()
-    uponDeliveryAmount: number;
 
     @ApiProperty({
         description: 'Optional notes or terms added by the supplier.',
