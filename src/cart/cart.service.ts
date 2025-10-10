@@ -385,6 +385,8 @@ export class CartService {
         if (!buyer.card) {
             throw new BadRequestException('No saved card found for this buyer');
         }
+        if (!buyer.user.tapCustomerId)
+            throw new BadRequestException('Missing Tap customer ID');
 
         // --- Path 1: Confirm existing charge if chargeId is provided ---
         if (dto.chargeId) {

@@ -11,7 +11,7 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.docs';
 import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
@@ -90,6 +90,11 @@ export class InvoiceController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post(':groupId')
+    @ApiOperation({
+        deprecated: true,
+        summary: 'Not implemented yet',
+        description: 'This endpoint is a placeholder and not implemented yet.',
+    })
     async createPreInvoice(
         @Req() req: Request,
         @Param('groupId') groupId: string,

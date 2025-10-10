@@ -1,11 +1,12 @@
 import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 import {
     BadRequestException,
+    ForbiddenException,
     Injectable,
     InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
-import { InvoiceStatus, UserRole } from '@prisma/client';
+import { InvoiceStatus, InvoiceTermsOfPayment, UserRole } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
     InvoiceItemDto,
@@ -467,22 +468,39 @@ export class InvoiceService {
             where: { id },
             include: {
                 buyer: { include: { user: true, card: true } },
-                invoiceItems: { include: { product: true } },
+                preInvoice: {
+                    include: { product: { include: { supplier: true } } },
+                },
+                items: {
+                    include: {
+                        relatedProduct: {
+                            include: { category: true, supplier: true },
+                        },
+                        relatedService: { include: { category: true } },
+                    },
+                },
             },
         });
 
-        if (!invoice) throw new NotFoundException('Invoice not found');
+        if (!invoice || !invoice.buyer)
+            throw new NotFoundException('Invoice not found');
+
         if (invoice.buyer.userId !== userId)
             throw new ForbiddenException(
                 'You are not allowed to pay this invoice',
             );
-        if (invoice.isPaid)
+
+        if (invoice.status === InvoiceStatus.FULLY_PAID)
             throw new BadRequestException('Invoice already paid');
 
-        if (!['ACCEPTED', 'PARTIALLY_PAID'].includes(invoice.status))
+        if (
+            invoice.status !== InvoiceStatus.ACCEPTED &&
+            invoice.status !== InvoiceStatus.PARTIALLY_PAID
+        ) {
             throw new BadRequestException(
                 'Invoice must be accepted or partially paid to proceed with payment',
             );
+        }
 
         const buyer = invoice.buyer;
 
@@ -492,33 +510,65 @@ export class InvoiceService {
         if (!buyer.user.tapCustomerId)
             throw new BadRequestException('Missing Tap customer ID');
 
-        // --- 3. Calculate totals (like checkoutCart) ---
-        const itemsTotal = invoice.invoiceItems.reduce(
-            (sum, item) => sum + item.quantity * item.product.price,
-            0,
-        );
+        // --- 3. Calculate totals ---
+        let totalAmount = 0;
+        let deliveryFees = 0;
 
-        const deliveryFees =
-            invoice.deliveryFees ??
-            invoice.invoiceItems.reduce(
+        if (invoice.preInvoice) {
+            //TODO: Path 1: upgraded preinvoice (one product + supplier delivery fee)
+            const product = invoice.preInvoice.product;
+            if (!product)
+                throw new BadRequestException('Pre-invoice product not found');
+
+            // const basePrice = product.price * (invoice.quantity ?? 1);
+            // const supplierDeliveryFees = product.supplier?.deliveryFees ?? 0;
+            // totalAmount = basePrice + supplierDeliveryFees;
+            // deliveryFees = supplierDeliveryFees;
+        } else {
+            // Path 2: normal invoice (multiple products or services)
+            const itemsTotal = invoice.items.reduce((sum, item) => {
+                const productPrice = item.relatedProduct
+                    ? item.relatedProduct.price * item.quantity
+                    : 0;
+                const servicePrice = item.relatedService
+                    ? item.relatedService.price * item.quantity
+                    : 0;
+                return sum + productPrice + servicePrice;
+            }, 0);
+
+            deliveryFees = invoice.items.reduce(
                 (sum, item) =>
-                    sum + (item.product?.supplier?.deliveryFees ?? 0),
+                    sum + (item.relatedProduct?.supplier?.deliveryFees ?? 0),
                 0,
             );
 
-        const totalAmount = itemsTotal + deliveryFees;
+            totalAmount = itemsTotal + deliveryFees;
+        }
 
         // --- 4. Create Tap charge ---
-        const token = await this.tapPaymentsService.createTokenFromSavedCard(
+        const token = await this.tapPaymentService.createTokenFromSavedCard(
             buyer.user.tapCustomerId,
             buyer.card.tapCardId,
         );
 
-        const charge = await this.tapPaymentsService.payWithSavedCard(
+        let chargeAmount: number;
+
+        if (
+            invoice.termsOfPayment === InvoiceTermsOfPayment.PARTIAL &&
+            !invoice.tapChargeId
+        ) {
+            // First payment —> only pay upfront
+            chargeAmount = invoice.upfrontAmount!;
+        } else {
+            // Second (final) or full payment
+            chargeAmount = invoice.uponDeliveryAmount ?? invoice.amount;
+        }
+
+        const charge = await this.tapPaymentService.payWithSavedCard(
             buyer.user.tapCustomerId,
             token.id,
             buyer.card.tapCardId,
-            totalAmount,
+            chargeAmount,
             'http://localhost:5137/payment/invoice/callback', // TODO: replace with real callback URL
         );
 
@@ -538,36 +588,58 @@ export class InvoiceService {
             );
         }
 
-        // --- 7. Mark invoice as paid & reduce stock ---
+        // --- 7. Update invoice payment details ---
         await this.prisma.$transaction(async (tx) => {
-            // reduce product stock
-            for (const item of invoice.invoiceItems) {
-                await tx.product.update({
-                    where: { id: item.product.id },
-                    data: { stock: item.product.stock - item.quantity },
-                });
+            let newPaidAmount = 0;
+            let remainingAmount = 0;
+            let newStatus: InvoiceStatus;
+
+            if (
+                invoice.termsOfPayment === InvoiceTermsOfPayment.PARTIAL &&
+                !invoice.tapChargeId
+            ) {
+                // First payment (upfront)
+                // Only upfrontAmount is paid; the rest remains
+                newPaidAmount = invoice.upfrontAmount!;
+                remainingAmount = invoice.amount - newPaidAmount;
+                newStatus = InvoiceStatus.PARTIALLY_PAID;
+            } else if (
+                invoice.termsOfPayment === InvoiceTermsOfPayment.PARTIAL &&
+                invoice.tapChargeId
+            ) {
+                // Second payment (upon delivery)
+                // The upfront was already paid, now pay the rest
+                newPaidAmount = invoice.amount; // fully paid now
+                remainingAmount = 0;
+                newStatus = InvoiceStatus.FULLY_PAID;
+            } else {
+                // Not partial → single full payment from the beginning
+                newPaidAmount = invoice.amount;
+                remainingAmount = 0;
+                newStatus = InvoiceStatus.FULLY_PAID;
             }
 
-            // mark invoice as paid
+            // 💳 Update invoice payment fields
             await tx.invoice.update({
                 where: { id: invoice.id },
                 data: {
-                    isPaid: true,
-                    status: 'PAID',
+                    status: newStatus,
                     tapChargeId: charge.id,
-                    totalPaid: totalAmount,
-                    paidAt: new Date(),
                 },
             });
         });
 
         // --- 8. Return summary ---
         return {
-            message: 'Invoice paid successfully',
+            message:
+                invoice.status === InvoiceStatus.PARTIALLY_PAID
+                    ? 'Partial payment was maid successfully'
+                    : 'Invoice paid successfully',
             tapChargeId: charge.id,
             buyerId: buyer.id,
             invoiceId: invoice.id,
             totalPaid: totalAmount,
+            totalAmount: invoice.amount,
         };
     }
 }
