@@ -1,5 +1,5 @@
 import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
-import { Buyer, OrderStatus } from '@prisma/client';
+import { OrderStatus } from '@prisma/client';
 import { CartItemResponseDto } from '../../cart/dtos/cartResponse.dto';
 import { BuyerResponseDto } from 'src/buyer/dtos/buyerResponse.dto';
 import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';

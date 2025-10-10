@@ -115,6 +115,7 @@ How to use this on frontend:
         { name: 'Users' },
         { name: 'Buyers' },
         { name: 'Suppliers' },
+        { name: 'Settings' },
         { name: 'Categories' },
         { name: 'Products' },
         { name: 'Services' },
@@ -123,6 +124,7 @@ How to use this on frontend:
         { name: 'Carts' },
         { name: 'Orders' },
         { name: 'Invoices' },
+        { name: 'Reviews' },
         { name: 'Demand Predictions' },
     ];
     SwaggerModule.setup('api/docs', app, document, {

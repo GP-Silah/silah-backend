@@ -9,7 +9,7 @@ import { ProductResponseDto } from 'src/product/dtos/productResponse.dto';
 import { ServiceResponseDto } from 'src/service/dtos/serviceResponse.dto';
 import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';
 
-export class InvoiceItemDto {
+export class InvoiceItemResponseDto {
     @ApiProperty({
         description: 'Unique identifier of the invoice item.',
         example: 1,
@@ -205,9 +205,9 @@ export class InvoiceResponseDto {
 
     @ApiProperty({
         description: 'List of items included in this invoice.',
-        type: [InvoiceItemDto],
+        type: [InvoiceItemResponseDto],
     })
-    items: InvoiceItemDto[];
+    items: InvoiceItemResponseDto[];
 
     @ApiProperty({
         description: 'Pre-invoice that was upgraded to this invoice, if any.',

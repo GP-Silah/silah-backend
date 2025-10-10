@@ -8672,6 +8672,169 @@
           "Invoices"
         ]
       }
+    },
+    "/api/reviews/suppliers/{supplierId}": {
+      "get": {
+        "operationId": "ReviewController_getSupplierReviews",
+        "parameters": [
+          {
+            "name": "supplierId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Reviews"
+        ]
+      }
+    },
+    "/api/reviews/{reviewId}": {
+      "get": {
+        "operationId": "ReviewController_getReviewById",
+        "parameters": [
+          {
+            "name": "reviewId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Reviews"
+        ]
+      }
+    },
+    "/api/reviews/items/{itemId}": {
+      "get": {
+        "operationId": "ReviewController_getItemReviews",
+        "parameters": [
+          {
+            "name": "itemId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Reviews"
+        ]
+      }
+    },
+    "/api/reviews/{id}": {
+      "post": {
+        "operationId": "ReviewController_createReview",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Reviews"
+        ]
+      }
     }
   },
   "info": {
@@ -8700,6 +8863,9 @@
       "name": "Suppliers"
     },
     {
+      "name": "Settings"
+    },
+    {
       "name": "Categories"
     },
     {
@@ -8722,6 +8888,9 @@
     },
     {
       "name": "Invoices"
+    },
+    {
+      "name": "Reviews"
     },
     {
       "name": "Demand Predictions"
@@ -10298,7 +10467,7 @@
           "recommendedStock"
         ]
       },
-      "InvoiceItemDto": {
+      "InvoiceItemResponseDto": {
         "type": "object",
         "properties": {
           "invoiceItemId": {
@@ -10517,7 +10686,7 @@
             "description": "List of items included in this invoice.",
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/InvoiceItemDto"
+              "$ref": "#/components/schemas/InvoiceItemResponseDto"
             }
           },
           "preInvoice": {
@@ -10644,6 +10813,78 @@
           "deliveryDate",
           "termsOfPayment",
           "items"
+        ]
+      },
+      "CreateItemReviewDto": {
+        "type": "object",
+        "properties": {
+          "orderItemId": {
+            "type": "number",
+            "description": "The cart item ID this review is linked to (if it's an order-based review). Should only be used when orderId is provided on parent review.",
+            "example": 12
+          },
+          "invoiceItemId": {
+            "type": "number",
+            "description": "The invoice item ID this review is linked to (if it's an invoice-based review). Should only be used when invoiceId is provided on parent review.",
+            "example": 34
+          },
+          "itemRating": {
+            "type": "number",
+            "description": "Rating for this item (1-5)",
+            "example": 5,
+            "default": 5,
+            "minimum": 1,
+            "maximum": 5
+          },
+          "writtenReviewOfItem": {
+            "type": "string",
+            "description": "Optional written feedback for the reviewed item (max 150 chars)",
+            "example": "The product quality was excellent and packaging was neat!",
+            "maxLength": 150
+          }
+        },
+        "required": [
+          "itemRating"
+        ]
+      },
+      "CreateReviewDto": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "description": "The order ID this review is related to (if order-based). Exactly one of `orderId` or `invoiceId` must be provided.",
+            "example": "3c90b93d-223f-4dfb-9d1c-0bbf2fae861b"
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "The invoice ID this review is related to (if invoice-based). Exactly one of `orderId` or `invoiceId` must be provided.",
+            "example": "a1d83c33-7f8c-4f1d-b37e-9b6fbb9d6502"
+          },
+          "supplierRating": {
+            "type": "number",
+            "description": "Supplier rating (1-5)",
+            "example": 5,
+            "default": 5,
+            "minimum": 1,
+            "maximum": 5
+          },
+          "writtenReviewOfSupplier": {
+            "type": "string",
+            "description": "Optional written feedback for the supplier (max 150 chars)",
+            "example": "Excellent communication and fast delivery.",
+            "maxLength": 150
+          },
+          "itemsReview": {
+            "description": "Array of item reviews for each item in this order/invoice",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateItemReviewDto"
+            }
+          }
+        },
+        "required": [
+          "supplierRating",
+          "itemsReview"
         ]
       },
       "InactiveSupplierResponseDto": {

@@ -59,14 +59,15 @@ model Supplier {
   isDeleted           Boolean        @default(false)
   deletedAt           DateTime?
 
-  categories    SupplierFavoriteCategory[]
-  subscriptions SupplierSubscription[]
-  products      Product[]
-  services      Service[]
-  cartGroups    CartBySupplier[] // buyer's cart is grouped based on suppliers
-  ordersRecived Order[]
-  preInvoicces  PreInvoice[]
-  invoices      Invoice[]
+  categories      SupplierFavoriteCategory[]
+  subscriptions   SupplierSubscription[]
+  products        Product[]
+  services        Service[]
+  cartGroups      CartBySupplier[] // buyer's cart is grouped based on suppliers
+  ordersReceived  Order[]
+  preInvoices     PreInvoice[]
+  invoices        Invoice[]
+  recievedReviews Review[]
 }
 
 // ============ 🛂 SUBSCRIPTIONS ==============
@@ -89,11 +90,13 @@ model Buyer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  carts       Cart[]
-  orders      Order[]
-  wishlist    Wishlist[]
-  preInvoices PreInvoice[]
-  invoices    Invoice[]
+  carts               Cart[]
+  orders              Order[]
+  wishlist            Wishlist[]
+  preInvoices         PreInvoice[]
+  invoices            Invoice[]
+  writtenReviews      Review[]
+  writtenItemsReviews ItemReview[]
 }
 
 // ============  💳 CARD ===============
@@ -265,6 +268,8 @@ model CartItem {
   product          Product        @relation(fields: [productId], references: [id])
   quantity         Int
   itemTotalPrice   Float // product.price * quantity at time of adding
+
+  itemReview ItemReview?
 }
 
 // =========== 📦️ ORDER ================
@@ -280,6 +285,8 @@ model Order {
   finalPrice  Float
   status      OrderStatus @default(PENDING)
   createdAt   DateTime    @default(now())
+
+  review Review?
 }
 
 // ============ 🧾 INVOICE ===============
@@ -294,7 +301,7 @@ model Invoice {
   upfrontAmount         Float?
   tapChargeIdForUpfront String?
   tapChargeId           String? // can be null if invoice just created or partially paid
-  uponDeliveryAmount    Float 
+  uponDeliveryAmount    Float
   amount                Float
   notesAndTerms         String?
   status                InvoiceStatus         @default(PENDING)
@@ -302,6 +309,7 @@ model Invoice {
 
   items      InvoiceItem[]
   preInvoice PreInvoice? // if created from a preinvoice
+  review     Review?
 }
 
 // ============ 🧾 INVOICE ITEM ===============
@@ -319,6 +327,8 @@ model InvoiceItem {
   relatedService     Service? @relation(fields: [relatedServiceId], references: [id], onDelete: SetNull)
   relatedProductId   String?
   relatedProduct     Product? @relation(fields: [relatedProductId], references: [id], onDelete: SetNull)
+
+  itemReview ItemReview?
 }
 
 // ============ 🧾 PRE-INVOICE ===============
@@ -336,6 +346,40 @@ model PreInvoice {
   amount          Float //TODO: price_based_quantity at Group_Purchase_Bueyrs + delivery fees when linked with groups later
   status          PreInvoiceStatus @default(PENDING)
   createdAt       DateTime         @default(now())
+}
+
+// ============ ✍️ REVIEW ===============
+model Review {
+  id                      String    @id @default(uuid())
+  orderId                 String?   @unique
+  order                   Order?    @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  invoiceId               String?   @unique
+  invoice                 Invoice?  @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  buyerId                 String?
+  buyer                   Buyer?    @relation(fields: [buyerId], references: [id], onDelete: SetNull)
+  supplierId              String?
+  supplier                Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  supplierRating          Int       @default(5)
+  writtenReviewOfSupplier String?   @db.VarChar(150)
+  createdAt               DateTime  @default(now())
+
+  itemsReview ItemReview[]
+}
+
+// ========== ✍️ ITEM REVIEW =============
+model ItemReview {
+  id                  Int          @id @default(autoincrement())
+  reviewId            String
+  review              Review       @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  orderItemId         Int?         @unique
+  orderItem           CartItem?    @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+  invoiceItemId       Int?         @unique
+  invoiceItem         InvoiceItem? @relation(fields: [invoiceItemId], references: [id], onDelete: Cascade)
+  buyerId             String?
+  buyer               Buyer?       @relation(fields: [buyerId], references: [id], onDelete: SetNull)
+  itemRating          Int          @default(5)
+  writtenReviewOfItem String?      @db.VarChar(150)
+  createdAt           DateTime     @default(now())
 }
 
 // ============ ❤️ WISHLIST ==============

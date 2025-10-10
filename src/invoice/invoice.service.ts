@@ -9,7 +9,7 @@ import {
 import { InvoiceStatus, InvoiceTermsOfPayment, UserRole } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
-    InvoiceItemDto,
+    InvoiceItemResponseDto,
     InvoiceResponseDto,
     PreInvoiceResponseDto,
 } from './dtos/invoiceResponse.dto';
@@ -76,7 +76,7 @@ export class InvoiceService {
                                                 item.relatedService,
                                             )
                                           : null,
-                                  }) as InvoiceItemDto,
+                                  }) as InvoiceItemResponseDto,
                           ),
                       )
                     : [],
@@ -476,7 +476,9 @@ export class InvoiceService {
                         relatedProduct: {
                             include: { category: true, supplier: true },
                         },
-                        relatedService: { include: { category: true } },
+                        relatedService: {
+                            include: { category: true, supplier: true },
+                        },
                     },
                 },
             },
