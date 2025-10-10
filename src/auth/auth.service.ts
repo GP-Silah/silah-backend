@@ -18,6 +18,7 @@ import { ResetPasswordDto } from './dtos/resetPassword.dto';
 import { UserRole } from '../enums/userRole.enum';
 import { Request, Response } from 'express';
 import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
+import { WathqService } from 'src/wathq/wathq.service';
 
 /**
  * AuthService contains all authentication-related business logic,
@@ -32,6 +33,7 @@ export class AuthService {
         @Inject(forwardRef(() => UserService))
         private readonly userService: UserService,
         private readonly tapPaymentsService: TapPaymentsService,
+        private readonly wathqService: WathqService,
     ) {}
 
     /**
@@ -106,6 +108,10 @@ export class AuthService {
             }
         }
 
+        // Validate CRN is real and its status is active through Wathq API
+        // const wathqRes = await this.wathqService.getBasicInfo(payload.crn);
+        // return wathqRes; // to test
+
         // Create a Customer on Tap Payments API of the user
         const tapCustomerId = await this.tapPaymentsService.createCustomer({
             first_name: payload.name,
@@ -150,6 +156,7 @@ export class AuthService {
             sub: user.id, // Standard JWT subject claim
             email: user.email, // Useful for some identity checks
             role: user.role, // For role-based access
+            isVerified: user.isEmailVerified, // For verified-only access
             jti: crypto.randomUUID(),
         });
         return { token };
@@ -431,6 +438,7 @@ export class AuthService {
             sub: user.id, // Standard JWT subject claim
             email: user.email, // Useful for some identity checks
             role: user.role, // For role-based access
+            isVerified: user.isEmailVerified, // For verified-only accesss
             jti: crypto.randomUUID(),
         });
         return { token };
@@ -472,7 +480,7 @@ export class AuthService {
 
     async switchUserRole(req: Request, res: Response) {
         const tokenData = req.tokenData!;
-        const { sub: userId, email, role: currentRole } = tokenData;
+        const { sub: userId, email, role: currentRole, isVerified } = tokenData;
 
         let newRole;
         if (currentRole === UserRole.BUYER) {
@@ -505,6 +513,7 @@ export class AuthService {
             sub: userId,
             email,
             role: newRole,
+            isVerified,
         });
 
         // Overwrite the token cookie

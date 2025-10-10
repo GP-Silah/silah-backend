@@ -13,14 +13,14 @@ import { BuyerService } from './buyer.service';
 import { ApiTags } from '@nestjs/swagger';
 import { BuyerResponseDto } from './dtos/buyerResponse.dto';
 import { CardDetailsDto } from './dtos/cardDetails.dto';
-import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.docs';
+import { ApiDocsJwtAuthGuard } from 'src/auth/decorators/jwt-auth-guard.docs';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/enums/userRole.enum';
 import { Request } from 'express';
 import { CreateCardStep1Dto, CreateCardStep2Dto } from './dtos/createCard.dto';
-import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
+import { ApiDocsRolesGuard } from 'src/auth/decorators/roles-guard.docs';
 import {
     ApiDocsDeleteCurrentBuyerCard,
     ApiDocsGetCurrentBuyerCard,
@@ -30,14 +30,16 @@ import {
     ApiDocsSaveOrReplaceCurrentBuyerCardStep2,
     ApiDocsToggleWishlistItem,
 } from './buyer.docs';
+import { ApiDocsVerifiedGuard } from 'src/auth/decorators/verified-guard.docs';
+import { VerifiedGuard } from 'src/auth/guards/verified.guard';
 
 @ApiTags('Buyers')
 @Controller('buyers')
 export class BuyerController {
     constructor(private readonly buyerService: BuyerService) {}
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me')
@@ -46,8 +48,8 @@ export class BuyerController {
         return this.buyerService.getCurrentBuyerData(req.tokenData!.email);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me/card')
@@ -67,10 +69,11 @@ export class BuyerController {
         return card as unknown as Promise<CardDetailsDto>;
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.BUYER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Put('me/card')
     @ApiDocsSaveOrReplaceCurrentBuyerCardStep1()
     async saveOrReplaceCurrentBuyerCardStep1(
@@ -83,10 +86,11 @@ export class BuyerController {
         );
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.BUYER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Put('me/card/confirm')
     @ApiDocsSaveOrReplaceCurrentBuyerCardStep2()
     async saveOrReplaceCurrentBuyerCardStep2(
@@ -99,18 +103,19 @@ export class BuyerController {
         );
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.BUYER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Delete('me/card')
     @ApiDocsDeleteCurrentBuyerCard()
     async deleteCurrentBuyerCard(@Req() req: Request) {
         return this.buyerService.deleteCurrentBuyerCard(req.tokenData!.sub);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me/wishlist')
@@ -120,8 +125,8 @@ export class BuyerController {
         return this.buyerService.getWishlist(userId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch('me/wishlist/:itemId')

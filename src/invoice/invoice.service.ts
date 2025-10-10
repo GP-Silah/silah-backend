@@ -462,7 +462,7 @@ export class InvoiceService {
         )) as InvoiceResponseDto;
     }
 
-    async payInvoice(userId: string, id: string) {
+    async payInvoice(userId: string, id: string, chargeId?: string) {
         // --- 1. Verify invoice exists and belongs to the buyer ---
         const invoice = await this.prisma.invoice.findUnique({
             where: { id },
@@ -484,15 +484,12 @@ export class InvoiceService {
 
         if (!invoice || !invoice.buyer)
             throw new NotFoundException('Invoice not found');
-
         if (invoice.buyer.userId !== userId)
             throw new ForbiddenException(
                 'You are not allowed to pay this invoice',
             );
-
         if (invoice.status === InvoiceStatus.FULLY_PAID)
             throw new BadRequestException('Invoice already paid');
-
         if (
             invoice.status !== InvoiceStatus.ACCEPTED &&
             invoice.status !== InvoiceStatus.PARTIALLY_PAID
@@ -519,11 +516,10 @@ export class InvoiceService {
             const product = invoice.preInvoice.product;
             if (!product)
                 throw new BadRequestException('Pre-invoice product not found');
-
-            // const basePrice = product.price * (invoice.quantity ?? 1);
-            // const supplierDeliveryFees = product.supplier?.deliveryFees ?? 0;
-            // totalAmount = basePrice + supplierDeliveryFees;
-            // deliveryFees = supplierDeliveryFees;
+            // totalAmount =
+            //     product.price * (invoice.preInvoice.quantity ?? 1) +
+            //     (product.supplier?.deliveryFees ?? 0);
+            // deliveryFees = product.supplier?.deliveryFees ?? 0;
         } else {
             // Path 2: normal invoice (multiple products or services)
             const itemsTotal = invoice.items.reduce((sum, item) => {
@@ -535,57 +531,70 @@ export class InvoiceService {
                     : 0;
                 return sum + productPrice + servicePrice;
             }, 0);
-
             deliveryFees = invoice.items.reduce(
                 (sum, item) =>
                     sum + (item.relatedProduct?.supplier?.deliveryFees ?? 0),
                 0,
             );
-
             totalAmount = itemsTotal + deliveryFees;
         }
 
-        // --- 4. Create Tap charge ---
-        const token = await this.tapPaymentService.createTokenFromSavedCard(
-            buyer.user.tapCustomerId,
-            buyer.card.tapCardId,
-        );
+        let charge: any;
 
-        let chargeAmount: number;
-
-        if (
-            invoice.termsOfPayment === InvoiceTermsOfPayment.PARTIAL &&
-            !invoice.tapChargeId
-        ) {
-            // First payment —> only pay upfront
-            chargeAmount = invoice.upfrontAmount!;
+        // --- 4. Path 1: Use existing charge if chargeId is provided ---
+        if (chargeId) {
+            charge = await this.tapPaymentService.getCharge(chargeId);
+            if (!['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
+                throw new BadRequestException(
+                    `Charge not successful yet. Status: ${charge.status}`,
+                );
+            }
         } else {
-            // Second (final) or full payment
-            chargeAmount = invoice.uponDeliveryAmount ?? invoice.amount;
-        }
-
-        const charge = await this.tapPaymentService.payWithSavedCard(
-            buyer.user.tapCustomerId,
-            token.id,
-            buyer.card.tapCardId,
-            chargeAmount,
-            'http://localhost:5137/payment/invoice/callback', // TODO: replace with real callback URL
-        );
-
-        // --- 5. Redirect for 3DS if needed ---
-        if (charge.status === 'INITIATED' && charge.transaction?.url) {
-            return {
-                message: 'Redirect for authentication',
-                redirectUrl: charge.transaction.url,
-                chargeId: charge.id,
-            };
-        }
-
-        // --- 6. Confirm successful charge ---
-        if (!['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
-            throw new BadRequestException(
-                `Payment failed. Charge status: ${charge.status}`,
+            // --- 5. Path 2: Create new Tap charge ---
+            const token = await this.tapPaymentService.createTokenFromSavedCard(
+                buyer.user.tapCustomerId,
+                buyer.card.tapCardId,
             );
+
+            let chargeAmount: number;
+            if (
+                invoice.termsOfPayment === InvoiceTermsOfPayment.PARTIAL &&
+                !invoice.tapChargeId
+            ) {
+                // First payment (upfront)
+                if (!invoice.upfrontAmount) {
+                    throw new InternalServerErrorException(
+                        'Partial payment invoices must have an upfront amount specified.',
+                    );
+                }
+                chargeAmount = invoice.upfrontAmount;
+            } else {
+                // Final payment (upon delivery) or full invoice
+                chargeAmount = invoice.uponDeliveryAmount ?? invoice.amount;
+            }
+
+            charge = await this.tapPaymentService.payWithSavedCard(
+                buyer.user.tapCustomerId,
+                token.id,
+                buyer.card.tapCardId,
+                chargeAmount,
+                'http://localhost:5137/payment/invoice/callback', // TODO: replace with real callback URL
+            );
+
+            // --- 6. Redirect for 3DS if needed ---
+            if (charge.status === 'INITIATED' && charge.transaction?.url) {
+                return {
+                    message: 'Redirect for authentication',
+                    redirectUrl: charge.transaction.url,
+                    chargeId: charge.id,
+                };
+            }
+
+            if (!['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
+                throw new BadRequestException(
+                    `Payment failed. Charge status: ${charge.status}`,
+                );
+            }
         }
 
         // --- 7. Update invoice payment details ---
@@ -609,17 +618,17 @@ export class InvoiceService {
             ) {
                 // Second payment (upon delivery)
                 // The upfront was already paid, now pay the rest
-                newPaidAmount = invoice.amount; // fully paid now
+                newPaidAmount = invoice.amount;
                 remainingAmount = 0;
                 newStatus = InvoiceStatus.FULLY_PAID;
             } else {
-                // Not partial → single full payment from the beginning
+                // Full payment
+                // Not partial; single full payment from the beginning
                 newPaidAmount = invoice.amount;
                 remainingAmount = 0;
                 newStatus = InvoiceStatus.FULLY_PAID;
             }
 
-            // 💳 Update invoice payment fields
             await tx.invoice.update({
                 where: { id: invoice.id },
                 data: {
@@ -632,8 +641,9 @@ export class InvoiceService {
         // --- 8. Return summary ---
         return {
             message:
-                invoice.status === InvoiceStatus.PARTIALLY_PAID
-                    ? 'Partial payment was maid successfully'
+                invoice.termsOfPayment === InvoiceTermsOfPayment.PARTIAL &&
+                !invoice.tapChargeId
+                    ? 'Partial payment was made successfully'
                     : 'Invoice paid successfully',
             tapChargeId: charge.id,
             buyerId: buyer.id,

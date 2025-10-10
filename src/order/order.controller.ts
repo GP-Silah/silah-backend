@@ -12,8 +12,8 @@ import {
 import { OrderService } from './order.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.docs';
-import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
+import { ApiDocsJwtAuthGuard } from 'src/auth/decorators/jwt-auth-guard.docs';
+import { ApiDocsRolesGuard } from 'src/auth/decorators/roles-guard.docs';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -25,13 +25,15 @@ import {
     ApiDocsGetOrderById,
     ApiDocsUpdateOrderStatus,
 } from './order.docs';
+import { ApiDocsVerifiedGuard } from 'src/auth/decorators/verified-guard.docs';
+import { VerifiedGuard } from 'src/auth/guards/verified.guard';
 
 @ApiTags('Orders')
 @Controller('orders')
 export class OrderController {
     constructor(private readonly orderService: OrderService) {}
 
-    @ApiJwtAuthGuard()
+    @ApiDocsJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Get('me')
     @ApiDocsGetMyOrders()
@@ -53,7 +55,7 @@ export class OrderController {
         return this.orderService.getMyOrders(userId, status as OrderStatus);
     }
 
-    @ApiJwtAuthGuard()
+    @ApiDocsJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Get(':orderId')
     @ApiDocsGetOrderById()
@@ -62,10 +64,11 @@ export class OrderController {
         return this.orderService.getOrderById(userId, orderId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Patch(':orderId/status')
     @ApiDocsUpdateOrderStatus()
     async updateOrderStatus(
@@ -92,10 +95,11 @@ export class OrderController {
         );
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.BUYER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Patch(':orderId/confirm-delivery')
     @ApiDocsConfirmDelivery()
     async confirmDelivery(

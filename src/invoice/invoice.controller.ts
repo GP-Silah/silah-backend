@@ -13,23 +13,33 @@ import {
 import { InvoiceService } from './invoice.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.docs';
-import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
+import { ApiDocsJwtAuthGuard } from 'src/auth/decorators/jwt-auth-guard.docs';
+import { ApiDocsRolesGuard } from 'src/auth/decorators/roles-guard.docs';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/enums/userRole.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { InvoiceStatus } from '@prisma/client';
 import { CreateInvoiceDto } from './dtos/createInvoice.dto';
+import {
+    ApiDocsCreateInvoice,
+    ApiDocsGetMyInvoiceById,
+    ApiDocsGetMyInvoices,
+    ApiDocsPayInvoice,
+    ApiDocsUpdateInvoiceStatus,
+} from './invoice.docs';
+import { ApiDocsVerifiedGuard } from 'src/auth/decorators/verified-guard.docs';
+import { VerifiedGuard } from 'src/auth/guards/verified.guard';
 
 @ApiTags('Invoices')
 @Controller('invoices')
 export class InvoiceController {
     constructor(private readonly invoiceService: InvoiceService) {}
 
-    @ApiJwtAuthGuard()
+    @ApiDocsJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Get('me')
+    @ApiDocsGetMyInvoices()
     async getMyInvoices(
         @Req() req: Request,
         @Query('status') status?: string,
@@ -67,28 +77,32 @@ export class InvoiceController {
         );
     }
 
-    @ApiJwtAuthGuard()
+    @ApiDocsJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Get('me/:id')
+    @ApiDocsGetMyInvoiceById()
     async getMyInvoiceById(@Req() req: Request, @Param('id') id: string) {
         const userId = req.tokenData!.sub;
         return this.invoiceService.getMyInvoiceById(userId, id);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Post()
+    @ApiDocsCreateInvoice()
     async createInvoice(@Body() dto: CreateInvoiceDto) {
         return this.invoiceService.createInvoice(dto);
     }
 
     //TODO: when groups are done
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.BUYER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Post(':groupId')
     @ApiOperation({
         deprecated: true,
@@ -104,11 +118,13 @@ export class InvoiceController {
 
     //TODO: when groups and offers are finished think about the cron job
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.BUYER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Patch('me/:id/status')
+    @ApiDocsUpdateInvoiceStatus()
     async updateInvoiceStatus(
         @Req() req: Request,
         @Param('id') id: string,
@@ -132,13 +148,19 @@ export class InvoiceController {
         );
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.BUYER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Post('me/:id/pay')
-    async payInvoice(@Req() req: Request, @Param('id') id: string) {
+    @ApiDocsPayInvoice()
+    async payInvoice(
+        @Req() req: Request,
+        @Param('id') id: string,
+        @Body('chargeId') chargeId?: string,
+    ) {
         const userId = req.tokenData!.sub;
-        return this.invoiceService.payInvoice(userId, id);
+        return this.invoiceService.payInvoice(userId, id, chargeId);
     }
 }

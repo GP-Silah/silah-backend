@@ -50,6 +50,10 @@ async function bootstrap() {
             `
 Use this documentation to explore, test, and understand the available API endpoints, their request/response structure, and any required parameters such as headers, cookies, or authentication tokens.
 
+\`\`\`text
+[ base URL: \`https://api.silah.site\` ]
+\`\`\`
+
 **Important Note about Error Responses**
 
 When you test the APIs here in Swagger UI, the error responses are shown in a *simplified* format (only what we document in each endpoint).  

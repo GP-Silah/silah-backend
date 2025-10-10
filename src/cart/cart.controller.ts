@@ -13,8 +13,8 @@ import {
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { ApiTags } from '@nestjs/swagger';
-import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.docs';
-import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
+import { ApiDocsJwtAuthGuard } from 'src/auth/decorators/jwt-auth-guard.docs';
+import { ApiDocsRolesGuard } from 'src/auth/decorators/roles-guard.docs';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/enums/userRole.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -31,14 +31,16 @@ import {
     ApiDocsUpdateItemQuantity,
 } from './cart.docs';
 import { CheckoutCartDto } from './dtos/checkoutCart.dto';
+import { ApiDocsVerifiedGuard } from 'src/auth/decorators/verified-guard.docs';
+import { VerifiedGuard } from 'src/auth/guards/verified.guard';
 
 @ApiTags('Carts')
 @Controller('carts')
 export class CartController {
     constructor(private readonly cartService: CartService) {}
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me')
@@ -48,8 +50,8 @@ export class CartController {
         return this.cartService.getBuyerActiveCart(userId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     // auto creation when first item is added
@@ -60,8 +62,8 @@ export class CartController {
         return this.cartService.addItem(userId, dto);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch('me/items/:itemId')
@@ -81,8 +83,8 @@ export class CartController {
         return this.cartService.updateItemQuantity(userId, itemId, newQuantity);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('me/items/:itemId')
@@ -92,8 +94,8 @@ export class CartController {
         return this.cartService.removeItem(userId, itemId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('me')
@@ -103,8 +105,8 @@ export class CartController {
         return this.cartService.deleteCart(userId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('me/suppliers/:supplierId')
@@ -117,10 +119,11 @@ export class CartController {
         return this.cartService.removeSupplierFromCart(userId, supplierId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.BUYER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Post('me/checkout')
     @ApiDocsCheckoutCart()
     async checkoutCart(@Req() req: Request, @Body() dto: CheckoutCartDto) {
