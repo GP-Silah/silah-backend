@@ -1,21 +1,22 @@
 import {
+    BadRequestException,
+    ForbiddenException,
     Injectable,
     InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
-import { InvoiceService } from 'src/invoice/invoice.service';
-import { OrderService } from 'src/order/order.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
     ItemReviewResponseDto,
     ReviewResponseDto,
+    SupplierReviewResponseDto,
 } from './dtos/reviewResponse.dto';
 import { BuyerService } from 'src/buyer/buyer.service';
 import { SupplierService } from 'src/supplier/supplier.service';
-import { CartService } from 'src/cart/cart.service';
 import { ProductService } from 'src/product/product.service';
 import { ServiceService } from 'src/service/service.service';
 import { CreateReviewDto } from './dtos/createReview.dto';
+import { InvoiceStatus, OrderStatus } from '@prisma/client';
 
 @Injectable()
 export class ReviewService {
@@ -35,9 +36,12 @@ export class ReviewService {
             reviewId: itemReviewEntity.reviewId,
             orderItemReview: itemReviewEntity.orderItem
                 ? {
-                      cartItemId: itemReviewEntity.orderItem.id,
-                      productId: itemReviewEntity.orderItem.productId,
-                      productName: itemReviewEntity.orderItem.productName,
+                      orderItemId: itemReviewEntity.orderItem.id,
+                      product: itemReviewEntity.orderItem.product
+                          ? await this.productService.toProductResponseDto(
+                                itemReviewEntity.orderItem.product,
+                            )
+                          : undefined,
                   }
                 : undefined,
             invoiceItemReview: itemReviewEntity.invoiceItem
@@ -94,7 +98,9 @@ export class ReviewService {
         };
     }
 
-    async getSupplierReviews(supplierId: string) {
+    async getSupplierReviews(
+        supplierId: string,
+    ): Promise<SupplierReviewResponseDto[]> {
         const supplier = await this.prisma.supplier.findUnique({
             where: { id: supplierId },
             include: { user: true },
@@ -125,22 +131,24 @@ export class ReviewService {
             },
         });
 
-        // Map entities to DTOs
         return Promise.all(
-            reviews.map(async (review) => ({
-                reviewId: review.id,
-                orderId: review.orderId ?? undefined,
-                invoiceId: review.invoiceId ?? undefined,
-                buyerId: review.buyerId ?? undefined,
-                supplierRating: review.supplierRating,
-                writtenReviewOfSupplier:
-                    review.writtenReviewOfSupplier ?? undefined,
-                createdAt: review.createdAt,
-                supplier: await this.supplierService.toSupplierResponseDTO(
-                    supplier.user,
-                    supplier,
-                ),
-            })),
+            reviews.map(async (review) => {
+                const dto: SupplierReviewResponseDto = {
+                    reviewId: review.id,
+                    orderId: review.orderId ?? undefined,
+                    invoiceId: review.invoiceId ?? undefined,
+                    buyerId: review.buyerId ?? undefined,
+                    supplierRating: review.supplierRating,
+                    writtenReviewOfSupplier:
+                        review.writtenReviewOfSupplier ?? undefined,
+                    createdAt: review.createdAt,
+                    supplier: await this.supplierService.toSupplierResponseDTO(
+                        supplier.user,
+                        supplier,
+                    ),
+                };
+                return dto;
+            }),
         );
     }
 
@@ -153,7 +161,11 @@ export class ReviewService {
                 supplier: { include: { user: true } },
                 itemsReview: {
                     include: {
-                        orderItem: true,
+                        orderItem: {
+                            include: {
+                                product: { include: { category: true } },
+                            },
+                        },
                         invoiceItem: {
                             include: {
                                 relatedProduct: { include: { category: true } },
@@ -197,7 +209,9 @@ export class ReviewService {
                 ? { orderItem: { productId: itemId } }
                 : { invoiceItem: { relatedServiceId: itemId } },
             include: {
-                orderItem: true,
+                orderItem: {
+                    include: { product: { include: { category: true } } },
+                },
                 invoiceItem: {
                     include: {
                         relatedProduct: { include: { category: true } },
@@ -218,27 +232,21 @@ export class ReviewService {
         id: string,
         dto: CreateReviewDto,
     ): Promise<ReviewResponseDto> {
-        // Identify if order or invoice
+        // Identify if order or invoice. NOTE: we only include buyer & supplier here.
         const order = await this.prisma.order.findUnique({
             where: { id },
             include: {
-                buyer: true,
-                supplier: true,
-                cart: {
-                    include: {
-                        suppliers: {
-                            include: {
-                                cartItems: { include: { product: true } },
-                            },
-                        },
-                    },
-                },
+                buyer: { include: { user: true } },
+                supplier: { include: { user: true } },
             },
         });
 
         const invoice = await this.prisma.invoice.findUnique({
             where: { id },
-            include: { buyer: true, supplier: true, items: true },
+            include: {
+                buyer: { include: { user: true } },
+                supplier: { include: { user: true } },
+            },
         });
 
         if (!order && !invoice)
@@ -247,11 +255,126 @@ export class ReviewService {
             );
 
         const buyer = order ? order.buyer : invoice!.buyer;
-
         const supplier = order ? order.supplier : invoice!.supplier;
+
+        // Validate the request user is the buyer who made the order/invoice
+        const toValidateUser = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { buyer: true },
+        });
 
         if (!buyer || !supplier) {
             throw new NotFoundException('Buyer or Supplier not found');
+        }
+        // compare ids (not object references)
+        if (
+            !toValidateUser ||
+            !toValidateUser.buyer ||
+            toValidateUser.buyer.id !== buyer.id
+        ) {
+            throw new ForbiddenException(
+                "You can't write a review to an order or an invoice you haven't made",
+            );
+        }
+
+        if (order) {
+            const validateReview = await this.prisma.review.findFirst({
+                where: { orderId: order.id },
+            });
+            if (validateReview) {
+                throw new BadRequestException(
+                    `You already reviewd order with ID: ${order.id}`,
+                );
+            }
+
+            if (order.status !== OrderStatus.COMPLETED) {
+                throw new BadRequestException(
+                    `Order must be marked as completed before writting a review. Current status: ${order.status}`,
+                );
+            }
+
+            for (const itemDto of dto.itemsReview || []) {
+                // order-based item review -> expect orderItemId
+                if (!itemDto.orderItemId) {
+                    throw new BadRequestException(
+                        'orderItemId is required for order-based reviews',
+                    );
+                }
+
+                // Directly fetch the OrderItem
+                const orderItem = await this.prisma.orderItem.findUnique({
+                    where: { id: itemDto.orderItemId },
+                    include: { product: true },
+                });
+
+                if (!orderItem) {
+                    throw new InternalServerErrorException(
+                        `OrderItem ${itemDto.orderItemId} not found`,
+                    );
+                }
+
+                if (orderItem.orderId !== order.id) {
+                    throw new ForbiddenException(
+                        `OrderItem ${orderItem.id} does not belong to order ${order.id}`,
+                    );
+                }
+            }
+        }
+        if (invoice) {
+            const validateReview = await this.prisma.review.findFirst({
+                where: { invoiceId: invoice.id },
+            });
+            if (validateReview) {
+                throw new BadRequestException(
+                    `You already reviewd invoice with ID: ${invoice.id}`,
+                );
+            }
+
+            if (invoice.status !== InvoiceStatus.FULLY_PAID) {
+                throw new BadRequestException(
+                    `Invoice must be fully paid before writting a review. Current status: ${invoice.status}`,
+                );
+            }
+
+            for (const itemDto of dto.itemsReview || []) {
+                // invoice-based
+                if (!itemDto.invoiceItemId) {
+                    throw new BadRequestException(
+                        'invoiceItemId is required for invoice-based reviews',
+                    );
+                }
+
+                const invoiceItem = await this.prisma.invoiceItem.findUnique({
+                    where: { id: itemDto.invoiceItemId },
+                });
+                if (!invoiceItem) {
+                    throw new InternalServerErrorException(
+                        `Invoice Item not found for invoice ${invoice!.id}`,
+                    );
+                }
+
+                if (invoiceItem.relatedProductId) {
+                    const product = await this.prisma.product.findUnique({
+                        where: { id: invoiceItem!.relatedProductId },
+                    });
+                    if (!product) {
+                        throw new InternalServerErrorException(
+                            `Related Product not found for invoice ${invoice!.id}`,
+                        );
+                    }
+                }
+
+                if (invoiceItem.relatedServiceId) {
+                    const service = await this.prisma.service.findUnique({
+                        where: { id: invoiceItem.relatedServiceId },
+                    });
+                    if (!service) {
+                        throw new InternalServerErrorException(
+                            `Related Service not found for invoice ${invoice!.id}`,
+                        );
+                    }
+                }
+            }
         }
 
         // Create Review
@@ -267,121 +390,91 @@ export class ReviewService {
         });
 
         // Create Item Reviews
-        for (const itemDto of dto.itemsReview) {
-            const itemData = order
-                ? { orderItemId: itemDto.orderItemId }
-                : { invoiceItemId: itemDto.invoiceItemId };
-
-            const itemReview = await this.prisma.itemReview.create({
-                data: {
-                    reviewId: review.id,
-                    buyerId: buyer.id,
-                    itemRating: itemDto.itemRating,
-                    writtenReviewOfItem: itemDto.writtenReviewOfItem,
-                    ...itemData,
-                },
-            });
-
-            // Update Product/Service rating
-            if (order && itemReview.orderItemId) {
-                const orderWithCart = await this.prisma.order.findUnique({
-                    where: { id: order.id },
-                    include: {
-                        cart: {
-                            include: {
-                                suppliers: {
-                                    include: {
-                                        cartItems: {
-                                            include: { product: true },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
+        for (const itemDto of dto.itemsReview || []) {
+            if (order) {
+                // Directly fetch the OrderItem
+                const orderItem = await this.prisma.orderItem.findUnique({
+                    where: { id: itemDto.orderItemId },
+                    include: { product: true },
                 });
 
-                if (!orderWithCart) {
-                    throw new InternalServerErrorException(
-                        `Order ${order.id} not found`,
-                    );
-                }
-
-                // Find the specific CartItem that matches the itemReview
-                const foundCartItem = orderWithCart.cart.suppliers
-                    .flatMap((s) => s.cartItems)
-                    .find((item) => item.id === itemReview.orderItemId);
-
-                if (!foundCartItem) {
-                    throw new InternalServerErrorException(
-                        `Cart item not found for order ${order.id}`,
-                    );
-                }
-
-                const product = foundCartItem.product;
-
-                if (!product) {
-                    throw new InternalServerErrorException(
-                        `Product not found for cart item ${foundCartItem.id}`,
-                    );
-                }
-
-                await this.prisma.product.update({
-                    where: { id: product.id },
+                const itemReview = await this.prisma.itemReview.create({
                     data: {
-                        ratingsCount: { increment: 1 },
-                        avgRating:
-                            (product.avgRating * product.ratingsCount +
-                                itemDto.itemRating) /
-                            (product.ratingsCount + 1),
+                        reviewId: review.id,
+                        buyerId: buyer.id,
+                        itemRating: itemDto.itemRating,
+                        writtenReviewOfItem: itemDto.writtenReviewOfItem,
+                        orderItemId: orderItem!.id,
                     },
                 });
-            } else if (invoice && itemReview.invoiceItemId) {
-                const invoiceItem = await this.prisma.invoiceItem.findUnique({
-                    where: { id: itemDto.invoiceItemId },
-                });
-                if (!invoiceItem) {
-                    throw new InternalServerErrorException(
-                        `Invoice Item not found for invocie ${invoice}`,
-                    );
-                }
-                if (invoiceItem.relatedProductId) {
-                    const product = await this.prisma.product.findUnique({
-                        where: { id: invoiceItem.relatedProductId },
-                    });
-                    if (!product) {
-                        throw new InternalServerErrorException(
-                            `Related Product not found for invoice ${invoice.id}`,
-                        );
-                    }
+
+                // Update Product rating if this item has a product
+                if (orderItem!.product) {
+                    const product = orderItem!.product;
+                    // compute new average
+                    const newCount = product.ratingsCount + 1;
+                    const newAvg =
+                        (product.avgRating * product.ratingsCount +
+                            itemDto.itemRating) /
+                        newCount;
+
                     await this.prisma.product.update({
                         where: { id: product.id },
                         data: {
                             ratingsCount: { increment: 1 },
-                            avgRating:
-                                (product.avgRating * product.ratingsCount +
-                                    itemDto.itemRating) /
-                                (product.ratingsCount + 1),
+                            avgRating: newAvg,
                         },
                     });
                 }
-                if (invoiceItem.relatedServiceId) {
-                    const service = await this.prisma.service.findUnique({
-                        where: { id: invoiceItem.relatedServiceId },
+            } else {
+                const invoiceItem = await this.prisma.invoiceItem.findUnique({
+                    where: { id: itemDto.invoiceItemId },
+                });
+
+                const itemReview = await this.prisma.itemReview.create({
+                    data: {
+                        reviewId: review.id,
+                        buyerId: buyer.id,
+                        itemRating: itemDto.itemRating,
+                        writtenReviewOfItem: itemDto.writtenReviewOfItem,
+                        invoiceItemId: invoiceItem!.id,
+                    },
+                });
+
+                // Update product/service ratings for invoice item
+                if (invoiceItem!.relatedProductId) {
+                    const product = await this.prisma.product.findUnique({
+                        where: { id: invoiceItem!.relatedProductId },
                     });
-                    if (!service) {
-                        throw new InternalServerErrorException(
-                            `Related Service not found for invoice ${invoice.id}`,
-                        );
-                    }
-                    await this.prisma.service.update({
-                        where: { id: service.id },
+                    const newCount = product!.ratingsCount + 1;
+                    const newAvg =
+                        (product!.avgRating * product!.ratingsCount +
+                            itemDto.itemRating) /
+                        newCount;
+
+                    await this.prisma.product.update({
+                        where: { id: product!.id },
                         data: {
                             ratingsCount: { increment: 1 },
-                            avgRating:
-                                (service.avgRating * service.ratingsCount +
-                                    itemDto.itemRating) /
-                                (service.ratingsCount + 1),
+                            avgRating: newAvg,
+                        },
+                    });
+                }
+                if (invoiceItem!.relatedServiceId) {
+                    const service = await this.prisma.service.findUnique({
+                        where: { id: invoiceItem!.relatedServiceId },
+                    });
+                    const newCount = service!.ratingsCount + 1;
+                    const newAvg =
+                        (service!.avgRating * service!.ratingsCount +
+                            itemDto.itemRating) /
+                        newCount;
+
+                    await this.prisma.service.update({
+                        where: { id: service!.id },
+                        data: {
+                            ratingsCount: { increment: 1 },
+                            avgRating: newAvg,
                         },
                     });
                 }
@@ -400,7 +493,7 @@ export class ReviewService {
             },
         });
 
-        // Return DTO
+        // Re-fetch the review with items (include product categories)
         const reviewWithItems = await this.prisma.review.findUnique({
             where: { id: review.id },
             include: {
@@ -408,7 +501,11 @@ export class ReviewService {
                 supplier: { include: { user: true } },
                 itemsReview: {
                     include: {
-                        orderItem: true,
+                        orderItem: {
+                            include: {
+                                product: { include: { category: true } },
+                            },
+                        },
                         invoiceItem: {
                             include: {
                                 relatedProduct: { include: { category: true } },

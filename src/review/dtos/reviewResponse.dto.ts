@@ -4,8 +4,8 @@ import {
     getSchemaPath,
 } from '@nestjs/swagger';
 import { BuyerResponseDto } from 'src/buyer/dtos/buyerResponse.dto';
-import { CartItemResponseDto } from 'src/cart/dtos/cartResponse.dto';
 import { InvoiceItemResponseDto } from 'src/invoice/dtos/invoiceResponse.dto';
+import { OrderItemResponseDto } from 'src/order/dtos/orderResponse.dto';
 import { InactiveSupplierResponseDto } from 'src/supplier/dtos/inactiveSupplierResponse.dto';
 import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';
 
@@ -25,9 +25,9 @@ export class ItemReviewResponseDto {
     @ApiPropertyOptional({
         description:
             'Details of the order item being reviewed (if review is order-based)',
-        type: () => CartItemResponseDto,
+        type: () => OrderItemResponseDto,
     })
-    orderItemReview?: Partial<CartItemResponseDto>;
+    orderItemReview?: Partial<OrderItemResponseDto>;
 
     @ApiPropertyOptional({
         description:
@@ -120,4 +120,59 @@ export class ReviewResponseDto {
         example: '2025-10-10T12:34:56.789Z',
     })
     createdAt: Date;
+}
+
+export class SupplierReviewResponseDto {
+    @ApiProperty({
+        description: 'Unique ID of the review',
+        example: 'f1e2d3c4-5678-90ab-cdef-1234567890ab',
+    })
+    reviewId: string;
+
+    @ApiPropertyOptional({
+        description:
+            'ID of the related order if this review was created after an order',
+        example: '3c90b93d-223f-4dfb-9d1c-0bbf2fae861b',
+    })
+    orderId?: string;
+
+    @ApiPropertyOptional({
+        description:
+            'ID of the related invoice if this review was created after an invoice',
+        example: 'a1d83c33-7f8c-4f1d-b37e-9b6fbb9d6502',
+    })
+    invoiceId?: string;
+
+    @ApiPropertyOptional({
+        description: 'ID of the buyer who submitted this review',
+        example: 'y1x2w3v4-5678-90ab-cdef-1234567890ab',
+    })
+    buyerId?: string;
+
+    @ApiProperty({
+        description: 'Numeric rating given to the supplier',
+        example: 5,
+    })
+    supplierRating: number;
+
+    @ApiPropertyOptional({
+        description: 'Written feedback for this supplier',
+        example: 'The supplier was professional and prompt.',
+    })
+    writtenReviewOfSupplier?: string;
+
+    @ApiProperty({
+        description: 'Date when this review was created',
+        example: '2025-10-10T12:34:56.789Z',
+    })
+    createdAt: Date;
+
+    @ApiProperty({
+        description: 'Supplier details (active or inactive supplier)',
+        oneOf: [
+            { $ref: getSchemaPath(SupplierResponseDto) },
+            { $ref: getSchemaPath(InactiveSupplierResponseDto) },
+        ],
+    })
+    supplier: SupplierResponseDto | InactiveSupplierResponseDto;
 }

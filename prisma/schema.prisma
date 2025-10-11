@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../node_modules/.prisma/client"
@@ -14,97 +8,88 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ============  👤 USER ================
 model User {
-  id                String    @id @default(uuid())
-  tapCustomerId     String    @unique
-  email             String    @unique
-  crn               String    @unique
+  id                String         @id @default(uuid())
+  email             String         @unique
+  crn               String         @unique
   password          String
   name              String
-  role              UserRole  @default(BUYER)
-  businessName      String
   city              String
-  nid               String    @unique
-  agreedToTerms     Boolean   @default(true)
-  isEmailVerified   Boolean   @default(false)
+  nid               String         @unique
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  businessName      String
+  agreedToTerms     Boolean        @default(true)
+  isEmailVerified   Boolean        @default(false)
+  role              UserRole       @default(BUYER)
   pfpFileName       String?
-  isPfpDefault      Boolean   @default(true)
-  preferredLanguage Languages @default(EN)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  categories UserCategory[]
-  supplier   Supplier?
-  buyer      Buyer?
+  isPfpDefault      Boolean        @default(true)
+  tapCustomerId     String         @unique
+  preferredLanguage Languages      @default(EN)
+  buyer             Buyer?
+  supplier          Supplier?
+  categories        UserCategory[]
 }
 
-// ============ 🛢 SUPPLIER ==============
 model Supplier {
-  id                  String         @id @default(uuid())
-  userId              String         @unique
-  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  plan                SupplierPlan   @default(BASIC)
-  status              SupplierStatus @default(ACTIVE)
-  usedFreeTrail       Boolean        @default(false)
-  isStoreClosed       Boolean        @default(true)
-  storeClosedMsg      String         @default("This store is currently closed. Please check back later.")
+  id                  String                     @id @default(uuid())
+  userId              String                     @unique
+  plan                SupplierPlan               @default(BASIC)
+  isStoreClosed       Boolean                    @default(true)
+  storeClosedMsg      String                     @default("This store is currently closed. Please check back later.")
   storeBio            String?
+  deliveryFees        Float                      @default(0.0)
+  avgRating           Float                      @default(0.0)
+  createdAt           DateTime                   @default(now())
+  updatedAt           DateTime                   @updatedAt
   storeBannerFileName String?
-  deliveryFees        Float          @default(0.0)
-  avgRating           Float          @default(0.0)
-  ratingsCount        Int            @default(0)
-  createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
-  isDeleted           Boolean        @default(false)
+  status              SupplierStatus             @default(ACTIVE)
+  ratingsCount        Int                        @default(0)
+  usedFreeTrail       Boolean                    @default(false)
   deletedAt           DateTime?
-
-  categories      SupplierFavoriteCategory[]
-  subscriptions   SupplierSubscription[]
-  products        Product[]
-  services        Service[]
-  cartGroups      CartBySupplier[] // buyer's cart is grouped based on suppliers
-  ordersReceived  Order[]
-  preInvoices     PreInvoice[]
-  invoices        Invoice[]
-  recievedReviews Review[]
+  isDeleted           Boolean                    @default(false)
+  cartGroups          CartBySupplier[]
+  invoices            Invoice[]
+  ordersReceived      Order[]
+  preInvoices         PreInvoice[]
+  products            Product[]
+  recievedReviews     Review[]
+  services            Service[]
+  user                User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categories          SupplierFavoriteCategory[]
+  subscriptions       SupplierSubscription[]
 }
 
-// ============ 🛂 SUBSCRIPTIONS ==============
 model SupplierSubscription {
   id         String   @id @default(uuid())
   supplierId String
-  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
   startDate  DateTime @default(now())
-  endDate    DateTime @default(dbgenerated("now() + interval '1 month'")) // postgres interval syntax
+  endDate    DateTime @default(dbgenerated("(now() + '1 mon'::interval)"))
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 }
 
-// ============ 🛍️ BUYER ================
 model Buyer {
-  id        String   @id @default(uuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  card      Card?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id                  String       @id @default(uuid())
+  userId              String       @unique
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  user                User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card                Card?
   carts               Cart[]
-  orders              Order[]
-  wishlist            Wishlist[]
-  preInvoices         PreInvoice[]
   invoices            Invoice[]
-  writtenReviews      Review[]
   writtenItemsReviews ItemReview[]
+  orders              Order[]
+  preInvoices         PreInvoice[]
+  writtenReviews      Review[]
+  wishlist            Wishlist[]
 }
 
-// ============  💳 CARD ===============
 model Card {
   id             String   @id @default(uuid())
   tapCardId      String   @unique
   buyerId        String   @unique
-  buyer          Buyer    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
   cardHolderName String
   last4          String
   brand          String
@@ -112,63 +97,57 @@ model Card {
   expYear        String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  buyer          Buyer    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
 }
 
-// =========== 📁 CATEGORY ==============
 model Category {
-  id               Int        @id @default(autoincrement())
-  name             String     @unique
+  id               Int                        @id @default(autoincrement())
+  name             String                     @unique
   parentCategoryId Int?
-  parentCategory   Category?  @relation("CategoryToSubcategories", fields: [parentCategoryId], references: [id], onDelete: Cascade)
-  subcategories    Category[] @relation("CategoryToSubcategories")
-  usedFor          ItemType // products or services
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-
-  users     UserCategory[]
-  suppliers SupplierFavoriteCategory[]
-  products  Product[]
-  services  Service[]
+  createdAt        DateTime                   @default(now())
+  updatedAt        DateTime                   @updatedAt
+  usedFor          ItemType
+  parentCategory   Category?                  @relation("CategoryToSubcategories", fields: [parentCategoryId], references: [id], onDelete: Cascade)
+  subcategories    Category[]                 @relation("CategoryToSubcategories")
+  products         Product[]
+  services         Service[]
+  suppliers        SupplierFavoriteCategory[]
+  users            UserCategory[]
 }
 
-// ===========  🚥 USER_CATEGORY =============
 model UserCategory {
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   categoryId Int
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, categoryId])
 }
 
-// ===========  ⭐️ SUPPLIER_FAVORITE_CATEGORY =============
 model SupplierFavoriteCategory {
   supplierId String
-  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
   categoryId Int
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 
-  @@id([supplierId, categoryId]) // composite PK ensures uniqueness
+  @@id([supplierId, categoryId])
 }
 
-// ============ 🪧 PRODUCT ===============
 model Product {
   id                    String                 @id @default(uuid())
   supplierId            String?
-  supplier              Supplier?              @relation(fields: [supplierId], references: [id], onDelete: SetNull)
   name                  String                 @db.VarChar(60)
   description           String                 @db.VarChar(1000)
   price                 Float
   stock                 Int                    @default(0)
   categoryId            Int
-  category              Category               @relation(fields: [categoryId], references: [id])
   imagesFilesNames      String[]
   caseQuantity          Int                    @default(1)
   minOrderQuantity      Int                    @default(1)
-  maxOrderQuantity      Int? // when null it means unlimitid
+  maxOrderQuantity      Int?
   allowGroupPurchase    Boolean                @default(false)
   minGroupOrderQuantity Int?
   groupPurchasePrice    Float?
@@ -181,23 +160,22 @@ model Product {
   deletedAt             DateTime?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
-
-  cartItems    CartItem[]
-  invoiceItems InvoiceItem[]
-  preInoivces  PreInvoice[]
+  cartItems             CartItem[]
+  invoiceItems          InvoiceItem[]
+  orderItems            OrderItem[]
+  preInoivces           PreInvoice[]
+  category              Category               @relation(fields: [categoryId], references: [id])
+  supplier              Supplier?              @relation(fields: [supplierId], references: [id])
 }
 
-// ============ ✋ SERVICES ===============
 model Service {
   id                  String              @id @default(uuid())
   supplierId          String?
-  supplier            Supplier?           @relation(fields: [supplierId], references: [id], onDelete: SetNull)
   name                String              @db.VarChar(60)
   description         String              @db.VarChar(1000)
   price               Float
   isPriceNegotiable   Boolean             @default(false)
   categoryId          Int
-  category            Category            @relation(fields: [categoryId], references: [id])
   imagesFilesNames    String[]
   serviceAvailability ServiceAvailability
   isPublished         Boolean             @default(false)
@@ -208,193 +186,186 @@ model Service {
   deletedAt           DateTime?
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
-
-  invoiceItems InvoiceItem[]
+  invoiceItems        InvoiceItem[]
+  category            Category            @relation(fields: [categoryId], references: [id])
+  supplier            Supplier?           @relation(fields: [supplierId], references: [id])
 }
 
-// =========== 🔖 ITEM EMBEDDING ==========
 model ItemEmbedding {
   id        String   @id @default(uuid())
   itemId    String
   itemType  ItemType
-  embedding Float[] // array of numbers representing the vector
+  embedding Float[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([itemId, itemType]) // each item has exactly one embedding
+  @@unique([itemId, itemType])
 }
 
-// ============ 🛒 CART =================
 model Cart {
-  id            String    @id @default(uuid())
+  id            String           @id @default(uuid())
   buyerId       String
-  buyer         Buyer     @relation(fields: [buyerId], references: [id])
   productsTotal Float
   deliveryFees  Float
   cartTotal     Float
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  isBought      Boolean   @default(false)
-  isDeleted     Boolean   @default(false)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  isBought      Boolean          @default(false)
+  isDeleted     Boolean          @default(false)
   deletedAt     DateTime?
-
-  orders    Order[]
-  // A cart can have many suppliers inside it
-  suppliers CartBySupplier[]
+  buyer         Buyer            @relation(fields: [buyerId], references: [id])
+  suppliers     CartBySupplier[]
+  orders        Order[]
 }
 
-// ============ 🛒 CART BY SUPPLIER =============
 model CartBySupplier {
-  id                 String   @id @default(uuid())
+  id                 String     @id @default(uuid())
   cartId             String
-  cart               Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
   supplierId         String
-  supplier           Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
-  deliveryFee        Float // of the supplier
-  subTotal           Float // sum of this supplier’s items (without delivery fee)
-  supplierTotalPrice Float // subTotal + deliveryFee
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-
-  cartItems CartItem[]
+  deliveryFee        Float
+  subTotal           Float
+  supplierTotalPrice Float
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  cart               Cart       @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  supplier           Supplier   @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  cartItems          CartItem[]
 }
 
-// ============ 🛒 CART ITEM =============
 model CartItem {
   id               Int            @id @default(autoincrement())
   cartBySupplierId String
-  cartBySupplier   CartBySupplier @relation(fields: [cartBySupplierId], references: [id], onDelete: Cascade)
   productId        String
-  product          Product        @relation(fields: [productId], references: [id])
   quantity         Int
-  itemTotalPrice   Float // product.price * quantity at time of adding
-
-  itemReview ItemReview?
+  itemTotalPrice   Float
+  cartBySupplier   CartBySupplier @relation(fields: [cartBySupplierId], references: [id], onDelete: Cascade)
+  product          Product        @relation(fields: [productId], references: [id])
 }
 
-// =========== 📦️ ORDER ================
 model Order {
   id          String      @id @default(uuid())
-  tapChargeId String // same across all orders from the same checkout
   buyerId     String?
-  buyer       Buyer?      @relation(fields: [buyerId], references: [id], onDelete: SetNull)
   cartId      String
-  cart        Cart        @relation(fields: [cartId], references: [id])
   supplierId  String
-  supplier    Supplier    @relation(fields: [supplierId], references: [id])
   finalPrice  Float
   status      OrderStatus @default(PENDING)
   createdAt   DateTime    @default(now())
-
-  review Review?
+  tapChargeId String
+  buyer       Buyer?      @relation(fields: [buyerId], references: [id])
+  cart        Cart        @relation(fields: [cartId], references: [id])
+  supplier    Supplier    @relation(fields: [supplierId], references: [id])
+  items       OrderItem[]
+  review      Review?
 }
 
-// ============ 🧾 INVOICE ===============
+model OrderItem {
+  id         Int         @id @default(autoincrement())
+  orderId    String
+  productId  String?
+  quantity   Int         @default(1)
+  unitPrice  Float
+  totalPrice Float
+  createdAt  DateTime    @default(now())
+  itemReview ItemReview?
+  order      Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product    Product?    @relation(fields: [productId], references: [id])
+}
+
 model Invoice {
   id                    String                @id @default(uuid())
   buyerId               String?
-  buyer                 Buyer?                @relation(fields: [buyerId], references: [id], onDelete: SetNull)
   supplierId            String?
-  supplier              Supplier?             @relation(fields: [supplierId], references: [id], onDelete: SetNull)
   deliveryDate          DateTime
   termsOfPayment        InvoiceTermsOfPayment
   upfrontAmount         Float?
   tapChargeIdForUpfront String?
-  tapChargeId           String? // can be null if invoice just created or partially paid
+  tapChargeId           String?
   uponDeliveryAmount    Float
   amount                Float
   notesAndTerms         String?
   status                InvoiceStatus         @default(PENDING)
   createdAt             DateTime              @default(now())
-
-  items      InvoiceItem[]
-  preInvoice PreInvoice? // if created from a preinvoice
-  review     Review?
+  buyer                 Buyer?                @relation(fields: [buyerId], references: [id])
+  supplier              Supplier?             @relation(fields: [supplierId], references: [id])
+  items                 InvoiceItem[]
+  preInvoice            PreInvoice?
+  review                Review?
 }
 
-// ============ 🧾 INVOICE ITEM ===============
 model InvoiceItem {
-  id                 Int      @id @default(autoincrement())
-  invoiceId          String // how is the relation
-  invoice            Invoice  @relation(fields: [invoiceId], references: [id])
-  name               String   @db.VarChar(60)
-  description        String   @db.VarChar(100)
-  agreedDetails      String   @db.VarChar(100)
+  id                 Int         @id @default(autoincrement())
+  invoiceId          String
+  name               String      @db.VarChar(60)
+  description        String      @db.VarChar(100)
+  agreedDetails      String      @db.VarChar(100)
   quantity           Int
   unitPrice          Float
-  priceBasedQuantity Float // price * quantity
+  priceBasedQuantity Float
   relatedServiceId   String?
-  relatedService     Service? @relation(fields: [relatedServiceId], references: [id], onDelete: SetNull)
   relatedProductId   String?
-  relatedProduct     Product? @relation(fields: [relatedProductId], references: [id], onDelete: SetNull)
-
-  itemReview ItemReview?
+  invoice            Invoice     @relation(fields: [invoiceId], references: [id])
+  relatedProduct     Product?    @relation(fields: [relatedProductId], references: [id])
+  relatedService     Service?    @relation(fields: [relatedServiceId], references: [id])
+  itemReview         ItemReview?
 }
 
-// ============ 🧾 PRE-INVOICE ===============
 model PreInvoice {
   id              String           @id @default(uuid())
   invoiceId       String?          @unique
-  invoice         Invoice?         @relation(fields: [invoiceId], references: [id])
-  groupPurchaseId String? //TODO: link with groups later
+  groupPurchaseId String?
   buyerId         String?
-  buyer           Buyer?           @relation(fields: [buyerId], references: [id], onDelete: SetNull)
   supplierId      String?
-  supplier        Supplier?        @relation(fields: [supplierId], references: [id], onDelete: SetNull)
   productId       String?
-  product         Product?         @relation(fields: [productId], references: [id], onDelete: SetNull)
-  amount          Float //TODO: price_based_quantity at Group_Purchase_Bueyrs + delivery fees when linked with groups later
+  amount          Float
   status          PreInvoiceStatus @default(PENDING)
   createdAt       DateTime         @default(now())
+  buyer           Buyer?           @relation(fields: [buyerId], references: [id])
+  invoice         Invoice?         @relation(fields: [invoiceId], references: [id])
+  product         Product?         @relation(fields: [productId], references: [id])
+  supplier        Supplier?        @relation(fields: [supplierId], references: [id])
 }
 
-// ============ ✍️ REVIEW ===============
 model Review {
-  id                      String    @id @default(uuid())
-  orderId                 String?   @unique
-  order                   Order?    @relation(fields: [orderId], references: [id], onDelete: SetNull)
-  invoiceId               String?   @unique
-  invoice                 Invoice?  @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  id                      String       @id @default(uuid())
+  orderId                 String?      @unique
+  invoiceId               String?      @unique
   buyerId                 String?
-  buyer                   Buyer?    @relation(fields: [buyerId], references: [id], onDelete: SetNull)
   supplierId              String?
-  supplier                Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
-  supplierRating          Int       @default(5)
-  writtenReviewOfSupplier String?   @db.VarChar(150)
-  createdAt               DateTime  @default(now())
-
-  itemsReview ItemReview[]
+  supplierRating          Int          @default(5)
+  writtenReviewOfSupplier String?      @db.VarChar(150)
+  createdAt               DateTime     @default(now())
+  itemsReview             ItemReview[]
+  buyer                   Buyer?       @relation(fields: [buyerId], references: [id])
+  invoice                 Invoice?     @relation(fields: [invoiceId], references: [id])
+  order                   Order?       @relation(fields: [orderId], references: [id])
+  supplier                Supplier?    @relation(fields: [supplierId], references: [id])
 }
 
-// ========== ✍️ ITEM REVIEW =============
 model ItemReview {
   id                  Int          @id @default(autoincrement())
   reviewId            String
-  review              Review       @relation(fields: [reviewId], references: [id], onDelete: Cascade)
   orderItemId         Int?         @unique
-  orderItem           CartItem?    @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
   invoiceItemId       Int?         @unique
-  invoiceItem         InvoiceItem? @relation(fields: [invoiceItemId], references: [id], onDelete: Cascade)
   buyerId             String?
-  buyer               Buyer?       @relation(fields: [buyerId], references: [id], onDelete: SetNull)
   itemRating          Int          @default(5)
   writtenReviewOfItem String?      @db.VarChar(150)
   createdAt           DateTime     @default(now())
+  buyer               Buyer?       @relation(fields: [buyerId], references: [id])
+  invoiceItem         InvoiceItem? @relation(fields: [invoiceItemId], references: [id], onDelete: Cascade)
+  orderItem           OrderItem?   @relation(fields: [orderItemId], references: [id])
+  review              Review       @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 }
 
-// ============ ❤️ WISHLIST ==============
 model Wishlist {
   id        String   @id @default(uuid())
   buyerId   String
-  buyer     Buyer    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
   itemId    String
   itemType  ItemType
   createdAt DateTime @default(now())
+  buyer     Buyer    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
 
   @@unique([buyerId, itemId, itemType])
 }
-
-// ============  ⚔️ ENUMS ================
 
 enum UserRole {
   GUEST

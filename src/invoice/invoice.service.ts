@@ -546,6 +546,7 @@ export class InvoiceService {
         // --- 4. Path 1: Use existing charge if chargeId is provided ---
         if (chargeId) {
             charge = await this.tapPaymentService.getCharge(chargeId);
+            await this.tapPaymentService.validateCharge(charge);
             if (!['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
                 throw new BadRequestException(
                     `Charge not successful yet. Status: ${charge.status}`,

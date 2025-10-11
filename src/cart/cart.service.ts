@@ -394,10 +394,13 @@ export class CartService {
                 dto.chargeId,
             );
 
+            await this.tapPaymentsService.validateCharge(charge);
+
             if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
                 // Create orders + reduce stock
                 const orders = await Promise.all(
                     cart.suppliers.map(async (supplierCart) => {
+                        // Create the order with nested order items
                         const order = await this.prisma.order.create({
                             data: {
                                 tapChargeId: charge.id,
@@ -405,6 +408,27 @@ export class CartService {
                                 cartId: cart.id,
                                 supplierId: supplierCart.supplierId,
                                 finalPrice: supplierCart.supplierTotalPrice,
+                                items: {
+                                    create: supplierCart.cartItems.map(
+                                        (cartItem) => ({
+                                            productId: cartItem.product.id,
+                                            quantity: cartItem.quantity,
+                                            unitPrice: cartItem.product.price,
+                                            totalPrice:
+                                                cartItem.product.price *
+                                                cartItem.quantity,
+                                        }),
+                                    ),
+                                },
+                            },
+                            include: {
+                                items: {
+                                    include: {
+                                        product: {
+                                            include: { category: true },
+                                        },
+                                    },
+                                },
                             },
                         });
 
@@ -472,6 +496,7 @@ export class CartService {
         if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
             const orders = await Promise.all(
                 cart.suppliers.map(async (supplierCart) => {
+                    // Create the order with nested order items
                     const order = await this.prisma.order.create({
                         data: {
                             tapChargeId: charge.id,
@@ -479,19 +504,39 @@ export class CartService {
                             cartId: cart.id,
                             supplierId: supplierCart.supplierId,
                             finalPrice: supplierCart.supplierTotalPrice,
+                            items: {
+                                create: supplierCart.cartItems.map(
+                                    (cartItem) => ({
+                                        productId: cartItem.product.id,
+                                        quantity: cartItem.quantity,
+                                        unitPrice: cartItem.product.price,
+                                        totalPrice:
+                                            cartItem.product.price *
+                                            cartItem.quantity,
+                                    }),
+                                ),
+                            },
+                        },
+                        include: {
+                            items: {
+                                include: {
+                                    product: { include: { category: true } },
+                                },
+                            },
                         },
                     });
 
-                    // Reduce stock for each product
+                    // Reduce stock for all products in the supplier cart
                     await Promise.all(
-                        supplierCart.cartItems.map((item) =>
-                            this.prisma.product.update({
-                                where: { id: item.product.id },
+                        supplierCart.cartItems.map(async (cartItem) => {
+                            const product = cartItem.product;
+                            await this.prisma.product.update({
+                                where: { id: product.id },
                                 data: {
-                                    stock: item.product.stock - item.quantity,
+                                    stock: product.stock - cartItem.quantity,
                                 },
-                            }),
-                        ),
+                            });
+                        }),
                     );
 
                     return order;

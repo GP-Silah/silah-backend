@@ -1,14 +1,61 @@
 import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
 import { OrderStatus } from '@prisma/client';
-import { CartItemResponseDto } from '../../cart/dtos/cartResponse.dto';
 import { BuyerResponseDto } from 'src/buyer/dtos/buyerResponse.dto';
 import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';
 import { ProductResponseDto } from 'src/product/dtos/productResponse.dto';
 import { InactiveSupplierResponseDto } from 'src/supplier/dtos/inactiveSupplierResponse.dto';
 
+export class OrderItemResponseDto {
+    @ApiProperty({
+        description: 'Unique identifier of this order item record.',
+        example: 101,
+    })
+    orderItemId: number;
+
+    @ApiProperty({
+        description:
+            'The unique identifier of the parent order this item belongs to.',
+        example: '23bd9a1c-51b2-44d5-99cc-71b15a4d9d31',
+    })
+    orderId: string;
+
+    @ApiProperty({
+        description:
+            'Snapshot of the product associated with this item at the time of checkout.',
+        type: ProductResponseDto,
+    })
+    product?: ProductResponseDto;
+
+    @ApiProperty({
+        description: 'Number of units purchased for this specific product.',
+        example: 2,
+    })
+    quantity: number;
+
+    @ApiProperty({
+        description: 'Price per unit at the time of purchase (in SAR).',
+        example: 59.99,
+    })
+    unitPrice: number;
+
+    @ApiProperty({
+        description:
+            'Total price for this line item, computed as `quantity * unitPrice`.',
+        example: 119.98,
+    })
+    totalPrice: number;
+
+    @ApiProperty({
+        description:
+            'Timestamp when this order item record was created in the database.',
+        example: '2025-10-11T12:45:00.000Z',
+    })
+    createdAt: Date;
+}
+
 export class OrderResponseDto {
     @ApiProperty({ description: 'Unique identifier of the order.' })
-    id: string;
+    orderId: string;
 
     @ApiProperty({
         description: `Unique identifier for the Tap Payments charge session.<br><br>
@@ -61,10 +108,10 @@ export class OrderResponseDto {
 
     @ApiProperty({
         description:
-            'The items included in this order, with their details such as product info, quantity, and total price for each item.',
-        type: [CartItemResponseDto],
+            'The list of items included in this order, with their product details and purchase information.',
+        type: [OrderItemResponseDto],
     })
-    items: CartItemResponseDto[];
+    items: OrderItemResponseDto[];
 
     @ApiProperty({
         description: 'Buyer info for this order',
@@ -80,10 +127,4 @@ export class OrderResponseDto {
         ],
     })
     supplier: SupplierResponseDto | InactiveSupplierResponseDto | null;
-
-    @ApiProperty({
-        description: 'List of products in this order',
-        type: [ProductResponseDto],
-    })
-    products: ProductResponseDto[];
 }

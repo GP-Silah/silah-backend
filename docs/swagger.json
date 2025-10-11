@@ -8675,6 +8675,7 @@
     },
     "/api/reviews/suppliers/{supplierId}": {
       "get": {
+        "description": "Fetches all reviews written for a supplier. Does not include item reviews.\n                Reviews are ordered by creation date (latest first).",
         "operationId": "ReviewController_getSupplierReviews",
         "parameters": [
           {
@@ -8688,9 +8689,34 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "List of reviews for the supplier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SupplierReviewResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No supplier found with ID: 123",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Get all reviews for a supplier",
         "tags": [
           "Reviews"
         ]
@@ -8698,6 +8724,7 @@
     },
     "/api/reviews/{reviewId}": {
       "get": {
+        "description": "Includes buyer, supplier, and item reviews if available.",
         "operationId": "ReviewController_getReviewById",
         "parameters": [
           {
@@ -8711,9 +8738,31 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Review details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Review not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No review found with ID: 123",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Get a single review by its ID",
         "tags": [
           "Reviews"
         ]
@@ -8721,6 +8770,7 @@
     },
     "/api/reviews/items/{itemId}": {
       "get": {
+        "description": "Fetches all reviews for a given product or service item ID, ordered by creation date (latest first).",
         "operationId": "ReviewController_getItemReviews",
         "parameters": [
           {
@@ -8734,9 +8784,34 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "List of item reviews",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ItemReviewResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No product or service found with ID: 123",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Get reviews for a specific item (product or service)",
         "tags": [
           "Reviews"
         ]
@@ -8744,6 +8819,7 @@
     },
     "/api/reviews/{id}": {
       "post": {
+        "description": "Buyer can create a review for a completed order or fully paid invoice.\n                Supports both supplier rating and item reviews.\n                Multiple item reviews can be included in the request.\n                Only the buyer who made the order/invoice can write the review.",
         "operationId": "ReviewController_createReview",
         "parameters": [
           {
@@ -8757,6 +8833,7 @@
         ],
         "requestBody": {
           "required": true,
+          "description": "Request body for creating a review",
           "content": {
             "application/json": {
               "schema": {
@@ -8766,6 +8843,55 @@
           }
         },
         "responses": {
+          "201": {
+            "description": "Review created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "You already reviewd order with ID: 123",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Order must be marked as completed before writting a review",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "orderItemId is required for order-based reviews",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "invoiceItemId is required for invoice-based reviews",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -8805,6 +8931,31 @@
               }
             }
           },
+          "404": {
+            "description": "Order, invoice, buyer, or supplier not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 404,
+                        "message": "No order or invoice found with ID: 123",
+                        "error": "Not Found"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 404,
+                        "message": "Buyer or Supplier not found",
+                        "error": "Not Found"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
           "423": {
             "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
             "content": {
@@ -8822,6 +8973,9 @@
         },
         "security": [
           {
+            "bearer": []
+          },
+          {
             "cookie": []
           },
           {
@@ -8831,6 +8985,7 @@
             "bearer": []
           }
         ],
+        "summary": "Create a review for an order or invoice",
         "tags": [
           "Reviews"
         ]
@@ -8839,7 +8994,7 @@
   },
   "info": {
     "title": "Silah Backend API Documentation",
-    "description": "\nUse this documentation to explore, test, and understand the available API endpoints, their request/response structure, and any required parameters such as headers, cookies, or authentication tokens.\n\n```text\n[ base URL: `https://api.silah.site` ]\n```\n\n**Important Note about Error Responses**\n\nWhen you test the APIs here in Swagger UI, the error responses are shown in a *simplified* format (only what we document in each endpoint).  \n\nIn real life, the server wraps these responses inside a bigger error object because of our logging system.  \n\nFor example, Swagger might show this error response for an endpoint that requires authentication and receives no token:\n\n```json\n{\n  \"statusCode\": 401,\n  \"message\": \"No token found in cookies\",\n  \"error\": \"Unauthorized\"\n}\n```\n\nBut the actual response you will receive when calling the API from your frontend will look like this:\n\n```json\n{\n  \"statusCode\": 401,\n  \"timestamp\": \"2025-09-07T07:24:11.173Z\",\n  \"path\": \"/api/auth/switch-role\",\n  \"error\": {\n    \"statusCode\": 401,\n    \"message\": \"No token found in cookies\",\n    \"error\": \"Unauthorized\"\n  }\n}\n```\n\nHow to use this on frontend:\n- Always read the `error.message` property if you want to show an error to the user.  \n- Ignore `timestamp` and `path` (they're for debugging).  \n- The shape in Swagger helps you know *what kinds of messages to expect*, but real responses are wrapped as shown above.\n",
+    "description": "\nUse this documentation to explore, test, and understand the available API endpoints, their request/response structure, and any required parameters such as headers, cookies, or authentication tokens.\n\n```text\n[ base URL: https://api.silah.site ]\n```\n\n**Important Note about Error Responses**\n\nWhen you test the APIs here in Swagger UI, the error responses are shown in a *simplified* format (only what we document in each endpoint).  \n\nIn real life, the server wraps these responses inside a bigger error object because of our logging system.  \n\nFor example, Swagger might show this error response for an endpoint that requires authentication and receives no token:\n\n```json\n{\n  \"statusCode\": 401,\n  \"message\": \"No token found in cookies\",\n  \"error\": \"Unauthorized\"\n}\n```\n\nBut the actual response you will receive when calling the API from your frontend will look like this:\n\n```json\n{\n  \"statusCode\": 401,\n  \"timestamp\": \"2025-09-07T07:24:11.173Z\",\n  \"path\": \"/api/auth/switch-role\",\n  \"error\": {\n    \"statusCode\": 401,\n    \"message\": \"No token found in cookies\",\n    \"error\": \"Unauthorized\"\n  }\n}\n```\n\nHow to use this on frontend:\n- Always read the `error.message` property if you want to show an error to the user.  \n- Ignore `timestamp` and `path` (they're for debugging).  \n- The shape in Swagger helps you know *what kinds of messages to expect*, but real responses are wrapped as shown above.\n",
     "version": "1.0",
     "contact": {}
   },
@@ -10305,10 +10460,63 @@
           }
         }
       },
+      "OrderItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "orderItemId": {
+            "type": "number",
+            "description": "Unique identifier of this order item record.",
+            "example": 101
+          },
+          "orderId": {
+            "type": "string",
+            "description": "The unique identifier of the parent order this item belongs to.",
+            "example": "23bd9a1c-51b2-44d5-99cc-71b15a4d9d31"
+          },
+          "product": {
+            "description": "Snapshot of the product associated with this item at the time of checkout.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProductResponseDto"
+              }
+            ]
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Number of units purchased for this specific product.",
+            "example": 2
+          },
+          "unitPrice": {
+            "type": "number",
+            "description": "Price per unit at the time of purchase (in SAR).",
+            "example": 59.99
+          },
+          "totalPrice": {
+            "type": "number",
+            "description": "Total price for this line item, computed as `quantity * unitPrice`.",
+            "example": 119.98
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when this order item record was created in the database.",
+            "example": "2025-10-11T12:45:00.000Z"
+          }
+        },
+        "required": [
+          "orderItemId",
+          "orderId",
+          "product",
+          "quantity",
+          "unitPrice",
+          "totalPrice",
+          "createdAt"
+        ]
+      },
       "OrderResponseDto": {
         "type": "object",
         "properties": {
-          "id": {
+          "orderId": {
             "type": "string",
             "description": "Unique identifier of the order."
           },
@@ -10349,10 +10557,10 @@
             "description": "Timestamp when the order was created. Useful for order history, tracking, and reporting."
           },
           "items": {
-            "description": "The items included in this order, with their details such as product info, quantity, and total price for each item.",
+            "description": "The list of items included in this order, with their product details and purchase information.",
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CartItemResponseDto"
+              "$ref": "#/components/schemas/OrderItemResponseDto"
             }
           },
           "buyer": {
@@ -10373,17 +10581,10 @@
                 "$ref": "#/components/schemas/InactiveSupplierResponseDto"
               }
             ]
-          },
-          "products": {
-            "description": "List of products in this order",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProductResponseDto"
-            }
           }
         },
         "required": [
-          "id",
+          "orderId",
           "tapChargeId",
           "buyerId",
           "cartId",
@@ -10393,8 +10594,7 @@
           "createdAt",
           "items",
           "buyer",
-          "supplier",
-          "products"
+          "supplier"
         ]
       },
       "ForecastMonthDto": {
@@ -10815,12 +11015,199 @@
           "items"
         ]
       },
+      "SupplierReviewResponseDto": {
+        "type": "object",
+        "properties": {
+          "reviewId": {
+            "type": "string",
+            "description": "Unique ID of the review",
+            "example": "f1e2d3c4-5678-90ab-cdef-1234567890ab"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "ID of the related order if this review was created after an order",
+            "example": "3c90b93d-223f-4dfb-9d1c-0bbf2fae861b"
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "ID of the related invoice if this review was created after an invoice",
+            "example": "a1d83c33-7f8c-4f1d-b37e-9b6fbb9d6502"
+          },
+          "buyerId": {
+            "type": "string",
+            "description": "ID of the buyer who submitted this review",
+            "example": "y1x2w3v4-5678-90ab-cdef-1234567890ab"
+          },
+          "supplierRating": {
+            "type": "number",
+            "description": "Numeric rating given to the supplier",
+            "example": 5
+          },
+          "writtenReviewOfSupplier": {
+            "type": "string",
+            "description": "Written feedback for this supplier",
+            "example": "The supplier was professional and prompt."
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when this review was created",
+            "example": "2025-10-10T12:34:56.789Z"
+          },
+          "supplier": {
+            "description": "Supplier details (active or inactive supplier)",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SupplierResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/InactiveSupplierResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "reviewId",
+          "supplierRating",
+          "createdAt",
+          "supplier"
+        ]
+      },
+      "ItemReviewResponseDto": {
+        "type": "object",
+        "properties": {
+          "itemReviewId": {
+            "type": "string",
+            "description": "Unique ID of this item review",
+            "example": "d1f2a3b4-5678-90ab-cdef-1234567890ab"
+          },
+          "reviewId": {
+            "type": "string",
+            "description": "ID of the parent review",
+            "example": "f1e2d3c4-5678-90ab-cdef-1234567890ab"
+          },
+          "orderItemReview": {
+            "description": "Details of the order item being reviewed (if review is order-based)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderItemResponseDto"
+              }
+            ]
+          },
+          "invoiceItemReview": {
+            "description": "Details of the invoice item being reviewed (if review is invoice-based)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InvoiceItemResponseDto"
+              }
+            ]
+          },
+          "buyerId": {
+            "type": "string",
+            "description": "ID of the buyer who wrote this review",
+            "example": "y1x2w3v4-5678-90ab-cdef-1234567890ab"
+          },
+          "itemRating": {
+            "type": "number",
+            "description": "Rating given for this item",
+            "example": 5
+          },
+          "writtenReviewOfItem": {
+            "type": "string",
+            "description": "Written feedback for this item review",
+            "example": "The product quality was excellent."
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when this review was created",
+            "example": "2025-10-10T12:34:56.789Z"
+          }
+        },
+        "required": [
+          "itemReviewId",
+          "reviewId",
+          "buyerId",
+          "itemRating",
+          "createdAt"
+        ]
+      },
+      "ReviewResponseDto": {
+        "type": "object",
+        "properties": {
+          "reviewId": {
+            "type": "string",
+            "description": "Unique ID of the review",
+            "example": "f1e2d3c4-5678-90ab-cdef-1234567890ab"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "ID of the order this review is related to (if order-based)",
+            "example": "3c90b93d-223f-4dfb-9d1c-0bbf2fae861b"
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "ID of the invoice this review is related to (if invoice-based)",
+            "example": "a1d83c33-7f8c-4f1d-b37e-9b6fbb9d6502"
+          },
+          "buyer": {
+            "description": "Details of the buyer who wrote the review",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BuyerResponseDto"
+              }
+            ]
+          },
+          "supplier": {
+            "description": "Details of the supplier being reviewed",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SupplierResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/InactiveSupplierResponseDto"
+              }
+            ]
+          },
+          "supplierRating": {
+            "type": "number",
+            "description": "Rating given to the supplier",
+            "example": 5
+          },
+          "writtenReviewOfSupplier": {
+            "type": "string",
+            "description": "Written feedback for the supplier",
+            "example": "The supplier was very responsive and professional."
+          },
+          "itemsReview": {
+            "description": "List of item reviews under this review",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemReviewResponseDto"
+            }
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when this review was created",
+            "example": "2025-10-10T12:34:56.789Z"
+          }
+        },
+        "required": [
+          "reviewId",
+          "buyer",
+          "supplier",
+          "supplierRating",
+          "itemsReview",
+          "createdAt"
+        ]
+      },
       "CreateItemReviewDto": {
         "type": "object",
         "properties": {
           "orderItemId": {
             "type": "number",
-            "description": "The cart item ID this review is linked to (if it's an order-based review). Should only be used when orderId is provided on parent review.",
+            "description": "The order item ID this review is linked to (if it's an order-based review). Should only be used when orderId is provided on parent review.",
             "example": 12
           },
           "invoiceItemId": {
@@ -10850,16 +11237,6 @@
       "CreateReviewDto": {
         "type": "object",
         "properties": {
-          "orderId": {
-            "type": "string",
-            "description": "The order ID this review is related to (if order-based). Exactly one of `orderId` or `invoiceId` must be provided.",
-            "example": "3c90b93d-223f-4dfb-9d1c-0bbf2fae861b"
-          },
-          "invoiceId": {
-            "type": "string",
-            "description": "The invoice ID this review is related to (if invoice-based). Exactly one of `orderId` or `invoiceId` must be provided.",
-            "example": "a1d83c33-7f8c-4f1d-b37e-9b6fbb9d6502"
-          },
           "supplierRating": {
             "type": "number",
             "description": "Supplier rating (1-5)",
