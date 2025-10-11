@@ -50,6 +50,10 @@ async function bootstrap() {
             `
 Use this documentation to explore, test, and understand the available API endpoints, their request/response structure, and any required parameters such as headers, cookies, or authentication tokens.
 
+\`\`\`text
+[ base URL: https://api.silah.site ]
+\`\`\`
+
 **Important Note about Error Responses**
 
 When you test the APIs here in Swagger UI, the error responses are shown in a *simplified* format (only what we document in each endpoint).  
@@ -111,6 +115,7 @@ How to use this on frontend:
         { name: 'Users' },
         { name: 'Buyers' },
         { name: 'Suppliers' },
+        { name: 'Settings' },
         { name: 'Categories' },
         { name: 'Products' },
         { name: 'Services' },
@@ -118,6 +123,8 @@ How to use this on frontend:
         { name: 'Smart Search' },
         { name: 'Carts' },
         { name: 'Orders' },
+        { name: 'Invoices' },
+        { name: 'Reviews' },
         { name: 'Demand Predictions' },
     ];
     SwaggerModule.setup('api/docs', app, document, {

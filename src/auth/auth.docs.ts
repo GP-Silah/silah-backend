@@ -12,6 +12,7 @@ import {
 import { SignupDto } from './dtos/signup.dto';
 import { LoginDto } from './dtos/login.dto';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
+import { ChangePasswordDto } from './dtos/changePassword.dto';
 
 export function ApiDocsSignUp() {
     return applyDecorators(
@@ -418,6 +419,84 @@ export function ApiDocsSwitchRole() {
                     message:
                         'Unexpected role: GUEST should never reach this endpoint',
                     error: 'Internal Server Error',
+                },
+            },
+        }),
+    );
+}
+
+export function ApiDocsChangePassword() {
+    return applyDecorators(
+        ApiOperation({
+            summary: 'Change user password (requires authentication)',
+            description: `This endpoint allows an authenticated user to change their account password.<br><br>
+            The user must provide their <code>oldPassword</code> (current password) and a <code>newPassword</code>.<br>
+            The system will verify that the old password is correct before updating the new one.`,
+        }),
+        ApiBody({
+            type: ChangePasswordDto,
+            description:
+                "Contains the user's current and new passwords for validation and update.",
+            examples: {
+                validExample: {
+                    summary: 'Change password successfully',
+                    value: {
+                        oldPassword: 'currentPassword123',
+                        newPassword: 'newSecurePassword456',
+                    },
+                },
+                invalidExample: {
+                    summary: 'Incorrect current password',
+                    value: {
+                        oldPassword: 'wrongPassword',
+                        newPassword: 'newSecurePassword456',
+                    },
+                },
+            },
+        }),
+        ApiResponse({
+            status: 200,
+            description: 'Password updated successfully.',
+            schema: {
+                example: {
+                    message: 'Password updated successfully.',
+                },
+            },
+        }),
+        ApiBadRequestResponse({
+            description:
+                'Bad Request: current password is incorrect or invalid input.',
+            content: {
+                'application/json': {
+                    examples: {
+                        invalidPassword: {
+                            summary: 'Incorrect old password',
+                            value: {
+                                statusCode: 400,
+                                message: 'Current password is incorrect',
+                                error: 'Bad Request',
+                            },
+                        },
+                        invalidInput: {
+                            summary: 'Validation error (e.g., short password)',
+                            value: {
+                                statusCode: 400,
+                                message:
+                                    'Password must be at least 8 characters long',
+                                error: 'Bad Request',
+                            },
+                        },
+                    },
+                },
+            },
+        }),
+        ApiNotFoundResponse({
+            description: 'User not found in the database.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'User not found',
+                    error: 'Not Found',
                 },
             },
         }),

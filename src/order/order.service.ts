@@ -3,13 +3,12 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { CartService } from 'src/cart/cart.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { OrderResponseDto } from './dtos/orderResponse.dto';
 import {
-    CartItemResponseDto,
-    CartResponseDto,
-} from 'src/cart/dtos/cartResponse.dto';
+    OrderItemResponseDto,
+    OrderResponseDto,
+} from './dtos/orderResponse.dto';
+
 import { OrderStatus } from '@prisma/client';
 import { BuyerService } from 'src/buyer/buyer.service';
 import { SupplierService } from 'src/supplier/supplier.service';
@@ -19,51 +18,43 @@ import { ProductService } from 'src/product/product.service';
 export class OrderService {
     constructor(
         private readonly prisma: PrismaService,
-        private readonly cartService: CartService,
         private readonly buyerService: BuyerService,
         private readonly supplierService: SupplierService,
         private readonly productService: ProductService,
     ) {}
 
     async toOrderResponseDto(order: any): Promise<OrderResponseDto> {
-        // Convert the cart into your standard DTO
-        const cartDto: CartResponseDto =
-            await this.cartService.toCartResponseDto(order.cart);
-
-        // Get the supplier slice inside the cart
-        const supplierInCart = cartDto.suppliers.find(
-            (s) => s.supplierId === order.supplierId,
-        );
-
-        // Extract cart items belonging to this supplier
-        const items: CartItemResponseDto[] = supplierInCart
-            ? supplierInCart.cartItems
-            : [];
-
-        // Collect products from those items
-        const products = await Promise.all(
-            items.map(async (i) => {
-                const product = await this.prisma.product.findUnique({
-                    where: { id: i.productId },
-                    include: {
-                        supplier: { include: { user: true } },
-                        category: true,
-                    },
-                });
-                return this.productService.toProductResponseDto(product!);
-            }),
-        );
-
         return {
-            id: order.id,
-            checkoutId: order.checkoutId,
+            orderId: order.id,
+            tapChargeId: order.tapChargeId,
             buyerId: order.buyerId ?? undefined,
             cartId: order.cartId,
             supplierId: order.supplierId,
             finalPrice: order.finalPrice,
             status: order.status,
             createdAt: order.createdAt,
-            items,
+
+            // --- Map order items ---
+            items: await Promise.all(
+                order.items.map(async (item) => {
+                    // Defensive null check (product may be deleted)
+                    const productDto = item.product
+                        ? await this.productService.toProductResponseDto(
+                              item.product,
+                          )
+                        : undefined;
+
+                    return {
+                        orderItemId: item.id,
+                        orderId: item.orderId,
+                        product: productDto,
+                        quantity: item.quantity,
+                        unitPrice: item.unitPrice,
+                        totalPrice: item.totalPrice,
+                        createdAt: item.createdAt,
+                    };
+                }),
+            ),
 
             // Properly mapped buyer
             buyer: order.buyer
@@ -80,19 +71,20 @@ export class OrderService {
                       order.supplier, // supplier entity
                   )
                 : null,
-
-            products,
         };
     }
 
-    async getMyOrders(userId: string): Promise<OrderResponseDto[]> {
+    async getMyOrders(
+        userId: string,
+        status?: OrderStatus,
+    ): Promise<OrderResponseDto[]> {
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
             include: { buyer: true, supplier: true },
         });
         if (!user) throw new NotFoundException('User not found');
 
-        let whereCondition = {};
+        let whereCondition: any = {};
 
         if (user.role === 'BUYER') {
             if (!user.buyer) throw new NotFoundException('Buyer not found');
@@ -112,19 +104,22 @@ export class OrderService {
             );
         }
 
+        // Apply status filter only if valid
+        if (status) {
+            whereCondition.status;
+        }
+
         // Fetch orders including cart and cart items
         const orders = await this.prisma.order.findMany({
             where: whereCondition,
             include: {
-                buyer: true,
-                supplier: true,
-                cart: {
+                buyer: { include: { user: true, card: true } },
+                supplier: { include: { user: true } },
+                items: {
                     include: {
-                        suppliers: {
+                        product: {
                             include: {
-                                cartItems: {
-                                    include: { product: true },
-                                },
+                                category: true,
                             },
                         },
                     },
@@ -155,13 +150,13 @@ export class OrderService {
         const order = await this.prisma.order.findUnique({
             where: { id: orderId },
             include: {
-                buyer: { include: { user: true } },
+                buyer: { include: { user: true, card: true } },
                 supplier: { include: { user: true } },
-                cart: {
+                items: {
                     include: {
-                        suppliers: {
+                        product: {
                             include: {
-                                cartItems: { include: { product: true } },
+                                category: true,
                             },
                         },
                     },

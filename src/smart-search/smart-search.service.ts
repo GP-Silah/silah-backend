@@ -124,6 +124,51 @@ export class SmartSearchService {
         // Fill missing request fields from DB
         if (!text) dto.text = item.name;
 
+        if (!itemId) {
+            const [allProducts, allServices] = await Promise.all([
+                this.prisma.product.findMany({
+                    where: { isDeleted: false },
+                    include: { category: true },
+                }),
+                this.prisma.service.findMany({
+                    where: { isDeleted: false },
+                    include: { category: true },
+                }),
+            ]);
+
+            productPayloads = await Promise.all(
+                allProducts.map(async (p) => ({
+                    id: p.id,
+                    name: p.name,
+                    description: p.description ?? null,
+                    category_name: p.category?.name ?? null,
+                    embedding: await this.ensureEmbedding({
+                        id: p.id,
+                        name: p.name,
+                        description: p.description,
+                        category: p.category,
+                        type: ItemType.PRODUCT,
+                    }),
+                })),
+            );
+
+            servicePayloads = await Promise.all(
+                allServices.map(async (s) => ({
+                    id: s.id,
+                    name: s.name,
+                    description: s.description ?? null,
+                    category_name: s.category?.name ?? null,
+                    embedding: await this.ensureEmbedding({
+                        id: s.id,
+                        name: s.name,
+                        description: s.description,
+                        category: s.category,
+                        type: ItemType.SERVICE,
+                    }),
+                })),
+            );
+        }
+
         // Build payload for FastAPI
         let payload;
 

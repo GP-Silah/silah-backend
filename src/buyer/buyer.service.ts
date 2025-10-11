@@ -25,10 +25,7 @@ export class BuyerService {
         private readonly serviceService: ServiceService,
     ) {}
 
-    async toBuyerResponseDto(
-        user: User,
-        buyer: Buyer & { card?: Card | null },
-    ): Promise<BuyerResponseDto> {
+    async toBuyerResponseDto(user, buyer): Promise<BuyerResponseDto> {
         const userData = await this.userService.toUserResponseDTO(user);
 
         const cardData: CardDetailsDto | null = buyer.card
@@ -44,6 +41,7 @@ export class BuyerService {
             : null;
 
         return {
+            buyerId: buyer.id,
             user: userData,
             card: cardData,
         };
@@ -51,33 +49,20 @@ export class BuyerService {
 
     async getCurrentBuyerData(email: string): Promise<BuyerResponseDto> {
         const user = await this.prisma.user.findUnique({
-            // currently the bueyr doesn't have any unique data, thus calling the user table only is enough
             where: { email },
             include: {
                 buyer: {
-                    select: {
-                        card: true,
-                    },
+                    include: { card: true },
                 },
             },
         });
-        const cardEntity = user?.buyer?.card;
-        const userData = await this.userService.toUserResponseDTO(user!);
-        const cardData: CardDetailsDto | null = cardEntity
-            ? {
-                  id: cardEntity.id,
-                  tapCardId: cardEntity.tapCardId,
-                  cardHolderName: cardEntity.cardHolderName,
-                  last4: cardEntity.last4,
-                  brand: cardEntity.brand,
-                  expMonth: cardEntity.expMonth,
-                  expYear: cardEntity.expYear,
-              }
-            : null;
-        return {
-            user: userData,
-            card: cardData ?? null,
-        } as BuyerResponseDto;
+
+        if (!user || !user.buyer) {
+            throw new NotFoundException('Buyer not found');
+        }
+
+        // Always use the mapper to avoid duplication
+        return this.toBuyerResponseDto(user, user.buyer);
     }
 
     async getCurrentBuyerCard(email: string): Promise<CardDetailsDto | null> {
@@ -85,7 +70,7 @@ export class BuyerService {
             where: { email },
             include: {
                 buyer: {
-                    select: {
+                    include: {
                         card: true,
                     },
                 },

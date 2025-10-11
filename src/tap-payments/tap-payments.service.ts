@@ -1,5 +1,9 @@
 import { tap } from 'rxjs';
-import { Injectable } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    InternalServerErrorException,
+} from '@nestjs/common';
 import axios from 'axios';
 
 @Injectable()
@@ -290,6 +294,28 @@ export class TapPaymentsService {
         } catch (err: any) {
             console.error(err.response?.data || err.message);
             throw new Error('Failed to charge saved card');
+        }
+    }
+
+    async validateCharge(charge: any) {
+        const createdMs =
+            charge.transaction?.created || charge.transaction?.date?.created;
+        if (!createdMs) {
+            throw new InternalServerErrorException(
+                'Cannot determine charge creation time.',
+            );
+        }
+
+        const chargeCreationTime = new Date(Number(createdMs));
+        const now = new Date();
+
+        const timeDifference = now.getTime() - chargeCreationTime.getTime();
+
+        // 1 hour = 3600000 ms
+        if (timeDifference > 3600000) {
+            throw new BadRequestException(
+                'Charge ID is too old. Please initiate a new payment.',
+            );
         }
     }
 }

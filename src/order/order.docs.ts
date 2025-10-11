@@ -6,24 +6,52 @@ import {
     ApiBadRequestResponse,
     ApiNotFoundResponse,
     ApiBody,
+    ApiQuery,
 } from '@nestjs/swagger';
 import { OrderResponseDto } from './dtos/orderResponse.dto';
+import { OrderStatus } from '@prisma/client';
 
 export function ApiDocsGetMyOrders() {
     return applyDecorators(
         ApiBearerAuth(),
         ApiOperation({
             summary: 'Get my orders',
-            description: `Fetches orders for the authenticated user. 
+            description: `Fetches orders for the authenticated user.
                 <ul>
-                    <li>If user role is <strong>BUYER</strong>, returns orders placed by the buyer.</li>
-                    <li>If user role is <strong>SUPPLIER</strong>, returns orders received by the supplier.</li>
-                </ul>`,
+                    <li>If the user role is <strong>BUYER</strong>, returns orders placed by the buyer.</li>
+                    <li>If the user role is <strong>SUPPLIER</strong>, returns orders received by the supplier.</li>
+                </ul>
+                <br>
+                You can optionally filter the results by <code>status</code> (case-insensitive). 
+                Example: <code>?status=pending</code> or <code>?status=DELIVERED</code>.`,
+        }),
+        ApiQuery({
+            name: 'status',
+            required: false,
+            enum: OrderStatus,
+            description: `Filter orders by status (case-insensitive). 
+            <ul>
+                ${Object.values(OrderStatus)
+                    .map((s) => `<li><code>${s}</code></li>`)
+                    .join('')}
+            </ul>
+            If omitted, all orders are returned.`,
+            example: 'pending',
         }),
         ApiResponse({
             status: 200,
             description: 'List of orders',
             type: [OrderResponseDto],
+        }),
+        ApiBadRequestResponse({
+            description: 'Invalid query or unsupported order status.',
+            schema: {
+                example: {
+                    statusCode: 400,
+                    message: 'Invalid order status: shippeded',
+                    error: 'Bad Request',
+                },
+            },
         }),
         ApiNotFoundResponse({
             description: 'User not found or orders not found',
