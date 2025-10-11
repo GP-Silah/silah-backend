@@ -17,14 +17,14 @@ import {
 } from '@nestjs/common';
 import { SupplierService } from './supplier.service';
 import { ApiTags } from '@nestjs/swagger';
-import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.docs';
+import { ApiDocsJwtAuthGuard } from 'src/auth/decorators/jwt-auth-guard.docs';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRole } from 'src/enums/userRole.enum';
 import { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
+import { ApiDocsRolesGuard } from 'src/auth/decorators/roles-guard.docs';
 import { SupplierResponseDto } from './dtos/supplierResponse.dto';
 import {
     ApiDocsDeleteStoreBanner,
@@ -43,14 +43,16 @@ import {
     ApiDocsUpdateStoreBanner,
 } from './supplier.docs';
 import { InactiveSupplierResponseDto } from './dtos/inactiveSupplierResponse.dto';
+import { ApiDocsVerifiedGuard } from 'src/auth/decorators/verified-guard.docs';
+import { VerifiedGuard } from 'src/auth/guards/verified.guard';
 
 @ApiTags('Suppliers')
 @Controller('suppliers')
 export class SupplierController {
     constructor(private readonly supplierService: SupplierService) {}
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @ApiDocsGetMySupplierData()
@@ -60,8 +62,8 @@ export class SupplierController {
         return this.supplierService.getSupplierData(userId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me/store')
@@ -71,8 +73,8 @@ export class SupplierController {
         return this.supplierService.getSupplierStoreData(userId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me/stock-levels')
@@ -82,8 +84,8 @@ export class SupplierController {
         return this.supplierService.getStockLevels(userId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch('me')
@@ -93,8 +95,8 @@ export class SupplierController {
         return this.supplierService.updateSupplierData(userId, req.body);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me/favorite-categories')
@@ -104,10 +106,11 @@ export class SupplierController {
         return this.supplierService.getSupplierFavoriteCategories(userId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Patch('me/favorite-categories')
     @ApiDocsToggleFavoriteCategory()
     async toggleFavoriteCategory(
@@ -118,8 +121,8 @@ export class SupplierController {
         return this.supplierService.toggleFavoriteCategory(userId, categoryId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('me/plan')
@@ -129,10 +132,11 @@ export class SupplierController {
         return this.supplierService.getSupplierPlan(userId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Post('me/subscripe-premium')
     @ApiDocsSubscribePremium()
     async subscripePremium(@Req() req: Request) {
@@ -140,10 +144,11 @@ export class SupplierController {
         return this.supplierService.subscripePremium(userId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Post('me/start-free-trail')
     @ApiDocsStartFreeTrial()
     async startFreeTrial(@Req() req) {
@@ -151,8 +156,8 @@ export class SupplierController {
         return this.supplierService.startFreeTrial(userId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('me/store-banner')
@@ -177,8 +182,8 @@ export class SupplierController {
         return this.supplierService.updateStoreBanner(file, userId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('me/store-banner')

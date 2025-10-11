@@ -708,17 +708,7 @@
     "/api/auth/switch-role": {
       "patch": {
         "operationId": "AuthController_switchUserRole",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Token regenerated with updated role",
@@ -778,16 +768,154 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Switch user role (BUYER ⇌ SUPPLIER)",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/me/change-password": {
+      "patch": {
+        "description": "This endpoint allows an authenticated user to change their account password.<br><br>\n            The user must provide their <code>oldPassword</code> (current password) and a <code>newPassword</code>.<br>\n            The system will verify that the old password is correct before updating the new one.",
+        "operationId": "AuthController_changePassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Contains the user's current and new passwords for validation and update.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              },
+              "examples": {
+                "validExample": {
+                  "summary": "Change password successfully",
+                  "value": {
+                    "oldPassword": "currentPassword123",
+                    "newPassword": "newSecurePassword456"
+                  }
+                },
+                "invalidExample": {
+                  "summary": "Incorrect current password",
+                  "value": {
+                    "oldPassword": "wrongPassword",
+                    "newPassword": "newSecurePassword456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Password updated successfully."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request: current password is incorrect or invalid input.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "invalidPassword": {
+                    "summary": "Incorrect old password",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "Current password is incorrect",
+                      "error": "Bad Request"
+                    }
+                  },
+                  "invalidInput": {
+                    "summary": "Validation error (e.g., short password)",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "Password must be at least 8 characters long",
+                      "error": "Bad Request"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found in the database.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Change user password (requires authentication)",
         "tags": [
           "Auth"
         ]
@@ -893,17 +1021,7 @@
       "get": {
         "description": "Returns the currently authenticated user's data.",
         "operationId": "UserController_getCurrentUserData",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Current user data retrieved successfully",
@@ -949,13 +1067,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get current user",
@@ -966,17 +1081,7 @@
       "patch": {
         "description": "Updates the currently authenticated user's profile information.",
         "operationId": "UserController_updateCurrentUserData",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": false,
           "description": "User data to update (you don't have to not send all fields, only the ones you want to change will be updated).",
@@ -1061,13 +1166,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Update current user",
@@ -1080,17 +1182,7 @@
       "post": {
         "description": "Uploads a new profile picture for the authenticated user and updates their record. Replaces the previous picture if it exists.<br><strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br><strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         "operationId": "UserController_updateProfilePicture",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "description": "Profile picture file to upload",
@@ -1184,13 +1276,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Update user profile picture",
@@ -1201,17 +1290,7 @@
       "delete": {
         "description": "Deletes the authenticated user's current profile picture and replaces it with a default avatar.",
         "operationId": "UserController_deleteProfilePicture",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Profile picture deleted successfully",
@@ -1273,13 +1352,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Delete current user profile picture",
@@ -1292,17 +1368,7 @@
       "patch": {
         "description": "Switches the authenticated user's preferred language between English (ENG) and Arabic (ARA). Returns the old and new preferred language.",
         "operationId": "UserController_switchPreferredLanguage",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "User preferred language switched successfully",
@@ -1352,13 +1418,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Toggle user preferred language",
@@ -1508,17 +1571,7 @@
       "get": {
         "description": "Returns the currently authenticated buyer's user details and saved card information (if available).",
         "operationId": "BuyerController_getCurrentBuyerData",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Current buyer data retrieved successfully",
@@ -1592,13 +1645,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get current buyer data",
@@ -1611,17 +1661,7 @@
       "get": {
         "description": "Returns the saved card of the currently authenticated buyer. If the buyer has no card, returns `{ message: 'No card found', card: null }`.",
         "operationId": "BuyerController_getCurrentBuyerCard",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Buyer card retrieved successfully",
@@ -1694,13 +1734,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get current buyer card",
@@ -1711,17 +1748,7 @@
       "put": {
         "description": "**Step 1 of the two-step flow to save a buyer card using Tap:**<br><br>This endpoint creates a temporary charge and redirects the user to complete 3D Secure verification (OTP). If the buyer already has a card, it will be deleted from Tap and replaced with the new one. The response includes a `chargeId` and a `transactionUrl` which must be stored by the frontend to complete Step 2.<br><br>⚠️ **Important:** When testing, always use Tap's [test card values](https://developers.tap.company/reference/testing-cards). Live cards should only be used in production.<br><br>Step 1 must be followed by Step 2 (`PUT /api/buyers/me/card/confirm`) to verify the charge and save the card information in the database.",
         "operationId": "BuyerController_saveOrReplaceCurrentBuyerCardStep1",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "description": "Card details provided from Tap tokenization (tokenId and redirect URL)",
@@ -1813,6 +1840,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1823,13 +1864,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Initiate card save or replacement for buyer",
@@ -1840,17 +1878,7 @@
       "delete": {
         "description": "Deletes the authenticated buyer's saved card from Tap and the database.",
         "operationId": "BuyerController_deleteCurrentBuyerCard",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Card deleted successfully",
@@ -1916,6 +1944,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1926,13 +1968,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Delete current buyer card",
@@ -1945,17 +1984,7 @@
       "put": {
         "description": "**Two-step flow for saving a buyer card using Tap:**<br><br>**Step 1:** Call the `PUT /api/buyers/me/card` endpoint with a Tap token and redirect URL. This creates a temporary charge and redirects the user to complete 3D Secure verification (OTP). The response contains a `chargeId` which must be kept for step 2.<br><br>**Step 2:** After the user completes the 3D Secure step, Tap redirects back to your frontend `redirect_url` with `tap_id` (chargeId). Your frontend then calls this endpoint (`PUT /api/buyers/me/card/confirm`) with that `chargeId`. The backend will verify the charge status and extract the saved card details directly from the charge object. The card information is then stored in the database for future charges.<br><br>⚠️ **Important:** When testing, make sure to use Tap's [test card values](https://developers.tap.company/reference/testing-cards) for generating tokens and performing charges. Live cards should only be used in production.<br><br>These two endpoints are connected: step 1 initiates the card save and step 2 completes it.",
         "operationId": "BuyerController_saveOrReplaceCurrentBuyerCardStep2",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "description": "Charge ID returned from Tap after 3D Secure redirect",
@@ -2055,6 +2084,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2065,13 +2108,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Confirm and save buyer card after Tap redirect",
@@ -2084,17 +2124,7 @@
       "get": {
         "description": "Returns the wishlist items of the currently authenticated buyer. Each item can be a product or a service.",
         "operationId": "BuyerController_getWishlist",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Wishlist retrieved successfully",
@@ -2171,13 +2201,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get current buyer wishlist",
@@ -2196,15 +2223,6 @@
             "required": true,
             "in": "path",
             "description": "The ID of the product or service to toggle",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -2312,13 +2330,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Toggle an item in the buyer wishlist",
@@ -2382,17 +2397,7 @@
       "post": {
         "description": "<strong>IMPORTANT:</strong> This endpoint requires sending the data as <u>multipart/form-data</u>.<br>\n                <strong>Note:</strong> Because this endpoint uses multipart/form-data, Swagger cannot directly show the CreateProductDto schema here. \n                There is a separate Swagger-only endpoint (GET /swagger-products-reference/create-product-dto) where you can view the full CreateProductDto schema and example.<br><br>\n                You must send two fields:\n                <ul>\n                    <li><strong>dto</strong> (type: text) → JSON string of the product details (see example below). \n                    <br>Check the Swagger-only endpoint for full schema reference.</li>\n                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 3 files)</li>\n                </ul>\n                Make sure the JSON string is properly formatted.<br><br>\n                Only subcategories can be assigned to products. Main categories are invalid.<br><br>\n                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         "operationId": "ProductController_createProduct",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -2511,6 +2516,20 @@
               }
             }
           },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
           "502": {
             "description": "Failed to generate embedding for the product (coming from FastAPI backend). **But the product is still created successfully.**",
             "content": {
@@ -2534,13 +2553,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Create a new product",
@@ -2628,15 +2644,6 @@
             "name": "productId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -2730,6 +2737,20 @@
               }
             }
           },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
           "502": {
             "description": "Failed to generate embedding for the product (coming from FastAPI backend). **But the product is still updated successfully.**",
             "content": {
@@ -2753,13 +2774,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Update a product",
@@ -2775,15 +2793,6 @@
             "name": "productId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -2854,6 +2863,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2864,13 +2887,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Delete a product",
@@ -2994,15 +3014,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3068,6 +3079,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -3078,13 +3103,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Duplicate a product",
@@ -3102,15 +3124,6 @@
             "name": "productId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -3213,6 +3226,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -3223,13 +3250,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Add a new image to an existing product",
@@ -3255,15 +3279,6 @@
             "name": "fileName",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -3346,6 +3361,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -3356,13 +3385,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Delete a specific product image",
@@ -3375,17 +3401,7 @@
       "get": {
         "description": "Retrieves the supplier data of the authenticated user. Returns either full supplier data if active, or a minimal inactive DTO if the supplier is inactive.",
         "operationId": "SupplierController_getSupplierData",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successfully retrieved supplier profile.",
@@ -3466,13 +3482,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get current supplier profile",
@@ -3483,17 +3496,7 @@
       "patch": {
         "description": "Allows the authenticated supplier to update their profile information such as store status, store closed message, store bio, banner filename, and delivery fees. Only supplier-related fields can be updated.",
         "operationId": "SupplierController_updateSupplierData",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "description": "Supplier fields that can be updated.",
@@ -3575,13 +3578,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Update current supplier profile",
@@ -3594,17 +3594,7 @@
       "get": {
         "description": "Retrieves the supplier data of the authenticated user. Returns either full supplier data if active, or a minimal inactive DTO if the supplier is inactive.",
         "operationId": "SupplierController_updateSupplierStoreData",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successfully retrieved supplier profile.",
@@ -3685,13 +3675,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get current supplier profile",
@@ -3704,17 +3691,7 @@
       "get": {
         "description": "Retrieves the stock levels for all products of the authenticated supplier. Products are grouped into stock levels: VERY_LOW, LOW, AVERAGE, and GOOD. Each group contains a count of products and the list of product details including ID, name, and current stock.",
         "operationId": "SupplierController_getStockLevels",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Stock levels retrieved successfully.",
@@ -3788,13 +3765,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get supplier stock levels",
@@ -3807,17 +3781,7 @@
       "get": {
         "description": "Retrieves the list of favorite subcategories for the authenticated supplier. Each item contains the category ID and name.",
         "operationId": "SupplierController_getFavoriteCategories",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successfully retrieved favorite categories.",
@@ -3914,13 +3878,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get supplier favorite categories",
@@ -3931,17 +3892,7 @@
       "patch": {
         "description": "Adds a category to the supplier's favorite categories if not already present, or removes it if already present. Returns a message and updated favorite categories list.",
         "operationId": "SupplierController_toggleFavoriteCategory",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -4082,6 +4033,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -4092,13 +4057,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Toggle a favorite category for supplier",
@@ -4111,17 +4073,7 @@
       "get": {
         "description": "Retrieves the current subscription plan of the authenticated supplier.",
         "operationId": "SupplierController_getSupplierPlan",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successfully retrieved supplier plan.",
@@ -4208,13 +4160,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get current supplier plan",
@@ -4227,17 +4176,7 @@
       "post": {
         "description": "Upgrades the supplier account to the premium plan. Throws error if already on premium.",
         "operationId": "SupplierController_subscripePremium",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successfully subscribed to premium plan.",
@@ -4333,6 +4272,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -4343,13 +4296,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Subscribe to premium plan",
@@ -4362,17 +4312,7 @@
       "post": {
         "description": "Starts the 30-day free trial for the supplier, upgrading to premium plan. Throws error if trial already used.",
         "operationId": "SupplierController_startFreeTrial",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successfully started free trial.",
@@ -4468,6 +4408,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -4478,13 +4432,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Start free trial",
@@ -4497,17 +4448,7 @@
       "post": {
         "description": "Uploads a new store banner image for the authenticated supplier and updates their record.<br><strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br><strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         "operationId": "SupplierController_updateStoreBanner",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -4615,13 +4556,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Update store banner",
@@ -4632,17 +4570,7 @@
       "delete": {
         "description": "Deletes the current banner image for the supplier store.",
         "operationId": "SupplierController_deleteStoreBanner",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Store banner deleted successfully.",
@@ -4739,13 +4667,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Delete store banner",
@@ -4982,23 +4907,116 @@
     },
     "/api/smart-search": {
       "post": {
+        "description": "Performs a smart similarity search between items (products or services) using AI embeddings.<br>\n            You can either:\n            <ul>\n                <li>Provide an existing <strong>itemId</strong> to find similar alternatives.</li>\n                <li>Or provide free-text <strong>text</strong> to perform a semantic search across all products and services.</li>\n            </ul>\n            The backend automatically determines whether the provided item belongs to products or services.<br><br>\n            The AI service (FastAPI backend) computes similarity scores using embeddings and returns the most relevant matches.<br><br>\n            <strong>Behavior:</strong>\n            <ul>\n                <li>If <code>itemId</code> is provided → search is limited to the same type (products or services).</li>\n                <li>If <code>text</code> is provided → searches both products and services simultaneously.</li>\n                <li>If both are missing → request will fail with a <code>400 Bad Request</code>.</li>\n            </ul>\n            <strong>Note:</strong> This endpoint depends on the <code>AI_BACKEND_URL</code> environment variable and will throw a <code>502 Bad Gateway</code> if the AI service is offline.",
         "operationId": "SmartSearchController_getSimilarItems",
         "parameters": [],
         "requestBody": {
           "required": true,
+          "description": "Provide either an itemId or a text. If itemId is provided, it will automatically detect the item type (product or service).",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/SmartSearchRequestDto"
+              },
+              "examples": {
+                "byItemId": {
+                  "summary": "Search by existing item ID",
+                  "description": "Finds items similar to the given product or service ID.",
+                  "value": {
+                    "itemId": "a1b2c3d4e5"
+                  }
+                },
+                "byText": {
+                  "summary": "Search by free text",
+                  "description": "Performs AI-based semantic search for items similar to the provided text.",
+                  "value": {
+                    "text": "Handmade wooden spoon"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "List of similar items (products or services) ranked by similarity.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SmartSearchResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Either itemId or text must be provided",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "No item found with the given ID",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Embedding not found for item a1b2c3d4e5 (PRODUCT)",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "AI backend (FastAPI) is unavailable or returned invalid data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 502,
+                        "message": "AI backend is unavailable",
+                        "error": "Bad Gateway"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 502,
+                        "message": "Invalid AI response format",
+                        "error": "Bad Gateway"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 502,
+                        "message": "Failed to generate embedding for item",
+                        "error": "Bad Gateway"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
+        "summary": "Find similar items (Products or Services)",
         "tags": [
           "Smart Search"
         ]
@@ -5059,17 +5077,7 @@
       "post": {
         "description": "<strong>IMPORTANT:</strong> This endpoint requires sending the data as <u>multipart/form-data</u>.<br>\n                <strong>Note:</strong> Because this endpoint uses multipart/form-data, Swagger cannot directly show the CreateServiceDto schema here. \n                There is a separate Swagger-only endpoint (GET /create-service-dto) where you can view the full CreateServiceDto schema and example.<br><br>\n                You must send two fields:\n                <ul>\n                    <li><strong>dto</strong> (type: text) → JSON string of the service details (see example below). \n                        <br>Check the Swagger-only endpoint for full schema reference.</li>\n                    <li><strong>files</strong> → one or more image files (PNG, JPEG, WebP, max 5MB each, 1 to 3 files)</li>\n                </ul>\n                Only categories with <strong>usedFor=SERVICE</strong> can be assigned to services.<br><br>\n                <strong>Note:</strong> The file must be an image (PNG, JPEG, WebP) and cannot exceed 5MB in size.<br>\n                <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         "operationId": "ServiceController_createService",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -5188,6 +5196,20 @@
               }
             }
           },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
           "502": {
             "description": "Failed to generate embedding for the service (coming from FastAPI backend). **But the service is still created successfully.**",
             "content": {
@@ -5211,13 +5233,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Create a new service",
@@ -5305,15 +5324,6 @@
             "name": "serviceId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -5407,6 +5417,20 @@
               }
             }
           },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
           "502": {
             "description": "Failed to generate embedding for the service (coming from FastAPI backend). **But the service is still updated successfully.**",
             "content": {
@@ -5430,13 +5454,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Update a service",
@@ -5452,15 +5473,6 @@
             "name": "serviceId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -5531,6 +5543,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -5541,13 +5567,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Delete a service",
@@ -5671,15 +5694,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -5745,6 +5759,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -5755,13 +5783,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Duplicate a service",
@@ -5779,15 +5804,6 @@
             "name": "serviceId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -5890,6 +5906,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -5900,13 +5930,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Add a new image to an existing service",
@@ -5932,15 +5959,6 @@
             "name": "fileName",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -6023,6 +6041,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -6033,13 +6065,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Delete a specific service image",
@@ -6385,17 +6414,7 @@
       "get": {
         "description": "Fetches the currently active cart of the authenticated buyer, including suppliers, items, and totals. Throws 404 if no active cart exists.",
         "operationId": "CartController_getBuyerActiveCart",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Active cart retrieved successfully",
@@ -6469,13 +6488,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get active cart for buyer",
@@ -6486,17 +6502,7 @@
       "delete": {
         "description": "Marks the buyer's cart as deleted. Once deleted, it cannot be retrieved as active.",
         "operationId": "CartController_deleteCart",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Cart deleted successfully",
@@ -6572,13 +6578,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Delete entire cart",
@@ -6591,17 +6594,7 @@
       "post": {
         "description": "Adds a product to the buyer's active cart. If no cart exists, a new one is created. Items are grouped by supplier automatically.",
         "operationId": "CartController_addItem",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -6731,13 +6724,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Add item to cart",
@@ -6758,15 +6748,6 @@
             "description": "Cart Item ID",
             "schema": {
               "type": "number"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -6905,13 +6886,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Update item quantity in cart",
@@ -6930,15 +6908,6 @@
             "description": "Cart Item ID",
             "schema": {
               "type": "number"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -7015,13 +6984,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Remove item from cart",
@@ -7040,15 +7006,6 @@
             "required": true,
             "in": "path",
             "description": "Supplier ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -7138,13 +7095,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Remove supplier (and its items) from cart",
@@ -7157,17 +7111,7 @@
       "post": {
         "description": "Finalizes the buyer's cart by creating a Tap Payments token from the saved card, charging the card, and creating orders for each supplier. Marks the cart as bought and returns checkout details. If 3DS authentication is required, returns the redirect URL and charge ID.",
         "operationId": "CartController_checkoutCart",
-        "parameters": [
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -7262,6 +7206,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7272,13 +7230,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Checkout cart",
@@ -7289,15 +7244,21 @@
     },
     "/api/orders/me": {
       "get": {
-        "description": "Fetches orders for the authenticated user. \n                <ul>\n                    <li>If user role is <strong>BUYER</strong>, returns orders placed by the buyer.</li>\n                    <li>If user role is <strong>SUPPLIER</strong>, returns orders received by the supplier.</li>\n                </ul>",
+        "description": "Fetches orders for the authenticated user.\n                <ul>\n                    <li>If the user role is <strong>BUYER</strong>, returns orders placed by the buyer.</li>\n                    <li>If the user role is <strong>SUPPLIER</strong>, returns orders received by the supplier.</li>\n                </ul>\n                <br>\n                You can optionally filter the results by <code>status</code> (case-insensitive). \n                Example: <code>?status=pending</code> or <code>?status=DELIVERED</code>.",
         "operationId": "OrderController_getMyOrders",
         "parameters": [
           {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter orders by status (case-insensitive). \n            <ul>\n                <li><code>PENDING</code></li><li><code>PROCESSING</code></li><li><code>SHIPPED</code></li><li><code>COMPLETED</code></li>\n            </ul>\n            If omitted, all orders are returned.",
             "schema": {
+              "enum": [
+                "PENDING",
+                "PROCESSING",
+                "SHIPPED",
+                "COMPLETED"
+              ],
               "type": "string"
             }
           }
@@ -7311,6 +7272,20 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/OrderResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query or unsupported order status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Invalid order status: shippeded",
+                    "error": "Bad Request"
                   }
                 }
               }
@@ -7364,13 +7339,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get my orders",
@@ -7388,15 +7360,6 @@
             "name": "orderId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -7461,13 +7424,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get order by ID",
@@ -7485,15 +7445,6 @@
             "name": "orderId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -7604,6 +7555,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7614,13 +7579,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Update order status",
@@ -7638,15 +7600,6 @@
             "name": "orderId",
             "required": true,
             "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -7718,6 +7671,20 @@
                 }
               }
             }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -7728,13 +7695,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Confirm delivery",
@@ -7755,15 +7719,6 @@
             "description": "ID of the product to generate demand prediction for",
             "schema": {
               "example": "uuid-product-id",
-              "type": "string"
-            }
-          },
-          {
-            "name": "Cookie",
-            "in": "header",
-            "description": "JWT token must be set in the cookie named \"token\". Example: token=your_jwt_token_here",
-            "required": true,
-            "schema": {
               "type": "string"
             }
           }
@@ -7857,6 +7812,20 @@
               }
             }
           },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
           "502": {
             "description": "AI backend failed to return prediction",
             "content": {
@@ -7880,13 +7849,10 @@
             "cookie": []
           },
           {
-            "cookie": []
+            "token": []
           },
           {
             "bearer": []
-          },
-          {
-            "token": []
           }
         ],
         "summary": "Get demand prediction for a product",
@@ -8138,11 +8104,1038 @@
           "Search"
         ]
       }
+    },
+    "/api/invoices/me": {
+      "get": {
+        "description": "\nFetches all invoices and pre-invoices associated with the authenticated user.<br><br>\nOptional query parameters allow filtering:<br>\n<ul>\n    <li><strong>status</strong> - filter by invoice status (e.g., PENDING, ACCEPTED, REJECTED).</li>\n    <li><strong>showFor</strong> - filter by type of items: 'all', 'products', 'services', 'bids', 'groups'.</li>\n</ul>\nInvoices are automatically sorted with the latest first. Pre-invoices are also included when applicable.\n",
+        "operationId": "InvoiceController_getMyInvoices",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter invoices by status. Allowed values: PENDING, ACCEPTED, REJECTED, PARTIALLY_PAID, FULLY_PAID.",
+            "schema": {
+              "example": "PENDING",
+              "type": "string"
+            }
+          },
+          {
+            "name": "showFor",
+            "required": false,
+            "in": "query",
+            "description": "Filter invoices by item type. Allowed values: 'all', 'products', 'services', 'bids', 'groups'.",
+            "schema": {
+              "example": "products",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of invoices and pre-invoices for the authenticated user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters (status or showFor).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Invalid invoice status: wrongStatus",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Invalid showFor choice: unknown",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get my invoices",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/invoices/me/{id}": {
+      "get": {
+        "description": "\nFetch a specific invoice or pre-invoice belonging to the authenticated user.<br><br>\nThe endpoint checks whether the invoice exists and whether it belongs to the current user.\n",
+        "operationId": "InvoiceController_getMyInvoiceById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Invoice or pre-invoice ID.",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice or pre-invoice details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Buyer account not found",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invoice or pre-invoice not found for this ID and user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No invoice or pre-invoice found for this ID and user.",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get a single invoice or pre-invoice by ID",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/invoices": {
+      "post": {
+        "description": "\nCreates an invoice for a buyer from the supplier. Validates buyer, supplier, and items.<br>\n- Upfront amount must not exceed total or max allowed percentage (30%).<br>\n- Items must reference exactly one of product or service.<br>\n- Returns the created invoice with all items and calculated totals.\n",
+        "operationId": "InvoiceController_createInvoice",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Payload for creating a new invoice.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Invoice created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, validation failed, or business rule violation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Upfront amount cannot exceed total invoice amount.",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Each invoice item must reference either a product or a service, not both.",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new invoice",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/invoices/{groupId}": {
+      "post": {
+        "deprecated": true,
+        "description": "This endpoint is a placeholder and not implemented yet.",
+        "operationId": "InvoiceController_createPreInvoice",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Not implemented yet",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/invoices/me/{id}/status": {
+      "patch": {
+        "description": "\nAllows a buyer to update the status of a PENDING invoice to ACCEPTED or REJECTED.<br>\n- Only PENDING invoices can be updated.<br>\n- Role must be BUYER.\n",
+        "operationId": "InvoiceController_updateInvoiceStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Invoice ID to update.",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": true,
+            "in": "query",
+            "description": "New status of the invoice. Allowed values: ACCEPTED, REJECTED.",
+            "schema": {
+              "example": "ACCEPTED",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice status updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status or business rule violation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Invalid status. Allowed values: ACCEPTED, REJECTED",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invoice not found for this buyer.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Invoice not found for this buyer",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update status of a pending invoice",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/invoices/me/{id}/pay": {
+      "post": {
+        "description": "\nAllows a buyer to pay an accepted or partially paid invoice using a saved card in Tap Payments.<br>\n- Partial payments supported for upfront amounts.<br>\n- Returns payment summary and Tap charge ID.<br>\n- May return a redirect URL for 3DS authentication if required.\n",
+        "operationId": "InvoiceController_payInvoice",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Invoice ID to pay.",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Optional existing charge ID if already created.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "example": {
+                  "chargeId": "chg_abc123"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment successful or redirect required for 3DS authentication.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Invoice paid successfully",
+                    "tapChargeId": "chg_abc123",
+                    "buyerId": "buyerId123",
+                    "invoiceId": "123e4567-e89b-12d3-a456-426614174000",
+                    "totalPaid": 1000,
+                    "totalAmount": 1000
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Payment failed, invalid invoice state, or validation error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Invoice already paid",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "No saved card found for this buyer",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invoice not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Invoice not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Pay an invoice",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/reviews/suppliers/{supplierId}": {
+      "get": {
+        "description": "Fetches all reviews written for a supplier. Does not include item reviews.\n                Reviews are ordered by creation date (latest first).",
+        "operationId": "ReviewController_getSupplierReviews",
+        "parameters": [
+          {
+            "name": "supplierId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of reviews for the supplier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SupplierReviewResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No supplier found with ID: 123",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all reviews for a supplier",
+        "tags": [
+          "Reviews"
+        ]
+      }
+    },
+    "/api/reviews/{reviewId}": {
+      "get": {
+        "description": "Includes buyer, supplier, and item reviews if available.",
+        "operationId": "ReviewController_getReviewById",
+        "parameters": [
+          {
+            "name": "reviewId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Review not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No review found with ID: 123",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a single review by its ID",
+        "tags": [
+          "Reviews"
+        ]
+      }
+    },
+    "/api/reviews/items/{itemId}": {
+      "get": {
+        "description": "Fetches all reviews for a given product or service item ID, ordered by creation date (latest first).",
+        "operationId": "ReviewController_getItemReviews",
+        "parameters": [
+          {
+            "name": "itemId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of item reviews",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ItemReviewResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No product or service found with ID: 123",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get reviews for a specific item (product or service)",
+        "tags": [
+          "Reviews"
+        ]
+      }
+    },
+    "/api/reviews/{id}": {
+      "post": {
+        "description": "Buyer can create a review for a completed order or fully paid invoice.\n                Supports both supplier rating and item reviews.\n                Multiple item reviews can be included in the request.\n                Only the buyer who made the order/invoice can write the review.",
+        "operationId": "ReviewController_createReview",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Request body for creating a review",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Review created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "You already reviewd order with ID: 123",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Order must be marked as completed before writting a review",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "orderItemId is required for order-based reviews",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "invoiceItemId is required for invoice-based reviews",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order, invoice, buyer, or supplier not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 404,
+                        "message": "No order or invoice found with ID: 123",
+                        "error": "Not Found"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 404,
+                        "message": "Buyer or Supplier not found",
+                        "error": "Not Found"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a review for an order or invoice",
+        "tags": [
+          "Reviews"
+        ]
+      }
     }
   },
   "info": {
     "title": "Silah Backend API Documentation",
-    "description": "\nUse this documentation to explore, test, and understand the available API endpoints, their request/response structure, and any required parameters such as headers, cookies, or authentication tokens.\n\n**Important Note about Error Responses**\n\nWhen you test the APIs here in Swagger UI, the error responses are shown in a *simplified* format (only what we document in each endpoint).  \n\nIn real life, the server wraps these responses inside a bigger error object because of our logging system.  \n\nFor example, Swagger might show this error response for an endpoint that requires authentication and receives no token:\n\n```json\n{\n  \"statusCode\": 401,\n  \"message\": \"No token found in cookies\",\n  \"error\": \"Unauthorized\"\n}\n```\n\nBut the actual response you will receive when calling the API from your frontend will look like this:\n\n```json\n{\n  \"statusCode\": 401,\n  \"timestamp\": \"2025-09-07T07:24:11.173Z\",\n  \"path\": \"/api/auth/switch-role\",\n  \"error\": {\n    \"statusCode\": 401,\n    \"message\": \"No token found in cookies\",\n    \"error\": \"Unauthorized\"\n  }\n}\n```\n\nHow to use this on frontend:\n- Always read the `error.message` property if you want to show an error to the user.  \n- Ignore `timestamp` and `path` (they're for debugging).  \n- The shape in Swagger helps you know *what kinds of messages to expect*, but real responses are wrapped as shown above.\n",
+    "description": "\nUse this documentation to explore, test, and understand the available API endpoints, their request/response structure, and any required parameters such as headers, cookies, or authentication tokens.\n\n```text\n[ base URL: https://api.silah.site ]\n```\n\n**Important Note about Error Responses**\n\nWhen you test the APIs here in Swagger UI, the error responses are shown in a *simplified* format (only what we document in each endpoint).  \n\nIn real life, the server wraps these responses inside a bigger error object because of our logging system.  \n\nFor example, Swagger might show this error response for an endpoint that requires authentication and receives no token:\n\n```json\n{\n  \"statusCode\": 401,\n  \"message\": \"No token found in cookies\",\n  \"error\": \"Unauthorized\"\n}\n```\n\nBut the actual response you will receive when calling the API from your frontend will look like this:\n\n```json\n{\n  \"statusCode\": 401,\n  \"timestamp\": \"2025-09-07T07:24:11.173Z\",\n  \"path\": \"/api/auth/switch-role\",\n  \"error\": {\n    \"statusCode\": 401,\n    \"message\": \"No token found in cookies\",\n    \"error\": \"Unauthorized\"\n  }\n}\n```\n\nHow to use this on frontend:\n- Always read the `error.message` property if you want to show an error to the user.  \n- Ignore `timestamp` and `path` (they're for debugging).  \n- The shape in Swagger helps you know *what kinds of messages to expect*, but real responses are wrapped as shown above.\n",
     "version": "1.0",
     "contact": {}
   },
@@ -8166,6 +9159,9 @@
       "name": "Suppliers"
     },
     {
+      "name": "Settings"
+    },
+    {
       "name": "Categories"
     },
     {
@@ -8185,6 +9181,12 @@
     },
     {
       "name": "Orders"
+    },
+    {
+      "name": "Invoices"
+    },
+    {
+      "name": "Reviews"
     },
     {
       "name": "Demand Predictions"
@@ -8306,13 +9308,36 @@
         "properties": {
           "newPassword": {
             "type": "string",
-            "description": "The new password to replace the old one.",
+            "description": "The new password to replace the old one.<br>Password must contain at least one uppercase, one lowercase, and one number. Special characters (@, #, !, $) are optional.",
             "example": "StrongPass123",
             "minLength": 8,
             "maxLength": 28
           }
         },
         "required": [
+          "newPassword"
+        ]
+      },
+      "ChangePasswordDto": {
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "type": "string",
+            "description": "The current password that will be replaced.",
+            "example": "StrongPass123",
+            "minLength": 8,
+            "maxLength": 28
+          },
+          "newPassword": {
+            "type": "string",
+            "description": "The new password to replace the old one.<br>Password must contain at least one uppercase, one lowercase, and one number. Special characters (@, #, !, $) are optional.",
+            "example": "StrongPass123",
+            "minLength": 8,
+            "maxLength": 28
+          }
+        },
+        "required": [
+          "oldPassword",
           "newPassword"
         ]
       },
@@ -8524,6 +9549,11 @@
       "BuyerResponseDto": {
         "type": "object",
         "properties": {
+          "buyerId": {
+            "type": "string",
+            "description": "The buyer ID.",
+            "example": "2343dsfawaf-sarfe3-dg45-bfc"
+          },
           "user": {
             "$ref": "#/components/schemas/UserResponseDTO"
           },
@@ -8537,6 +9567,7 @@
           }
         },
         "required": [
+          "buyerId",
           "user",
           "card"
         ]
@@ -9285,6 +10316,37 @@
           }
         }
       },
+      "SmartSearchResponseDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The text used by the backend for this smart search",
+            "example": "Organic Honey 500g"
+          },
+          "item": {
+            "description": "The matched item (product or service)",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ProductResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/ServiceResponseDto"
+              }
+            ]
+          },
+          "rank": {
+            "type": "number",
+            "description": "Ranking position among the top results (1 = most similar)",
+            "example": 1
+          }
+        },
+        "required": [
+          "text",
+          "item",
+          "rank"
+        ]
+      },
       "CreateServiceDto": {
         "type": "object",
         "properties": {
@@ -9562,16 +10624,70 @@
           }
         }
       },
+      "OrderItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "orderItemId": {
+            "type": "number",
+            "description": "Unique identifier of this order item record.",
+            "example": 101
+          },
+          "orderId": {
+            "type": "string",
+            "description": "The unique identifier of the parent order this item belongs to.",
+            "example": "23bd9a1c-51b2-44d5-99cc-71b15a4d9d31"
+          },
+          "product": {
+            "description": "Snapshot of the product associated with this item at the time of checkout.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProductResponseDto"
+              }
+            ]
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Number of units purchased for this specific product.",
+            "example": 2
+          },
+          "unitPrice": {
+            "type": "number",
+            "description": "Price per unit at the time of purchase (in SAR).",
+            "example": 59.99
+          },
+          "totalPrice": {
+            "type": "number",
+            "description": "Total price for this line item, computed as `quantity * unitPrice`.",
+            "example": 119.98
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when this order item record was created in the database.",
+            "example": "2025-10-11T12:45:00.000Z"
+          }
+        },
+        "required": [
+          "orderItemId",
+          "orderId",
+          "product",
+          "quantity",
+          "unitPrice",
+          "totalPrice",
+          "createdAt"
+        ]
+      },
       "OrderResponseDto": {
         "type": "object",
         "properties": {
-          "id": {
+          "orderId": {
             "type": "string",
             "description": "Unique identifier of the order."
           },
-          "checkoutId": {
+          "tapChargeId": {
             "type": "string",
-            "description": "Identifier for the checkout session.<br>\n        Since a buyer can have items from multiple suppliers in a single cart, \n        each supplier will generate a separate order, but all share the same checkoutId."
+            "description": "Unique identifier for the Tap Payments charge session.<br><br>\n            When a buyer proceeds to checkout, all items in their cart that belong to the same supplier \n            are grouped into a single order. However, multiple orders (one per supplier) can still \n            originate from the same checkout session.<br><br>\n            The <code>tapChargeId</code> serves as a shared reference linking all orders \n            created during that checkout flow, allowing the system to trace which orders \n            were generated from the same payment attempt.",
+            "example": "chg_x8q3x9l7z5w2y1v0"
           },
           "buyerId": {
             "type": "string",
@@ -9605,10 +10721,10 @@
             "description": "Timestamp when the order was created. Useful for order history, tracking, and reporting."
           },
           "items": {
-            "description": "The items included in this order, with their details such as product info, quantity, and total price for each item.",
+            "description": "The list of items included in this order, with their product details and purchase information.",
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CartItemResponseDto"
+              "$ref": "#/components/schemas/OrderItemResponseDto"
             }
           },
           "buyer": {
@@ -9629,18 +10745,11 @@
                 "$ref": "#/components/schemas/InactiveSupplierResponseDto"
               }
             ]
-          },
-          "products": {
-            "description": "List of products in this order",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProductResponseDto"
-            }
           }
         },
         "required": [
-          "id",
-          "checkoutId",
+          "orderId",
+          "tapChargeId",
           "buyerId",
           "cartId",
           "supplierId",
@@ -9649,8 +10758,7 @@
           "createdAt",
           "items",
           "buyer",
-          "supplier",
-          "products"
+          "supplier"
         ]
       },
       "ForecastMonthDto": {
@@ -9721,6 +10829,603 @@
           "lowAccuracy",
           "salesCount",
           "recommendedStock"
+        ]
+      },
+      "InvoiceItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "invoiceItemId": {
+            "type": "number",
+            "description": "Unique identifier of the invoice item.",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the invoiced product or service.",
+            "example": "Custom Website Design"
+          },
+          "description": {
+            "type": "string",
+            "description": "Short description of the item.",
+            "example": "A modern business website with 5 pages."
+          },
+          "agreedDetails": {
+            "type": "string",
+            "description": "Details agreed between buyer and supplier for this item.",
+            "example": "Includes SEO optimization and contact form integration."
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity of the product purchased (if service then write 1).",
+            "example": 2
+          },
+          "unitPrice": {
+            "type": "number",
+            "description": "Unit price of the product or service.",
+            "example": 500
+          },
+          "priceBasedQuantity": {
+            "type": "number",
+            "description": "Total price for this line item (quantity × unit price).",
+            "example": 1000
+          },
+          "relatedProduct": {
+            "description": "Product details if this invoice item represents a product.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProductResponseDto"
+              }
+            ]
+          },
+          "relatedService": {
+            "description": "Service details if this invoice item represents a service.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServiceResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "invoiceItemId",
+          "name",
+          "description",
+          "agreedDetails",
+          "quantity",
+          "unitPrice",
+          "priceBasedQuantity"
+        ]
+      },
+      "PreInvoiceResponseDto": {
+        "type": "object",
+        "properties": {
+          "preInvoiceId": {
+            "type": "string",
+            "description": "Unique identifier for the pre-invoice.",
+            "example": "23e4567-e89b-12d3-a456-426614174000"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type identifier for frontend use.",
+            "enum": [
+              "PRE_INVOICE"
+            ],
+            "example": "PRE_INVOICE"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the pre-invoice.",
+            "enum": [
+              "PENDING",
+              "FAILED",
+              "SUCCESSFUL"
+            ],
+            "example": "PENDING"
+          },
+          "buyer": {
+            "description": "Buyer who owns this pre-invoice (null if his account is deleted).",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BuyerResponseDto"
+              }
+            ]
+          },
+          "supplier": {
+            "description": "Supplier associated with this pre-invoice (null if his account is deleted).",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SupplierResponseDto"
+              }
+            ]
+          },
+          "product": {
+            "description": "Product associated with this pre-invoice (from group purchase).",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProductResponseDto"
+              }
+            ]
+          },
+          "amount": {
+            "type": "number",
+            "description": "(unit price x quantity) + supplier delivery fees.",
+            "example": 250.5
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Creation timestamp of the pre-invoice.",
+            "example": "2025-10-07T09:00:00Z"
+          }
+        },
+        "required": [
+          "preInvoiceId",
+          "type",
+          "status",
+          "buyer",
+          "supplier",
+          "amount",
+          "createdAt"
+        ]
+      },
+      "InvoiceResponseDto": {
+        "type": "object",
+        "properties": {
+          "invoiceId": {
+            "type": "string",
+            "description": "Unique identifier for the invoice.",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type identifier for frontend use.",
+            "enum": [
+              "INVOICE"
+            ],
+            "example": "INVOICE"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the invoice.",
+            "enum": [
+              "PENDING",
+              "ACCEPTED",
+              "REJECTED",
+              "FULLY_PAID",
+              "PARTIALLY_PAID"
+            ],
+            "example": "PENDING"
+          },
+          "buyer": {
+            "description": "Buyer associated with this invoice (null if his account is deleted).",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BuyerResponseDto"
+              }
+            ]
+          },
+          "supplier": {
+            "description": "Supplier associated with this invoice (null if his account is deleted).",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SupplierResponseDto"
+              }
+            ]
+          },
+          "termsOfPayment": {
+            "type": "string",
+            "description": "Payment terms applied to this invoice.",
+            "enum": [
+              "PARTIAL",
+              "FULL"
+            ],
+            "example": "PARTIAL"
+          },
+          "upfrontAmount": {
+            "type": "number",
+            "description": "Amount to be paid upfront (if applicable).",
+            "example": 100
+          },
+          "tapChargeIdForUpfront": {
+            "type": "string",
+            "description": "Tap Payments charge ID for the upfront payment (if applicable).",
+            "example": "chg_abc123"
+          },
+          "tapChargeId": {
+            "type": "string",
+            "description": "Tap Payments charge ID for the payment.",
+            "example": "chg_abc123"
+          },
+          "deliveryDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Scheduled delivery date for this invoice.",
+            "example": "2025-10-08"
+          },
+          "notesAndTerms": {
+            "type": "string",
+            "description": "Additional notes or contractual terms provided by the supplier."
+          },
+          "items": {
+            "description": "List of items included in this invoice.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceItemResponseDto"
+            }
+          },
+          "preInvoice": {
+            "description": "Pre-invoice that was upgraded to this invoice, if any.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PreInvoiceResponseDto"
+              }
+            ]
+          },
+          "amount": {
+            "type": "number",
+            "description": "Total amount for this invoice (sum of all items).",
+            "example": 1000
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Creation timestamp of the invoice.",
+            "example": "2025-10-07T09:00:00Z"
+          }
+        },
+        "required": [
+          "invoiceId",
+          "type",
+          "status",
+          "buyer",
+          "supplier",
+          "termsOfPayment",
+          "deliveryDate",
+          "items",
+          "amount",
+          "createdAt"
+        ]
+      },
+      "CreateInvoiceItemDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Display name of the invoiced product or service.",
+            "example": "Premium Wooden Chair"
+          },
+          "description": {
+            "type": "string",
+            "description": "Short description of the item.",
+            "example": "High-quality oak wood with natural finish."
+          },
+          "agreedDetails": {
+            "type": "string",
+            "description": "Details agreed between buyer and supplier.",
+            "example": "Includes free delivery and 2-year warranty."
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity of the product purchased (if service then they should write 1).",
+            "example": 5
+          },
+          "unitPrice": {
+            "type": "number",
+            "description": "Unit price of the item.",
+            "example": 99.99
+          },
+          "relatedServiceId": {
+            "type": "string",
+            "description": "Service ID if this item represents a service."
+          },
+          "relatedProductId": {
+            "type": "string",
+            "description": "Product ID if this item represents a product."
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "agreedDetails",
+          "quantity",
+          "unitPrice"
+        ]
+      },
+      "CreateInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "buyerId": {
+            "type": "string",
+            "description": "Identifier of the buyer who will receive this invoice."
+          },
+          "supplierId": {
+            "type": "string",
+            "description": "Identifier of the supplier issuing this invoice."
+          },
+          "deliveryDate": {
+            "type": "string",
+            "description": "Expected delivery date for the invoice items.",
+            "example": "2025-10-08"
+          },
+          "termsOfPayment": {
+            "type": "string",
+            "description": "Terms of payment for the invoice.",
+            "enum": [
+              "PARTIAL",
+              "FULL"
+            ]
+          },
+          "upfrontAmount": {
+            "type": "number",
+            "description": "Upfront payment amount (required only when termsOfPayment = PARTIAL)."
+          },
+          "notesAndTerms": {
+            "type": "string",
+            "description": "Optional notes or terms added by the supplier."
+          },
+          "items": {
+            "description": "List of items included in this invoice.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateInvoiceItemDto"
+            }
+          }
+        },
+        "required": [
+          "buyerId",
+          "supplierId",
+          "deliveryDate",
+          "termsOfPayment",
+          "items"
+        ]
+      },
+      "SupplierReviewResponseDto": {
+        "type": "object",
+        "properties": {
+          "reviewId": {
+            "type": "string",
+            "description": "Unique ID of the review",
+            "example": "f1e2d3c4-5678-90ab-cdef-1234567890ab"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "ID of the related order if this review was created after an order",
+            "example": "3c90b93d-223f-4dfb-9d1c-0bbf2fae861b"
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "ID of the related invoice if this review was created after an invoice",
+            "example": "a1d83c33-7f8c-4f1d-b37e-9b6fbb9d6502"
+          },
+          "buyerId": {
+            "type": "string",
+            "description": "ID of the buyer who submitted this review",
+            "example": "y1x2w3v4-5678-90ab-cdef-1234567890ab"
+          },
+          "supplierRating": {
+            "type": "number",
+            "description": "Numeric rating given to the supplier",
+            "example": 5
+          },
+          "writtenReviewOfSupplier": {
+            "type": "string",
+            "description": "Written feedback for this supplier",
+            "example": "The supplier was professional and prompt."
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when this review was created",
+            "example": "2025-10-10T12:34:56.789Z"
+          },
+          "supplier": {
+            "description": "Supplier details (active or inactive supplier)",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SupplierResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/InactiveSupplierResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "reviewId",
+          "supplierRating",
+          "createdAt",
+          "supplier"
+        ]
+      },
+      "ItemReviewResponseDto": {
+        "type": "object",
+        "properties": {
+          "itemReviewId": {
+            "type": "string",
+            "description": "Unique ID of this item review",
+            "example": "d1f2a3b4-5678-90ab-cdef-1234567890ab"
+          },
+          "reviewId": {
+            "type": "string",
+            "description": "ID of the parent review",
+            "example": "f1e2d3c4-5678-90ab-cdef-1234567890ab"
+          },
+          "orderItemReview": {
+            "description": "Details of the order item being reviewed (if review is order-based)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderItemResponseDto"
+              }
+            ]
+          },
+          "invoiceItemReview": {
+            "description": "Details of the invoice item being reviewed (if review is invoice-based)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InvoiceItemResponseDto"
+              }
+            ]
+          },
+          "buyerId": {
+            "type": "string",
+            "description": "ID of the buyer who wrote this review",
+            "example": "y1x2w3v4-5678-90ab-cdef-1234567890ab"
+          },
+          "itemRating": {
+            "type": "number",
+            "description": "Rating given for this item",
+            "example": 5
+          },
+          "writtenReviewOfItem": {
+            "type": "string",
+            "description": "Written feedback for this item review",
+            "example": "The product quality was excellent."
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when this review was created",
+            "example": "2025-10-10T12:34:56.789Z"
+          }
+        },
+        "required": [
+          "itemReviewId",
+          "reviewId",
+          "buyerId",
+          "itemRating",
+          "createdAt"
+        ]
+      },
+      "ReviewResponseDto": {
+        "type": "object",
+        "properties": {
+          "reviewId": {
+            "type": "string",
+            "description": "Unique ID of the review",
+            "example": "f1e2d3c4-5678-90ab-cdef-1234567890ab"
+          },
+          "orderId": {
+            "type": "string",
+            "description": "ID of the order this review is related to (if order-based)",
+            "example": "3c90b93d-223f-4dfb-9d1c-0bbf2fae861b"
+          },
+          "invoiceId": {
+            "type": "string",
+            "description": "ID of the invoice this review is related to (if invoice-based)",
+            "example": "a1d83c33-7f8c-4f1d-b37e-9b6fbb9d6502"
+          },
+          "buyer": {
+            "description": "Details of the buyer who wrote the review",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BuyerResponseDto"
+              }
+            ]
+          },
+          "supplier": {
+            "description": "Details of the supplier being reviewed",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SupplierResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/InactiveSupplierResponseDto"
+              }
+            ]
+          },
+          "supplierRating": {
+            "type": "number",
+            "description": "Rating given to the supplier",
+            "example": 5
+          },
+          "writtenReviewOfSupplier": {
+            "type": "string",
+            "description": "Written feedback for the supplier",
+            "example": "The supplier was very responsive and professional."
+          },
+          "itemsReview": {
+            "description": "List of item reviews under this review",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemReviewResponseDto"
+            }
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when this review was created",
+            "example": "2025-10-10T12:34:56.789Z"
+          }
+        },
+        "required": [
+          "reviewId",
+          "buyer",
+          "supplier",
+          "supplierRating",
+          "itemsReview",
+          "createdAt"
+        ]
+      },
+      "CreateItemReviewDto": {
+        "type": "object",
+        "properties": {
+          "orderItemId": {
+            "type": "number",
+            "description": "The order item ID this review is linked to (if it's an order-based review). Should only be used when orderId is provided on parent review.",
+            "example": 12
+          },
+          "invoiceItemId": {
+            "type": "number",
+            "description": "The invoice item ID this review is linked to (if it's an invoice-based review). Should only be used when invoiceId is provided on parent review.",
+            "example": 34
+          },
+          "itemRating": {
+            "type": "number",
+            "description": "Rating for this item (1-5)",
+            "example": 5,
+            "default": 5,
+            "minimum": 1,
+            "maximum": 5
+          },
+          "writtenReviewOfItem": {
+            "type": "string",
+            "description": "Optional written feedback for the reviewed item (max 150 chars)",
+            "example": "The product quality was excellent and packaging was neat!",
+            "maxLength": 150
+          }
+        },
+        "required": [
+          "itemRating"
+        ]
+      },
+      "CreateReviewDto": {
+        "type": "object",
+        "properties": {
+          "supplierRating": {
+            "type": "number",
+            "description": "Supplier rating (1-5)",
+            "example": 5,
+            "default": 5,
+            "minimum": 1,
+            "maximum": 5
+          },
+          "writtenReviewOfSupplier": {
+            "type": "string",
+            "description": "Optional written feedback for the supplier (max 150 chars)",
+            "example": "Excellent communication and fast delivery.",
+            "maxLength": 150
+          },
+          "itemsReview": {
+            "description": "Array of item reviews for each item in this order/invoice",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateItemReviewDto"
+            }
+          }
+        },
+        "required": [
+          "supplierRating",
+          "itemsReview"
         ]
       },
       "InactiveSupplierResponseDto": {

@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiForbiddenResponse } from '@nestjs/swagger';
 
-export function ApiRolesGuard() {
+export function ApiDocsRolesGuard() {
     return applyDecorators(
         ApiForbiddenResponse({
             description:

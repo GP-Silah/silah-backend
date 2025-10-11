@@ -16,9 +16,10 @@ import { LoginDto } from './dtos/login.dto';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
 import { ParseEmailPipe } from '../pipes/parse-email.pipe';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { ApiJwtAuthGuard } from './decorators/api-jwt-auth-guard.docs';
+import { ApiDocsJwtAuthGuard } from './decorators/jwt-auth-guard.docs';
 import { Request } from 'express';
 import {
+    ApiDocsChangePassword,
     ApiDocsLogin,
     ApiDocsLogout,
     ApiDocsRequestPasswordReset,
@@ -28,6 +29,9 @@ import {
     ApiDocsSwitchRole,
     ApiDocsVerifyEmail,
 } from './auth.docs';
+import { ApiDocsVerifiedGuard } from './decorators/verified-guard.docs';
+import { VerifiedGuard } from './guards/verified.guard';
+import { ChangePasswordDto } from './dtos/changePassword.dto';
 
 /**
  * AuthController handles incoming authentication-related requests,
@@ -115,14 +119,23 @@ export class AuthController {
         return await this.authService.resetPassword(token, dto);
     }
 
+    @ApiDocsJwtAuthGuard()
+    @UseGuards(JwtAuthGuard)
     @Patch('switch-role')
     @ApiDocsSwitchRole()
-    @ApiJwtAuthGuard()
-    @UseGuards(JwtAuthGuard)
     async switchUserRole(
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ) {
         return await this.authService.switchUserRole(req, res);
+    }
+
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsVerifiedGuard()
+    @UseGuards(JwtAuthGuard, VerifiedGuard)
+    @Patch('me/change-password')
+    @ApiDocsChangePassword()
+    async changePassword(@Req() req: Request, @Body() dto: ChangePasswordDto) {
+        return this.authService.changePassword(req.tokenData!.sub, dto);
     }
 }

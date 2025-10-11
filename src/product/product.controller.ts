@@ -20,8 +20,8 @@ import {
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ApiTags } from '@nestjs/swagger';
-import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.docs';
-import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
+import { ApiDocsJwtAuthGuard } from 'src/auth/decorators/jwt-auth-guard.docs';
+import { ApiDocsRolesGuard } from 'src/auth/decorators/roles-guard.docs';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/enums/userRole.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -43,6 +43,8 @@ import {
 } from './product.docs';
 import { UpdateProductDto } from './dtos/updateProduct.dto';
 import { validateOrReject, ValidationError } from 'class-validator';
+import { ApiDocsVerifiedGuard } from 'src/auth/decorators/verified-guard.docs';
+import { VerifiedGuard } from 'src/auth/guards/verified.guard';
 
 @ApiTags('Products')
 @Controller('products')
@@ -91,10 +93,11 @@ export class ProductController {
         );
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Post()
     @UseInterceptors(FilesInterceptor('files', 3)) // note: "files" for multiple files
     @ApiDocsCreateProduct()
@@ -147,10 +150,11 @@ export class ProductController {
         return; // Never called
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Post(':productId/clone')
     @ApiDocsDuplicateProduct()
     async duplicateProduct(
@@ -161,10 +165,11 @@ export class ProductController {
         return this.productService.duplicateProduct(userId, productId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Patch(':productId')
     @ApiDocsUpdateProduct()
     async updateProduct(
@@ -176,10 +181,11 @@ export class ProductController {
         return this.productService.updateProduct(userId, productId, dto);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @UseInterceptors(FileInterceptor('file'))
     @Patch(':productId/images')
     @ApiDocsUpdateProductImage()
@@ -203,10 +209,11 @@ export class ProductController {
         return this.productService.updateProductImages(userId, productId, file);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Delete(':productId/image/:fileName')
     @ApiDocsDeleteProductImage()
     async deleteProductImage(
@@ -222,10 +229,11 @@ export class ProductController {
         );
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Delete(':productId')
     @ApiDocsDeleteProduct()
     async deleteProduct(

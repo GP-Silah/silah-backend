@@ -385,6 +385,8 @@ export class CartService {
         if (!buyer.card) {
             throw new BadRequestException('No saved card found for this buyer');
         }
+        if (!buyer.user.tapCustomerId)
+            throw new BadRequestException('Missing Tap customer ID');
 
         // --- Path 1: Confirm existing charge if chargeId is provided ---
         if (dto.chargeId) {
@@ -392,19 +394,41 @@ export class CartService {
                 dto.chargeId,
             );
 
-            if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
-                const checkoutId = uuidv4();
+            await this.tapPaymentsService.validateCharge(charge);
 
+            if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
                 // Create orders + reduce stock
                 const orders = await Promise.all(
                     cart.suppliers.map(async (supplierCart) => {
+                        // Create the order with nested order items
                         const order = await this.prisma.order.create({
                             data: {
-                                checkoutId,
+                                tapChargeId: charge.id,
                                 buyerId: buyer.id,
                                 cartId: cart.id,
                                 supplierId: supplierCart.supplierId,
                                 finalPrice: supplierCart.supplierTotalPrice,
+                                items: {
+                                    create: supplierCart.cartItems.map(
+                                        (cartItem) => ({
+                                            productId: cartItem.product.id,
+                                            quantity: cartItem.quantity,
+                                            unitPrice: cartItem.product.price,
+                                            totalPrice:
+                                                cartItem.product.price *
+                                                cartItem.quantity,
+                                        }),
+                                    ),
+                                },
+                            },
+                            include: {
+                                items: {
+                                    include: {
+                                        product: {
+                                            include: { category: true },
+                                        },
+                                    },
+                                },
                             },
                         });
 
@@ -432,7 +456,7 @@ export class CartService {
 
                 return {
                     message: 'Paid successfully',
-                    checkoutId,
+                    tapChargeId: charge.id,
                     buyerId: buyer.id,
                     cartId: cart.id,
                     totalPaid: cart.cartTotal,
@@ -470,30 +494,49 @@ export class CartService {
 
         // --- Complete checkout if charge captured/authorized ---
         if (['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
-            const checkoutId = uuidv4();
-
             const orders = await Promise.all(
                 cart.suppliers.map(async (supplierCart) => {
+                    // Create the order with nested order items
                     const order = await this.prisma.order.create({
                         data: {
-                            checkoutId,
+                            tapChargeId: charge.id,
                             buyerId: buyer.id,
                             cartId: cart.id,
                             supplierId: supplierCart.supplierId,
                             finalPrice: supplierCart.supplierTotalPrice,
+                            items: {
+                                create: supplierCart.cartItems.map(
+                                    (cartItem) => ({
+                                        productId: cartItem.product.id,
+                                        quantity: cartItem.quantity,
+                                        unitPrice: cartItem.product.price,
+                                        totalPrice:
+                                            cartItem.product.price *
+                                            cartItem.quantity,
+                                    }),
+                                ),
+                            },
+                        },
+                        include: {
+                            items: {
+                                include: {
+                                    product: { include: { category: true } },
+                                },
+                            },
                         },
                     });
 
-                    // Reduce stock for each product
+                    // Reduce stock for all products in the supplier cart
                     await Promise.all(
-                        supplierCart.cartItems.map((item) =>
-                            this.prisma.product.update({
-                                where: { id: item.product.id },
+                        supplierCart.cartItems.map(async (cartItem) => {
+                            const product = cartItem.product;
+                            await this.prisma.product.update({
+                                where: { id: product.id },
                                 data: {
-                                    stock: item.product.stock - item.quantity,
+                                    stock: product.stock - cartItem.quantity,
                                 },
-                            }),
-                        ),
+                            });
+                        }),
                     );
 
                     return order;
@@ -507,7 +550,7 @@ export class CartService {
 
             return {
                 message: 'Paid successfully',
-                checkoutId,
+                tapChargeId: charge.id,
                 buyerId: buyer.id,
                 cartId: cart.id,
                 totalPaid: cart.cartTotal,

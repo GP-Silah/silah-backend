@@ -2,22 +2,13 @@ import { applyDecorators } from '@nestjs/common';
 import {
     ApiCookieAuth,
     ApiUnauthorizedResponse,
-    ApiHeader,
     ApiSecurity,
 } from '@nestjs/swagger';
 
-export function ApiJwtAuthGuard() {
+export function ApiDocsJwtAuthGuard() {
     return applyDecorators(
-        ApiSecurity({ cookie: [] }),
-        ApiSecurity('cookie'),
-        ApiSecurity('bearer'),
-        ApiCookieAuth('token'),
-        ApiHeader({
-            name: 'Cookie',
-            description:
-                'JWT token must be set in the cookie named "token". Example: token=your_jwt_token_here',
-            required: true,
-        }),
+        ApiSecurity('cookie'), // indicates cookie-based auth in Swagger
+        ApiCookieAuth('token'), // cookie name is "token"
         ApiUnauthorizedResponse({
             description: 'Unauthorized: Token missing or invalid/expired.',
             schema: {
@@ -39,5 +30,8 @@ export function ApiJwtAuthGuard() {
                 ],
             },
         }),
+        // Optional: extra note for frontend devs
+        // This is purely documentation; it won’t affect Swagger UI behavior
+        ApiSecurity('bearer', []), // if you ever also support Authorization header
     );
 }

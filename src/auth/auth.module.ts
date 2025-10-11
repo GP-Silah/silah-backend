@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from '../user/user.module';
 import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 import { TapPaymentsModule } from 'src/tap-payments/tap-payments.module';
+import { WathqModule } from 'src/wathq/wathq.module';
 
 /**
  * AuthModule is responsible for handling authentication-related features
@@ -26,6 +27,7 @@ import { TapPaymentsModule } from 'src/tap-payments/tap-payments.module';
         }),
         forwardRef(() => UserModule),
         TapPaymentsModule,
+        WathqModule,
     ],
     controllers: [AuthController],
     providers: [AuthService, IsEmailOrCrnConstraint],

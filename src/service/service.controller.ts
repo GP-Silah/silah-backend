@@ -20,8 +20,8 @@ import {
 } from '@nestjs/common';
 import { ServiceService } from './service.service';
 import { ApiTags } from '@nestjs/swagger';
-import { ApiJwtAuthGuard } from 'src/auth/decorators/api-jwt-auth-guard.docs';
-import { ApiRolesGuard } from 'src/auth/decorators/api-roles-guard.docs';
+import { ApiDocsJwtAuthGuard } from 'src/auth/decorators/jwt-auth-guard.docs';
+import { ApiDocsRolesGuard } from 'src/auth/decorators/roles-guard.docs';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/enums/userRole.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -42,6 +42,8 @@ import {
     ApiDocsUpdateService,
     ApiDocsUpdateServiceImage,
 } from './service.docs';
+import { ApiDocsVerifiedGuard } from 'src/auth/decorators/verified-guard.docs';
+import { VerifiedGuard } from 'src/auth/guards/verified.guard';
 
 @ApiTags('Services')
 @Controller('services')
@@ -86,14 +88,15 @@ export class ServiceController {
         return this.serviceService.getAllSupplierServices(
             supplierId,
             finalLang,
-            userId
+            userId,
         );
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Post()
     @UseInterceptors(FilesInterceptor('files', 3)) // note: "files" for multiple files
     @ApiDocsCreateService()
@@ -129,10 +132,11 @@ export class ServiceController {
         return; // Never called
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Post(':serviceId/clone')
     @ApiDocsDuplicateService()
     async duplicateService(
@@ -143,10 +147,11 @@ export class ServiceController {
         return this.serviceService.duplicateService(userId, serviceId);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Patch(':serviceId')
     @ApiDocsUpdateService()
     async updateService(
@@ -158,10 +163,11 @@ export class ServiceController {
         return this.serviceService.updateService(userId, serviceId, dto);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @UseInterceptors(FileInterceptor('file'))
     @Patch(':serviceId/images')
     @ApiDocsUpdateServiceImage()
@@ -185,10 +191,11 @@ export class ServiceController {
         return this.serviceService.updateServiceImages(userId, serviceId, file);
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Delete(':serviceId/image/:fileName')
     @ApiDocsDeleteServiceImage()
     async deleteServiceImage(
@@ -204,10 +211,11 @@ export class ServiceController {
         );
     }
 
-    @ApiJwtAuthGuard()
-    @ApiRolesGuard()
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Delete(':serviceId')
     @ApiDocsDeleteService()
     async deleteService(
