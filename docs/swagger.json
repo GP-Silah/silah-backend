@@ -780,6 +780,147 @@
         ]
       }
     },
+    "/api/auth/me/change-password": {
+      "patch": {
+        "description": "This endpoint allows an authenticated user to change their account password.<br><br>\n            The user must provide their <code>oldPassword</code> (current password) and a <code>newPassword</code>.<br>\n            The system will verify that the old password is correct before updating the new one.",
+        "operationId": "AuthController_changePassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Contains the user's current and new passwords for validation and update.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              },
+              "examples": {
+                "validExample": {
+                  "summary": "Change password successfully",
+                  "value": {
+                    "oldPassword": "currentPassword123",
+                    "newPassword": "newSecurePassword456"
+                  }
+                },
+                "invalidExample": {
+                  "summary": "Incorrect current password",
+                  "value": {
+                    "oldPassword": "wrongPassword",
+                    "newPassword": "newSecurePassword456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Password updated successfully."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request: current password is incorrect or invalid input.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "invalidPassword": {
+                    "summary": "Incorrect old password",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "Current password is incorrect",
+                      "error": "Bad Request"
+                    }
+                  },
+                  "invalidInput": {
+                    "summary": "Validation error (e.g., short password)",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "Password must be at least 8 characters long",
+                      "error": "Bad Request"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found in the database.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Change user password (requires authentication)",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/api/users/email/{email}": {
       "get": {
         "description": "Fetches a single user using their email address.",
@@ -9167,13 +9308,36 @@
         "properties": {
           "newPassword": {
             "type": "string",
-            "description": "The new password to replace the old one.",
+            "description": "The new password to replace the old one.<br>Password must contain at least one uppercase, one lowercase, and one number. Special characters (@, #, !, $) are optional.",
             "example": "StrongPass123",
             "minLength": 8,
             "maxLength": 28
           }
         },
         "required": [
+          "newPassword"
+        ]
+      },
+      "ChangePasswordDto": {
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "type": "string",
+            "description": "The current password that will be replaced.",
+            "example": "StrongPass123",
+            "minLength": 8,
+            "maxLength": 28
+          },
+          "newPassword": {
+            "type": "string",
+            "description": "The new password to replace the old one.<br>Password must contain at least one uppercase, one lowercase, and one number. Special characters (@, #, !, $) are optional.",
+            "example": "StrongPass123",
+            "minLength": 8,
+            "maxLength": 28
+          }
+        },
+        "required": [
+          "oldPassword",
           "newPassword"
         ]
       },

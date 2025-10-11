@@ -19,6 +19,7 @@ import { UserRole } from '../enums/userRole.enum';
 import { Request, Response } from 'express';
 import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 import { WathqService } from 'src/wathq/wathq.service';
+import { ChangePasswordDto } from './dtos/changePassword.dto';
 
 /**
  * AuthService contains all authentication-related business logic,
@@ -522,5 +523,31 @@ export class AuthService {
         });
 
         return { message: 'Role switched successfully', newRole };
+    }
+
+    async changePassword(userId: string, dto: ChangePasswordDto) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+        });
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        const isMatch = await bcrypt.compare(dto.oldPassword, user.password);
+        if (!isMatch) {
+            throw new BadRequestException('Current password is incorrect');
+        }
+
+        const hashedPassword = await this.encryptPassword(dto.newPassword);
+
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: { password: hashedPassword },
+        });
+
+        return {
+            message: 'Password updated successfully.',
+        };
     }
 }

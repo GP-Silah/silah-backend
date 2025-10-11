@@ -7,7 +7,17 @@ import {
     MinLength,
 } from 'class-validator';
 
-export class ResetPasswordDto {
+export class ChangePasswordDto {
+    @ApiProperty({
+        description: 'The current password that will be replaced.',
+        example: 'StrongPass123',
+        minLength: 8,
+        maxLength: 28,
+    })
+    @IsString()
+    @IsNotEmpty()
+    oldPassword: string;
+
     @ApiProperty({
         description:
             'The new password to replace the old one.<br>Password must contain at least one uppercase, one lowercase, and one number. Special characters (@, #, !, $) are optional.',
