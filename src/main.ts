@@ -37,7 +37,7 @@ async function bootstrap() {
                 ? process.env.FRONTEND_URL?.split(',')
                       .map((o) => o.trim())
                       .filter(Boolean)
-                : true,
+                : ['http://localhost:5173'], // explicit React dev origin so SSE work
         credentials: true,
     });
 

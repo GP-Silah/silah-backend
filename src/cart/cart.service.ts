@@ -6,10 +6,11 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CartResponseDto } from './dtos/cartResponse.dto';
 import { AddCartItemDto } from './dtos/addCartItem.dto';
-import { v4 as uuidv4 } from 'uuid';
 import { TranslationService } from 'src/translation/translation.service';
 import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 import { CheckoutCartDto } from './dtos/checkoutCart.dto';
+import { NotificationService } from 'src/notification/notification.service';
+import { NotificationEntityType, NotificationType } from '@prisma/client';
 
 @Injectable()
 export class CartService {
@@ -17,6 +18,7 @@ export class CartService {
         private readonly prisma: PrismaService,
         private readonly translationService: TranslationService,
         private readonly tapPaymentsService: TapPaymentsService,
+        private readonly notificationService: NotificationService,
     ) {}
 
     async toCartResponseDto(cart: any): Promise<CartResponseDto> {
@@ -445,6 +447,17 @@ export class CartService {
                             ),
                         );
 
+                        // Send a notification for the supplier
+                        this.notificationService.createNotification({
+                            senderUserId: buyer.user.id,
+                            receiverUserId: supplierCart.supplier.userId,
+                            type: NotificationType.NEW_ORDER,
+                            title: 'New Order!',
+                            content: `You have received a new order from ${buyer.user.name}`,
+                            entityId: order.id,
+                            entityType: NotificationEntityType.ORDER,
+                        });
+
                         return order;
                     }),
                 );
@@ -538,6 +551,17 @@ export class CartService {
                             });
                         }),
                     );
+
+                    // Send a notification for the supplier
+                    this.notificationService.createNotification({
+                        senderUserId: buyer.user.id,
+                        receiverUserId: supplierCart.supplier.userId,
+                        type: NotificationType.NEW_ORDER,
+                        title: 'New Order!',
+                        content: `You have received a new order from ${buyer.user.name}`,
+                        entityId: order.id,
+                        entityType: NotificationEntityType.ORDER,
+                    });
 
                     return order;
                 }),

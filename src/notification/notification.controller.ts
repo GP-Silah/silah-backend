@@ -9,6 +9,7 @@ import {
     Sse,
     UseGuards,
     MessageEvent,
+    Res,
 } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -16,11 +17,18 @@ import { ApiDocsJwtAuthGuard } from 'src/auth/decorators/jwt-auth-guard.docs';
 import { ApiDocsVerifiedGuard } from 'src/auth/decorators/verified-guard.docs';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { VerifiedGuard } from 'src/auth/guards/verified.guard';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { MarkAsReadDto } from './dtos/markReadBulk.dto';
 import { UpdateNotificationPreferencesDto } from './dtos/updateNotificationPreference.dto';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil, filter, map } from 'rxjs/operators';
+import { takeUntil, filter, map, tap } from 'rxjs/operators';
+import {
+    ApiDocsGetMyNotifications,
+    ApiDocsMarkNotificationAsRead,
+    ApiDocsMarkNotificationsAsReadInBulk,
+    ApiDocsNotificationStream,
+    ApiDocsUpdateNotificationPreferences,
+} from './notification.docs';
 @ApiTags('Notifications')
 @Controller('notifications')
 export class NotificationController {
@@ -30,6 +38,7 @@ export class NotificationController {
     @ApiDocsVerifiedGuard()
     @UseGuards(JwtAuthGuard, VerifiedGuard)
     @Patch('me/preferences')
+    @ApiDocsUpdateNotificationPreferences()
     async updateNotificationPreferences(
         @Req() req: Request,
         @Body() dto: UpdateNotificationPreferencesDto,
@@ -45,6 +54,7 @@ export class NotificationController {
     @ApiDocsVerifiedGuard()
     @UseGuards(JwtAuthGuard, VerifiedGuard)
     @Get('me')
+    @ApiDocsGetMyNotifications()
     async getMyNotifications(
         @Req() req: Request,
         @Query('date') date?: string,
@@ -58,6 +68,7 @@ export class NotificationController {
     @ApiDocsVerifiedGuard()
     @UseGuards(JwtAuthGuard, VerifiedGuard)
     @Patch(':id/read')
+    @ApiDocsMarkNotificationAsRead()
     async markNotificationAsRead(
         @Req() req: Request,
         @Param('id') notificationId: string,
@@ -73,6 +84,7 @@ export class NotificationController {
     @ApiDocsVerifiedGuard()
     @UseGuards(JwtAuthGuard, VerifiedGuard)
     @Patch('read-many')
+    @ApiDocsMarkNotificationsAsReadInBulk()
     async markNotificationsAsReadInBulk(
         @Req() req: Request,
         @Body() dto: MarkAsReadDto,
@@ -87,9 +99,21 @@ export class NotificationController {
     @ApiDocsJwtAuthGuard()
     @ApiDocsVerifiedGuard()
     @UseGuards(JwtAuthGuard, VerifiedGuard)
+    @ApiDocsNotificationStream()
     @Get('stream')
     @Sse('stream')
-    notificationStream(@Req() req: Request): Observable<MessageEvent> {
+    notificationStream(
+        @Req() req: Request,
+        @Res({ passthrough: true }) res: Response,
+    ): Observable<MessageEvent> {
+        const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:5173';
+        // Set SSE + CORS headers
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.setHeader('Access-Control-Allow-Origin', frontendUrl); // exact frontend URL
+        res.setHeader('Access-Control-Allow-Credentials', 'true'); // important for cookies
+
         const userId = req.tokenData!.sub;
 
         const disconnect$ = new Subject<void>(); // This will signal when to stop
@@ -100,12 +124,15 @@ export class NotificationController {
         });
 
         return this.notificationService.getNotificationStream().pipe(
+            // tap((event) =>
+            //     console.log('📡 Stream event:', event.receiverUserId),
+            // ), // add tap from rxjs/operators
             filter((event) => event.receiverUserId === userId),
             takeUntil(disconnect$), // Stop streaming when disconnect$ emits
-            map((event) => ({
-                data: event.notification,
-                type: 'new-notification',
-            })),
+            map((event) => {
+                const payload = JSON.stringify(event.notification);
+                return { data: payload }; // must be stringified
+            }),
         );
     }
 }

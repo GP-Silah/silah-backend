@@ -44,11 +44,11 @@ export class NotificationResponseDto {
     @ApiPropertyOptional({
         description: 'ID of the related entity (e.g., order, chat message)',
     })
-    relatedEntityId?: string;
+    relatedEntityId: string;
 
     @ApiPropertyOptional({
         enum: NotificationEntityType,
         description: 'Type of the related entity',
     })
-    relatedEntityType?: NotificationEntityType;
+    relatedEntityType: NotificationEntityType;
 }

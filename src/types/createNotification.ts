@@ -6,6 +6,6 @@ export interface CreateNotification {
     type: NotificationType;
     title: string;
     content: string;
-    entityId?: string;
-    entityType?: NotificationEntityType;
+    entityId: string;
+    entityType: NotificationEntityType;
 }

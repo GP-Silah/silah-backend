@@ -9131,6 +9131,555 @@
           "Reviews"
         ]
       }
+    },
+    "/api/notifications/me/preferences": {
+      "patch": {
+        "description": "Allows the authenticated user to update their notification preferences.\n                <ul>\n                    <li>Suppliers can modify: new orders, new reviews, bidding status, invoice status.</li>\n                    <li>Buyers can modify: new invoices, new offers, order status, group purchase status.</li>\n                    <li>All users can toggle all notifications or new message notifications.</li>\n                </ul>",
+        "operationId": "NotificationController_updateNotificationPreferences",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNotificationPreferencesDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notification preferences updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Notification preferences updated successfully",
+                    "newNotificationPreferences": {
+                      "userId": "user-uuid",
+                      "allowNotifications": true,
+                      "newMessageNotify": true,
+                      "newOrderNotify": true,
+                      "newReviewNotify": true,
+                      "biddingStatusNotify": true,
+                      "invoiceStatusNotify": true,
+                      "newInvoiceNotify": true,
+                      "newOfferNotify": true,
+                      "orderStatusNotify": true,
+                      "groupPurchaseStatusNotify": true,
+                      "createdAt": "2025-01-01T00:00:00.000Z",
+                      "updatedAt": "2025-01-01T00:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body or unsupported fields for this role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "No valid preferences to update for this role",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update my notification preferences",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/notifications/me": {
+      "get": {
+        "description": "Fetch notifications for the authenticated user.\n                <ul>\n                    <li>You can filter by date using query: <code>today</code>, <code>this-week</code>, <code>this-month</code>, <code>all</code> (default: all)</li>\n                    <li>You can filter by notification type using the <code>type</code> query parameter.</li>\n                </ul>",
+        "operationId": "NotificationController_getMyNotifications",
+        "parameters": [
+          {
+            "name": "date",
+            "required": false,
+            "in": "query",
+            "description": "Filter notifications by date",
+            "schema": {
+              "example": "today",
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "Filter notifications by type",
+            "schema": {
+              "enum": [
+                "NEW_MESSAGE",
+                "NEW_ORDER",
+                "NEW_REVIEW",
+                "NEW_INVOICE",
+                "NEW_OFFER",
+                "BID_STATUS_CHANGED",
+                "INVOICE_STATUS_CHANGED",
+                "ORDER_STATUS_CHANGED",
+                "GROUP_PURCHASE_STATUS_CHANGED"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of notifications",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Invalid 'date' filter. Use: all, today, this-week, this-month",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get my notifications",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/notifications/{id}/read": {
+      "patch": {
+        "description": "Marks a single notification as read by its ID for the authenticated user.",
+        "operationId": "NotificationController_markNotificationAsRead",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification marked as read successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Notification not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Notification not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Mark a notification as read",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/notifications/read-many": {
+      "patch": {
+        "description": "Marks multiple notifications as read using an array of notification IDs.",
+        "operationId": "NotificationController_markNotificationsAsReadInBulk",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkAsReadDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bulk update result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Successfully marked 3 notification(s) as read",
+                    "updatedCount": 3
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No notification IDs provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "No notification IDs provided",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Notifications not found for the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No valid notifications found for this user",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Mark multiple notifications as read",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/notifications/stream": {
+      "get": {
+        "description": "Provides a real-time stream of notifications for the authenticated user via Server-Sent Events.",
+        "operationId": "NotificationController_notificationStream",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Stream started successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "data": "{\"notificationId\":\"uuid\",\"title\":\"New Message\",\"content\":\"You have a new message\",\"sender\":{\"userId\":\"uuid\",\"name\":\"John Doe\"},\"receiver\":{\"userId\":\"uuid\",\"name\":\"Jane Doe\"},\"notificationType\":\"NEW_MESSAGE\",\"isRead\":false,\"createdAt\":\"2025-01-01T00:00:00.000Z\"}"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Stream live notifications (SSE)",
+        "tags": [
+          "Notifications"
+        ]
+      }
     }
   },
   "info": {
@@ -9157,9 +9706,6 @@
     },
     {
       "name": "Suppliers"
-    },
-    {
-      "name": "Settings"
     },
     {
       "name": "Categories"
@@ -9190,6 +9736,9 @@
     },
     {
       "name": "Demand Predictions"
+    },
+    {
+      "name": "Notifications"
     }
   ],
   "servers": [],
@@ -11426,6 +11975,160 @@
         "required": [
           "supplierRating",
           "itemsReview"
+        ]
+      },
+      "UpdateNotificationPreferencesDto": {
+        "type": "object",
+        "properties": {
+          "allowNotifications": {
+            "type": "boolean",
+            "description": "Toggle all notifications (applies to all users)"
+          },
+          "newMessageNotify": {
+            "type": "boolean",
+            "description": "Receive notifications for new chat messages (all users)"
+          },
+          "newOrderNotify": {
+            "type": "boolean",
+            "description": "Receive notifications for new orders (suppliers only)"
+          },
+          "newReviewNotify": {
+            "type": "boolean",
+            "description": "Receive notifications for new reviews (suppliers only)"
+          },
+          "newInvoiceNotify": {
+            "type": "boolean",
+            "description": "Receive notifications for new invoices (buyers only)"
+          },
+          "newOfferNotify": {
+            "type": "boolean",
+            "description": "Receive notifications for new offers (buyers only)"
+          },
+          "biddingStatusNotify": {
+            "type": "boolean",
+            "description": "Receive notifications for bidding status changes (suppliers only)"
+          },
+          "invoiceStatusNotify": {
+            "type": "boolean",
+            "description": "Receive notifications for invoice status changes (suppliers only)"
+          },
+          "orderStatusNotify": {
+            "type": "boolean",
+            "description": "Receive notifications for order status changes (buyers only)"
+          },
+          "groupPurchaseStatusNotify": {
+            "type": "boolean",
+            "description": "Receive notifications for group purchase status changes (buyers only)"
+          }
+        }
+      },
+      "NotificationResponseDto": {
+        "type": "object",
+        "properties": {
+          "notificationId": {
+            "type": "string",
+            "description": "Unique identifier of the notification"
+          },
+          "sender": {
+            "description": "User who sent the notification",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserResponseDTO"
+              }
+            ]
+          },
+          "receiver": {
+            "description": "User who receives the notification",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserResponseDTO"
+              }
+            ]
+          },
+          "notificationType": {
+            "type": "string",
+            "enum": [
+              "NEW_MESSAGE",
+              "NEW_ORDER",
+              "NEW_REVIEW",
+              "NEW_INVOICE",
+              "NEW_OFFER",
+              "BID_STATUS_CHANGED",
+              "INVOICE_STATUS_CHANGED",
+              "ORDER_STATUS_CHANGED",
+              "GROUP_PURCHASE_STATUS_CHANGED"
+            ],
+            "description": "Type of the notification"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the notification"
+          },
+          "content": {
+            "type": "string",
+            "description": "Content/body of the notification"
+          },
+          "isRead": {
+            "type": "boolean",
+            "description": "Indicates if the notification has been read"
+          },
+          "readAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the notification was read, if applicable"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the notification was created"
+          },
+          "relatedEntityId": {
+            "type": "string",
+            "description": "ID of the related entity (e.g., order, chat message)"
+          },
+          "relatedEntityType": {
+            "type": "string",
+            "enum": [
+              "CHAT",
+              "ORDER",
+              "REVIEW",
+              "INVOICE",
+              "OFFER",
+              "BID",
+              "GROUP_PURCHASE"
+            ],
+            "description": "Type of the related entity"
+          }
+        },
+        "required": [
+          "notificationId",
+          "sender",
+          "receiver",
+          "notificationType",
+          "title",
+          "content",
+          "isRead",
+          "createdAt"
+        ]
+      },
+      "MarkAsReadDto": {
+        "type": "object",
+        "properties": {
+          "notificationIds": {
+            "description": "Array of notification IDs to mark as read",
+            "example": [
+              "uuid-1",
+              "uuid-2",
+              "uuid-3"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "notificationIds"
         ]
       },
       "InactiveSupplierResponseDto": {

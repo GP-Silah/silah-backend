@@ -43,8 +43,8 @@ export class NotificationService {
             isRead: notification.isRead,
             readAt: notification.readAt,
             createdAt: notification.createdAt,
-            relatedEntityId: notification.relatedEntityId ?? undefined,
-            relatedEntityType: notification.relatedEntityType ?? undefined,
+            relatedEntityId: notification.relatedEntityId,
+            relatedEntityType: notification.relatedEntityType,
         };
     }
 
@@ -304,11 +304,54 @@ export class NotificationService {
         // Step 2: Convert to DTO
         const dto = await this.toNotificationResponseDto(notification);
 
-        // Step 3: Emit to stream subscribers
-        this.notifications$.next({
-            receiverUserId: data.receiverUserId,
-            notification: dto,
+        // Step 2.5: Load notification preferences
+        const preference = await this.prisma.notificationPreference.findUnique({
+            where: { userId: data.receiverUserId },
         });
+
+        // Step 3: Emit based on preference
+        if (preference?.allowNotifications) {
+            let shouldSend = false;
+
+            switch (data.type) {
+                case 'NEW_MESSAGE':
+                    shouldSend = preference.newMessageNotify;
+                    break;
+                case 'NEW_ORDER':
+                    shouldSend = preference.newOrderNotify;
+                    break;
+                case 'NEW_REVIEW':
+                    shouldSend = preference.newReviewNotify;
+                    break;
+                case 'NEW_INVOICE':
+                    shouldSend = preference.newInvoiceNotify;
+                    break;
+                case 'NEW_OFFER':
+                    shouldSend = preference.newOfferNotify;
+                    break;
+                case 'BID_STATUS_CHANGED':
+                    shouldSend = preference.biddingStatusNotify;
+                    break;
+                case 'INVOICE_STATUS_CHANGED':
+                    shouldSend = preference.invoiceStatusNotify;
+                    break;
+                case 'ORDER_STATUS_CHANGED':
+                    shouldSend = preference.orderStatusNotify;
+                    break;
+                case 'GROUP_PURCHASE_STATUS_CHANGED':
+                    shouldSend = preference.groupPurchaseStatusNotify;
+                    break;
+                default:
+                    shouldSend = false;
+            }
+
+            if (shouldSend) {
+                this.notifications$.next({
+                    receiverUserId: data.receiverUserId,
+                    notification: dto,
+                });
+            }
+        }
 
         return dto;
     }
