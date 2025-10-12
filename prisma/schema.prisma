@@ -34,9 +34,12 @@ model User {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
-  categories UserCategory[]
-  supplier   Supplier?
-  buyer      Buyer?
+  categories             UserCategory[]
+  supplier               Supplier?
+  buyer                  Buyer?
+  notificationPreference NotificationPreference?
+  sentNotifications      Notification[]          @relation("SentNotifications")
+  receivedNotifications  Notification[]          @relation("ReceivedNotifications")
 }
 
 // ============ 🛢 SUPPLIER ==============
@@ -409,6 +412,43 @@ model Wishlist {
   @@unique([buyerId, itemId, itemType])
 }
 
+// =========== 🔔 NOTIFICATION PREFERENCE ===========
+model NotificationPreference {
+  userId                    String   @id
+  user                      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  allowNotifications        Boolean  @default(true) // for all users
+  newMessageNotify          Boolean  @default(true) // for all users
+  newOrderNotify            Boolean  @default(true) // for suppliers only
+  newReviewNotify           Boolean  @default(true) // for suppliers only
+  newInvoiceNotify          Boolean  @default(true) // for buyers only
+  newOfferNotify            Boolean  @default(true) // for bueyrs only
+  biddingStatusNotify       Boolean  @default(true) // for suppliers only
+  invoiceStatusNotify       Boolean  @default(true) // for suppliers only
+  orderStatusNotify         Boolean  @default(true) // for buyers only
+  groupPurchaseStatusNotify Boolean  @default(true) // for buyers only
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+}
+
+// =========== 🔔 NOTIFICATION ===========
+model Notification {
+  id             String                  @id @default(uuid())
+  senderUserId   String
+  sender         User                    @relation("SentNotifications", fields: [senderUserId], references: [id], onDelete: Cascade)
+  receiverUserId String
+  receiver       User                    @relation("ReceivedNotifications", fields: [receiverUserId], references: [id], onDelete: Cascade)
+  type           NotificationType
+  title          String
+  content        String
+  isRead         Boolean                 @default(false)
+  readAt         DateTime?
+  entityId       String
+  entityType     NotificationEntityType
+  isDeleted      Boolean                 @default(false)
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+}
+
 // ============  ⚔️ ENUMS ================
 
 enum UserRole {
@@ -486,4 +526,26 @@ enum InvoiceStatus {
 enum InvoiceTermsOfPayment {
   PARTIAL
   FULL
+}
+
+enum NotificationType {
+  NEW_MESSAGE
+  NEW_ORDER
+  NEW_REVIEW
+  NEW_INVOICE
+  NEW_OFFER
+  BID_STATUS_CHANGED
+  INVOICE_STATUS_CHANGED
+  ORDER_STATUS_CHANGED
+  GROUP_PURCHASE_STATUS_CHANGED
+}
+
+enum NotificationEntityType {
+  CHAT
+  ORDER
+  REVIEW
+  INVOICE
+  OFFER
+  BID
+  GROUP_PURCHASE
 }

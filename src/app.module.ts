@@ -27,6 +27,7 @@ import { SmartSearchModule } from './smart-search/smart-search.module';
 import { SearchModule } from './search/search.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { ReviewModule } from './review/review.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
     imports: [
@@ -57,6 +58,7 @@ import { ReviewModule } from './review/review.module';
         SearchModule,
         InvoiceModule,
         ReviewModule,
+        NotificationModule,
     ],
     controllers: [AppController, HealthController],
     providers: [
