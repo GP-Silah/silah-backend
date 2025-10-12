@@ -9,10 +9,15 @@ import {
     OrderResponseDto,
 } from './dtos/orderResponse.dto';
 
-import { OrderStatus } from '@prisma/client';
+import {
+    NotificationEntityType,
+    NotificationType,
+    OrderStatus,
+} from '@prisma/client';
 import { BuyerService } from 'src/buyer/buyer.service';
 import { SupplierService } from 'src/supplier/supplier.service';
 import { ProductService } from 'src/product/product.service';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class OrderService {
@@ -21,6 +26,7 @@ export class OrderService {
         private readonly buyerService: BuyerService,
         private readonly supplierService: SupplierService,
         private readonly productService: ProductService,
+        private readonly notificationService: NotificationService,
     ) {}
 
     async toOrderResponseDto(order: any): Promise<OrderResponseDto> {
@@ -200,6 +206,10 @@ export class OrderService {
 
         const order = await this.prisma.order.findUnique({
             where: { id: orderId, supplierId: user.supplier!.id },
+            include: {
+                supplier: { include: { user: true } },
+                buyer: { include: { user: true } },
+            },
         });
         if (!order) throw new NotFoundException('Order not found');
 
@@ -208,6 +218,17 @@ export class OrderService {
             data: {
                 status: newStatus,
             },
+        });
+
+        // Send a notification for the buyer
+        await this.notificationService.createNotification({
+            senderUserId: order.supplier.userId,
+            receiverUserId: order.buyer!.userId,
+            type: NotificationType.ORDER_STATUS_CHANGED,
+            title: 'Order Status Changed!',
+            content: `Your order from ${order.supplier!.user.businessName} is now ${newStatus.toLowerCase}`,
+            entityId: order.id,
+            entityType: NotificationEntityType.ORDER,
         });
 
         return { message: 'Order status updated successfully', newStatus };

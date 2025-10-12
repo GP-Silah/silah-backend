@@ -141,6 +141,11 @@ export class AuthService {
                 userId: user.id,
             },
         });
+        await this.prisma.notificationPreference.create({
+            data: {
+                userId: user.id,
+            },
+        });
 
         // Generate a JWT token for email verification and send it via email
         const emailToken = this.generateEmailVerificationToken(

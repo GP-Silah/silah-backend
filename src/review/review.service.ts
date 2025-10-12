@@ -16,7 +16,13 @@ import { SupplierService } from 'src/supplier/supplier.service';
 import { ProductService } from 'src/product/product.service';
 import { ServiceService } from 'src/service/service.service';
 import { CreateReviewDto } from './dtos/createReview.dto';
-import { InvoiceStatus, OrderStatus } from '@prisma/client';
+import {
+    InvoiceStatus,
+    NotificationEntityType,
+    NotificationType,
+    OrderStatus,
+} from '@prisma/client';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class ReviewService {
@@ -26,6 +32,7 @@ export class ReviewService {
         private readonly supplierService: SupplierService,
         private readonly productService: ProductService,
         private readonly serviceService: ServiceService,
+        private readonly notificationService: NotificationService,
     ) {}
 
     private async toItemReviewResponseDto(
@@ -516,6 +523,31 @@ export class ReviewService {
                 },
             },
         });
+
+        if (order) {
+            // Send a notification for the supplier
+            await this.notificationService.createNotification({
+                senderUserId: buyer.userId,
+                receiverUserId: supplier.userId,
+                type: NotificationType.NEW_REVIEW,
+                title: 'New Review!',
+                content: `You have received a new review from ${buyer.user.name}`,
+                entityId: order.id,
+                entityType: NotificationEntityType.ORDER,
+            });
+        }
+        if (invoice) {
+            // Send a notification for the supplier
+            await this.notificationService.createNotification({
+                senderUserId: buyer.userId,
+                receiverUserId: supplier.userId,
+                type: NotificationType.NEW_REVIEW,
+                title: 'New Review!',
+                content: `You have received a new review from ${buyer.user.name}`,
+                entityId: invoice.id,
+                entityType: NotificationEntityType.INVOICE,
+            });
+        }
 
         return this.toReviewResponseDto(reviewWithItems);
     }

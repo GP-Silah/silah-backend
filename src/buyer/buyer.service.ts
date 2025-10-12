@@ -163,6 +163,8 @@ export class BuyerService {
             );
         }
 
+        await this.tapPaymentsService.validateCharge(charge);
+
         // 2. Safely extract saved card from charge
         const card = charge.card || charge.payment_agreement?.contract;
         if (!card) {

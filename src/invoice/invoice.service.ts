@@ -6,7 +6,13 @@ import {
     InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
-import { InvoiceStatus, InvoiceTermsOfPayment, UserRole } from '@prisma/client';
+import {
+    InvoiceStatus,
+    InvoiceTermsOfPayment,
+    NotificationEntityType,
+    NotificationType,
+    UserRole,
+} from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
     InvoiceItemResponseDto,
@@ -18,6 +24,7 @@ import { SupplierService } from 'src/supplier/supplier.service';
 import { ProductService } from 'src/product/product.service';
 import { ServiceService } from 'src/service/service.service';
 import { CreateInvoiceDto } from './dtos/createInvoice.dto';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class InvoiceService {
@@ -28,6 +35,7 @@ export class InvoiceService {
         private readonly productService: ProductService,
         private readonly serviceService: ServiceService,
         private readonly tapPaymentService: TapPaymentsService,
+        private readonly notificationService: NotificationService,
     ) {}
 
     async toInvoiceResponseDto(
@@ -402,10 +410,22 @@ export class InvoiceService {
             },
         });
 
+        // Send a notification for the buyer
+        await this.notificationService.createNotification({
+            senderUserId: supplier.userId,
+            receiverUserId: buyer.userId,
+            type: NotificationType.NEW_INVOICE,
+            title: 'New Invoice!',
+            content: `You have received a new invocie from ${invoice.supplier!.user.businessName}`,
+            entityId: invoice.id,
+            entityType: NotificationEntityType.INVOICE,
+        });
+
         // Convert to InvoiceResponseDto
         return await this.toInvoiceResponseDto(invoice, 'INVOICE');
     }
 
+    //TODO:
     async createPreInvoice() {}
 
     async updateInvoiceStatus(
@@ -454,6 +474,17 @@ export class InvoiceService {
                     },
                 },
             },
+        });
+
+        // Send a notification for the supplier
+        await this.notificationService.createNotification({
+            senderUserId: updatedInvoice.buyer!.userId,
+            receiverUserId: updatedInvoice.supplier!.userId,
+            type: NotificationType.INVOICE_STATUS_CHANGED,
+            title: 'Invoice Status Changed!',
+            content: `Invoice from ${updatedInvoice.buyer!.user.name} got ${updatedInvoice.status.toLowerCase}`,
+            entityId: updatedInvoice.id,
+            entityType: NotificationEntityType.INVOICE,
         });
 
         return (await this.toInvoiceResponseDto(
