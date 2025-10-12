@@ -6079,10 +6079,29 @@
     },
     "/api/categories": {
       "get": {
-        "description": "Returns all categories in the system, including nested subcategories. Optionally, filter by `usedFor` (products or services).",
+        "description": "Returns all categories in the system (including nested subcategories). Supports translation via query parameter or header. Optionally, filter by `usedFor` (products or services).",
         "operationId": "CategoryController_getAllCategories",
         "parameters": [
           {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Optional language code for translation (e.g., `ar` or `en`). If omitted, system will use the user's preferred language or default to English.",
+            "schema": {
+              "example": "ar",
+              "type": "string"
+            }
+          },
+          {
             "name": "usedFor",
             "required": false,
             "in": "query",
@@ -6095,192 +6114,14 @@
         ],
         "responses": {
           "200": {
-            "description": "List of all categories",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": [
-                    {
-                      "id": 1,
-                      "name": "Agricultural & Pet Supplies",
-                      "usedFor": "PRODUCT",
-                      "subcategories": [
-                        {
-                          "id": 2,
-                          "name": "Animal Feed",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        },
-                        {
-                          "id": 3,
-                          "name": "Fertilizers",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        },
-                        {
-                          "id": 4,
-                          "name": "Pet Accessories & Toys",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        },
-                        {
-                          "id": 5,
-                          "name": "Pet Food & Treats",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      "id": 20,
-                      "name": "Software & IT Solutions",
-                      "usedFor": "SERVICE",
-                      "subcategories": [
-                        {
-                          "id": 21,
-                          "name": "Web & App Development",
-                          "usedFor": "SERVICE",
-                          "parentCategory": {
-                            "id": 20,
-                            "name": "Software & IT Solutions"
-                          }
-                        },
-                        {
-                          "id": 22,
-                          "name": "IT & Cloud Services",
-                          "usedFor": "SERVICE",
-                          "parentCategory": {
-                            "id": 20,
-                            "name": "Software & IT Solutions"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get all categories",
-        "tags": [
-          "Categories"
-        ]
-      }
-    },
-    "/api/categories/main": {
-      "get": {
-        "description": "Returns only the top-level categories (no parent) in the system, optionally filtered by `usedFor`.",
-        "operationId": "CategoryController_getMainCategories",
-        "parameters": [
-          {
-            "name": "usedFor",
-            "required": false,
-            "in": "query",
-            "description": "Filter categories by type",
+            "description": "List of all categories (translated if language specified).",
             "schema": {
-              "example": "services",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of top-level categories",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": [
-                    {
-                      "id": 1,
-                      "name": "Agricultural & Pet Supplies",
-                      "usedFor": "PRODUCT",
-                      "subcategories": [
-                        {
-                          "id": 2,
-                          "name": "Animal Feed",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        },
-                        {
-                          "id": 3,
-                          "name": "Fertilizers",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        },
-                        {
-                          "id": 4,
-                          "name": "Pet Accessories & Toys",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        },
-                        {
-                          "id": 5,
-                          "name": "Pet Food & Treats",
-                          "usedFor": "PRODUCT",
-                          "parentCategory": {
-                            "id": 1,
-                            "name": "Agricultural & Pet Supplies"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get main (top-level) categories",
-        "tags": [
-          "Categories"
-        ]
-      }
-    },
-    "/api/categories/sub": {
-      "get": {
-        "description": "Returns only subcategories (categories that have a parent), optionally filtered by `usedFor`.",
-        "operationId": "CategoryController_getSubCategories",
-        "parameters": [
-          {
-            "name": "usedFor",
-            "required": false,
-            "in": "query",
-            "description": "Filter subcategories by type",
-            "schema": {
-              "example": "products",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of subcategories",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": [
+              "example": [
+                {
+                  "id": 1,
+                  "name": "Agricultural & Pet Supplies",
+                  "usedFor": "PRODUCT",
+                  "subcategories": [
                     {
                       "id": 2,
                       "name": "Animal Feed",
@@ -6298,17 +6139,168 @@
                         "id": 1,
                         "name": "Agricultural & Pet Supplies"
                       }
-                    },
-                    {
-                      "id": 21,
-                      "name": "Web & App Development",
-                      "usedFor": "SERVICE",
-                      "parentCategory": {
-                        "id": 20,
-                        "name": "Software & IT Solutions"
-                      }
                     }
                   ]
+                }
+              ]
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all categories",
+        "tags": [
+          "Categories"
+        ]
+      }
+    },
+    "/api/categories/main": {
+      "get": {
+        "description": "Returns only top-level categories (no parent). Supports translation via query parameter or header.",
+        "operationId": "CategoryController_getMainCategories",
+        "parameters": [
+          {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Optional language code for translation (e.g., `ar` or `en`). If omitted, system will use the user's preferred language or default to English.",
+            "schema": {
+              "example": "ar",
+              "type": "string"
+            }
+          },
+          {
+            "name": "usedFor",
+            "required": false,
+            "in": "query",
+            "description": "Filter categories by type",
+            "schema": {
+              "example": "services",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of main categories (translated if language specified).",
+            "schema": {
+              "example": [
+                {
+                  "id": 1,
+                  "name": "Agricultural & Pet Supplies",
+                  "usedFor": "PRODUCT",
+                  "subcategories": [
+                    {
+                      "id": 2,
+                      "name": "Animal Feed",
+                      "usedFor": "PRODUCT"
+                    }
+                  ]
+                }
+              ]
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get main (top-level) categories",
+        "tags": [
+          "Categories"
+        ]
+      }
+    },
+    "/api/categories/sub": {
+      "get": {
+        "description": "Returns only subcategories (categories that have a parent). Supports translation via query parameter or header.",
+        "operationId": "CategoryController_getSubCategories",
+        "parameters": [
+          {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Optional language code for translation (e.g., `ar` or `en`). If omitted, system will use the user's preferred language or default to English.",
+            "schema": {
+              "example": "ar",
+              "type": "string"
+            }
+          },
+          {
+            "name": "usedFor",
+            "required": false,
+            "in": "query",
+            "description": "Filter subcategories by type",
+            "schema": {
+              "example": "products",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of subcategories (translated if language specified).",
+            "schema": {
+              "example": [
+                {
+                  "id": 2,
+                  "name": "Animal Feed",
+                  "usedFor": "PRODUCT",
+                  "parentCategory": {
+                    "id": 1,
+                    "name": "Agricultural & Pet Supplies"
+                  }
+                },
+                {
+                  "id": 3,
+                  "name": "Fertilizers",
+                  "usedFor": "PRODUCT",
+                  "parentCategory": {
+                    "id": 1,
+                    "name": "Agricultural & Pet Supplies"
+                  }
+                }
+              ]
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryResponseDto"
+                  }
                 }
               }
             }
@@ -6322,7 +6314,7 @@
     },
     "/api/categories/{id}": {
       "get": {
-        "description": "Returns a single category by its ID, including its parent category and all nested subcategories.",
+        "description": "Returns a single category by its ID (including its parent and all subcategories). Supports translation via query parameter or header.",
         "operationId": "CategoryController_getCategoryById",
         "parameters": [
           {
@@ -6334,57 +6326,52 @@
               "example": 1,
               "type": "number"
             }
+          },
+          {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Optional language code for translation (e.g., `ar` or `en`). If omitted, system will use the user's preferred language or default to English.",
+            "schema": {
+              "example": "ar",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Category found",
+            "description": "Category found (translated if language specified).",
+            "schema": {
+              "example": {
+                "id": 1,
+                "name": "Agricultural & Pet Supplies",
+                "usedFor": "PRODUCT",
+                "subcategories": [
+                  {
+                    "id": 2,
+                    "name": "Animal Feed",
+                    "usedFor": "PRODUCT",
+                    "parentCategory": {
+                      "id": 1,
+                      "name": "Agricultural & Pet Supplies"
+                    }
+                  }
+                ]
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "id": 1,
-                    "name": "Agricultural & Pet Supplies",
-                    "usedFor": "PRODUCT",
-                    "subcategories": [
-                      {
-                        "id": 2,
-                        "name": "Animal Feed",
-                        "usedFor": "PRODUCT",
-                        "parentCategory": {
-                          "id": 1,
-                          "name": "Agricultural & Pet Supplies"
-                        }
-                      },
-                      {
-                        "id": 3,
-                        "name": "Fertilizers",
-                        "usedFor": "PRODUCT",
-                        "parentCategory": {
-                          "id": 1,
-                          "name": "Agricultural & Pet Supplies"
-                        }
-                      },
-                      {
-                        "id": 4,
-                        "name": "Pet Accessories & Toys",
-                        "usedFor": "PRODUCT",
-                        "parentCategory": {
-                          "id": 1,
-                          "name": "Agricultural & Pet Supplies"
-                        }
-                      },
-                      {
-                        "id": 5,
-                        "name": "Pet Food & Treats",
-                        "usedFor": "PRODUCT",
-                        "parentCategory": {
-                          "id": 1,
-                          "name": "Agricultural & Pet Supplies"
-                        }
-                      }
-                    ]
-                  }
+                  "$ref": "#/components/schemas/CategoryResponseDto"
                 }
               }
             }
@@ -6396,7 +6383,7 @@
                 "schema": {
                   "example": {
                     "statusCode": 404,
-                    "message": "Category not found",
+                    "message": "Category with ID 1 not found",
                     "error": "Not Found"
                   }
                 }
@@ -9371,6 +9358,27 @@
         "operationId": "NotificationController_getMyNotifications",
         "parameters": [
           {
+            "name": "accept-language",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Force response language. Defaults to user preference or English.",
+            "schema": {
+              "enum": [
+                "ar",
+                "en"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "name": "date",
             "required": false,
             "in": "query",
@@ -9623,7 +9631,7 @@
               "application/json": {
                 "schema": {
                   "example": {
-                    "statusCode": 403,
+                    "statusCode": 400,
                     "message": "No notification IDs provided",
                     "error": "Forbidden"
                   }
@@ -9707,12 +9715,21 @@
     },
     "/api/notifications/stream": {
       "get": {
-        "description": "Provides a real-time stream of notifications for the authenticated user via Server-Sent Events.",
+        "description": "Provides a real-time stream of translated notifications for the authenticated user via Server-Sent Events (SSE). The connection closes automatically when the client disconnects.",
         "operationId": "NotificationController_notificationStream",
         "parameters": [],
         "responses": {
           "200": {
             "description": "Stream started successfully",
+            "headers": {
+              "Content-Type": {
+                "description": "text/event-stream; charset=utf-8",
+                "schema": {
+                  "type": "string",
+                  "example": "text/event-stream; charset=utf-8"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -11099,6 +11116,72 @@
             "example": false
           }
         }
+      },
+      "CategoryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Unique identifier of the category",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the category",
+            "example": "Agricultural & Pet Supplies"
+          },
+          "usedFor": {
+            "type": "string",
+            "description": "Specifies whether this category is for products or services",
+            "enum": [
+              "PRODUCT",
+              "SERVICE"
+            ],
+            "example": "PRODUCT"
+          },
+          "parentCategory": {
+            "type": "object",
+            "description": "Parent category, if this category is a subcategory",
+            "example": {
+              "id": 1,
+              "name": "Agricultural & Pet Supplies"
+            }
+          },
+          "subcategories": {
+            "description": "Subcategories of this category, recursively nested",
+            "example": [
+              {
+                "id": 2,
+                "name": "Pet Food & Treats",
+                "usedFor": "PRODUCT",
+                "parentCategory": {
+                  "id": 1,
+                  "name": "Agricultural & Pet Supplies"
+                },
+                "subcategories": []
+              },
+              {
+                "id": 3,
+                "name": "Pet Accessories & Toys",
+                "usedFor": "PRODUCT",
+                "parentCategory": {
+                  "id": 1,
+                  "name": "Agricultural & Pet Supplies"
+                },
+                "subcategories": []
+              }
+            ],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryResponseDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "usedFor"
+        ]
       },
       "CartItemResponseDto": {
         "type": "object",

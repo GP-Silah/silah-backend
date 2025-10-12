@@ -13,6 +13,7 @@ import { MarkAsReadDto } from './dtos/markReadBulk.dto';
 import { startOfDay, startOfWeek, startOfMonth } from 'date-fns';
 import { Subject } from 'rxjs';
 import { CreateNotification } from 'src/types/createNotification';
+import { TranslationService } from 'src/translation/translation.service';
 
 @Injectable()
 export class NotificationService {
@@ -24,7 +25,43 @@ export class NotificationService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly userService: UserService,
+        private readonly translationService: TranslationService,
     ) {}
+
+    /** Helper: get user preferred language */
+    async getUserLanguage(userId: string): Promise<'ar' | 'en' | null> {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { preferredLanguage: true },
+        });
+        const lang = user?.preferredLanguage?.toLowerCase();
+        return lang === 'ar' || lang === 'en' ? lang : null;
+    }
+
+    /** Helper: translate notification title/content */
+    async translateNotification(
+        notification: NotificationResponseDto,
+        targetLang: 'ar' | 'en',
+    ): Promise<NotificationResponseDto> {
+        if (!notification || targetLang === 'en') return notification;
+
+        const [translatedTitle, translatedContent] = await Promise.all([
+            this.translationService.translateText(
+                notification.title,
+                targetLang,
+            ),
+            this.translationService.translateText(
+                notification.content,
+                targetLang,
+            ),
+        ]);
+
+        return {
+            ...notification,
+            title: translatedTitle,
+            content: translatedContent,
+        };
+    }
 
     async toNotificationResponseDto(
         notification: any,
@@ -43,8 +80,8 @@ export class NotificationService {
             isRead: notification.isRead,
             readAt: notification.readAt,
             createdAt: notification.createdAt,
-            relatedEntityId: notification.relatedEntityId,
-            relatedEntityType: notification.relatedEntityType,
+            relatedEntityId: notification.entityId,
+            relatedEntityType: notification.entityType,
         };
     }
 
@@ -166,7 +203,7 @@ export class NotificationService {
         );
 
         if (Object.keys(filteredUpdate).length === 0) {
-            throw new ForbiddenException(
+            throw new BadRequestException(
                 'No valid preferences to update for this role',
             );
         }
@@ -187,10 +224,54 @@ export class NotificationService {
         userId: string,
         date: string = 'all',
         notificationType?: string,
+        targetLang?: 'ar' | 'en',
     ): Promise<NotificationResponseDto[]> {
-        // Step 1: Build dynamic Prisma filter
+        // --- Step 0: Get user role (we use it to decide which notification types are relevant) ---
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { role: true },
+        });
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        // Define allowed notification types per role
+        const SUPPLIER_NOTIFICATION_TYPES: NotificationType[] = [
+            'NEW_MESSAGE',
+            'NEW_ORDER',
+            'NEW_REVIEW',
+            'BID_STATUS_CHANGED',
+            'INVOICE_STATUS_CHANGED',
+        ];
+
+        const BUYER_NOTIFICATION_TYPES: NotificationType[] = [
+            'NEW_MESSAGE',
+            'NEW_INVOICE',
+            'NEW_OFFER',
+            'ORDER_STATUS_CHANGED',
+            'GROUP_PURCHASE_STATUS_CHANGED',
+        ];
+
+        const allowedTypes =
+            user.role === UserRole.SUPPLIER
+                ? SUPPLIER_NOTIFICATION_TYPES
+                : user.role === UserRole.BUYER
+                  ? BUYER_NOTIFICATION_TYPES
+                  : [];
+
+        if (allowedTypes.length === 0) {
+            // If there is an unsupported role, fail fast
+            throw new ForbiddenException(
+                'Unsupported user role for notifications',
+            );
+        }
+
+        // --- Step 1: Build dynamic Prisma filter ---
         const where: any = {
             receiverUserId: userId,
+            // Only notifications relevant to this role
+            type: { in: allowedTypes },
         };
 
         // --- Handle date filter ---
@@ -220,17 +301,27 @@ export class NotificationService {
             where.createdAt = { gte: startDate };
         }
 
-        // --- Handle type filter ---
+        // --- Handle type filter (user asked for a specific type) ---
         if (notificationType) {
             const upper = notificationType.toUpperCase();
 
-            if (!(upper in NotificationType)) {
+            // Validate requested type is a valid NotificationType
+            const validNotificationTypes = Object.values(NotificationType);
+            if (!validNotificationTypes.includes(upper as NotificationType)) {
                 throw new BadRequestException(
                     `Invalid notification type: ${notificationType}`,
                 );
             }
 
-            where.notificationType = upper as NotificationType;
+            // If requested type is valid but not allowed for this role -> forbidden
+            if (!allowedTypes.includes(upper as NotificationType)) {
+                throw new ForbiddenException(
+                    `Notification type '${upper}' is not available for the current user role`,
+                );
+            }
+
+            // Narrow the query by the specific requested type
+            where.type = upper;
         }
 
         // Step 2: Query notifications
@@ -245,10 +336,19 @@ export class NotificationService {
 
         if (!notifications.length) return [];
 
-        // Step 3: Convert to DTOs
-        return Promise.all(
+        // Step 3: Convert to DTO
+        const dtos = await Promise.all(
             notifications.map((n) => this.toNotificationResponseDto(n)),
         );
+
+        // Step 4: Translate title/content of the notification
+        if (targetLang && targetLang !== 'en') {
+            return Promise.all(
+                dtos.map((dto) => this.translateNotification(dto, targetLang)),
+            );
+        }
+
+        return dtos;
     }
 
     async markNotificationAsRead(userId: string, notificationId: string) {
@@ -290,7 +390,7 @@ export class NotificationService {
         const { notificationIds } = dto;
 
         if (!notificationIds || notificationIds.length === 0) {
-            throw new ForbiddenException('No notification IDs provided');
+            throw new BadRequestException('No notification IDs provided');
         }
 
         // Step 1: Get notifications belonging to this user
@@ -367,6 +467,14 @@ export class NotificationService {
             where: { userId: data.receiverUserId },
         });
 
+        const userLang = await this.getUserLanguage(data.receiverUserId);
+
+        // Translate before emitting
+        const translatedDto =
+            userLang && userLang !== 'en'
+                ? await this.translateNotification(dto, userLang)
+                : dto;
+
         // Step 3: Emit based on preference
         if (preference?.allowNotifications) {
             let shouldSend = false;
@@ -406,11 +514,11 @@ export class NotificationService {
             if (shouldSend) {
                 this.notifications$.next({
                     receiverUserId: data.receiverUserId,
-                    notification: dto,
+                    notification: translatedDto,
                 });
             }
         }
 
-        return dto;
+        return translatedDto;
     }
 }

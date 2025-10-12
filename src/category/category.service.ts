@@ -2,14 +2,39 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Category } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CategoryResponseDto } from './dtos/categoryResponse.dto';
+import { TranslationService } from 'src/translation/translation.service';
 
 @Injectable()
 export class CategoryService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly translationService: TranslationService,
+    ) {}
 
+    /** Helper: fetch user's preferred language */
+    async getUserLanguage(userId: string): Promise<'ar' | 'en' | null> {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { preferredLanguage: true },
+        });
+        const lang = user?.preferredLanguage?.toLowerCase();
+        return lang === 'ar' || lang === 'en' ? lang : null;
+    }
+
+    /** Convert category model to DTO (with recursive translation) */
     private async toCategoryResponse(
         category: Category,
+        targetLang?: 'ar' | 'en',
     ): Promise<CategoryResponseDto> {
+        // Translate name if targetLang provided
+        const translatedName =
+            targetLang && targetLang !== 'en'
+                ? await this.translationService.translateText(
+                      category.name,
+                      targetLang,
+                  )
+                : category.name;
+
         // Fetch parent category name if it exists
         let parentCategoryDto: { id: number; name: string } | undefined =
             undefined;
@@ -19,25 +44,36 @@ export class CategoryService {
                 select: { id: true, name: true },
             });
             if (parent) {
-                parentCategoryDto = { id: parent.id, name: parent.name };
+                const parentTranslatedName =
+                    targetLang && targetLang !== 'en'
+                        ? await this.translationService.translateText(
+                              parent.name,
+                              targetLang,
+                          )
+                        : parent.name;
+
+                parentCategoryDto = {
+                    id: parent.id,
+                    name: parentTranslatedName,
+                };
             }
         }
 
-        // Fetch subcategories
+        // Fetch subcategories recursively
         const subcategories = await this.prisma.category.findMany({
             where: { parentCategoryId: category.id },
         });
 
-        // Recursively map subcategories
         const subcategoriesDto: CategoryResponseDto[] = [];
         for (const sub of subcategories) {
-            subcategoriesDto.push(await this.toCategoryResponse(sub));
+            subcategoriesDto.push(
+                await this.toCategoryResponse(sub, targetLang),
+            );
         }
 
-        // Return DTO
         return {
             id: category.id,
-            name: category.name,
+            name: translatedName,
             usedFor: category.usedFor,
             parentCategory: parentCategoryDto,
             subcategories: subcategoriesDto.length
@@ -48,6 +84,7 @@ export class CategoryService {
 
     async getAllCategories(
         usedFor?: 'products' | 'services',
+        targetLang?: 'ar' | 'en',
     ): Promise<CategoryResponseDto[]> {
         // Map the query value to Prisma ItemType
         const usedForEnum =
@@ -68,7 +105,9 @@ export class CategoryService {
         // Map each main category to DTO including subcategories recursively
         const categoriesDto: CategoryResponseDto[] = [];
         for (const category of mainCategories) {
-            categoriesDto.push(await this.toCategoryResponse(category));
+            categoriesDto.push(
+                await this.toCategoryResponse(category, targetLang),
+            );
         }
 
         return categoriesDto;
@@ -76,6 +115,7 @@ export class CategoryService {
 
     async getMainCategories(
         usedFor?: 'products' | 'services',
+        targetLang?: 'ar' | 'en',
     ): Promise<CategoryResponseDto[]> {
         const usedForEnum =
             usedFor === 'products'
@@ -91,13 +131,14 @@ export class CategoryService {
         });
         const dto: CategoryResponseDto[] = [];
         for (const cat of mainCategories) {
-            dto.push(await this.toCategoryResponse(cat));
+            dto.push(await this.toCategoryResponse(cat, targetLang));
         }
         return dto;
     }
 
     async getSubCategories(
         usedFor?: 'products' | 'services',
+        targetLang?: 'ar' | 'en',
     ): Promise<CategoryResponseDto[]> {
         const usedForEnum =
             usedFor === 'products'
@@ -113,18 +154,21 @@ export class CategoryService {
         });
         const dto: CategoryResponseDto[] = [];
         for (const cat of subCategories) {
-            dto.push(await this.toCategoryResponse(cat));
+            dto.push(await this.toCategoryResponse(cat, targetLang));
         }
         return dto;
     }
 
-    async getCategoryById(id: number): Promise<CategoryResponseDto> {
+    async getCategoryById(
+        id: number,
+        targetLang?: 'ar' | 'en',
+    ): Promise<CategoryResponseDto> {
         const category = await this.prisma.category.findUnique({
             where: { id },
         });
         if (!category) {
             throw new NotFoundException(`Category with ID ${id} not found`);
         }
-        return this.toCategoryResponse(category);
+        return this.toCategoryResponse(category, targetLang);
     }
 }

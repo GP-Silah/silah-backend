@@ -226,7 +226,7 @@ export class OrderService {
             receiverUserId: order.buyer!.userId,
             type: NotificationType.ORDER_STATUS_CHANGED,
             title: 'Order Status Changed!',
-            content: `Your order from ${order.supplier!.user.businessName} is now ${newStatus.toLowerCase}`,
+            content: `Your order from ${order.supplier!.user.businessName} is now ${newStatus}`,
             entityId: order.id,
             entityType: NotificationEntityType.ORDER,
         });
