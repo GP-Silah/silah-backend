@@ -9133,6 +9133,108 @@
       }
     },
     "/api/notifications/me/preferences": {
+      "get": {
+        "description": "Fetches the notification preferences for the authenticated user. \n            Only fields relevant to the user's role are returned:\n                <ul>\n                    <li><strong>Suppliers:</strong> allowNotifications, newMessageNotify, newOrderNotify, newReviewNotify, biddingStatusNotify, invoiceStatusNotify</li>\n                    <li><strong>Buyers:</strong> allowNotifications, newMessageNotify, newInvoiceNotify, newOfferNotify, orderStatusNotify, groupPurchaseStatusNotify</li>\n                </ul>",
+        "operationId": "NotificationController_getNotificationPreferences",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Notification preferences retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Notification preferences retrieved successfully",
+                    "notificationPreferences": {
+                      "allowNotifications": true,
+                      "newMessageNotify": true,
+                      "newOrderNotify": true,
+                      "newReviewNotify": false,
+                      "biddingStatusNotify": true,
+                      "invoiceStatusNotify": false,
+                      "newInvoiceNotify": true,
+                      "newOfferNotify": false,
+                      "orderStatusNotify": true,
+                      "groupPurchaseStatusNotify": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "User not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get my notification preferences",
+        "tags": [
+          "Notifications"
+        ]
+      },
       "patch": {
         "description": "Allows the authenticated user to update their notification preferences.\n                <ul>\n                    <li>Suppliers can modify: new orders, new reviews, bidding status, invoice status.</li>\n                    <li>Buyers can modify: new invoices, new offers, order status, group purchase status.</li>\n                    <li>All users can toggle all notifications or new message notifications.</li>\n                </ul>",
         "operationId": "NotificationController_updateNotificationPreferences",

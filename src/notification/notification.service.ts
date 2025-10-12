@@ -48,6 +48,64 @@ export class NotificationService {
         };
     }
 
+    async getNotificationPreferences(userId: string) {
+        // Step 1: Get the user and their role
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { id: true, role: true },
+        });
+
+        if (!user) throw new NotFoundException('User not found');
+
+        // Step 2: Get existing preferences or create default
+        let prefs = await this.prisma.notificationPreference.findUnique({
+            where: { userId },
+        });
+
+        if (!prefs) {
+            prefs = await this.prisma.notificationPreference.create({
+                data: { userId },
+            });
+        }
+
+        // Step 3: Define allowed fields per role
+        const baseFields = ['allowNotifications', 'newMessageNotify'];
+        const supplierFields = [
+            ...baseFields,
+            'newOrderNotify',
+            'newReviewNotify',
+            'biddingStatusNotify',
+            'invoiceStatusNotify',
+        ];
+        const buyerFields = [
+            ...baseFields,
+            'newInvoiceNotify',
+            'newOfferNotify',
+            'orderStatusNotify',
+            'groupPurchaseStatusNotify',
+        ];
+
+        let allowedFields: string[];
+        if (user.role === UserRole.SUPPLIER) allowedFields = supplierFields;
+        else if (user.role === UserRole.BUYER) allowedFields = buyerFields;
+        else {
+            throw new ForbiddenException(
+                'Unsupported user role for notifications',
+            );
+        }
+
+        // Step 4: Pick only allowed fields
+        const filteredPrefs: Record<string, boolean> = {};
+        for (const key of allowedFields) {
+            filteredPrefs[key] = prefs[key];
+        }
+
+        return {
+            message: 'Notification preferences retrieved successfully',
+            notificationPreferences: filteredPrefs,
+        };
+    }
+
     async updateNotificationPreferences(
         userId: string,
         dto: UpdateNotificationPreferencesDto,

@@ -13,6 +13,54 @@ import { UpdateNotificationPreferencesDto } from './dtos/updateNotificationPrefe
 import { MarkAsReadDto } from './dtos/markReadBulk.dto';
 import { NotificationType } from '@prisma/client';
 
+export function ApiDocsGetNotificationPreferences() {
+    return applyDecorators(
+        ApiBearerAuth(),
+        ApiOperation({
+            summary: 'Get my notification preferences',
+            description: `Fetches the notification preferences for the authenticated user. 
+            Only fields relevant to the user's role are returned:
+                <ul>
+                    <li><strong>Suppliers:</strong> allowNotifications, newMessageNotify, newOrderNotify, newReviewNotify, biddingStatusNotify, invoiceStatusNotify</li>
+                    <li><strong>Buyers:</strong> allowNotifications, newMessageNotify, newInvoiceNotify, newOfferNotify, orderStatusNotify, groupPurchaseStatusNotify</li>
+                </ul>`,
+        }),
+        ApiResponse({
+            status: 200,
+            description: 'Notification preferences retrieved successfully',
+            schema: {
+                example: {
+                    message: 'Notification preferences retrieved successfully',
+                    notificationPreferences: {
+                        allowNotifications: true,
+                        newMessageNotify: true,
+                        // Supplier example:
+                        newOrderNotify: true,
+                        newReviewNotify: false,
+                        biddingStatusNotify: true,
+                        invoiceStatusNotify: false,
+                        // Buyer example (these would be omitted for a supplier):
+                        newInvoiceNotify: true,
+                        newOfferNotify: false,
+                        orderStatusNotify: true,
+                        groupPurchaseStatusNotify: false,
+                    },
+                },
+            },
+        }),
+        ApiNotFoundResponse({
+            description: 'User not found',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'User not found',
+                    error: 'Not Found',
+                },
+            },
+        }),
+    );
+}
+
 export function ApiDocsUpdateNotificationPreferences() {
     return applyDecorators(
         ApiBearerAuth(),

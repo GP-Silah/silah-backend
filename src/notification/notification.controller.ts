@@ -24,6 +24,7 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil, filter, map, tap } from 'rxjs/operators';
 import {
     ApiDocsGetMyNotifications,
+    ApiDocsGetNotificationPreferences,
     ApiDocsMarkNotificationAsRead,
     ApiDocsMarkNotificationsAsReadInBulk,
     ApiDocsNotificationStream,
@@ -33,6 +34,16 @@ import {
 @Controller('notifications')
 export class NotificationController {
     constructor(private readonly notificationService: NotificationService) {}
+
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsVerifiedGuard()
+    @UseGuards(JwtAuthGuard, VerifiedGuard)
+    @Get('me/preferences')
+    @ApiDocsGetNotificationPreferences()
+    async getNotificationPreferences(@Req() req: Request) {
+        const userId = req.tokenData!.sub;
+        return this.notificationService.getNotificationPreferences(userId);
+    }
 
     @ApiDocsJwtAuthGuard()
     @ApiDocsVerifiedGuard()
