@@ -10012,6 +10012,15 @@
           "agreedToTerms": {
             "type": "boolean",
             "example": true
+          },
+          "preferredLanguage": {
+            "type": "string",
+            "description": "Set user preferred language.",
+            "example": "ar",
+            "enum": [
+              "AR",
+              "EN"
+            ]
           }
         },
         "required": [
@@ -10023,7 +10032,8 @@
           "city",
           "nid",
           "categories",
-          "agreedToTerms"
+          "agreedToTerms",
+          "preferredLanguage"
         ]
       },
       "LoginDto": {

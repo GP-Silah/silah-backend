@@ -20,6 +20,7 @@ import { Request, Response } from 'express';
 import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 import { WathqService } from 'src/wathq/wathq.service';
 import { ChangePasswordDto } from './dtos/changePassword.dto';
+import { Languages } from '@prisma/client';
 
 /**
  * AuthService contains all authentication-related business logic,
@@ -65,8 +66,6 @@ export class AuthService {
      * @throws BadRequestException if validation fails.
      */
     async signUp(payload: SignupDto): Promise<{ token: string }> {
-        //TODO: Validate CRN through WatheqAPI; Probably at DTO level
-
         // Validate categories: must exist & must be main (no parentCategoryId)
         const categories = await this.prisma.category.findMany({
             where: {
@@ -210,20 +209,129 @@ export class AuthService {
             },
         });
 
-        const mailOptions = {
+        // Get user langauge preference
+        const lang = await this.prisma.user.findUnique({
+            where: { email },
+            select: { preferredLanguage: true },
+        });
+
+        let mailOptions = {
             from: `"Silah Support" <${process.env.MAIL_USER}>`,
             to: email,
             subject: 'Verify your email address',
             html: `
-      <h2>Welcome to Silah!</h2>
-      <p>Please verify your email address by clicking the button below:</p>
-      <a href="${verifyUrl}" style="display:inline-block; padding:10px 20px; background-color:#543361; color:white; text-decoration:none; border-radius:4px;">Verify Email</a>
-      <p>If the button doesn't work, copy and paste the following link in your browser:</p>
-      <p>${verifyUrl}</p>
-      <hr />
-      <small>This is an automated message. Please do not reply.</small>
-    `,
+  <div style="
+      font-family: Arial, sans-serif;
+      color: #000000;
+      text-align: center;
+      background-color: #ffffff;
+      padding: 30px;
+  ">
+  <img src="https://silah.site/logo.png" alt="Silah Logo" width="120" style="margin-bottom: 20px;" />
+    <h2 style="color: #000000; margin-bottom: 20px;">Welcome to <span style="color:#543361;">Silah</span>!</h2>
+    <p style="color: #000000; font-size: 16px; margin-bottom: 25px;">
+      Please verify your email address by clicking the button below:
+    </p>
+
+    <a href="${verifyUrl}" 
+      style="
+        display: inline-block;
+        padding: 12px 25px;
+        background-color: #543361;
+        color: #ffffff;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 6px;
+      ">
+      Verify Email
+    </a>
+
+    <p style="color: #000000; margin-top: 30px; font-size: 14px;">
+      If the button doesn't work, copy and paste the following link in your browser:
+    </p>
+
+    <p style="color: #000000; font-size: 14px; word-break: break-all;">
+      <a href="${verifyUrl}" style="color: #543361; text-decoration: none;">${verifyUrl}</a>
+    </p>
+
+    <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
+
+    <small style="color: #555555; font-size: 12px;">
+      This is an automated message. Please do not reply.
+    </small>
+  </div>
+  `,
         };
+
+        if (lang && lang.preferredLanguage === Languages.AR) {
+            mailOptions = {
+                from: `"Silah Support" <${process.env.MAIL_USER}>`,
+                to: email,
+                subject:
+                    'Verify your email address | تحقق من عنوان بريدك الإلكتروني',
+                html: `
+  <div style="
+      font-family: Arial, sans-serif;
+      color: #000000;
+      text-align: center;
+      background-color: #ffffff;
+      padding: 30px;
+  ">
+  <img src="https://silah.site/logo.png" alt="Silah Logo" width="120" style="margin-bottom: 20px;" />
+    <h2 style="color: #000000; margin-bottom: 20px;">
+      Welcome to <span style="color:#543361;">Silah</span>!
+    </h2>
+    <h3 dir="rtl" style="color: #000000; margin-top: 0; font-weight: normal;">
+      مرحبًا بك في <span style="color:#543361;">صلة</span>!
+    </h3>
+
+    <p style="color: #000000; font-size: 16px; margin-bottom: 25px;">
+      Please verify your email address by clicking the button below:
+    </p>
+    <p dir="rtl" style="color: #000000; font-size: 15px; margin-top: -10px; margin-bottom: 25px;">
+      يرجى تأكيد عنوان بريدك الإلكتروني من خلال النقر على الزر أدناه:
+    </p>
+
+    <a href="${verifyUrl}" 
+      style="
+        display: inline-block;
+        padding: 12px 25px;
+        background-color: #543361;
+        color: #ffffff;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 6px;
+      ">
+      Verify Email
+    </a>
+    <p dir="rtl" style="color: #000000; margin-top: 8px; font-size: 14px;">
+      تأكيد البريد الإلكتروني
+    </p>
+
+    <p style="color: #000000; margin-top: 30px; font-size: 14px;">
+      If the button doesn't work, copy and paste the following link in your browser:
+    </p>
+    <p dir="rtl" style="color: #000000; font-size: 14px; margin-top: -10px;">
+      إذا لم يعمل الزر، انسخ الرابط التالي وضعه في متصفحك:
+    </p>
+
+    <p style="color: #000000; font-size: 14px; word-break: break-all;">
+      <a href="${verifyUrl}" style="color: #543361; text-decoration: none;">${verifyUrl}</a>
+    </p>
+
+    <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
+
+    <small style="color: #555555; font-size: 12px;">
+      This is an automated message. Please do not reply.
+    </small>
+    <br />
+    <small dir="rtl" style="color: #555555; font-size: 12px;">
+      هذه رسالة تلقائية، يُرجى عدم الرد عليها.
+    </small>
+  </div>
+  `,
+            };
+        }
 
         try {
             const info = await transporter.sendMail(mailOptions);
@@ -257,11 +365,18 @@ export class AuthService {
             },
         });
 
-        const mailOptions = {
+        // Get user langauge preference
+        const lang = await this.prisma.user.findUnique({
+            where: { email },
+            select: { preferredLanguage: true },
+        });
+
+        let mailOptions = {
             from: `"Silah Support" <${process.env.MAIL_USER}>`,
             to: email,
             subject: 'Reset Your Silah Account Password',
             html: `
+        <img src="https://silah.site/logo.png" alt="Silah Logo" width="120" style="margin-bottom: 20px;" />
         <h2>Reset Your Password</h2>
         <p>We received a request to reset your Silah account password.</p>
         <p>Click the button below to reset your password. This link is valid for <strong>5 minutes</strong> only.</p>
@@ -273,6 +388,90 @@ export class AuthService {
         <small>This is an automated message. Please do not reply.</small>
       `,
         };
+
+        if (lang && lang.preferredLanguage === Languages.AR) {
+            mailOptions = {
+                from: `"Silah Support" <${process.env.MAIL_USER}>`,
+                to: email,
+                subject:
+                    'Reset Your Silah Account Password | إعادة تعيين كلمة مرور حسابك في صلة',
+                html: `
+  <div style="
+      font-family: Arial, sans-serif;
+      color: #000000;
+      text-align: center;
+      background-color: #ffffff;
+      padding: 30px;
+  ">
+  <img src="https://silah.site/logo.png" alt="Silah Logo" width="120" style="margin-bottom: 20px;" />
+    <h2 style="color: #000000; margin-bottom: 20px;">
+      Reset Your Password
+    </h2>
+    <h3 dir="rtl" style="color: #000000; margin-top: 0; font-weight: normal;">
+      إعادة تعيين كلمة المرور
+    </h3>
+
+    <p style="color: #000000; font-size: 16px; margin-bottom: 15px;">
+      We received a request to reset your Silah account password.
+    </p>
+    <p dir="rtl" style="color: #000000; font-size: 15px; margin-top: -10px; margin-bottom: 25px;">
+      تلقّينا طلبًا لإعادة تعيين كلمة مرور حسابك في <span style="color:#543361;">صلة</span>.
+    </p>
+
+    <p style="color: #000000; font-size: 16px; margin-bottom: 25px;">
+      Click the button below to reset your password. This link is valid for <strong>5 minutes</strong> only.
+    </p>
+    <p dir="rtl" style="color: #000000; font-size: 15px; margin-top: -10px; margin-bottom: 25px;">
+      انقر على الزر أدناه لإعادة تعيين كلمة المرور. هذا الرابط صالح لمدة <strong>5 دقائق</strong> فقط.
+    </p>
+
+    <a href="${resetUrl}" 
+      style="
+        display: inline-block;
+        padding: 12px 25px;
+        background-color: #543361;
+        color: #ffffff;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 6px;
+      ">
+      Reset Password
+    </a>
+    <p dir="rtl" style="color: #000000; margin-top: 8px; font-size: 14px;">
+      إعادة تعيين كلمة المرور
+    </p>
+
+    <p style="color: #000000; margin-top: 30px; font-size: 14px;">
+      If the button doesn't work, copy and paste the following link into your browser:
+    </p>
+    <p dir="rtl" style="color: #000000; font-size: 14px; margin-top: -10px;">
+      إذا لم يعمل الزر، انسخ الرابط التالي وضعه في متصفحك:
+    </p>
+
+    <p style="color: #000000; font-size: 14px; word-break: break-all;">
+      <a href="${resetUrl}" style="color: #543361; text-decoration: none;">${resetUrl}</a>
+    </p>
+
+    <p style="color: #000000; font-size: 14px; margin-top: 30px;">
+      If you did not request a password reset, you can safely ignore this email.
+    </p>
+    <p dir="rtl" style="color: #000000; font-size: 14px; margin-top: -10px;">
+      إذا لم تطلب إعادة تعيين كلمة المرور، يمكنك تجاهل هذه الرسالة بأمان.
+    </p>
+
+    <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
+
+    <small style="color: #555555; font-size: 12px;">
+      This is an automated message. Please do not reply.
+    </small>
+    <br />
+    <small dir="rtl" style="color: #555555; font-size: 12px;">
+      هذه رسالة تلقائية، يُرجى عدم الرد عليها.
+    </small>
+  </div>
+  `,
+            };
+        }
 
         try {
             const info = await transporter.sendMail(mailOptions);
