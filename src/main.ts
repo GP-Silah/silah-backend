@@ -126,6 +126,7 @@ How to use this on frontend:
         { name: 'Reviews' },
         { name: 'Demand Predictions' },
         { name: 'Notifications' },
+        { name: 'Chats' },
     ];
     SwaggerModule.setup('api/docs', app, document, {
         swaggerOptions: {
