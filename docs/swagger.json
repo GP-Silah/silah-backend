@@ -7248,6 +7248,28 @@
               ],
               "type": "string"
             }
+          },
+          {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Force response language. Defaults to user preference or English.",
+            "schema": {
+              "enum": [
+                "ar",
+                "en"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -7348,6 +7370,28 @@
             "required": true,
             "in": "path",
             "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Force response language. Defaults to user preference or English.",
+            "schema": {
+              "enum": [
+                "ar",
+                "en"
+              ],
               "type": "string"
             }
           }
@@ -8813,6 +8857,28 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Force response language. Defaults to user preference or English.",
+            "schema": {
+              "enum": [
+                "ar",
+                "en"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -8906,6 +8972,28 @@
             "required": true,
             "in": "path",
             "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Force response language. Defaults to user preference or English.",
+            "schema": {
+              "enum": [
+                "ar",
+                "en"
+              ],
               "type": "string"
             }
           }
@@ -9359,8 +9447,9 @@
         "parameters": [
           {
             "name": "accept-language",
-            "required": true,
+            "required": false,
             "in": "header",
+            "description": "Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.",
             "schema": {
               "type": "string"
             }

@@ -7,6 +7,8 @@ import {
     ApiNotFoundResponse,
     ApiForbiddenResponse,
     ApiBody,
+    ApiQuery,
+    ApiHeader,
 } from '@nestjs/swagger';
 import {
     ReviewResponseDto,
@@ -21,6 +23,21 @@ export function ApiDocsGetSupplierReviews() {
             summary: 'Get all reviews for a supplier',
             description: `Fetches all reviews written for a supplier. Does not include item reviews.
                 Reviews are ordered by creation date (latest first).`,
+        }),
+        ApiQuery({
+            name: 'lang',
+            required: false,
+            enum: ['ar', 'en'],
+            description:
+                'Force response language. Defaults to user preference or English.',
+            example: 'ar',
+        }),
+        ApiHeader({
+            name: 'accept-language',
+            description:
+                'Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.',
+            required: false,
+            example: 'ar',
         }),
         ApiResponse({
             status: 200,
@@ -71,6 +88,21 @@ export function ApiDocsGetItemReviews() {
             summary: 'Get reviews for a specific item (product or service)',
             description:
                 'Fetches all reviews for a given product or service item ID, ordered by creation date (latest first).',
+        }),
+        ApiQuery({
+            name: 'lang',
+            required: false,
+            enum: ['ar', 'en'],
+            description:
+                'Force response language. Defaults to user preference or English.',
+            example: 'ar',
+        }),
+        ApiHeader({
+            name: 'accept-language',
+            description:
+                'Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.',
+            required: false,
+            example: 'ar',
         }),
         ApiResponse({
             status: 200,

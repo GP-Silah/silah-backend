@@ -7,6 +7,7 @@ import {
     ApiNotFoundResponse,
     ApiBody,
     ApiQuery,
+    ApiHeader,
 } from '@nestjs/swagger';
 import { NotificationResponseDto } from './dtos/notificationResponse.dto';
 import { UpdateNotificationPreferencesDto } from './dtos/updateNotificationPreference.dto';
@@ -152,6 +153,13 @@ export function ApiDocsGetMyNotifications() {
             enum: ['ar', 'en'],
             description:
                 'Force response language. Defaults to user preference or English.',
+            example: 'ar',
+        }),
+        ApiHeader({
+            name: 'accept-language',
+            description:
+                'Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.',
+            required: false,
             example: 'ar',
         }),
         ApiResponse({
