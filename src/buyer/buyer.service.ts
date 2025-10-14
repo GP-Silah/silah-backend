@@ -1,4 +1,3 @@
-import { tap } from 'rxjs';
 import { UserService } from 'src/user/user.service';
 import {
     BadRequestException,
@@ -25,7 +24,12 @@ export class BuyerService {
         private readonly serviceService: ServiceService,
     ) {}
 
-    async toBuyerResponseDto(user, buyer): Promise<BuyerResponseDto> {
+    async toBuyerResponseDto(
+        user: User,
+        buyer: Buyer & {
+            card: Card | null;
+        },
+    ): Promise<BuyerResponseDto> {
         const userData = await this.userService.toUserResponseDTO(user);
 
         const cardData: CardDetailsDto | null = buyer.card

@@ -19,7 +19,7 @@ import { ApiDocsVerifiedGuard } from 'src/auth/decorators/verified-guard.docs';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { VerifiedGuard } from 'src/auth/guards/verified.guard';
 import { Request, Response } from 'express';
-import { MarkAsReadDto } from './dtos/markReadBulk.dto';
+import { MarkNotificationsAsReadDto } from './dtos/markNotificationsReadBulk.dto';
 import { UpdateNotificationPreferencesDto } from './dtos/updateNotificationPreference.dto';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, filter, map, tap } from 'rxjs/operators';
@@ -127,7 +127,7 @@ export class NotificationController {
     @ApiDocsMarkNotificationsAsReadInBulk()
     async markNotificationsAsReadInBulk(
         @Req() req: Request,
-        @Body() dto: MarkAsReadDto,
+        @Body() dto: MarkNotificationsAsReadDto,
     ) {
         const userId = req.tokenData!.sub;
         return this.notificationService.markNotificationsAsReadInBulk(

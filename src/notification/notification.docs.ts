@@ -11,7 +11,7 @@ import {
 } from '@nestjs/swagger';
 import { NotificationResponseDto } from './dtos/notificationResponse.dto';
 import { UpdateNotificationPreferencesDto } from './dtos/updateNotificationPreference.dto';
-import { MarkAsReadDto } from './dtos/markReadBulk.dto';
+import { MarkNotificationsAsReadDto } from './dtos/markNotificationsReadBulk.dto';
 import { NotificationType } from '@prisma/client';
 
 export function ApiDocsGetNotificationPreferences() {
@@ -215,7 +215,7 @@ export function ApiDocsMarkNotificationsAsReadInBulk() {
             description:
                 'Marks multiple notifications as read using an array of notification IDs.',
         }),
-        ApiBody({ type: MarkAsReadDto }),
+        ApiBody({ type: MarkNotificationsAsReadDto }),
         ApiResponse({
             status: 200,
             description: 'Bulk update result',

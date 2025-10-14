@@ -23,10 +23,12 @@ export class ChatResponseDto {
 
     @ApiPropertyOptional({
         description:
-            'Signed URL from R2 of the latest message, if the latest message is an image. Signed URLs expire 1 hour after creation.',
-        example: 'https://example.com/uploads/chat/last-message.jpg',
+            'Indicates whether the latest message in the chat is an image. ' +
+            'If true, the frontend can display a label like "Image" instead of showing message text. ' +
+            "Note: this field does not contain the image URL; it's a simple boolean flag.",
+        example: true,
     })
-    lastMessageImageUrl?: string;
+    lastMessageIsImage: boolean;
 
     @ApiProperty({
         description: 'Timestamp of when the latest message was sent',

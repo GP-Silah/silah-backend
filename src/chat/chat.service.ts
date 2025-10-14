@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Chat, Message, User } from '@prisma/client';
 import { FileService } from 'src/file/file.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -21,15 +21,9 @@ export class ChatService {
     async toMessageResponseDto(
         message: Message & {
             sender: {
-                id: string;
-                name: string;
-                pfpFileName?: string;
                 user: User;
             };
             receiver: {
-                id: string;
-                name: string;
-                pfpFileName?: string;
                 user: User;
             };
         },
@@ -65,47 +59,37 @@ export class ChatService {
     async toChatResponseDto(
         chat: Chat & {
             user1: {
-                id: string;
-                name: string;
-                pfpFileName?: string;
                 user: User;
             };
             user2: {
-                id: string;
-                name: string;
-                pfpFileName?: string;
                 user: User;
             };
-            messages?: Message[]; // optionally include messages to extract lastMessage
+            messages: Message[];
         },
         loggedInUserId: string,
     ): Promise<ChatResponseDto> {
         // Determine the other participant
         const otherUserRaw =
-            chat.user1.id === loggedInUserId ? chat.user2 : chat.user1;
+            chat.user1.user.id === loggedInUserId ? chat.user2 : chat.user1;
 
         const otherUser: UserResponseDTO =
             await this.userService.toUserResponseDTO(otherUserRaw.user);
 
         // Determine the latest message
         let lastMessageText: string | undefined;
-        let lastMessageImageUrl: string | undefined;
+        let lastMessageIsImage: boolean;
         let lastMessageAt: Date;
 
         if (chat.messages && chat.messages.length > 0) {
             // Assume messages are sorted by createdAt descending
             const lastMessage = chat.messages[0];
             lastMessageText = lastMessage.text ?? undefined;
-            lastMessageImageUrl = lastMessage.imageFileName
-                ? await this.fileService.getFileUrl(lastMessage.imageFileName)
-                : undefined;
+            lastMessageIsImage = lastMessage.imageFileName ? true : false;
             lastMessageAt = lastMessage.createdAt;
         } else {
-            // fallback: use chat.lastMessageAt field if available
-            lastMessageText = chat['lastMessage'] ?? undefined;
-            lastMessageImageUrl = undefined;
-            lastMessageAt =
-                chat['lastMessageAt'] ?? chat.updatedAt ?? new Date();
+            throw new InternalServerErrorException(
+                'Chats should always have one message at least.',
+            );
         }
 
         // Calculate unread count if messages are included
@@ -118,7 +102,7 @@ export class ChatService {
             chatId: chat.id,
             otherUser,
             lastMessageText,
-            lastMessageImageUrl,
+            lastMessageIsImage,
             lastMessageAt,
             unreadCount,
         };

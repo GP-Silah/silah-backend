@@ -9,7 +9,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateNotificationPreferencesDto } from './dtos/updateNotificationPreference.dto';
 import { NotificationType, UserRole } from '@prisma/client';
 import { NotificationResponseDto } from './dtos/notificationResponse.dto';
-import { MarkAsReadDto } from './dtos/markReadBulk.dto';
+import { MarkNotificationsAsReadDto } from './dtos/markNotificationsReadBulk.dto';
 import { startOfDay, startOfWeek, startOfMonth } from 'date-fns';
 import { Subject } from 'rxjs';
 import { CreateNotification } from 'src/types/createNotification';
@@ -386,7 +386,10 @@ export class NotificationService {
         return this.toNotificationResponseDto(updated);
     }
 
-    async markNotificationsAsReadInBulk(userId: string, dto: MarkAsReadDto) {
+    async markNotificationsAsReadInBulk(
+        userId: string,
+        dto: MarkNotificationsAsReadDto,
+    ) {
         const { notificationIds } = dto;
 
         if (!notificationIds || notificationIds.length === 0) {

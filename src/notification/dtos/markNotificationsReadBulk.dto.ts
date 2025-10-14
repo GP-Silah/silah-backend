@@ -1,7 +1,7 @@
 import { IsArray, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class MarkAsReadDto {
+export class MarkNotificationsAsReadDto {
     @ApiProperty({
         description: 'Array of notification IDs to mark as read',
         type: [String],

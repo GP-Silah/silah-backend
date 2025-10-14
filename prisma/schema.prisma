@@ -460,8 +460,6 @@ model Chat {
   user1         User      @relation("FirstUser", fields: [user1Id], references: [id])
   user2Id       String
   user2         User      @relation("SecondUser", fields: [user2Id], references: [id])
-  lastMessage   String?
-  lastMessageAt DateTime? @default(now())
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   messages      Message[]
