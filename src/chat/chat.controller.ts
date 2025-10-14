@@ -13,11 +13,8 @@ export class ChatController {
     @Get('me/:id/messages')
     async getMessagesByChatId() {}
 
-    @Patch('me/:id/read')
+    @Patch('me/:id/read') // handles single and bulk
     async markMessageAsRead() {}
-
-    @Patch('me/read-many')
-    async markMessageAsReadInBulk() {}
 
     @Post('me/:id/upload')
     async sendImage() {}

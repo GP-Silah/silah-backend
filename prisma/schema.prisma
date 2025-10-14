@@ -40,6 +40,10 @@ model User {
   notificationPreference NotificationPreference?
   sentNotifications      Notification[]          @relation("SentNotifications")
   receivedNotifications  Notification[]          @relation("ReceivedNotifications")
+  firstChatUser          Chat[]                  @relation("FirstUser")
+  secondChatUser         Chat[]                  @relation("SecondUser")
+  sentMessages           Message[]               @relation("SentMessages")
+  receivedMessages       Message[]               @relation("ReceivedMessages")
 }
 
 // ============ 🛢 SUPPLIER ==============
@@ -432,21 +436,53 @@ model NotificationPreference {
 
 // =========== 🔔 NOTIFICATION ===========
 model Notification {
-  id             String                  @id @default(uuid())
+  id             String                 @id @default(uuid())
   senderUserId   String
-  sender         User                    @relation("SentNotifications", fields: [senderUserId], references: [id], onDelete: Cascade)
+  sender         User                   @relation("SentNotifications", fields: [senderUserId], references: [id], onDelete: Cascade)
   receiverUserId String
-  receiver       User                    @relation("ReceivedNotifications", fields: [receiverUserId], references: [id], onDelete: Cascade)
+  receiver       User                   @relation("ReceivedNotifications", fields: [receiverUserId], references: [id], onDelete: Cascade)
   type           NotificationType
   title          String
   content        String
-  isRead         Boolean                 @default(false)
+  isRead         Boolean                @default(false)
   readAt         DateTime?
   entityId       String
   entityType     NotificationEntityType
-  isDeleted      Boolean                 @default(false)
-  createdAt      DateTime                @default(now())
-  updatedAt      DateTime                @updatedAt
+  isDeleted      Boolean                @default(false)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+}
+
+// =========== ✉️ CHAT ===============
+model Chat {
+  id            String    @id @default(uuid())
+  user1Id       String
+  user1         User      @relation("FirstUser", fields: [user1Id], references: [id])
+  user2Id       String
+  user2         User      @relation("SecondUser", fields: [user2Id], references: [id])
+  lastMessage   String?
+  lastMessageAt DateTime? @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  messages      Message[]
+
+  @@unique([user1Id, user2Id])
+}
+
+// =========== ✉️ MESSAGE ============
+model Message {
+  id            String    @id @default(uuid())
+  chatId        String
+  chat          Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  senderId      String
+  sender        User      @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId    String
+  receiver      User      @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  text          String? // null if it is just an image
+  imageFileName String?
+  isRead        Boolean   @default(false)
+  readAt        DateTime?
+  createdAt     DateTime  @default(now())
 }
 
 // ============  ⚔️ ENUMS ================

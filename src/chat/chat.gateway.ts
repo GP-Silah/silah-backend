@@ -15,7 +15,7 @@ export class ChatGateway {
     handleSendMessage(@MessageBody() data) {
         // 1. Save to DB (via ChatService)
         // 2. Emit to recipient socket
-        // 3. Send notification to reciever
+        // 3. Send notification to reciever (if the reciever is not on inside the chat page)
     }
 
     @SubscribeMessage('join_chat')
