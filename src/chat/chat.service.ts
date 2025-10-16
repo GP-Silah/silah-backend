@@ -1,5 +1,7 @@
 import {
     ForbiddenException,
+    forwardRef,
+    Inject,
     Injectable,
     InternalServerErrorException,
 } from '@nestjs/common';
@@ -26,6 +28,7 @@ export class ChatService {
         private readonly fileService: FileService,
         private readonly userService: UserService,
         private readonly notificationService: NotificationService,
+        @Inject(forwardRef(() => ChatGateway))
         private readonly chatGateway: ChatGateway,
     ) {}
 
@@ -39,20 +42,13 @@ export class ChatService {
      * Maps a Prisma Message object (with sender & receiver included) to MessageResponseDto
      */
     async toMessageResponseDto(
-        message: Message & {
-            sender: {
-                user: User;
-            };
-            receiver: {
-                user: User;
-            };
-        },
+        message: Message & { sender: User; receiver: User },
     ): Promise<MessageResponseDto> {
         const senderDto: UserResponseDTO =
-            await this.userService.toUserResponseDTO(message.sender.user);
+            await this.userService.toUserResponseDTO(message.sender);
 
         const receiverDto: UserResponseDTO =
-            await this.userService.toUserResponseDTO(message.receiver.user);
+            await this.userService.toUserResponseDTO(message.receiver);
 
         const imageUrl = message.imageFileName
             ? await this.fileService.getFileUrl(message.imageFileName)
@@ -172,7 +168,7 @@ export class ChatService {
         // Map each chat to a DTO
         const dtos = await Promise.all(
             chats.map(async (chat) => {
-                const dto = await this.toChatResponseDto(chat as any, userId);
+                const dto = await this.toChatResponseDto(chat as any, userId); //!
                 dto.unreadCount = unreadMap[chat.id] ?? 0;
                 return dto;
             }),
@@ -349,8 +345,8 @@ export class ChatService {
                 isRead: false,
             },
             include: {
-                sender: { include: { firstChatUser: true } },
-                receiver: { include: { secondChatUser: true } },
+                sender: true,
+                receiver: true,
             },
         });
 

@@ -28,7 +28,6 @@ import { SearchModule } from './search/search.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { ReviewModule } from './review/review.module';
 import { NotificationModule } from './notification/notification.module';
-import { ChatResolver } from './chat/chat.resolver';
 import { ChatModule } from './chat/chat.module';
 
 @Module({
@@ -74,7 +73,6 @@ import { ChatModule } from './chat/chat.module';
             provide: 'LOGGER',
             useValue: logger,
         },
-        ChatResolver,
     ],
 })
 export class AppModule {

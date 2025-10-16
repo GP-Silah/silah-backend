@@ -5,14 +5,52 @@ import {
     MessageBody,
     ConnectedSocket,
 } from '@nestjs/websockets';
+import * as cookie from 'cookie';
+import { JwtService } from '@nestjs/jwt';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import { MessageResponseDto } from './dtos/messageResonse.dto';
 import { SendMessageDto } from './dtos/sendMessage.dto';
+import {
+    Inject,
+    UnauthorizedException,
+    Injectable,
+    forwardRef,
+} from '@nestjs/common';
 
-@WebSocketGateway({ cors: true })
+@Injectable()
+@WebSocketGateway({ cors: { origin: true, credentials: true } })
 export class ChatGateway {
-    constructor(private readonly chatService: ChatService) {}
+    constructor(
+        @Inject(forwardRef(() => ChatService))
+        private readonly chatService: ChatService,
+        private readonly jwtService: JwtService,
+    ) {}
+
+    async handleConnection(client: Socket) {
+        try {
+            const rawCookies = client.handshake.headers.cookie || '';
+            const parsedCookies = cookie.parse(rawCookies);
+            let token = parsedCookies['token'];
+            if (!token)
+                throw new UnauthorizedException('No token found in cookies');
+
+            // Strip the "j:" prefix if present
+            if (token.startsWith('j:')) token = token.slice(2);
+
+            // Now parse JSON if it looks like an object
+            if (token.startsWith('{') && token.endsWith('}')) {
+                const obj = JSON.parse(token);
+                token = obj.token;
+            }
+
+            const payload = await this.jwtService.verifyAsync(token);
+            (client as any).userId = payload.sub;
+        } catch (err) {
+            console.log('Invalid socket connection:', err.message);
+            client.disconnect(true);
+        }
+    }
 
     @WebSocketServer() server: Server;
 
@@ -30,7 +68,8 @@ export class ChatGateway {
         @ConnectedSocket() client: Socket,
         @MessageBody() data: SendMessageDto,
     ) {
-        const { senderId, receiverId, chatId, text } = data;
+        const senderId = (client as any).userId;
+        const { receiverId, chatId, text } = data;
 
         // 0. If no chatId → create chat first
         let finalChatId = chatId;
@@ -40,6 +79,7 @@ export class ChatGateway {
                 receiverId,
             );
             finalChatId = chat!.id;
+            client.join(`chat_${finalChatId}`);
         }
 
         // 1. Save message + Send notification
@@ -68,18 +108,18 @@ export class ChatGateway {
     }
 
     @SubscribeMessage('join_user')
-    handleJoinUser(
-        @ConnectedSocket() client: Socket,
-        @MessageBody() userId: string,
-    ) {
+    handleJoinUser(@ConnectedSocket() client: Socket) {
+        const userId = (client as any).userId;
         client.join(userId);
         client.emit('joined_user_room', userId);
     }
 
     @SubscribeMessage('typing')
-    handleTyping(@MessageBody() data: { chatId: string; senderId: string }) {
-        this.server
-            .to(`chat_${data.chatId}`)
-            .emit('user_typing', data.senderId);
+    handleTyping(
+        @ConnectedSocket() client: Socket,
+        @MessageBody() data: { chatId: string },
+    ) {
+        const senderId = (client as any).userId;
+        this.server.to(`chat_${data.chatId}`).emit('user_typing', senderId);
     }
 }

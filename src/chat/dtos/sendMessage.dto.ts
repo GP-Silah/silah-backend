@@ -13,15 +13,6 @@ export class SendMessageDto {
     chatId?: string;
 
     @ApiProperty({
-        description: 'The UUID of the sender',
-        type: String,
-        format: 'uuid',
-        example: 'dsgfvwg-32v54-b54bv-324cc4',
-    })
-    @IsUUID()
-    senderId: string;
-
-    @ApiProperty({
         description: 'The UUID of the receiver',
         type: String,
         format: 'uuid',
