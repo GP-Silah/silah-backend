@@ -3777,6 +3777,106 @@
         ]
       }
     },
+    "/api/suppliers/me/pending-orders-count": {
+      "get": {
+        "description": "Retrieves the total number of orders with status PENDING for the authenticated supplier. Useful for showing the supplier how many orders still need processing.",
+        "operationId": "SupplierController_getPendingOrdersCount",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved pending orders count.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number",
+                      "example": 5,
+                      "description": "Number of pending orders for the supplier"
+                    }
+                  },
+                  "example": {
+                    "count": 5
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found for the given user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found.",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get count of pending orders for authenticated supplier",
+        "tags": [
+          "Suppliers"
+        ]
+      }
+    },
     "/api/suppliers/me/favorite-categories": {
       "get": {
         "description": "Retrieves the list of favorite subcategories for the authenticated supplier. Each item contains the category ID and name.",

@@ -31,6 +31,7 @@ import {
     ApiDocsGetAllSuppliers,
     ApiDocsGetFavoriteCategories,
     ApiDocsGetMySupplierData,
+    ApiDocsGetPendingOrdersCount,
     ApiDocsGetStockLevels,
     ApiDocsGetStoreBanner,
     ApiDocsGetSupplierDataById,
@@ -82,6 +83,17 @@ export class SupplierController {
     async getStockLevels(@Req() req: Request) {
         const userId = req.tokenData!.sub;
         return this.supplierService.getStockLevels(userId);
+    }
+
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @Roles(UserRole.SUPPLIER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Get('me/pending-orders-count')
+    @ApiDocsGetPendingOrdersCount()
+    async getPendingOrdersCount(@Req() req: Request) {
+        const userId = req.tokenData!.sub;
+        return this.supplierService.getPendingOrdersCount(userId);
     }
 
     @ApiDocsJwtAuthGuard()
