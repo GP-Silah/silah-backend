@@ -75,6 +75,7 @@ model Supplier {
   preInvoices     PreInvoice[]
   invoices        Invoice[]
   recievedReviews Review[]
+  groupPurchases  GroupPurchase[]
 }
 
 // ============ 🛂 SUBSCRIPTIONS ==============
@@ -97,13 +98,14 @@ model Buyer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  carts               Cart[]
-  orders              Order[]
-  wishlist            Wishlist[]
-  preInvoices         PreInvoice[]
-  invoices            Invoice[]
-  writtenReviews      Review[]
-  writtenItemsReviews ItemReview[]
+  carts                Cart[]
+  orders               Order[]
+  wishlist             Wishlist[]
+  preInvoices          PreInvoice[]
+  invoices             Invoice[]
+  writtenReviews       Review[]
+  writtenItemsReviews  ItemReview[]
+  joinedGroupPurchases GroupPurchaseBuyer[]
 }
 
 // ============  💳 CARD ===============
@@ -189,10 +191,11 @@ model Product {
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 
-  cartItems    CartItem[]
-  orderItems   OrderItem[]
-  invoiceItems InvoiceItem[]
-  preInoivces  PreInvoice[]
+  cartItems      CartItem[]
+  orderItems     OrderItem[]
+  invoiceItems   InvoiceItem[]
+  preInoivces    PreInvoice[]
+  groupPurchases GroupPurchase[]
 }
 
 // ============ ✋ SERVICES ===============
@@ -309,6 +312,39 @@ model OrderItem {
   createdAt  DateTime @default(now())
 
   itemReview ItemReview?
+}
+
+// ============ 👥 GROUP PURCHASE ===========
+model GroupPurchase {
+  id                  String              @id @default(uuid())
+  productId           String
+  product             Product             @relation(fields: [productId], references: [id])
+  supplierId          String
+  supplier            Supplier            @relation(fields: [supplierId], references: [id])
+  city                String
+  minGroupQuantity    Int
+  actualGroupQuantity Int
+  totalPrice          Float // sum of all buyers priceBasedQuantity
+  deadline            DateTime
+  status              GroupPurchaseStatus @default(OPEN)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  joinedBuyers GroupPurchaseBuyer[]
+}
+
+// ============ 👥 GROUP PURCHASE BUYER ===========
+model GroupPurchaseBuyer {
+  id                 String        @id @default(uuid())
+  groupPurchaseId    String
+  groupPurchase      GroupPurchase @relation(fields: [groupPurchaseId], references: [id])
+  buyerId            String
+  buyer              Buyer         @relation(fields: [buyerId], references: [id])
+  quantity           Int
+  priceBasedQuantity Float
+  joinedAt           DateTime      @default(now())
+
+  @@unique([groupPurchaseId, buyerId])
 }
 
 // ============ 🧾 INVOICE ===============
@@ -455,14 +491,14 @@ model Notification {
 
 // =========== ✉️ CHAT ===============
 model Chat {
-  id            String    @id @default(uuid())
-  user1Id       String
-  user1         User      @relation("FirstUser", fields: [user1Id], references: [id])
-  user2Id       String
-  user2         User      @relation("SecondUser", fields: [user2Id], references: [id])
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  messages      Message[]
+  id        String    @id @default(uuid())
+  user1Id   String
+  user1     User      @relation("FirstUser", fields: [user1Id], references: [id])
+  user2Id   String
+  user2     User      @relation("SecondUser", fields: [user2Id], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
 
   @@unique([user1Id, user2Id])
 }
@@ -582,4 +618,9 @@ enum NotificationEntityType {
   OFFER
   BID
   GROUP_PURCHASE
+}
+
+enum GroupPurchaseStatus {
+  OPEN
+  CLOSED
 }

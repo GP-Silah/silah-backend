@@ -124,6 +124,7 @@ How to use this on frontend:
         { name: 'Orders' },
         { name: 'Invoices' },
         { name: 'Reviews' },
+        { name: 'Group Purchases' },
         { name: 'Demand Predictions' },
         { name: 'Notifications' },
         { name: 'Chats' },
