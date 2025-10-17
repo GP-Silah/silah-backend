@@ -1,11 +1,14 @@
+import { query } from 'winston';
 import { Injectable } from '@nestjs/common';
-import { Product, User } from '@prisma/client';
+import { User } from '@prisma/client';
+import { ChatService } from 'src/chat/chat.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductService } from 'src/product/product.service';
 import { ServiceService } from 'src/service/service.service';
 import { SupplierService } from 'src/supplier/supplier.service';
 import { UserService } from 'src/user/user.service';
-import { query } from 'winston';
+import { ProductResponseDto } from 'src/product/dtos/productResponse.dto';
+import { ServiceResponseDto } from 'src/service/dtos/serviceResponse.dto';
 
 @Injectable()
 export class SearchService {
@@ -15,6 +18,7 @@ export class SearchService {
         private readonly supplierService: SupplierService,
         private readonly productService: ProductService,
         private readonly serviceService: ServiceService,
+        private readonly chatService: ChatService,
     ) {}
 
     async searchUsers(name?: string) {
@@ -208,11 +212,13 @@ export class SearchService {
         let productIds: string[] = [];
         if (q) {
             const query = `
-                SELECT "id", similarity("name", '${q}') AS sim
-                FROM "Product"
-                WHERE "isDeleted" = false
-                AND "isPublished" = true
-                AND similarity("name", '${q}') > 0.1
+                SELECT p."id", similarity(p."name", '${q}') AS sim
+                FROM "Product" p
+                JOIN "Supplier" s ON p."supplierId" = s."id"
+                WHERE p."isDeleted" = false
+                AND p."isPublished" = true
+                AND s."isStoreClosed" = false
+                AND similarity(p."name", '${q}') > 0.1
                 ORDER BY sim DESC
                 LIMIT 50;
             `;
@@ -288,11 +294,13 @@ export class SearchService {
         let servicesIds: string[] = [];
         if (q) {
             const query = `
-                SELECT "id", similarity("name", '${q}') AS sim
-                FROM "Service"
-                WHERE "isDeleted" = false
-                AND "isPublished" = true
-                AND similarity("name", '${q}') > 0.1
+                SELECT s."id", similarity(s."name", '${q}') AS sim
+                FROM "Service" s
+                JOIN "Supplier" sp ON s."supplierId" = sp."id"
+                WHERE s."isDeleted" = false
+                AND s."isPublished" = true
+                AND sp."isStoreClosed" = false
+                AND similarity(s."name", '${q}') > 0.1
                 ORDER BY sim DESC
                 LIMIT 50;
             `;
@@ -316,5 +324,170 @@ export class SearchService {
         return Promise.all(
             services.map((s) => this.serviceService.toServiceResponseDto(s)),
         );
+    }
+
+    async searchChats(userId: string, text: string) {
+        if (!text || !text.trim()) return [];
+
+        // Sanitize text
+        let q = text?.trim()?.replace(/'/g, "''") ?? '';
+        if (q.length > 100) q = q.substring(0, 100);
+
+        // Build base where
+        const whereClause: any = {};
+
+        // Fuzzy search
+        let chatIds: string[] = [];
+        if (q) {
+            const query = `
+                SELECT c."id" AS "chatId", u1."id" AS "user1Id", u2."id" AS "user2Id"
+                FROM "Chat" c
+                JOIN "User" u1 ON c."user1Id" = u1."id"
+                JOIN "User" u2 ON c."user2Id" = u2."id"
+                WHERE (c."user1Id" = '${userId}' AND (similarity(u2.name, '${text}') > 0.1 OR similarity(u2."businessName", '${text}') > 0.1))
+                OR (c."user2Id" = '${userId}' AND (similarity(u1.name, '${text}') > 0.1 OR similarity(u1."businessName", '${text}') > 0.1))
+                ORDER BY GREATEST(similarity(u1.name, '${text}'), similarity(u1."businessName",'${text}'),
+                similarity(u2.name, '${text}'), similarity(u2."businessName", '${text}')) DESC
+                LIMIT 50;
+            `;
+
+            const fuzzyRows =
+                await this.prisma.$queryRawUnsafe<{ chatId: string }[]>(query);
+            chatIds = fuzzyRows.map((r) => r.chatId);
+            if (!chatIds.length) return [];
+            whereClause.id = { in: chatIds };
+        }
+
+        // Fetch chats
+        let chats = await this.prisma.chat.findMany({
+            where: whereClause,
+            include: {
+                user1: { include: { firstChatUser: true } },
+                user2: { include: { secondChatUser: true } },
+                messages: {
+                    orderBy: { createdAt: 'desc' },
+                    take: 1,
+                },
+            },
+            orderBy: { updatedAt: 'desc' },
+        });
+
+        if (!chats.length) return [];
+
+        return Promise.all(
+            chats.map((c) =>
+                this.chatService.toChatResponseDto(c as any, userId),
+            ),
+        );
+    }
+
+    async searchSupplierCatalog(userId: string, name: string) {
+        if (!name || !name.trim()) return [];
+
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+            select: { id: true },
+        });
+        if (!supplier) return [];
+
+        // Sanitize text
+        let q = name?.trim()?.replace(/'/g, "''") ?? '';
+        if (q.length > 100) q = q.substring(0, 100);
+
+        // Build base where
+        const productWhereClause: any = {};
+        const serviceWhereClause: any = {};
+
+        // Fuzzy search
+        let productIds: string[] = [];
+        let serviceIds: string[] = [];
+        if (q) {
+            const productQuery = `
+                SELECT "id"
+                FROM "Product"
+                WHERE "supplierId" = '${supplier.id}'
+                AND "isDeleted" = false
+                AND similarity("name", '${q}') > 0.1
+                ORDER BY similarity("name", '${q}') DESC
+                LIMIT 50
+            `;
+
+            const fuzzyProductRows =
+                await this.prisma.$queryRawUnsafe<{ id: string }[]>(
+                    productQuery,
+                );
+            productIds = fuzzyProductRows.map((r) => r.id);
+            if (productIds) productWhereClause.id = { in: productIds };
+
+            const serviceQuery = `
+                SELECT "id"
+                FROM "Service"
+                WHERE "supplierId" = '${supplier.id}'
+                AND "isDeleted" = false
+                AND similarity("name", '${q}') > 0.1
+                ORDER BY similarity("name", '${q}') DESC
+                LIMIT 50
+            `;
+
+            const fuzzyServiceRows =
+                await this.prisma.$queryRawUnsafe<{ id: string }[]>(
+                    serviceQuery,
+                );
+            serviceIds = fuzzyServiceRows.map((r) => r.id);
+            if (serviceIds) serviceWhereClause.id = { in: serviceIds };
+
+            if (!productIds && !serviceIds) return [];
+        }
+
+        // Fetch products + services
+        let products = await this.prisma.product.findMany({
+            where: productWhereClause,
+            include: { supplier: { include: { user: true } }, category: true },
+        });
+
+        let services = await this.prisma.service.findMany({
+            where: serviceWhereClause,
+            include: { supplier: { include: { user: true } }, category: true },
+        });
+
+        if (!products.length && !services.length) return [];
+
+        // Map to DTOs
+        let productsDtoPromise: Promise<ProductResponseDto[]> = Promise.resolve(
+            [],
+        );
+        let servicesDtoPromise: Promise<ServiceResponseDto[]> = Promise.resolve(
+            [],
+        );
+
+        if (products.length > 0) {
+            productsDtoPromise = Promise.all(
+                products.map((p) =>
+                    this.productService.toProductResponseDto(p as any),
+                ),
+            );
+        }
+
+        if (services.length > 0) {
+            servicesDtoPromise = Promise.all(
+                services.map((s) =>
+                    this.serviceService.toServiceResponseDto(s as any),
+                ),
+            );
+        }
+
+        // Wait for results
+        const [productsDto, servicesDto] = await Promise.all([
+            productsDtoPromise,
+            servicesDtoPromise,
+        ]);
+
+        // Return according to availability
+        if (productsDto.length && servicesDto.length)
+            return [...productsDto, ...servicesDto];
+        if (productsDto.length) return productsDto;
+        if (servicesDto.length) return servicesDto;
+
+        return [];
     }
 }

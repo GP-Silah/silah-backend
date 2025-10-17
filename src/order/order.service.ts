@@ -29,7 +29,20 @@ export class OrderService {
         private readonly notificationService: NotificationService,
     ) {}
 
-    async toOrderResponseDto(order: any): Promise<OrderResponseDto> {
+    /** Helper: fetch user's preferred language */
+    async getUserLanguage(userId: string): Promise<'ar' | 'en' | null> {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { preferredLanguage: true },
+        });
+        const lang = user?.preferredLanguage?.toLowerCase();
+        return lang === 'ar' || lang === 'en' ? lang : null;
+    }
+
+    async toOrderResponseDto(
+        order: any,
+        targetLang?: 'ar' | 'en',
+    ): Promise<OrderResponseDto> {
         return {
             orderId: order.id,
             tapChargeId: order.tapChargeId,
@@ -47,6 +60,7 @@ export class OrderService {
                     const productDto = item.product
                         ? await this.productService.toProductResponseDto(
                               item.product,
+                              targetLang,
                           )
                         : undefined;
 
@@ -83,6 +97,7 @@ export class OrderService {
     async getMyOrders(
         userId: string,
         status?: OrderStatus,
+        targetLang?: 'ar' | 'en',
     ): Promise<OrderResponseDto[]> {
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
@@ -136,7 +151,7 @@ export class OrderService {
 
         // Map orders to DTO
         const orderDtos = await Promise.all(
-            orders.map((order) => this.toOrderResponseDto(order)),
+            orders.map((order) => this.toOrderResponseDto(order, targetLang)),
         );
 
         return orderDtos;
@@ -145,6 +160,7 @@ export class OrderService {
     async getOrderById(
         userId: string,
         orderId: string,
+        targetLang?: 'ar' | 'en',
     ): Promise<OrderResponseDto> {
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
@@ -190,7 +206,7 @@ export class OrderService {
         }
 
         // Map order to DTO
-        return this.toOrderResponseDto(order);
+        return this.toOrderResponseDto(order, targetLang);
     }
 
     async updateOrderStatus(
@@ -226,7 +242,7 @@ export class OrderService {
             receiverUserId: order.buyer!.userId,
             type: NotificationType.ORDER_STATUS_CHANGED,
             title: 'Order Status Changed!',
-            content: `Your order from ${order.supplier!.user.businessName} is now ${newStatus.toLowerCase}`,
+            content: `Your order from ${order.supplier!.user.businessName} is now ${newStatus}`,
             entityId: order.id,
             entityType: NotificationEntityType.ORDER,
         });

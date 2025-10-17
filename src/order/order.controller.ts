@@ -8,6 +8,7 @@ import {
     Query,
     Req,
     UseGuards,
+    Headers,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -33,13 +34,38 @@ import { VerifiedGuard } from 'src/auth/guards/verified.guard';
 export class OrderController {
     constructor(private readonly orderService: OrderService) {}
 
+    /** Helper function to determine target language */
+    private async resolveTargetLang(
+        req: Request,
+        lang?: 'ar' | 'en',
+        langHeader?: 'ar' | 'en',
+    ) {
+        let targetLang: 'ar' | 'en' = 'en';
+
+        // Priority: query param > header > user preference > default
+        if (lang) {
+            targetLang = lang;
+        } else if (langHeader) {
+            targetLang = langHeader;
+        } else if (req.tokenData?.sub) {
+            const user = await this.orderService.getUserLanguage(
+                req.tokenData.sub,
+            );
+            if (user) targetLang = user;
+        }
+
+        return targetLang;
+    }
+
     @ApiDocsJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Get('me')
     @ApiDocsGetMyOrders()
     async getMyOrders(
         @Req() req: Request,
-        @Query('status') status?: string, // lower case?
+        @Query('status') status?: string,
+        @Headers('accept-language') langHeader?: 'ar' | 'en',
+        @Query('lang') lang?: 'ar' | 'en',
     ) {
         if (status) {
             const normalized = status.toUpperCase();
@@ -52,16 +78,27 @@ export class OrderController {
             status = normalized as OrderStatus;
         }
         const userId = req.tokenData!.sub;
-        return this.orderService.getMyOrders(userId, status as OrderStatus);
+        const targetLang = await this.resolveTargetLang(req, lang, langHeader);
+        return this.orderService.getMyOrders(
+            userId,
+            status as OrderStatus,
+            targetLang,
+        );
     }
 
     @ApiDocsJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Get(':orderId')
     @ApiDocsGetOrderById()
-    async getOrderById(@Req() req: Request, @Param('orderId') orderId: string) {
+    async getOrderById(
+        @Req() req: Request,
+        @Param('orderId') orderId: string,
+        @Headers('accept-language') langHeader?: 'ar' | 'en',
+        @Query('lang') lang?: 'ar' | 'en',
+    ) {
         const userId = req.tokenData!.sub;
-        return this.orderService.getOrderById(userId, orderId);
+        const targetLang = await this.resolveTargetLang(req, lang, langHeader);
+        return this.orderService.getOrderById(userId, orderId, targetLang);
     }
 
     @ApiDocsJwtAuthGuard()

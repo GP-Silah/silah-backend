@@ -12,9 +12,12 @@ import {
     MinLength,
     IsInt,
     Min,
+    IsOptional,
+    IsEnum,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import { Languages } from '@prisma/client';
 
 export class SignupDto {
     @ApiProperty({ example: 'user@example.com' })
@@ -91,4 +94,13 @@ export class SignupDto {
     @Equals(true, { message: 'You must agree to the terms and conditions' })
     @IsNotEmpty()
     agreedToTerms: boolean;
+
+    @ApiProperty({
+        description: 'Set user preferred language.',
+        example: 'ar',
+        enum: Languages,
+    })
+    @IsEnum(Languages)
+    @IsOptional()
+    preferredLanguage?: Languages;
 }

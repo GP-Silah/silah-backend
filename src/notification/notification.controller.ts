@@ -10,6 +10,7 @@ import {
     UseGuards,
     MessageEvent,
     Res,
+    Headers,
 } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -18,7 +19,7 @@ import { ApiDocsVerifiedGuard } from 'src/auth/decorators/verified-guard.docs';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { VerifiedGuard } from 'src/auth/guards/verified.guard';
 import { Request, Response } from 'express';
-import { MarkAsReadDto } from './dtos/markReadBulk.dto';
+import { MarkNotificationsAsReadDto } from './dtos/markNotificationsReadBulk.dto';
 import { UpdateNotificationPreferencesDto } from './dtos/updateNotificationPreference.dto';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, filter, map, tap } from 'rxjs/operators';
@@ -34,6 +35,26 @@ import {
 @Controller('notifications')
 export class NotificationController {
     constructor(private readonly notificationService: NotificationService) {}
+
+    /** Helper: Resolve user’s preferred target language */
+    private async resolveTargetLang(
+        req: Request,
+        lang?: 'ar' | 'en',
+        langHeader?: 'ar' | 'en',
+    ): Promise<'ar' | 'en'> {
+        let targetLang: 'ar' | 'en' = 'en';
+        if (lang) {
+            targetLang = lang;
+        } else if (langHeader) {
+            targetLang = langHeader;
+        } else if (req.tokenData?.sub) {
+            const userLang = await this.notificationService.getUserLanguage(
+                req.tokenData.sub,
+            );
+            if (userLang) targetLang = userLang;
+        }
+        return targetLang;
+    }
 
     @ApiDocsJwtAuthGuard()
     @ApiDocsVerifiedGuard()
@@ -68,11 +89,19 @@ export class NotificationController {
     @ApiDocsGetMyNotifications()
     async getMyNotifications(
         @Req() req: Request,
+        @Headers('accept-language') langHeader?: 'ar' | 'en',
+        @Query('lang') lang?: 'ar' | 'en',
         @Query('date') date?: string,
         @Query('type') type?: string,
     ) {
         const userId = req.tokenData!.sub;
-        return this.notificationService.getMyNotifications(userId, date, type);
+        const targetLang = await this.resolveTargetLang(req, lang, langHeader);
+        return this.notificationService.getMyNotifications(
+            userId,
+            date,
+            type,
+            targetLang,
+        );
     }
 
     @ApiDocsJwtAuthGuard()
@@ -98,7 +127,7 @@ export class NotificationController {
     @ApiDocsMarkNotificationsAsReadInBulk()
     async markNotificationsAsReadInBulk(
         @Req() req: Request,
-        @Body() dto: MarkAsReadDto,
+        @Body() dto: MarkNotificationsAsReadDto,
     ) {
         const userId = req.tokenData!.sub;
         return this.notificationService.markNotificationsAsReadInBulk(
@@ -111,7 +140,6 @@ export class NotificationController {
     @ApiDocsVerifiedGuard()
     @UseGuards(JwtAuthGuard, VerifiedGuard)
     @ApiDocsNotificationStream()
-    @Get('stream')
     @Sse('stream')
     notificationStream(
         @Req() req: Request,

@@ -23,6 +23,7 @@ import {
     OrderStatus,
 } from '@prisma/client';
 import { NotificationService } from 'src/notification/notification.service';
+import { TranslationService } from 'src/translation/translation.service';
 
 @Injectable()
 export class ReviewService {
@@ -33,10 +34,22 @@ export class ReviewService {
         private readonly productService: ProductService,
         private readonly serviceService: ServiceService,
         private readonly notificationService: NotificationService,
+        private readonly translationService: TranslationService,
     ) {}
+
+    /** Helper: fetch user's preferred language */
+    async getUserLanguage(userId: string): Promise<'ar' | 'en' | null> {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { preferredLanguage: true },
+        });
+        const lang = user?.preferredLanguage?.toLowerCase();
+        return lang === 'ar' || lang === 'en' ? lang : null;
+    }
 
     private async toItemReviewResponseDto(
         itemReviewEntity: any,
+        targetLang?: 'ar' | 'en',
     ): Promise<ItemReviewResponseDto> {
         return {
             itemReviewId: itemReviewEntity.id,
@@ -71,7 +84,12 @@ export class ReviewService {
                 : undefined,
             buyerId: itemReviewEntity.buyerId,
             itemRating: itemReviewEntity.itemRating,
-            writtenReviewOfItem: itemReviewEntity.writtenReviewOfItem,
+            writtenReviewOfItem: targetLang
+                ? await this.translationService.translateText(
+                      itemReviewEntity.writtenReviewOfItem,
+                      targetLang,
+                  )
+                : itemReviewEntity.writtenReviewOfItem,
             createdAt: itemReviewEntity.createdAt,
         };
     }
@@ -107,6 +125,7 @@ export class ReviewService {
 
     async getSupplierReviews(
         supplierId: string,
+        targetLang?: 'ar' | 'en',
     ): Promise<SupplierReviewResponseDto[]> {
         const supplier = await this.prisma.supplier.findUnique({
             where: { id: supplierId },
@@ -147,7 +166,12 @@ export class ReviewService {
                     buyerId: review.buyerId ?? undefined,
                     supplierRating: review.supplierRating,
                     writtenReviewOfSupplier:
-                        review.writtenReviewOfSupplier ?? undefined,
+                        targetLang && review.writtenReviewOfSupplier
+                            ? await this.translationService.translateText(
+                                  review.writtenReviewOfSupplier,
+                                  targetLang,
+                              )
+                            : (review.writtenReviewOfSupplier ?? undefined),
                     createdAt: review.createdAt,
                     supplier: await this.supplierService.toSupplierResponseDTO(
                         supplier.user,
@@ -192,7 +216,10 @@ export class ReviewService {
         return this.toReviewResponseDto(review);
     }
 
-    async getItemReviews(itemId: string): Promise<ItemReviewResponseDto[]> {
+    async getItemReviews(
+        itemId: string,
+        targetLang?: 'ar' | 'en',
+    ): Promise<ItemReviewResponseDto[]> {
         // First, check if the itemId is a product or a service
         const product = await this.prisma.product.findUnique({
             where: { id: itemId },
@@ -230,7 +257,9 @@ export class ReviewService {
         });
 
         return Promise.all(
-            itemReviews.map((item) => this.toItemReviewResponseDto(item)),
+            itemReviews.map((item) =>
+                this.toItemReviewResponseDto(item, targetLang),
+            ),
         );
     }
 

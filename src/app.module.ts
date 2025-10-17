@@ -28,6 +28,7 @@ import { SearchModule } from './search/search.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { ReviewModule } from './review/review.module';
 import { NotificationModule } from './notification/notification.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
     imports: [
@@ -59,6 +60,7 @@ import { NotificationModule } from './notification/notification.module';
         InvoiceModule,
         ReviewModule,
         NotificationModule,
+        ChatModule,
     ],
     controllers: [AppController, HealthController],
     providers: [

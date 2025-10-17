@@ -6,6 +6,8 @@ import {
     Post,
     Req,
     UseGuards,
+    Headers,
+    Query,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -31,10 +33,39 @@ import {
 export class ReviewController {
     constructor(private readonly reviewService: ReviewService) {}
 
+    /** Helper function to determine target language */
+    private async resolveTargetLang(
+        req: Request,
+        lang?: 'ar' | 'en',
+        langHeader?: 'ar' | 'en',
+    ) {
+        let targetLang: 'ar' | 'en' = 'en';
+
+        // Priority: query param > header > user preference > default
+        if (lang) {
+            targetLang = lang;
+        } else if (langHeader) {
+            targetLang = langHeader;
+        } else if (req.tokenData?.sub) {
+            const user = await this.reviewService.getUserLanguage(
+                req.tokenData.sub,
+            );
+            if (user) targetLang = user;
+        }
+
+        return targetLang;
+    }
+
     @Get('suppliers/:supplierId')
     @ApiDocsGetSupplierReviews()
-    async getSupplierReviews(@Param('supplierId') supplierId: string) {
-        return this.reviewService.getSupplierReviews(supplierId);
+    async getSupplierReviews(
+        @Req() req: Request,
+        @Param('supplierId') supplierId: string,
+        @Headers('accept-language') langHeader?: 'ar' | 'en',
+        @Query('lang') lang?: 'ar' | 'en',
+    ) {
+        const targetLang = await this.resolveTargetLang(req, lang, langHeader);
+        return this.reviewService.getSupplierReviews(supplierId, targetLang);
     }
 
     @Get(':reviewId')
@@ -45,8 +76,14 @@ export class ReviewController {
 
     @Get('items/:itemId')
     @ApiDocsGetItemReviews()
-    async getItemReviews(@Param('itemId') itemId: string) {
-        return this.reviewService.getItemReviews(itemId);
+    async getItemReviews(
+        @Req() req: Request,
+        @Param('itemId') itemId: string,
+        @Headers('accept-language') langHeader?: 'ar' | 'en',
+        @Query('lang') lang?: 'ar' | 'en',
+    ) {
+        const targetLang = await this.resolveTargetLang(req, lang, langHeader);
+        return this.reviewService.getItemReviews(itemId, targetLang);
     }
 
     @ApiDocsJwtAuthGuard()

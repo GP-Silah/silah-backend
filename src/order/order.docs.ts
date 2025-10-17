@@ -7,6 +7,7 @@ import {
     ApiNotFoundResponse,
     ApiBody,
     ApiQuery,
+    ApiHeader,
 } from '@nestjs/swagger';
 import { OrderResponseDto } from './dtos/orderResponse.dto';
 import { OrderStatus } from '@prisma/client';
@@ -37,6 +38,21 @@ export function ApiDocsGetMyOrders() {
             </ul>
             If omitted, all orders are returned.`,
             example: 'pending',
+        }),
+        ApiQuery({
+            name: 'lang',
+            required: false,
+            enum: ['ar', 'en'],
+            description:
+                'Force response language. Defaults to user preference or English.',
+            example: 'ar',
+        }),
+        ApiHeader({
+            name: 'accept-language',
+            description:
+                'Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.',
+            required: false,
+            example: 'ar',
         }),
         ApiResponse({
             status: 200,
@@ -72,6 +88,21 @@ export function ApiDocsGetOrderById() {
         ApiOperation({
             summary: 'Get order by ID',
             description: `Fetches a single order by its ID. Only accessible by the buyer or supplier related to the order.`,
+        }),
+        ApiQuery({
+            name: 'lang',
+            required: false,
+            enum: ['ar', 'en'],
+            description:
+                'Force response language. Defaults to user preference or English.',
+            example: 'ar',
+        }),
+        ApiHeader({
+            name: 'accept-language',
+            description:
+                'Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.',
+            required: false,
+            example: 'ar',
         }),
         ApiResponse({
             status: 200,

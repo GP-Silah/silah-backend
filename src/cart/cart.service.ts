@@ -27,6 +27,12 @@ export class CartService {
             ? lang.toLowerCase()
             : 'en'; // fallback to English
 
+        // Calculate distinct product count
+        const totalItemsCount = cart.suppliers.reduce(
+            (acc, s) => acc + s.cartItems.length,
+            0,
+        );
+
         return {
             cartId: cart.id,
             buyerId: cart.buyerId,
@@ -34,6 +40,7 @@ export class CartService {
             deliveryFees: cart.deliveryFees,
             cartTotal: cart.cartTotal,
             isBought: cart.isBought,
+            totalItemsCount,
             suppliers: await Promise.all(
                 cart.suppliers.map(async (s: any) => ({
                     cartBySupplierId: s.id,
