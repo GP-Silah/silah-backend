@@ -12133,6 +12133,11 @@
             "description": "Whether the cart has been checked out",
             "example": false
           },
+          "totalItemsCount": {
+            "type": "number",
+            "description": "Total number of distinct products in the cart (for badge count)",
+            "example": 3
+          },
           "suppliers": {
             "description": "List of suppliers with their items",
             "type": "array",
@@ -12148,6 +12153,7 @@
           "deliveryFees",
           "cartTotal",
           "isBought",
+          "totalItemsCount",
           "suppliers"
         ]
       },
