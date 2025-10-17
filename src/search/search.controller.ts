@@ -1,12 +1,21 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { SearchService } from './search.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import {
+    ApiDocsGetSearchChats,
     ApiDocsGetSearchProducts,
     ApiDocsGetSearchServices,
+    ApiDocsGetSearchSupplierCatalog,
     ApiDocsGetSearchSuppliers,
     ApiDocsGetSearchUsers,
 } from './search.docs';
+import { ApiDocsJwtAuthGuard } from 'src/auth/decorators/jwt-auth-guard.docs';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Request } from 'express';
+import { ApiDocsRolesGuard } from 'src/auth/decorators/roles-guard.docs';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/enums/userRole.enum';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @ApiTags('Search')
 @Controller('search')
@@ -60,12 +69,26 @@ export class SearchController {
         );
     }
 
-    //TODO: chats srarch
+    @ApiDocsJwtAuthGuard()
+    @UseGuards(JwtAuthGuard)
     @Get('chats')
-    @ApiOperation({
-        deprecated: true,
-        summary: 'Not implemented yet',
-        description: 'This endpoint is a placeholder and not implemented yet.',
-    })
-    async searchChats(@Query('query') query: string) {}
+    @ApiDocsGetSearchChats()
+    async searchChats(@Req() req: Request, @Query('text') text: string) {
+        const userId = req.tokenData!.sub;
+        return this.searchService.searchChats(userId, text);
+    }
+
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @Roles(UserRole.SUPPLIER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Get('supplier/catalog')
+    @ApiDocsGetSearchSupplierCatalog()
+    async searchSupplierCatalog(
+        @Req() req: Request,
+        @Query('name') name: string,
+    ) {
+        const userId = req.tokenData!.sub;
+        return this.searchService.searchSupplierCatalog(userId, name);
+    }
 }

@@ -1,5 +1,11 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+    ApiOkResponse,
+    ApiOperation,
+    ApiQuery,
+    getSchemaPath,
+} from '@nestjs/swagger';
+import { ChatResponseDto } from 'src/chat/dtos/chatResponse.dto';
 import { ProductResponseDto } from 'src/product/dtos/productResponse.dto';
 import { ServiceResponseDto } from 'src/service/dtos/serviceResponse.dto';
 import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';
@@ -139,6 +145,78 @@ export function ApiDocsGetSearchServices() {
         ApiOkResponse({
             description: 'List of matching services',
             type: [ServiceResponseDto],
+        }),
+    );
+}
+
+export function ApiDocsGetSearchChats() {
+    return applyDecorators(
+        ApiOperation({
+            summary: 'Search chats by participant name or its business name',
+            description: `Performs fuzzy search across all chats of the **authenticated user**.<br>
+The search matches either the <code>name</code> or <code>businessName</code> of the **other participant** in each chat.<br><br>
+
+Only chats that belong to the logged-in user are returned.<br>
+Results are ordered by similarity (best match first).<br><br>
+
+This uses the <code>pg_trgm</code> extension for similarity-based matching.
+            `,
+        }),
+        ApiQuery({
+            name: 'text',
+            type: String,
+            description:
+                'Full or partial name or business name of the other chat participant',
+            example: 'Shahad',
+            required: true,
+        }),
+        ApiOkResponse({
+            description: 'List of chats matching the search query',
+            type: [ChatResponseDto],
+        }),
+    );
+}
+
+export function ApiDocsGetSearchSupplierCatalog() {
+    return applyDecorators(
+        ApiOperation({
+            summary: 'Search supplier catalog (products + services)',
+            description: `Allows an authenticated <strong>Supplier</strong> to search within <u>their own catalog</u> for both <strong>Products</strong> and <strong>Services</strong>.<br><br>
+
+Performs fuzzy and full-text search on product and service names.<br>
+Results are limited to items created by the current supplier.<br><br>
+
+Each result includes the supplier's information and related category details.<br><br>
+
+<strong>Returned items may include:</strong>
+<ul>
+  <li><code>ProductResponseDto</code> objects</li>
+  <li><code>ServiceResponseDto</code> objects</li>
+</ul>`,
+        }),
+        ApiQuery({
+            name: 'name',
+            type: String,
+            description:
+                'Full or partial product or service name to search within the supplier catalog',
+            example: 'Red Candle',
+            required: true,
+        }),
+        ApiOkResponse({
+            description:
+                'List of matching products and/or services owned by the authenticated supplier',
+            schema: {
+                oneOf: [
+                    {
+                        type: 'array',
+                        items: { $ref: getSchemaPath(ProductResponseDto) },
+                    },
+                    {
+                        type: 'array',
+                        items: { $ref: getSchemaPath(ServiceResponseDto) },
+                    },
+                ],
+            },
         }),
     );
 }
