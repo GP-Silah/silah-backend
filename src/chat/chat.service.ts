@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     ForbiddenException,
     forwardRef,
     Inject,
@@ -20,6 +21,7 @@ import { UserService } from 'src/user/user.service';
 import { ChatResponseDto } from './dtos/chatResponse.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { ChatGateway } from './chat.gateway';
+import { startOfDay, startOfWeek, startOfMonth } from 'date-fns';
 
 @Injectable()
 export class ChatService {
@@ -74,12 +76,8 @@ export class ChatService {
      */
     async toChatResponseDto(
         chat: Chat & {
-            user1: {
-                user: User;
-            };
-            user2: {
-                user: User;
-            };
+            user1: User;
+            user2: User;
             messages: Message[];
         },
         loggedInUserId: string,
@@ -87,10 +85,10 @@ export class ChatService {
         // Determine the other participant
         const otherUserId = this.getOtherUserId(chat, loggedInUserId);
         const otherUserRaw =
-            otherUserId === chat.user1.user.id ? chat.user1 : chat.user2;
+            otherUserId === chat.user1.id ? chat.user1 : chat.user2;
 
         const otherUser: UserResponseDTO =
-            await this.userService.toUserResponseDTO(otherUserRaw.user);
+            await this.userService.toUserResponseDTO(otherUserRaw);
 
         // Determine the latest message
         let lastMessageText: string | undefined;
@@ -125,33 +123,54 @@ export class ChatService {
         };
     }
 
-    async getAllChats(userId: string): Promise<ChatResponseDto[]> {
+    async getAllChats(
+        userId: string,
+        date: 'all' | 'today' | 'this-week' | 'this-month' = 'all',
+        status: 'all' | 'read' | 'unread' = 'all',
+    ): Promise<ChatResponseDto[]> {
+        // --- Step 1: Determine the date filter (based on latest message) ---
+        const now = new Date();
+        let startDate: Date | undefined;
+
+        switch (date?.toLowerCase()) {
+            case 'today':
+                startDate = startOfDay(now);
+                break;
+            case 'this-week':
+                startDate = startOfWeek(now, { weekStartsOn: 0 }); // Sunday
+                break;
+            case 'this-month':
+                startDate = startOfMonth(now);
+                break;
+            case 'all':
+            case undefined:
+                break;
+            default:
+                throw new BadRequestException(
+                    "Invalid 'date' filter. Use: all, today, this-week, this-month",
+                );
+        }
+
+        // --- Step 2: Base where clause ---
+        const where: any = {
+            OR: [{ user1Id: userId }, { user2Id: userId }],
+        };
+
+        // --- Step 3: Fetch chats with latest message ---
         const chats = await this.prisma.chat.findMany({
-            where: {
-                OR: [{ user1Id: userId }, { user2Id: userId }],
-            },
+            where,
             include: {
-                user1: {
-                    include: {
-                        firstChatUser: true,
-                    },
-                },
-                user2: {
-                    include: {
-                        secondChatUser: true,
-                    },
-                },
+                user1: { include: { firstChatUser: true } },
+                user2: { include: { secondChatUser: true } },
                 messages: {
                     orderBy: { createdAt: 'desc' },
-                    take: 1, // only latest message
+                    take: 1,
                 },
             },
-            orderBy: {
-                updatedAt: 'desc', // most recent chats first
-            },
+            orderBy: { updatedAt: 'desc' },
         });
 
-        // Compute unread counts efficiently (for optimization)
+        // --- Step 4: Precompute unread counts ---
         const unreadCounts = await this.prisma.message.groupBy({
             by: ['chatId'],
             where: {
@@ -165,10 +184,26 @@ export class ChatService {
             unreadCounts.map((c) => [c.chatId, c._count._all]),
         );
 
-        // Map each chat to a DTO
+        // --- Step 5: Filter chats by date or read status ---
+        const filteredChats = chats.filter((chat) => {
+            const latestMessage = chat.messages[0];
+            if (!latestMessage) return false;
+
+            // Filter by date (compare latest message timestamp)
+            if (startDate && latestMessage.createdAt < startDate) return false;
+
+            // Filter by status
+            const unreadCount = unreadMap[chat.id] ?? 0;
+            if (status === 'unread' && unreadCount === 0) return false;
+            if (status === 'read' && unreadCount > 0) return false;
+
+            return true;
+        });
+
+        // --- Step 6: Map to DTOs ---
         const dtos = await Promise.all(
-            chats.map(async (chat) => {
-                const dto = await this.toChatResponseDto(chat as any, userId); //!
+            filteredChats.map(async (chat) => {
+                const dto = await this.toChatResponseDto(chat as any, userId);
                 dto.unreadCount = unreadMap[chat.id] ?? 0;
                 return dto;
             }),

@@ -9891,9 +9891,53 @@
     },
     "/api/chats/me": {
       "get": {
+        "description": "Fetches all chats for the currently authenticated and verified user.\n                Each chat includes:\n                <ul>\n                    <li>Other user's details</li>\n                    <li>Last message (text or image)</li>\n                    <li>Unread message count</li>\n                    <li>Last message timestamp</li>\n                </ul>\n                <br/>\n                You can optionally filter the chats using query parameters:\n                <ul>\n                    <li><b>date</b> — Filter by recent activity:</li>\n                        <ul>\n                            <li><code>all</code> — All chats (default)</li>\n                            <li><code>today</code> — Chats with messages sent today</li>\n                            <li><code>this-week</code> — Chats active during this week</li>\n                            <li><code>this-month</code> — Chats active during this month</li>\n                        </ul>\n                    <li><b>status</b> — Filter by message read state:</li>\n                        <ul>\n                            <li><code>all</code> — Show all chats (default)</li>\n                            <li><code>unread</code> — Only chats that have unread messages</li>\n                            <li><code>read</code> — Only chats where all messages are read</li>\n                        </ul>\n                </ul>\n                You can combine filters, for example:\n                <code>?date=this-week&status=unread</code> to show unread chats from this week.",
         "operationId": "ChatController_getAllChats",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "date",
+            "required": false,
+            "in": "query",
+            "description": "Filter chats based on latest message date (default: all)",
+            "schema": {
+              "enum": [
+                "all",
+                "today",
+                "this-week",
+                "this-month"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter chats based on read/unread state (default: all)",
+            "schema": {
+              "enum": [
+                "all",
+                "unread",
+                "read"
+              ],
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
+          "200": {
+            "description": "List of chats for the logged-in user (filtered if applicable)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChatResponseDto"
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -9936,6 +9980,9 @@
         },
         "security": [
           {
+            "bearer": []
+          },
+          {
             "cookie": []
           },
           {
@@ -9945,6 +9992,7 @@
             "bearer": []
           }
         ],
+        "summary": "Get all chats of the logged-in user (with optional filters)",
         "tags": [
           "Chats"
         ]
@@ -9952,6 +10000,7 @@
     },
     "/api/chats/me/{id}/messages": {
       "get": {
+        "description": "Fetches all messages for the given <code>chatId</code> that belongs to the logged-in user.\n                Messages include sender/receiver details, text, image (if any), and read status.",
         "operationId": "ChatController_getMessagesForChatById",
         "parameters": [
           {
@@ -9964,6 +10013,19 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Messages for the specified chat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageResponseDto"
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -9989,6 +10051,20 @@
               }
             }
           },
+          "404": {
+            "description": "Chat not found or user not part of it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You are not part of this chat.",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
           "423": {
             "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
             "content": {
@@ -10006,6 +10082,9 @@
         },
         "security": [
           {
+            "bearer": []
+          },
+          {
             "cookie": []
           },
           {
@@ -10015,6 +10094,7 @@
             "bearer": []
           }
         ],
+        "summary": "Get messages for a specific chat",
         "tags": [
           "Chats"
         ]
@@ -10022,6 +10102,7 @@
     },
     "/api/chats/me/{id}/read": {
       "patch": {
+        "description": "Marks messages as read for the given <code>chatId</code>.<br>\n                Only messages received by the current user can be marked as read.<br><br>",
         "operationId": "ChatController_markMessageAsRead",
         "parameters": [
           {
@@ -10035,6 +10116,7 @@
         ],
         "requestBody": {
           "required": true,
+          "description": "Array of message IDs to mark as read",
           "content": {
             "application/json": {
               "schema": {
@@ -10044,6 +10126,33 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "Number of messages marked as read",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "updatedCount": 2,
+                    "message": "2 message(s) marked as read."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid message IDs or chat mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "You are not part of this chat.",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -10086,6 +10195,9 @@
         },
         "security": [
           {
+            "bearer": []
+          },
+          {
             "cookie": []
           },
           {
@@ -10095,6 +10207,7 @@
             "bearer": []
           }
         ],
+        "summary": "Mark one or more messages as read",
         "tags": [
           "Chats"
         ]
@@ -10102,6 +10215,7 @@
     },
     "/api/chats/me/{id}/upload": {
       "post": {
+        "description": "Sends an image message in an existing chat.<br>\n                <strong>Note:</strong> This endpoint requires sending <u>multipart/form-data</u>.<br><br>\n                <strong>File requirements:</strong>\n                <ul>\n                    <li>Field name: <code>file</code></li>\n                    <li>Allowed formats: PNG, JPEG, WEBP</li>\n                    <li>Max size: 5MB</li>\n                </ul>\n            <strong>IMPORTANT:</strong> Please ensure that uploaded images comply with Islamic laws. This means avoiding haram content such as music-related images, depictions of women's bodies (even hands), or any illustrations of living beings (humans, animals, etc.) whether drawn or digital.",
         "operationId": "ChatController_sendImage",
         "parameters": [
           {
@@ -10113,7 +10227,68 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Chat image file (PNG, JPEG, WEBP, max 5MB)"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
         "responses": {
+          "201": {
+            "description": "Image sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "message": "Image sent successfully",
+                    "data": {
+                      "messageId": "msg_123",
+                      "chatId": "chat_456",
+                      "sender": {
+                        "id": "usr_789",
+                        "name": "Shahad Bakery"
+                      },
+                      "receiver": {
+                        "id": "usr_101",
+                        "name": "Customer A"
+                      },
+                      "imageUrl": "https://cdn.example.com/uploads/file.webp",
+                      "isRead": false,
+                      "createdAt": "2025-10-17T15:10:00Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "File validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "File too large (max 5MB) or invalid format (only PNG, JPEG, WEBP allowed)",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized: Token missing or invalid/expired.",
             "content": {
@@ -10156,6 +10331,9 @@
         },
         "security": [
           {
+            "bearer": []
+          },
+          {
             "cookie": []
           },
           {
@@ -10165,6 +10343,24 @@
             "bearer": []
           }
         ],
+        "summary": "Send an image in a chat",
+        "tags": [
+          "Chats"
+        ]
+      }
+    },
+    "/api/chats/fake/websocket-guide": {
+      "get": {
+        "deprecated": true,
+        "description": "⚠️ **This endpoint does NOT exist in the real API.**  \nIt is a _Swagger-only documentation_ to help developers understand how to connect to and use the **Chat WebSocket Gateway**.\n\n**Base Socket URL:**  \n`https://api.silah.site` (same host as REST API, automatically maps HTTPS to WSS)  \n**Namespace:** Default (no prefix)  \n**Authorization:** Token is sent via cookies (JWT in `token` cookie)\n\n### Available Events\n\n| Event          | Direction      | Description                                                        | Example Payload |\n|----------------|----------------|--------------------------------------------------------------------|----------------|\n| `join_user`    | client → server | Joins the user's personal room for receiving direct notifications | `{}` |\n| `join_chat`    | client → server | Join a chat room to receive its messages                          | `{ \"chatId\": \"chat_123\" }` |\n| `send_message` | client → server | Sends a text message. If no `chatId` provided, a new chat is auto-created | `{ \"receiverId\": \"user_456\", \"chatId\": \"chat_123\", \"text\": \"السلام عليكم\" }` |\n| `new_message`  | server → client | Emitted when a new message is received in the joined chat room     | See below |\n| `typing`       | client → server | Notifies others in the chat that the user is typing               | `{ \"chatId\": \"chat_123\" }` |\n| `user_typing`  | server → client | Broadcasted when someone else in the chat is typing               | `{ \"userId\": \"user_123\" }` |\n\n### Detailed Example Payloads\n\n**new_message (server → client):**\n\n```json\n{\n  \"messageId\": \"msg_abc\",\n  \"chatId\": \"chat_123\",\n  \"sender\": { \"id\": \"user_123\", \"name\": \"Shahad Bakery\" },\n  \"receiver\": { \"id\": \"user_456\", \"name\": \"Client\" },\n  \"text\": \"مرحبا!\",\n  \"createdAt\": \"2025-10-17T15:20:00Z\"\n}\n```\n\n### Successful Connection Example (Client)\n\n```js\nimport { io } from \"socket.io-client\";\n\nconst socket = io(\"https://api.silah.site\", { withCredentials: true });\n\nsocket.emit(\"join_user\");\nsocket.emit(\"join_chat\", \"chat_123\");\nsocket.emit(\"send_message\", { receiverId: \"user_456\", text: \"Hello!\" });\n\nsocket.on(\"new_message\", (message) => console.log(message));\n```\n\n**Note:** The socket connection automatically validates the JWT token from cookies and disconnects unauthorized users.\n      ",
+        "operationId": "ChatController_fakeWebSocketDocs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "This endpoint returns nothing"
+          }
+        },
+        "summary": "⚠️ Swagger-only reference: WebSocket Chat Events Guide (NOT a real endpoint)",
         "tags": [
           "Chats"
         ]
@@ -12697,6 +12893,118 @@
         },
         "required": [
           "notificationIds"
+        ]
+      },
+      "ChatResponseDto": {
+        "type": "object",
+        "properties": {
+          "chatId": {
+            "type": "string",
+            "description": "Unique identifier of the chat",
+            "example": "a3f8b2d6-1b2c-4f59-81b3-2cf8d6a9d3b5"
+          },
+          "otherUser": {
+            "description": "The other participant in this chat (not the logged-in user)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserResponseDTO"
+              }
+            ]
+          },
+          "lastMessageText": {
+            "type": "string",
+            "description": "Text of the latest message in the chat, if any",
+            "example": "Are you available for tomorrow's delivery?"
+          },
+          "lastMessageIsImage": {
+            "type": "boolean",
+            "description": "Indicates whether the latest message in the chat is an image. If true, the frontend can display a label like \"Image\" instead of showing message text. Note: this field does not contain the image URL; it's a simple boolean flag.",
+            "example": true
+          },
+          "lastMessageAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp of when the latest message was sent",
+            "example": "2025-10-13T18:45:00.000Z"
+          },
+          "unreadCount": {
+            "type": "number",
+            "description": "Number of unread messages for the logged-in user in this chat",
+            "example": 2
+          }
+        },
+        "required": [
+          "chatId",
+          "otherUser",
+          "lastMessageAt",
+          "unreadCount"
+        ]
+      },
+      "MessageResponseDto": {
+        "type": "object",
+        "properties": {
+          "messageId": {
+            "type": "string",
+            "description": "Unique identifier of the message",
+            "example": "a9e4dc08-0c63-4c2b-b7f5-41e7e49b6222"
+          },
+          "chatId": {
+            "type": "string",
+            "description": "ID of the chat this message belongs to",
+            "example": "3c2f90b7-6b0e-42d4-a5d3-c7f21c8b1f77"
+          },
+          "sender": {
+            "description": "User who sent the message",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserResponseDTO"
+              }
+            ]
+          },
+          "receiver": {
+            "description": "User who received the message",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserResponseDTO"
+              }
+            ]
+          },
+          "text": {
+            "type": "string",
+            "description": "Text content of the message (if it is not an image-only message)",
+            "example": "Hello! How are you?"
+          },
+          "imageUrl": {
+            "type": "string",
+            "description": "Signed URL from R2 of the image attached to this message (if any). Signed URLs expire 1 hour after creation.",
+            "example": "https://gp-silah.d025be9440ae5eb8295c69a36497276a.r2.cloudflarestorage.com/gp-silah/moon.jpeg-30510246-41f7-4cff-a052-78bcc30f7301.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=...&X-Amz-Date=20250816T131236Z&X-Amz-Expires=3600&X-Amz-Signature=...",
+            "format": "uri"
+          },
+          "isRead": {
+            "type": "boolean",
+            "description": "Whether the receiver has read the message",
+            "example": false
+          },
+          "readAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the message was read (if applicable)",
+            "example": "2025-10-13T18:45:00.000Z"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the message was created/sent",
+            "example": "2025-10-13T18:40:00.000Z"
+          }
+        },
+        "required": [
+          "messageId",
+          "chatId",
+          "sender",
+          "receiver",
+          "isRead",
+          "createdAt"
         ]
       },
       "MarkMessageAsReadDto": {
