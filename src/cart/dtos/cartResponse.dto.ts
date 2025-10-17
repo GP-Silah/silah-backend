@@ -113,6 +113,13 @@ export class CartResponseDto {
     isBought: boolean;
 
     @ApiProperty({
+        description:
+            'Total number of distinct products in the cart (for badge count)',
+        example: 3,
+    })
+    totalItemsCount: number;
+
+    @ApiProperty({
         type: [CartBySupplierResponseDto],
         description: 'List of suppliers with their items',
     })

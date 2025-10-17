@@ -142,6 +142,7 @@ export class ProductService {
         const products = await this.prisma.product.findMany({
             where: {
                 isDeleted: false,
+                supplier: { isStoreClosed: false },
                 ...(isPublishedFilter !== undefined
                     ? { isPublished: isPublishedFilter }
                     : {}),

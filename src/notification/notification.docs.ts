@@ -7,10 +7,11 @@ import {
     ApiNotFoundResponse,
     ApiBody,
     ApiQuery,
+    ApiHeader,
 } from '@nestjs/swagger';
 import { NotificationResponseDto } from './dtos/notificationResponse.dto';
 import { UpdateNotificationPreferencesDto } from './dtos/updateNotificationPreference.dto';
-import { MarkAsReadDto } from './dtos/markReadBulk.dto';
+import { MarkNotificationsAsReadDto } from './dtos/markNotificationsReadBulk.dto';
 import { NotificationType } from '@prisma/client';
 
 export function ApiDocsGetNotificationPreferences() {
@@ -146,6 +147,21 @@ export function ApiDocsGetMyNotifications() {
             enum: NotificationType,
             example: 'NEW_MESSAGE',
         }),
+        ApiQuery({
+            name: 'lang',
+            required: false,
+            enum: ['ar', 'en'],
+            description:
+                'Force response language. Defaults to user preference or English.',
+            example: 'ar',
+        }),
+        ApiHeader({
+            name: 'accept-language',
+            description:
+                'Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.',
+            required: false,
+            example: 'ar',
+        }),
         ApiResponse({
             status: 200,
             description: 'List of notifications',
@@ -199,7 +215,7 @@ export function ApiDocsMarkNotificationsAsReadInBulk() {
             description:
                 'Marks multiple notifications as read using an array of notification IDs.',
         }),
-        ApiBody({ type: MarkAsReadDto }),
+        ApiBody({ type: MarkNotificationsAsReadDto }),
         ApiResponse({
             status: 200,
             description: 'Bulk update result',
@@ -214,7 +230,7 @@ export function ApiDocsMarkNotificationsAsReadInBulk() {
             description: 'No notification IDs provided',
             schema: {
                 example: {
-                    statusCode: 403,
+                    statusCode: 400,
                     message: 'No notification IDs provided',
                     error: 'Forbidden',
                 },
@@ -239,11 +255,20 @@ export function ApiDocsNotificationStream() {
         ApiOperation({
             summary: 'Stream live notifications (SSE)',
             description:
-                'Provides a real-time stream of notifications for the authenticated user via Server-Sent Events.',
+                'Provides a real-time stream of translated notifications for the authenticated user via Server-Sent Events (SSE). The connection closes automatically when the client disconnects.',
         }),
         ApiResponse({
             status: 200,
             description: 'Stream started successfully',
+            headers: {
+                'Content-Type': {
+                    description: 'text/event-stream; charset=utf-8',
+                    schema: {
+                        type: 'string',
+                        example: 'text/event-stream; charset=utf-8',
+                    },
+                },
+            },
             schema: {
                 example: {
                     data: '{"notificationId":"uuid","title":"New Message","content":"You have a new message","sender":{"userId":"uuid","name":"John Doe"},"receiver":{"userId":"uuid","name":"Jane Doe"},"notificationType":"NEW_MESSAGE","isRead":false,"createdAt":"2025-01-01T00:00:00.000Z"}',

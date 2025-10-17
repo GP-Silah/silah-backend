@@ -111,13 +111,14 @@ export class ServiceService {
                 include: { supplier: true, buyer: true },
             });
             if (user?.supplier) {
-                isPublishedFilter = undefined; // supplier sees all products
+                isPublishedFilter = undefined; // supplier sees all services
             }
         }
 
         const services = await this.prisma.service.findMany({
             where: {
                 isDeleted: false,
+                supplier: { isStoreClosed: false },
                 ...(isPublishedFilter !== undefined
                     ? { isPublished: isPublishedFilter }
                     : {}),
@@ -193,7 +194,7 @@ export class ServiceService {
                 include: { supplier: true, buyer: true },
             });
             if (user?.supplier) {
-                isPublishedFilter = undefined; // supplier sees all products
+                isPublishedFilter = undefined; // supplier sees all services
             }
         }
 

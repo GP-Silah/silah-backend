@@ -5,6 +5,7 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import {
+    OrderStatus,
     StoreStatus,
     Supplier,
     SupplierPlan,
@@ -361,6 +362,26 @@ export class SupplierService {
         };
 
         return response;
+    }
+
+    async getPendingOrdersCount(userId: string) {
+        const supplier = await this.prisma.supplier.findUnique({
+            where: { userId },
+            include: { user: true },
+        });
+
+        if (!supplier) {
+            throw new NotFoundException('Supplier not found.');
+        }
+
+        const pendingOrdersCount = await this.prisma.order.count({
+            where: {
+                supplierId: supplier.id,
+                status: OrderStatus.PENDING,
+            },
+        });
+
+        return { count: pendingOrdersCount };
     }
 
     async updateSupplierData(userId: string, dto: UpdateSupplierDto) {

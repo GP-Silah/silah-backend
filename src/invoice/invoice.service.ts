@@ -482,7 +482,7 @@ export class InvoiceService {
             receiverUserId: updatedInvoice.supplier!.userId,
             type: NotificationType.INVOICE_STATUS_CHANGED,
             title: 'Invoice Status Changed!',
-            content: `Invoice from ${updatedInvoice.buyer!.user.name} got ${updatedInvoice.status.toLowerCase}`,
+            content: `Invoice from ${updatedInvoice.buyer!.user.name} got ${updatedInvoice.status}`,
             entityId: updatedInvoice.id,
             entityType: NotificationEntityType.INVOICE,
         });

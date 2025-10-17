@@ -110,6 +110,44 @@ export function ApiDocsGetStockLevels() {
     );
 }
 
+export function ApiDocsGetPendingOrdersCount() {
+    return applyDecorators(
+        ApiBearerAuth(),
+        ApiOperation({
+            summary: 'Get count of pending orders for authenticated supplier',
+            description:
+                'Retrieves the total number of orders with status PENDING for the authenticated supplier. ' +
+                'Useful for showing the supplier how many orders still need processing.',
+        }),
+        ApiResponse({
+            status: 200,
+            description: 'Successfully retrieved pending orders count.',
+            schema: {
+                type: 'object',
+                properties: {
+                    count: {
+                        type: 'number',
+                        example: 5,
+                        description:
+                            'Number of pending orders for the supplier',
+                    },
+                },
+                example: { count: 5 },
+            },
+        }),
+        ApiNotFoundResponse({
+            description: 'Supplier not found for the given user.',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Supplier not found.',
+                    error: 'Not Found',
+                },
+            },
+        }),
+    );
+}
+
 export function ApiDocsUpdateMySupplierData() {
     return applyDecorators(
         ApiOperation({
