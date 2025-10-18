@@ -31,6 +31,7 @@ import { NotificationModule } from './notification/notification.module';
 import { ChatModule } from './chat/chat.module';
 import { GroupPurchaseModule } from './group-purchase/group-purchase.module';
 import { BidModule } from './bid/bid.module';
+import { OfferModule } from './offer/offer.module';
 
 @Module({
     imports: [
@@ -65,6 +66,7 @@ import { BidModule } from './bid/bid.module';
         ChatModule,
         GroupPurchaseModule,
         BidModule,
+        OfferModule,
     ],
     controllers: [AppController, HealthController],
     providers: [

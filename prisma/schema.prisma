@@ -367,18 +367,19 @@ model Bid {
 
 // =========== 💼 OFFER ===========
 model Offer {
-  id                     String   @id @default(uuid())
+  id                     String      @id @default(uuid())
   bidId                  String
-  bid                    Bid      @relation(fields: [bidId], references: [id], onDelete: Cascade)
+  bid                    Bid         @relation(fields: [bidId], references: [id], onDelete: Cascade)
   supplierId             String
-  supplier               Supplier @relation(fields: [supplierId], references: [id])
+  supplier               Supplier    @relation(fields: [supplierId], references: [id])
   proposedAmount         Float
   expectedCompletionTime DateTime
-  offerDetails           String   @db.VarChar(500)
-  executionDetails       String   @db.VarChar(500)
-  notes                  String?  @db.VarChar(500)
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  offerDetails           String      @db.VarChar(500)
+  executionDetails       String      @db.VarChar(500)
+  notes                  String?     @db.VarChar(500)
+  status                 OfferStatus @default(PENDING)
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
 }
 
 // ============ 🧾 INVOICE ===============
@@ -669,4 +670,10 @@ enum BidExpectedResponseTime {
   TWO_WEEKS
   FOUR_WEEKS
   SIX_WEEKS
+}
+
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
 }

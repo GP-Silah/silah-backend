@@ -7,5 +7,6 @@ import { BuyerModule } from 'src/buyer/buyer.module';
     imports: [BuyerModule],
     controllers: [BidController],
     providers: [BidService],
+    exports: [BidService],
 })
 export class BidModule {}
