@@ -326,7 +326,7 @@ model GroupPurchase {
   city                String
   minGroupQuantity    Int
   actualGroupQuantity Int
-  totalPrice          Float // sum of all buyers priceBasedQuantity
+  totalPrice          Float // sum of all buyers totalPrice
   deadline            DateTime
   status              GroupPurchaseStatus @default(OPEN)
   createdAt           DateTime            @default(now())
@@ -344,7 +344,10 @@ model GroupPurchaseBuyer {
   buyer              Buyer         @relation(fields: [buyerId], references: [id])
   quantity           Int
   priceBasedQuantity Float
+  totalPrice         Float // priceBasedQuantity + supplier deliveryFees
   joinedAt           DateTime      @default(now())
+
+  preinvoice PreInvoice?
 
   @@unique([groupPurchaseId, buyerId])
 }
@@ -380,6 +383,8 @@ model Offer {
   status                 OfferStatus @default(PENDING)
   createdAt              DateTime    @default(now())
   updatedAt              DateTime    @updatedAt
+
+  preinvoice PreInvoice?
 }
 
 // ============ 🧾 INVOICE ===============
@@ -408,7 +413,7 @@ model Invoice {
 // ============ 🧾 INVOICE ITEM ===============
 model InvoiceItem {
   id                 Int      @id @default(autoincrement())
-  invoiceId          String // how is the relation
+  invoiceId          String
   invoice            Invoice  @relation(fields: [invoiceId], references: [id])
   name               String   @db.VarChar(60)
   description        String   @db.VarChar(100)
@@ -426,19 +431,22 @@ model InvoiceItem {
 
 // ============ 🧾 PRE-INVOICE ===============
 model PreInvoice {
-  id              String           @id @default(uuid())
-  invoiceId       String?          @unique
-  invoice         Invoice?         @relation(fields: [invoiceId], references: [id])
-  groupPurchaseId String? //TODO: link with groups later
-  buyerId         String?
-  buyer           Buyer?           @relation(fields: [buyerId], references: [id], onDelete: SetNull)
-  supplierId      String?
-  supplier        Supplier?        @relation(fields: [supplierId], references: [id], onDelete: SetNull)
-  productId       String?
-  product         Product?         @relation(fields: [productId], references: [id], onDelete: SetNull)
-  amount          Float //TODO: price_based_quantity at Group_Purchase_Bueyrs + delivery fees when linked with groups later
-  status          PreInvoiceStatus @default(PENDING)
-  createdAt       DateTime         @default(now())
+  id                   String              @id @default(uuid())
+  invoiceId            String?             @unique
+  invoice              Invoice?            @relation(fields: [invoiceId], references: [id])
+  groupPurchaseBuyerId String?             @unique
+  groupPurchaseBuyer   GroupPurchaseBuyer? @relation(fields: [groupPurchaseBuyerId], references: [id])
+  offerId              String?             @unique
+  offer                Offer?              @relation(fields: [offerId], references: [id])
+  buyerId              String?
+  buyer                Buyer?              @relation(fields: [buyerId], references: [id], onDelete: SetNull)
+  supplierId           String?
+  supplier             Supplier?           @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  productId            String?
+  product              Product?            @relation(fields: [productId], references: [id], onDelete: SetNull)
+  amount               Float
+  status               PreInvoiceStatus    @default(PENDING)
+  createdAt            DateTime            @default(now())
 }
 
 // ============ ✍️ REVIEW ===============

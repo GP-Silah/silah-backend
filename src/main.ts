@@ -13,6 +13,10 @@ import { InactiveSupplierResponseDto } from './supplier/dtos/inactiveSupplierRes
 import { CheckoutRedirectDto } from './cart/dtos/checkoutRedirect.dto';
 import { ProductResponseDto } from './product/dtos/productResponse.dto';
 import { ServiceResponseDto } from './service/dtos/serviceResponse.dto';
+import {
+    InvoiceResponseDto,
+    PreInvoiceResponseDto,
+} from './invoice/dtos/invoiceResponse.dto';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -106,6 +110,8 @@ How to use this on frontend:
             CheckoutRedirectDto,
             ProductResponseDto,
             ServiceResponseDto,
+            InvoiceResponseDto,
+            PreInvoiceResponseDto,
         ], // extraModels is crucial when using $ref in oneOf, anyOf, or allOf.
     });
     document.tags = [

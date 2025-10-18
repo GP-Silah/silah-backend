@@ -4,10 +4,12 @@ import { GroupPurchaseController } from './group-purchase.controller';
 import { ProductModule } from 'src/product/product.module';
 import { SupplierModule } from 'src/supplier/supplier.module';
 import { BuyerModule } from 'src/buyer/buyer.module';
+import { GroupPurchaseCronService } from './group-purchase-cron.service';
 
 @Module({
     imports: [ProductModule, SupplierModule, BuyerModule],
     controllers: [GroupPurchaseController],
-    providers: [GroupPurchaseService],
+    providers: [GroupPurchaseService, GroupPurchaseCronService],
+    exports: [GroupPurchaseService],
 })
 export class GroupPurchaseModule {}

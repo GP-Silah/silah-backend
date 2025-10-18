@@ -5,6 +5,8 @@ import {
     PreInvoiceStatus,
 } from '@prisma/client';
 import { BuyerResponseDto } from 'src/buyer/dtos/buyerResponse.dto';
+import { GroupPurchaseBuyerResponseDto } from 'src/group-purchase/dtos/groupPurchaseResponse.dto';
+import { OfferResponseDto } from 'src/offer/dtos/offerResponse.dto';
 import { ProductResponseDto } from 'src/product/dtos/productResponse.dto';
 import { ServiceResponseDto } from 'src/service/dtos/serviceResponse.dto';
 import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';
@@ -48,7 +50,7 @@ export class InvoiceItemResponseDto {
     unitPrice: number;
 
     @ApiProperty({
-        description: 'Total price for this line item (quantity × unit price).',
+        description: 'Total price for this line item (quantity x unit price).',
         example: 1000.0,
     })
     priceBasedQuantity: number;
@@ -93,15 +95,17 @@ export class PreInvoiceResponseDto {
 
     @ApiProperty({
         description:
-            'Buyer who owns this pre-invoice (null if his account is deleted).',
+            'Buyer who owns this pre-invoice (null if account is deleted).',
         type: BuyerResponseDto,
+        required: false,
     })
     buyer?: BuyerResponseDto;
 
     @ApiProperty({
         description:
-            'Supplier associated with this pre-invoice (null if his account is deleted).',
+            'Supplier associated with this pre-invoice (null if account is deleted).',
         type: SupplierResponseDto,
+        required: false,
     })
     supplier?: SupplierResponseDto;
 
@@ -112,6 +116,21 @@ export class PreInvoiceResponseDto {
         required: false,
     })
     product?: ProductResponseDto;
+
+    @ApiProperty({
+        description: 'The offer associated with this pre-invoice, if any.',
+        type: OfferResponseDto,
+        required: false,
+    })
+    offer?: OfferResponseDto;
+
+    @ApiProperty({
+        description:
+            'The group purchase buyer relation for this pre-invoice, if any.',
+        type: GroupPurchaseBuyerResponseDto,
+        required: false,
+    })
+    groupPurchaseBuyer?: GroupPurchaseBuyerResponseDto;
 
     @ApiProperty({
         description: '(unit price x quantity) + supplier delivery fees.',

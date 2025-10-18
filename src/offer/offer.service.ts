@@ -11,9 +11,11 @@ import { CreateOfferDto } from './dtos/createOffer.dto';
 import { OfferResponseDto } from './dtos/offerResponse.dto';
 import {
     BidStatus,
+    InvoiceTermsOfPayment,
     NotificationEntityType,
     NotificationType,
     OfferStatus,
+    PreInvoiceStatus,
 } from '@prisma/client';
 import { NotificationService } from 'src/notification/notification.service';
 
@@ -210,7 +212,17 @@ export class OfferService {
             },
         });
 
-        //TODO: 6. Create preinvocie
+        // 6. Create pre-invoice for the offer
+        const preInvoice = await this.prisma.preInvoice.create({
+            data: {
+                offerId: newOffer.id, // link pre-invoice to this offer
+                buyerId: newOffer.bid.buyerId, // the buyer of the bid
+                supplierId: newOffer.supplierId, // the supplier creating the offer
+                productId: null,
+                amount: dto.proposedAmount, // amount based on the offer
+                status: PreInvoiceStatus.PENDING, // initial status
+            },
+        });
 
         // 7. Send a notification for the buyer
         await this.notificationService.createNotification({
@@ -278,24 +290,126 @@ export class OfferService {
             },
         });
 
-        //TODO: 6. Upgrade preinvoice in case of accepted, otherwise mark preinvocie status as failed
+        // 6. Upgrade preinvoice in case of accepted, otherwise mark preinvocie status as failed
+        // Get the pre-invoice of the updated offer
+        const offerPreInvoice = await this.prisma.preInvoice.findUnique({
+            where: { offerId: updatedOffer.id },
+        });
 
-        // 7. Send a notification for the supplier
+        if (offerPreInvoice) {
+            if (status === OfferStatus.ACCEPTED) {
+                // 1. Create an actual invoice based on the pre-invoice
+                const newInvoice = await this.prisma.invoice.create({
+                    data: {
+                        buyerId: offerPreInvoice.buyerId,
+                        supplierId: offerPreInvoice.supplierId,
+                        deliveryDate: updatedOffer.expectedCompletionTime,
+                        termsOfPayment: InvoiceTermsOfPayment.FULL,
+                        uponDeliveryAmount: offerPreInvoice.amount,
+                        amount: offerPreInvoice.amount,
+                        notesAndTerms: `System Note: This invoice was automatically created because the offer (${updatedOffer.id}) from supplier "${updatedOffer.supplier.user.businessName}" for your bid "${updatedOffer.bid.bidName}" was accepted.`,
+                        preInvoice: { connect: { id: offerPreInvoice.id } },
+                    },
+                });
+
+                // 2. Update the pre-invoice to link it to the newly created invoice and mark it successful
+                await this.prisma.preInvoice.update({
+                    where: { id: offerPreInvoice.id },
+                    data: {
+                        status: PreInvoiceStatus.SUCCESSFUL,
+                        invoiceId: newInvoice.id,
+                    },
+                });
+            } else {
+                // Offer declined → mark pre-invoice as failed
+                await this.prisma.preInvoice.update({
+                    where: { id: offerPreInvoice.id },
+                    data: { status: PreInvoiceStatus.FAILED },
+                });
+            }
+        }
+
+        // 7. Notify the supplier about their offer’s status
         await this.notificationService.createNotification({
             senderUserId: updatedOffer.bid.buyer.userId,
             receiverUserId: updatedOffer.supplier.userId,
             type: NotificationType.BID_STATUS_CHANGED,
             title: 'Offer Status Changed!',
-            content: `Your offer ${updatedOffer.id} got ${updatedOffer.status}`,
+            content: `Your offer ${updatedOffer.id} got ${updatedOffer.status.toLowerCase()}`,
             entityId: updatedOffer.id,
             entityType: NotificationEntityType.OFFER,
         });
 
-        // 8. Mark other offers of the same bid as DECLINED automatically
+        // 8. If accepted -> decline all other offers automatically
+        let declinedOffersInfo: {
+            offerId: string;
+            supplierUserId: string;
+            supplierName: string;
+        }[] = [];
 
-        //TODO: 9. Mark preinvocies status as failed for other participant suppliers
+        if (status === OfferStatus.ACCEPTED) {
+            // Get other offers for the same bid
+            const otherOffers = await this.prisma.offer.findMany({
+                where: {
+                    bidId: updatedOffer.bidId,
+                    NOT: { id: offerId },
+                    status: OfferStatus.PENDING,
+                },
+                include: {
+                    supplier: { include: { user: true } },
+                },
+            });
 
-        // 10. Send notifications for declined suppliers
+            if (otherOffers.length > 0) {
+                // Decline them in one go
+                await this.prisma.offer.updateMany({
+                    where: {
+                        id: { in: otherOffers.map((o) => o.id) },
+                    },
+                    data: { status: OfferStatus.DECLINED },
+                });
+
+                // Collect info for later notification use
+                declinedOffersInfo = otherOffers.map((offer) => ({
+                    offerId: offer.id,
+                    supplierUserId: offer.supplier.userId,
+                    supplierName: offer.supplier.user.name,
+                }));
+            }
+
+            // 9. Fail all other pre-invoices of declined offers automatically
+            if (declinedOffersInfo.length > 0) {
+                const otherPreInvoices = await this.prisma.preInvoice.findMany({
+                    where: {
+                        offerId: {
+                            in: declinedOffersInfo.map((o) => o.offerId),
+                        },
+                    },
+                });
+
+                await this.prisma.preInvoice.updateMany({
+                    where: {
+                        id: { in: otherPreInvoices.map((pi) => pi.id) },
+                    },
+                    data: { status: PreInvoiceStatus.FAILED },
+                });
+            }
+        }
+
+        // 10. Send notifications for declined suppliers (batched)
+        await Promise.all(
+            declinedOffersInfo.map((declined) =>
+                this.notificationService.createNotification({
+                    senderUserId: updatedOffer.bid.buyer.userId,
+                    receiverUserId: declined.supplierUserId,
+                    type: NotificationType.BID_STATUS_CHANGED,
+                    title: 'Offer Declined',
+                    content: `Your offer ${declined.offerId} has been declined because another offer was accepted.`,
+                    entityId: declined.offerId,
+                    entityType: NotificationEntityType.OFFER,
+                }),
+            ),
+        );
 
         // 11. Return dto
         return this.toOfferResponseDto(updatedOffer);

@@ -12,7 +12,17 @@ import {
     GroupPurchaseBuyerResponseDto,
     GroupPurchaseResponseDto,
 } from './dtos/groupPurchaseResponse.dto';
-import { GroupPurchaseDeadline, GroupPurchaseStatus } from '@prisma/client';
+import {
+    GroupPurchaseDeadline,
+    GroupPurchaseStatus,
+    InvoiceStatus,
+    InvoiceTermsOfPayment,
+    NotificationEntityType,
+    NotificationType,
+    PreInvoiceStatus,
+} from '@prisma/client';
+import { addDays } from 'date-fns';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class GroupPurchaseService {
@@ -21,12 +31,30 @@ export class GroupPurchaseService {
         private readonly productService: ProductService,
         private readonly supplierService: SupplierService,
         private readonly buyerService: BuyerService,
+        private readonly notificationService: NotificationService,
     ) {}
 
+    // --- 1. Map GroupPurchaseBuyer to DTO ---
+    async toGroupPurchaseBuyerResponseDto(
+        buyerRelation: any,
+    ): Promise<GroupPurchaseBuyerResponseDto> {
+        const buyerDto = new GroupPurchaseBuyerResponseDto();
+        buyerDto.groupPurchaseBuyerId = buyerRelation.id;
+        buyerDto.quantity = buyerRelation.quantity;
+        buyerDto.priceBasedQuantity = buyerRelation.priceBasedQuantity;
+        buyerDto.joinedAt = buyerRelation.joinedAt;
+        buyerDto.buyer = await this.buyerService.toBuyerResponseDto(
+            buyerRelation.buyer.user,
+            buyerRelation.buyer,
+        );
+        return buyerDto;
+    }
+
+    // --- 2. Map GroupPurchase to DTO ---
     async toGroupPurchaseResponseDto(
         groupPurchase: any,
     ): Promise<GroupPurchaseResponseDto> {
-        // Make sure related entities are loaded
+        // Load relations if not included
         if (
             !groupPurchase.product ||
             !groupPurchase.supplier ||
@@ -38,9 +66,7 @@ export class GroupPurchaseService {
                     product: { include: { category: true } },
                     supplier: { include: { user: true } },
                     joinedBuyers: {
-                        include: {
-                            buyer: { include: { user: true } },
-                        },
+                        include: { buyer: { include: { user: true } } },
                     },
                 },
             });
@@ -49,7 +75,6 @@ export class GroupPurchaseService {
         const product = groupPurchase.product;
         const supplier = groupPurchase.supplier;
 
-        // Compute derived fields
         const remainingQuantity = Math.max(
             0,
             groupPurchase.minGroupQuantity - groupPurchase.actualGroupQuantity,
@@ -63,7 +88,6 @@ export class GroupPurchaseService {
               )
             : 0;
 
-        // Base fields
         const dto = new GroupPurchaseResponseDto();
         dto.groupPurchaseId = groupPurchase.id;
         dto.city = groupPurchase.city;
@@ -77,27 +101,16 @@ export class GroupPurchaseService {
         dto.status = groupPurchase.status;
         dto.createdAt = groupPurchase.createdAt;
 
-        // Relations
         dto.product = await this.productService.toProductResponseDto(product);
         dto.supplier = await this.supplierService.toSupplierResponseDTO(
             supplier.user,
             supplier,
         );
 
-        // Joined buyers
         dto.joinedBuyers = await Promise.all(
-            groupPurchase.buyers.map(async (buyerRelation) => {
-                const buyerDto = new GroupPurchaseBuyerResponseDto();
-                buyerDto.groupPurchaseBuyerId = buyerRelation.id;
-                buyerDto.quantity = buyerRelation.quantity;
-                buyerDto.priceBasedQuantity = buyerRelation.priceBasedQuantity;
-                buyerDto.joinedAt = buyerRelation.joinedAt;
-                buyerDto.buyer = await this.buyerService.toBuyerResponseDto(
-                    buyerRelation.buyer.user,
-                    buyerRelation.buyer,
-                );
-                return buyerDto;
-            }),
+            groupPurchase.joinedBuyers.map((buyerRelation) =>
+                this.toGroupPurchaseBuyerResponseDto(buyerRelation),
+            ),
         );
 
         return dto;
@@ -257,7 +270,8 @@ export class GroupPurchaseService {
 
         // 4. Compute initial values
         const groupUnitPrice = product.groupPurchasePrice!;
-        const totalPrice = quantity * groupUnitPrice;
+        const priceBasedQuantity = quantity * groupUnitPrice;
+        const totalPrice = priceBasedQuantity + product.supplier!.deliveryFees;
 
         const days = this.deadlineDaysFromEnum(product.groupPurchaseDuration!);
         const deadline = new Date();
@@ -278,7 +292,8 @@ export class GroupPurchaseService {
                     create: {
                         buyerId: buyer.id,
                         quantity,
-                        priceBasedQuantity: totalPrice,
+                        priceBasedQuantity,
+                        totalPrice,
                         joinedAt: new Date(),
                     },
                 },
@@ -292,7 +307,17 @@ export class GroupPurchaseService {
             },
         });
 
-        //TODO: 6. Create preinvoice
+        // 6. Create preinvoice
+        const preInvoice = await this.prisma.preInvoice.create({
+            data: {
+                groupPurchaseBuyerId: groupPurchase.joinedBuyers[0].id,
+                buyerId: buyer.id,
+                supplierId: groupPurchase.supplierId,
+                productId: product.id,
+                amount: totalPrice,
+                status: PreInvoiceStatus.PENDING,
+            },
+        });
 
         // 7. Return response DTO
         return this.toGroupPurchaseResponseDto(groupPurchase);
@@ -343,7 +368,9 @@ export class GroupPurchaseService {
         const newActual = group.actualGroupQuantity + quantity;
         const groupUnitPrice = product.groupPurchasePrice!;
         const addedPrice = quantity * groupUnitPrice;
-        const newTotalPrice = group.totalPrice + addedPrice;
+        const totalPrice = addedPrice + group.supplier.deliveryFees;
+        const newPriceBasedQuantity = group.totalPrice + addedPrice;
+        const newTotalPrice = group.totalPrice + totalPrice;
 
         // if (newActual > group.minGroupQuantity * 5) {
         //     // just to prevent weird data errors or overbuying
@@ -376,6 +403,7 @@ export class GroupPurchaseService {
                         buyerId: buyer.id,
                         quantity,
                         priceBasedQuantity: addedPrice,
+                        totalPrice,
                         joinedAt: new Date(),
                     },
                 },
@@ -391,8 +419,74 @@ export class GroupPurchaseService {
         });
 
         // 6. Create preinvocie for the new joined buyer
+        const newJoinedBuyer = await this.prisma.groupPurchaseBuyer.findFirst({
+            where: {
+                buyerId: buyer.id,
+                groupPurchaseId: groupId,
+            },
+            include: { buyer: { include: { user: true } } },
+        });
 
-        // 7. If group successeded create invoices for every joiend buyer
+        const preInvoice = await this.prisma.preInvoice.create({
+            data: {
+                groupPurchaseBuyerId: newJoinedBuyer!.id,
+                buyerId: buyer.id,
+                supplierId: updatedGroup.supplierId,
+                productId: product.id,
+                amount: totalPrice,
+                status: PreInvoiceStatus.PENDING,
+            },
+        });
+
+        // 7. If group succeeded, create invoices for every joined buyer
+        if (updatedGroup.status === GroupPurchaseStatus.CLOSED) {
+            // Fetch all pre-invoices for this group
+            const preInvoices = await this.prisma.preInvoice.findMany({
+                where: {
+                    groupPurchaseBuyer: { groupPurchaseId: groupId },
+                },
+                include: {
+                    buyer: true,
+                    supplier: true,
+                    groupPurchaseBuyer: true,
+                },
+            });
+
+            for (const pre of preInvoices) {
+                // Create invoice
+                const invoice = await this.prisma.invoice.create({
+                    data: {
+                        buyerId: pre.buyerId!,
+                        supplierId: pre.supplierId!,
+                        deliveryDate: addDays(new Date(), 30),
+                        termsOfPayment: InvoiceTermsOfPayment.FULL,
+                        uponDeliveryAmount: pre.amount,
+                        amount: pre.amount,
+                        notesAndTerms: `System Note: This invoice was automatically generated because the group purchase for "${updatedGroup.product.name}" has successfully met all requirements. The expected delivery date has been set to 30 days from the invoice creation by system default.`,
+                        status: InvoiceStatus.PENDING,
+                    },
+                });
+
+                // Link pre-invoice to this invoice and mark success
+                await this.prisma.preInvoice.update({
+                    where: { id: pre.id },
+                    data: {
+                        invoiceId: invoice.id,
+                        status: PreInvoiceStatus.SUCCESSFUL,
+                    },
+                });
+
+                await this.notificationService.createNotification({
+                    senderUserId: pre.supplier!.userId,
+                    receiverUserId: pre.buyer!.userId,
+                    type: NotificationType.GROUP_PURCHASE_STATUS_CHANGED,
+                    title: 'Group Purchase Status Changed!',
+                    content: `The group purchase "${group.id}" has closed successfully. Your pre-invoice has been upgraded to a full invoice. You can procced with payment now.`,
+                    entityId: group.id,
+                    entityType: NotificationEntityType.GROUP_PURCHASE,
+                });
+            }
+        }
 
         // 8. Return DTO
         return this.toGroupPurchaseResponseDto(updatedGroup);

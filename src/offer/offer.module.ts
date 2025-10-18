@@ -8,5 +8,6 @@ import { SupplierModule } from 'src/supplier/supplier.module';
     imports: [BidModule, SupplierModule],
     controllers: [OfferController],
     providers: [OfferService],
+    exports: [OfferService],
 })
 export class OfferModule {}
