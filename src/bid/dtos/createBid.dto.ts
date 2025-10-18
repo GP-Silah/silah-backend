@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BidExpectedResponseTime } from '@prisma/client';
 import { IsString, IsNotEmpty, IsDateString, IsEnum } from 'class-validator';
+import { IsFutureDate } from 'src/invoice/dtos/createInvoice.dto';
 
 export class CreateBidDto {
     @ApiProperty({
@@ -20,11 +21,11 @@ export class CreateBidDto {
     mainActivity: string;
 
     @ApiProperty({
-        description:
-            'Deadline for suppliers to submit offers (ISO date string)',
-        example: '2025-11-30T23:59:59Z',
+        description: 'Deadline for suppliers to submit offers',
+        example: '2025-11-30',
     })
     @IsDateString()
+    @IsFutureDate({ message: 'Submission deadline must be in the future' })
     submissionDeadline: Date;
 
     @ApiProperty({
