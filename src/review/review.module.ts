@@ -17,5 +17,6 @@ import { TranslationModule } from 'src/translation/translation.module';
     ],
     controllers: [ReviewController],
     providers: [ReviewService],
+    exports: [ReviewService],
 })
 export class ReviewModule {}
