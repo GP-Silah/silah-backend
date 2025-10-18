@@ -32,6 +32,11 @@ export class GroupPurchaseController {
         );
     }
 
+    @Get(':id')
+    async getGroupById(@Param('id') groupId: string) {
+        return this.groupPurchaseService.getGroupById(groupId);
+    }
+
     @ApiDocsJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Get('products/:id/suitable-groups')

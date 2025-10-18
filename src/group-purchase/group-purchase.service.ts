@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { BuyerService } from 'src/buyer/buyer.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductService } from 'src/product/product.service';
@@ -7,7 +12,7 @@ import {
     GroupPurchaseBuyerResponseDto,
     GroupPurchaseResponseDto,
 } from './dtos/groupPurchaseResponse.dto';
-import { GroupPurchaseStatus } from '@prisma/client';
+import { GroupPurchaseDeadline, GroupPurchaseStatus } from '@prisma/client';
 
 @Injectable()
 export class GroupPurchaseService {
@@ -130,6 +135,18 @@ export class GroupPurchaseService {
         return dtoList;
     }
 
+    async getGroupById(groupId: string) {
+        const group = this.prisma.groupPurchase.findUnique({
+            where: { id: groupId },
+        });
+        if (!group) {
+            throw new NotFoundException(
+                `Group Purchase with ID ${groupId} not found`,
+            );
+        }
+        return this.toGroupPurchaseResponseDto(group);
+    }
+
     async getSuitableGroupPurchasesForProduct(
         userId: string,
         productId: string,
@@ -188,15 +205,196 @@ export class GroupPurchaseService {
         return dtoList;
     }
 
-    async startGroupPurchase(
-        userId: string,
-        productId: string,
-        quantity: number,
-    ) {}
+    // --- map enum to number of days ---
+    private deadlineDaysFromEnum(
+        enumValue?: GroupPurchaseDeadline | null,
+    ): number {
+        // map string enum values to days
+        const map: Record<string, number> = {
+            THREE_DAYS: 3,
+            FIVE_DAYS: 5,
+            SEVEN_DAYS: 7,
+        };
 
-    async joinGroupPurchase(
-        userId: string,
-        groupId: string,
-        quantity: number,
-    ) {}
+        if (!enumValue) return 3; // fallback default
+        return map[enumValue] ?? 3;
+    }
+
+    async startGroupPurchase(userId, productId, quantity) {
+        // 1. Validate buyer exists
+        const buyer = await this.prisma.buyer.findUnique({
+            where: { userId },
+            include: { user: true },
+        });
+        if (!buyer) throw new NotFoundException('Buyer not found');
+        const city = buyer.user.city.toLowerCase();
+
+        // 2. Validate product exists and published
+        const product = await this.prisma.product.findFirst({
+            where: {
+                id: productId,
+                isDeleted: false,
+                isPublished: true,
+                supplier: { isStoreClosed: false },
+            },
+            include: { supplier: { include: { user: true } } },
+        });
+        if (!product) throw new NotFoundException('Product not found');
+        if (!product.allowGroupPurchase) {
+            throw new BadRequestException(
+                'Group purchases are not enabled for this product',
+            );
+        }
+
+        // 3. Check if an open group purchase already exists
+        const existingOpenGroup = await this.prisma.groupPurchase.findFirst({
+            where: { productId, status: 'OPEN', city },
+        });
+        if (existingOpenGroup)
+            throw new ConflictException(
+                'There is already an open group purchase for this product',
+            );
+
+        // 4. Compute initial values
+        const groupUnitPrice = product.groupPurchasePrice!;
+        const totalPrice = quantity * groupUnitPrice;
+
+        const days = this.deadlineDaysFromEnum(product.groupPurchaseDuration!);
+        const deadline = new Date();
+        deadline.setDate(deadline.getDate() + days);
+
+        // 5. Create group purchase
+        const groupPurchase = await this.prisma.groupPurchase.create({
+            data: {
+                productId,
+                supplierId: product.supplierId!,
+                city,
+                minGroupQuantity: product.minGroupOrderQuantity!,
+                actualGroupQuantity: quantity,
+                totalPrice,
+                deadline,
+                status: GroupPurchaseStatus.OPEN,
+                joinedBuyers: {
+                    create: {
+                        buyerId: buyer.id,
+                        quantity,
+                        priceBasedQuantity: totalPrice,
+                        joinedAt: new Date(),
+                    },
+                },
+            },
+            include: {
+                product: { include: { category: true } },
+                supplier: { include: { user: true } },
+                joinedBuyers: {
+                    include: { buyer: { include: { user: true } } },
+                },
+            },
+        });
+
+        //TODO: 6. Create preinvoice
+
+        // 7. Return response DTO
+        return this.toGroupPurchaseResponseDto(groupPurchase);
+    }
+
+    async joinGroupPurchase(userId: string, groupId: string, quantity: number) {
+        // 1. Validate buyer
+        const buyer = await this.prisma.buyer.findUnique({
+            where: { userId },
+            include: { user: true },
+        });
+        if (!buyer) throw new NotFoundException('Buyer not found');
+        const city = buyer.user.city.toLowerCase();
+
+        // 2. Validate group
+        const group = await this.prisma.groupPurchase.findUnique({
+            where: { id: groupId },
+            include: {
+                product: true,
+                supplier: { include: { user: true } },
+                joinedBuyers: { include: { buyer: true } },
+            },
+        });
+        if (!group) throw new NotFoundException('Group purchase not found');
+
+        if (group.status !== GroupPurchaseStatus.OPEN)
+            throw new BadRequestException('This group purchase is not open');
+
+        if (group.deadline < new Date())
+            throw new BadRequestException('This group purchase has expired');
+
+        if (group.city.toLowerCase() !== city)
+            throw new BadRequestException(
+                'You can only join group purchases in your city',
+            );
+
+        // 3. Check if already joined
+        const alreadyJoined = await this.prisma.groupPurchaseBuyer.findFirst({
+            where: { buyerId: buyer.id, groupPurchaseId: groupId },
+        });
+        if (alreadyJoined)
+            throw new ConflictException(
+                'You already joined this group purchase',
+            );
+
+        // 4. Compute new totals
+        const product = group.product;
+        const newActual = group.actualGroupQuantity + quantity;
+        const groupUnitPrice = product.groupPurchasePrice!;
+        const addedPrice = quantity * groupUnitPrice;
+        const newTotalPrice = group.totalPrice + addedPrice;
+
+        // if (newActual > group.minGroupQuantity * 5) {
+        //     // just to prevent weird data errors or overbuying
+        //     throw new BadRequestException('Group purchase limit exceeded');
+        // }
+
+        // Compute number of buyers (existing + new one)
+        const currentBuyerCount = group.joinedBuyers.length;
+        const newBuyerCount = currentBuyerCount + 1;
+
+        // Determine new status
+        let newStatus: GroupPurchaseStatus = group.status;
+        if (
+            newActual >= group.minGroupQuantity && // quantity goal met
+            newBuyerCount >= 5 // at least 5 buyers joined
+        ) {
+            newStatus = GroupPurchaseStatus.CLOSED;
+        } else {
+            newStatus = GroupPurchaseStatus.OPEN;
+        }
+
+        // 5. Add buyer and update totals
+        const updatedGroup = await this.prisma.groupPurchase.update({
+            where: { id: groupId },
+            data: {
+                actualGroupQuantity: newActual,
+                totalPrice: newTotalPrice,
+                joinedBuyers: {
+                    create: {
+                        buyerId: buyer.id,
+                        quantity,
+                        priceBasedQuantity: addedPrice,
+                        joinedAt: new Date(),
+                    },
+                },
+                status: newStatus,
+            },
+            include: {
+                product: { include: { category: true } },
+                supplier: { include: { user: true } },
+                joinedBuyers: {
+                    include: { buyer: { include: { user: true } } },
+                },
+            },
+        });
+
+        // 6. Create preinvocie for the new joined buyer
+
+        // 7. If group successeded create invoices for every joiend buyer
+
+        // 8. Return DTO
+        return this.toGroupPurchaseResponseDto(updatedGroup);
+    }
 }
