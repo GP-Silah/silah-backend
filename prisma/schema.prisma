@@ -76,6 +76,7 @@ model Supplier {
   invoices        Invoice[]
   recievedReviews Review[]
   groupPurchases  GroupPurchase[]
+  writtenOffers   Offer[]
 }
 
 // ============ 🛂 SUBSCRIPTIONS ==============
@@ -106,6 +107,7 @@ model Buyer {
   writtenReviews       Review[]
   writtenItemsReviews  ItemReview[]
   joinedGroupPurchases GroupPurchaseBuyer[]
+  createdBids          Bid[]
 }
 
 // ============  💳 CARD ===============
@@ -345,6 +347,38 @@ model GroupPurchaseBuyer {
   joinedAt           DateTime      @default(now())
 
   @@unique([groupPurchaseId, buyerId])
+}
+
+// =========== ⚖️ BID ===========
+model Bid {
+  id                   String                  @id @default(uuid())
+  buyerId              String
+  buyer                Buyer                   @relation(fields: [buyerId], references: [id])
+  bidName              String                  @db.VarChar(100)
+  mainActivity         String                  @db.VarChar(500)
+  submissionDeadline   DateTime
+  expectedResponseTime BidExpectedResponseTime
+  status               BidStatus               @default(OPEN)
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+
+  offers Offer[]
+}
+
+// =========== 💼 OFFER ===========
+model Offer {
+  id                     String   @id @default(uuid())
+  bidId                  String
+  bid                    Bid      @relation(fields: [bidId], references: [id], onDelete: Cascade)
+  supplierId             String
+  supplier               Supplier @relation(fields: [supplierId], references: [id])
+  proposedAmount         Float
+  expectedCompletionTime DateTime
+  offerDetails           String   @db.VarChar(500)
+  executionDetails       String   @db.VarChar(500)
+  notes                  String?  @db.VarChar(500)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 }
 
 // ============ 🧾 INVOICE ===============
@@ -623,4 +657,16 @@ enum NotificationEntityType {
 enum GroupPurchaseStatus {
   OPEN
   CLOSED
+}
+
+enum BidStatus {
+  OPEN
+  CLOSED
+}
+
+enum BidExpectedResponseTime {
+  ONE_WEEK
+  TWO_WEEKS
+  FOUR_WEEKS
+  SIX_WEEKS
 }

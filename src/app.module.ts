@@ -30,6 +30,7 @@ import { ReviewModule } from './review/review.module';
 import { NotificationModule } from './notification/notification.module';
 import { ChatModule } from './chat/chat.module';
 import { GroupPurchaseModule } from './group-purchase/group-purchase.module';
+import { BidModule } from './bid/bid.module';
 
 @Module({
     imports: [
@@ -63,6 +64,7 @@ import { GroupPurchaseModule } from './group-purchase/group-purchase.module';
         NotificationModule,
         ChatModule,
         GroupPurchaseModule,
+        BidModule,
     ],
     controllers: [AppController, HealthController],
     providers: [
