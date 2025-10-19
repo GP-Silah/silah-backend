@@ -11,7 +11,7 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { ApiDocsJwtAuthGuard } from 'src/auth/decorators/jwt-auth-guard.docs';
 import { ApiDocsRolesGuard } from 'src/auth/decorators/roles-guard.docs';
@@ -96,27 +96,6 @@ export class InvoiceController {
     async createInvoice(@Body() dto: CreateInvoiceDto) {
         return this.invoiceService.createInvoice(dto);
     }
-
-    //TODO: when groups are done
-    @ApiDocsJwtAuthGuard()
-    @ApiDocsRolesGuard()
-    @ApiDocsVerifiedGuard()
-    @Roles(UserRole.BUYER)
-    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
-    @Post(':groupId')
-    @ApiOperation({
-        deprecated: true,
-        summary: 'Not implemented yet',
-        description: 'This endpoint is a placeholder and not implemented yet.',
-    })
-    async createPreInvoice(
-        @Req() req: Request,
-        @Param('groupId') groupId: string,
-    ) {}
-
-    //TODO: think of offers logic
-
-    //TODO: when groups and offers are finished think about the cron job
 
     @ApiDocsJwtAuthGuard()
     @ApiDocsRolesGuard()

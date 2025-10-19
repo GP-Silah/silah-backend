@@ -8,6 +8,7 @@ import {
     ApiParam,
     ApiBody,
     ApiForbiddenResponse,
+    getSchemaPath,
 } from '@nestjs/swagger';
 import {
     InvoiceResponseDto,
@@ -91,7 +92,12 @@ The endpoint checks whether the invoice exists and whether it belongs to the cur
         ApiResponse({
             status: 200,
             description: 'Invoice or pre-invoice details.',
-            type: InvoiceResponseDto,
+            schema: {
+                oneOf: [
+                    { $ref: getSchemaPath(InvoiceResponseDto) },
+                    { $ref: getSchemaPath(PreInvoiceResponseDto) },
+                ],
+            },
         }),
         ApiBadRequestResponse({
             description: 'Invalid request.',

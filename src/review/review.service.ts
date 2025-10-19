@@ -21,6 +21,7 @@ import {
     NotificationEntityType,
     NotificationType,
     OrderStatus,
+    User,
 } from '@prisma/client';
 import { NotificationService } from 'src/notification/notification.service';
 import { TranslationService } from 'src/translation/translation.service';
@@ -94,9 +95,7 @@ export class ReviewService {
         };
     }
 
-    private async toReviewResponseDto(
-        reviewEntity: any,
-    ): Promise<ReviewResponseDto> {
+    async toReviewResponseDto(reviewEntity: any): Promise<ReviewResponseDto> {
         return {
             reviewId: reviewEntity.id,
             orderId: reviewEntity.orderId ?? undefined,
@@ -120,6 +119,36 @@ export class ReviewService {
                   )
                 : [],
             createdAt: reviewEntity.createdAt,
+        };
+    }
+
+    async toSupplierReviewResponseDto(
+        review: any,
+        supplier: any & { user: User },
+        userId?: string,
+    ): Promise<SupplierReviewResponseDto> {
+        let targetLang: 'ar' | 'en' | null = 'en';
+        if (userId) {
+            targetLang = await this.getUserLanguage(userId);
+        }
+        return {
+            reviewId: review.id,
+            orderId: review.orderId ?? undefined,
+            invoiceId: review.invoiceId ?? undefined,
+            buyerId: review.buyerId ?? undefined,
+            supplierRating: review.supplierRating,
+            writtenReviewOfSupplier:
+                targetLang && review.writtenReviewOfSupplier
+                    ? await this.translationService.translateText(
+                          review.writtenReviewOfSupplier,
+                          targetLang,
+                      )
+                    : (review.writtenReviewOfSupplier ?? undefined),
+            createdAt: review.createdAt,
+            supplier: await this.supplierService.toSupplierResponseDTO(
+                supplier.user,
+                supplier,
+            ),
         };
     }
 
@@ -159,26 +188,10 @@ export class ReviewService {
 
         return Promise.all(
             reviews.map(async (review) => {
-                const dto: SupplierReviewResponseDto = {
-                    reviewId: review.id,
-                    orderId: review.orderId ?? undefined,
-                    invoiceId: review.invoiceId ?? undefined,
-                    buyerId: review.buyerId ?? undefined,
-                    supplierRating: review.supplierRating,
-                    writtenReviewOfSupplier:
-                        targetLang && review.writtenReviewOfSupplier
-                            ? await this.translationService.translateText(
-                                  review.writtenReviewOfSupplier,
-                                  targetLang,
-                              )
-                            : (review.writtenReviewOfSupplier ?? undefined),
-                    createdAt: review.createdAt,
-                    supplier: await this.supplierService.toSupplierResponseDTO(
-                        supplier.user,
-                        supplier,
-                    ),
-                };
-                return dto;
+                return this.toSupplierReviewResponseDto(
+                    review,
+                    review.supplier,
+                );
             }),
         );
     }
@@ -282,13 +295,21 @@ export class ReviewService {
             include: {
                 buyer: { include: { user: true } },
                 supplier: { include: { user: true } },
+                preInvoice: true,
             },
         });
 
-        if (!order && !invoice)
+        if (!order && !invoice) {
             throw new NotFoundException(
                 `No order or invoice found with ID: ${id}`,
             );
+        }
+
+        if (invoice && invoice.preInvoice) {
+            throw new BadRequestException(
+                'Cannot write a review for this invoice because it was created by upgrading a pre-invoice. Reviews are only allowed for invoices tied to actual products or services.',
+            );
+        }
 
         const buyer = order ? order.buyer : invoice!.buyer;
         const supplier = order ? order.supplier : invoice!.supplier;

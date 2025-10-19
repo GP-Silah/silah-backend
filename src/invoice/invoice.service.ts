@@ -25,6 +25,8 @@ import { ProductService } from 'src/product/product.service';
 import { ServiceService } from 'src/service/service.service';
 import { CreateInvoiceDto } from './dtos/createInvoice.dto';
 import { NotificationService } from 'src/notification/notification.service';
+import { OfferService } from 'src/offer/offer.service';
+import { GroupPurchaseService } from 'src/group-purchase/group-purchase.service';
 
 @Injectable()
 export class InvoiceService {
@@ -36,6 +38,8 @@ export class InvoiceService {
         private readonly serviceService: ServiceService,
         private readonly tapPaymentService: TapPaymentsService,
         private readonly notificationService: NotificationService,
+        private readonly offerService: OfferService,
+        private readonly groupPurchaseService: GroupPurchaseService,
     ) {}
 
     async toInvoiceResponseDto(
@@ -102,19 +106,33 @@ export class InvoiceService {
                 preInvoiceId: entity.id,
                 type,
                 status: entity.status,
-                buyer: await this.buyerService.toBuyerResponseDto(
-                    entity.buyer.user,
-                    entity.buyer,
-                ),
-                supplier: await this.supplierService.toSupplierResponseDTO(
-                    entity.supplier.user,
-                    entity.supplier,
-                ),
-                product: await this.productService.toProductResponseDto(
-                    entity.product,
-                ),
+                buyer: entity.buyer
+                    ? await this.buyerService.toBuyerResponseDto(
+                          entity.buyer.user,
+                          entity.buyer,
+                      )
+                    : undefined,
+                supplier: entity.supplier
+                    ? await this.supplierService.toSupplierResponseDTO(
+                          entity.supplier.user,
+                          entity.supplier,
+                      )
+                    : undefined,
+                product: entity.product
+                    ? await this.productService.toProductResponseDto(
+                          entity.product,
+                      )
+                    : undefined,
+                offer: entity.offer
+                    ? await this.offerService.toOfferResponseDto(entity.offer)
+                    : undefined,
+                groupPurchaseBuyer: entity.groupPurchaseBuyer
+                    ? await this.groupPurchaseService.toGroupPurchaseBuyerResponseDto(
+                          entity.groupPurchaseBuyer,
+                      )
+                    : undefined,
                 amount: entity.amount,
-                createdAt: entity.amout,
+                createdAt: entity.createdAt,
             } as PreInvoiceResponseDto;
         } else {
             throw new InternalServerErrorException(
@@ -208,13 +226,13 @@ export class InvoiceService {
     private buildItemFilter(showFor: string) {
         switch (showFor) {
             case 'products':
-                return { some: { relatedProductId: { not: null } } };
+                return { items: { some: { relatedProductId: { not: null } } } };
             case 'services':
-                return { some: { relatedServiceId: { not: null } } };
-            // case 'groups':
-            //     return { some: { relatedGroupId: { not: null } } }; // if exists
-            // case 'bids':
-            //     return { some: { relatedBidId: { not: null } } }; // if exists
+                return { items: { some: { relatedServiceId: { not: null } } } };
+            case 'groups':
+                return { groupPurchaseBuyerId: { not: null } };
+            case 'bids':
+                return { offerId: { not: null } };
             default:
                 return undefined;
         }
@@ -425,9 +443,6 @@ export class InvoiceService {
         return await this.toInvoiceResponseDto(invoice, 'INVOICE');
     }
 
-    //TODO:
-    async createPreInvoice() {}
-
     async updateInvoiceStatus(
         userId: string,
         invoiceId: string,
@@ -542,17 +557,10 @@ export class InvoiceService {
 
         // --- 3. Calculate totals ---
         let totalAmount = 0;
-        let deliveryFees = 0;
 
         if (invoice.preInvoice) {
-            //TODO: Path 1: upgraded preinvoice (one product + supplier delivery fee)
-            const product = invoice.preInvoice.product;
-            if (!product)
-                throw new BadRequestException('Pre-invoice product not found');
-            // totalAmount =
-            //     product.price * (invoice.preInvoice.quantity ?? 1) +
-            //     (product.supplier?.deliveryFees ?? 0);
-            // deliveryFees = product.supplier?.deliveryFees ?? 0;
+            // Path 1: upgraded preinvoice
+            totalAmount = invoice.preInvoice.amount; // everything is included in the preinvoice
         } else {
             // Path 2: normal invoice (multiple products or services)
             const itemsTotal = invoice.items.reduce((sum, item) => {
@@ -564,11 +572,13 @@ export class InvoiceService {
                     : 0;
                 return sum + productPrice + servicePrice;
             }, 0);
-            deliveryFees = invoice.items.reduce(
+
+            const deliveryFees = invoice.items.reduce(
                 (sum, item) =>
                     sum + (item.relatedProduct?.supplier?.deliveryFees ?? 0),
                 0,
             );
+
             totalAmount = itemsTotal + deliveryFees;
         }
 

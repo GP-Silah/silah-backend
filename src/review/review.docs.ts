@@ -176,6 +176,14 @@ export function ApiDocsCreateReview() {
                             error: 'Bad Request',
                         },
                     },
+                    {
+                        example: {
+                            statusCode: 400,
+                            message:
+                                'Cannot write a review for this invoice because it was created by upgrading a pre-invoice. Reviews are only allowed for invoices tied to actual products or services.',
+                            error: 'Bad Request',
+                        },
+                    },
                 ],
             },
         }),
