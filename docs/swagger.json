@@ -8987,7 +8987,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InvoiceResponseDto"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/InvoiceResponseDto"
+                    },
+                    {
+                      "$ref": "#/components/schemas/PreInvoiceResponseDto"
+                    }
+                  ]
                 }
               }
             }
@@ -9181,93 +9188,6 @@
           }
         ],
         "summary": "Create a new invoice",
-        "tags": [
-          "Invoices"
-        ]
-      }
-    },
-    "/api/invoices/{groupId}": {
-      "post": {
-        "deprecated": true,
-        "description": "This endpoint is a placeholder and not implemented yet.",
-        "operationId": "InvoiceController_createPreInvoice",
-        "parameters": [
-          {
-            "name": "groupId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden: You do not have access to this resource (role mismatch).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "You do not have access to this resource",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          },
-          "423": {
-            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "User email is not verified",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "cookie": []
-          },
-          {
-            "token": []
-          },
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Not implemented yet",
         "tags": [
           "Invoices"
         ]
@@ -9566,6 +9486,1344 @@
         ]
       }
     },
+    "/api/offers/{id}": {
+      "get": {
+        "description": "\nRetrieves detailed information about a specific offer, including:\n<ul>\n  <li>Offer details and pricing</li>\n  <li>Linked supplier and bid information</li>\n</ul>",
+        "operationId": "OfferController_getOfferById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unique identifier of the offer",
+            "schema": {
+              "example": "ofr_12345",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Offer found and returned successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Offer not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Offer not found for this ID.",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get offer details by ID",
+        "tags": [
+          "Offers"
+        ]
+      },
+      "patch": {
+        "description": "\nAllows a <b>buyer</b> to accept or decline an offer.<br>\n- If accepted → system automatically generates an invoice.<br>\n- If declined → pre-invoice is marked as failed.",
+        "operationId": "OfferController_updateOfferStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unique identifier of the offer",
+            "schema": {
+              "example": "ofr_12345",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": true,
+            "in": "query",
+            "description": "New status to apply for the offer.",
+            "schema": {
+              "enum": [
+                "PENDING",
+                "ACCEPTED",
+                "DECLINED"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Offer status successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status or offer cannot be updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Only offers with pending status can be updated",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Buyer or Offer not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Buyer or offer not found for this ID and user",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update offer status (Buyer only)",
+        "tags": [
+          "Offers"
+        ]
+      }
+    },
+    "/api/offers/bid/{id}": {
+      "get": {
+        "description": "\nRetrieves all submitted offers for a specific bid after the submission deadline.<br>\nOnly the <b>bid owner (buyer)</b> is authorized to access these offers.",
+        "operationId": "OfferController_getOffersForBid",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unique identifier of the bid",
+            "schema": {
+              "example": "bid_12345",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all offers for this bid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfferResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Cannot view offers before submission deadline.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "You can't view the offers before the submission deadline arrives",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Buyer or Bid not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No buyer or bid found for this ID and user.",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get all offers for a bid (Buyer only)",
+        "tags": [
+          "Offers"
+        ]
+      },
+      "post": {
+        "description": "\nAllows a <b>supplier</b> to create and submit a new offer for a specific bid.<br>\nAutomatically generates a pre-invoice and notifies the buyer.",
+        "operationId": "OfferController_createOffer",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unique identifier of the bid",
+            "schema": {
+              "example": "bid_12345",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOfferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Offer successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data or supplier already submitted an offer.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "You have already submitted an offer for this bid",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier or Bid not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier or bid not found for this ID and user",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create new offer for a bid (Supplier only)",
+        "tags": [
+          "Offers"
+        ]
+      }
+    },
+    "/api/bids": {
+      "get": {
+        "description": "\nFetches a list of all available bids in the system.  \nThis endpoint is public and can be used by suppliers to browse open bids.  \nEach bid includes its buyer information (buyer profile, user data, and card if available).\n            ",
+        "operationId": "BidController_getAllBids",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of all bids in the system.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BidResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all bids",
+        "tags": [
+          "Bids"
+        ]
+      },
+      "post": {
+        "description": "\nAllows a **Buyer** to create a new bid.  \nThe bid will include essential details such as name, main activity, submission deadline, and expected response time.<br><br>\nAutomatically associates the bid with the buyer creating it.\n            ",
+        "operationId": "BidController_createBid",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Payload for creating a new bid.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBidDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bid created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or buyer not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Buyer not found",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Invalid date format for submissionDeadline",
+                        "error": "Bad Request"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new bid (Buyer only)",
+        "tags": [
+          "Bids"
+        ]
+      }
+    },
+    "/api/bids/{id}": {
+      "get": {
+        "description": "\nFetch a single bid by its unique identifier.  \nReturns detailed information about the bid and its buyer.\n            ",
+        "operationId": "BidController_getBidById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Bid ID to retrieve.",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bid details retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BidResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bid not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Bid with ID 123e4567-e89b-12d3-a456-426614174000 not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a bid by ID",
+        "tags": [
+          "Bids"
+        ]
+      }
+    },
+    "/api/bids/created/me": {
+      "get": {
+        "description": "\nFetches all bids created by the authenticated **Buyer**.  \nThe bids are sorted by creation date (latest first).  \nEach bid includes its buyer information.\n            ",
+        "operationId": "BidController_getMyBids",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of bids created by the authenticated buyer.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BidResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Buyer not found or invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Buyer not found",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get my created bids (Buyer only)",
+        "tags": [
+          "Bids"
+        ]
+      }
+    },
+    "/api/bids/joined/me": {
+      "get": {
+        "description": "\nFetches all bids that the authenticated **Supplier** has joined through offers.<br>\nUseful for suppliers who want to view only the bids they've participated in.<br><br>\nEach bid includes detailed buyer information.\n            ",
+        "operationId": "BidController_getBidsIJoined",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of bids that the supplier has joined.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BidResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplier not found or no joined bids.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Supplier not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get bids I joined (Supplier only)",
+        "tags": [
+          "Bids"
+        ]
+      }
+    },
+    "/api/group-purchases/products/{id}": {
+      "get": {
+        "description": "\nRetrieves all group purchases related to a specific product.\nIncludes product, supplier, and joined buyers information.",
+        "operationId": "GroupPurchaseController_getAllGroupPurchaseForProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product unique identifier",
+            "schema": {
+              "example": "prd_12345",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Group purchases successfully retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GroupPurchaseResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Product with ID prd_12345 not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all group purchases for a product",
+        "tags": [
+          "Group Purchases"
+        ]
+      }
+    },
+    "/api/group-purchases/{id}": {
+      "get": {
+        "description": "Retrieve a group purchase along with its product, supplier, and joined buyers.",
+        "operationId": "GroupPurchaseController_getGroupById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Group purchase unique identifier",
+            "schema": {
+              "example": "gp_12345",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Group purchase successfully retrieved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupPurchaseResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Group purchase not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Group Purchase with ID gp_12345 not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get group purchase by ID",
+        "tags": [
+          "Group Purchases"
+        ]
+      }
+    },
+    "/api/group-purchases/products/{id}/suitable-groups": {
+      "get": {
+        "description": "\nFetches open group purchases for a specific product in the buyer's city.\nOnly returns groups that still have available quantity.",
+        "operationId": "GroupPurchaseController_getSuitableGroupPurchasesForProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product unique identifier",
+            "schema": {
+              "example": "prd_12345",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Suitable group purchases retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GroupPurchaseResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product or buyer not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Product with ID prd_12345 or buyer not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get suitable group purchases for product (Buyer only)",
+        "tags": [
+          "Group Purchases"
+        ]
+      }
+    },
+    "/api/group-purchases/products/{id}/start": {
+      "post": {
+        "description": "\nAllows a buyer to start a new group purchase for a product.\nAutomatically creates pre-invoice for the buyer.",
+        "operationId": "GroupPurchaseController_startGroupPurchase",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product unique identifier",
+            "schema": {
+              "example": "prd_12345",
+              "type": "string"
+            }
+          },
+          {
+            "name": "quantity",
+            "required": true,
+            "in": "query",
+            "description": "Number of units to start the group purchase with",
+            "schema": {
+              "example": 10,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Group purchase successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupPurchaseResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid quantity or group purchase not allowed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Quantity must exist and be greater than zero, found: 0",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Buyer or product not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Buyer or product not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Open group purchase already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 409,
+                    "message": "There is already an open group purchase for this product",
+                    "error": "Conflict"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Start a new group purchase (Buyer only)",
+        "tags": [
+          "Group Purchases"
+        ]
+      }
+    },
+    "/api/group-purchases/groups/{id}/join": {
+      "post": {
+        "description": "\nAllows a buyer to join an open group purchase.\nAutomatically updates totals and creates pre-invoice for the buyer.",
+        "operationId": "GroupPurchaseController_joinGroupPurchase",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Group purchase unique identifier",
+            "schema": {
+              "example": "gp_12345",
+              "type": "string"
+            }
+          },
+          {
+            "name": "quantity",
+            "required": true,
+            "in": "query",
+            "description": "Number of units to join with",
+            "schema": {
+              "example": 5,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully joined the group purchase.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupPurchaseResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid quantity or group purchase not open/expired/city mismatch.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "This group purchase has expired",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Buyer or group purchase not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Buyer or group purchase not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Buyer already joined this group purchase.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 409,
+                    "message": "You already joined this group purchase",
+                    "error": "Conflict"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Join an existing group purchase (Buyer only)",
+        "tags": [
+          "Group Purchases"
+        ]
+      }
+    },
     "/api/reviews/suppliers/{supplierId}": {
       "get": {
         "description": "Fetches all reviews written for a supplier. Does not include item reviews.\n                Reviews are ordered by creation date (latest first).",
@@ -9821,6 +11079,13 @@
                       "example": {
                         "statusCode": 400,
                         "message": "invoiceItemId is required for invoice-based reviews",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Cannot write a review for this invoice because it was created by upgrading a pre-invoice. Reviews are only allowed for invoices tied to actual products or services.",
                         "error": "Bad Request"
                       }
                     }
@@ -10610,606 +11875,18 @@
         ]
       }
     },
-    "/api/group-purchases/products/{id}": {
+    "/api/analytics/me": {
       "get": {
-        "operationId": "GroupPurchaseController_getAllGroupPurchaseForProduct",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Group Purchases"
-        ]
-      }
-    },
-    "/api/group-purchases/{id}": {
-      "get": {
-        "operationId": "GroupPurchaseController_getGroupById",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Group Purchases"
-        ]
-      }
-    },
-    "/api/group-purchases/products/{id}/suitable-groups": {
-      "get": {
-        "operationId": "GroupPurchaseController_getSuitableGroupPurchasesForProduct",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "cookie": []
-          },
-          {
-            "token": []
-          },
-          {
-            "bearer": []
-          }
-        ],
-        "tags": [
-          "Group Purchases"
-        ]
-      }
-    },
-    "/api/group-purchases/products/{id}/start": {
-      "post": {
-        "operationId": "GroupPurchaseController_startGroupPurchase",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "quantity",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden: You do not have access to this resource (role mismatch).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "You do not have access to this resource",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          },
-          "423": {
-            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "User email is not verified",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "cookie": []
-          },
-          {
-            "token": []
-          },
-          {
-            "bearer": []
-          }
-        ],
-        "tags": [
-          "Group Purchases"
-        ]
-      }
-    },
-    "/api/group-purchases/groups/{id}/join": {
-      "post": {
-        "operationId": "GroupPurchaseController_joinGroupPurchase",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "quantity",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden: You do not have access to this resource (role mismatch).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "You do not have access to this resource",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          },
-          "423": {
-            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "User email is not verified",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "cookie": []
-          },
-          {
-            "token": []
-          },
-          {
-            "bearer": []
-          }
-        ],
-        "tags": [
-          "Group Purchases"
-        ]
-      }
-    },
-    "/api/bids": {
-      "get": {
-        "description": "\nFetches a list of all available bids in the system.  \nThis endpoint is public and can be used by suppliers to browse open bids.  \nEach bid includes its buyer information (buyer profile, user data, and card if available).\n            ",
-        "operationId": "BidController_getAllBids",
+        "description": "Retrieves a comprehensive analytics report for the authenticated supplier account.<br><br>\nIncludes:\n<ul>\n  <li><b>Revenue by Month:</b> Orders & invoices totals for the past 3 full months.</li>\n  <li><b>Top Items:</b> Most ordered and wishlisted products/services.</li>\n  <li><b>Reviews:</b> Average rating and recent reviews in the same period.</li>\n</ul>",
+        "operationId": "AnalyticsController_getMyAnalytics",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "List of all bids in the system.",
+            "description": "Successfully retrieved analytics summary for supplier.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BidResponseDto"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get all bids",
-        "tags": [
-          "Bids"
-        ]
-      },
-      "post": {
-        "description": "\nAllows a **Buyer** to create a new bid.  \nThe bid will include essential details such as name, main activity, submission deadline, and expected response time.<br><br>\nAutomatically associates the bid with the buyer creating it.\n            ",
-        "operationId": "BidController_createBid",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "description": "Payload for creating a new bid.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateBidDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Bid created successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BidResponseDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input or buyer not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 400,
-                        "message": "Buyer not found",
-                        "error": "Bad Request"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 400,
-                        "message": "Invalid date format for submissionDeadline",
-                        "error": "Bad Request"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden: You do not have access to this resource (role mismatch).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "You do not have access to this resource",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          },
-          "423": {
-            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "User email is not verified",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "cookie": []
-          },
-          {
-            "token": []
-          },
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Create a new bid (Buyer only)",
-        "tags": [
-          "Bids"
-        ]
-      }
-    },
-    "/api/bids/{id}": {
-      "get": {
-        "description": "\nFetch a single bid by its unique identifier.  \nReturns detailed information about the bid and its buyer.\n            ",
-        "operationId": "BidController_getBidById",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "Bid ID to retrieve.",
-            "schema": {
-              "example": "123e4567-e89b-12d3-a456-426614174000",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Bid details retrieved successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BidResponseDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Bid not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Bid with ID 123e4567-e89b-12d3-a456-426614174000 not found",
-                    "error": "Not Found"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get a bid by ID",
-        "tags": [
-          "Bids"
-        ]
-      }
-    },
-    "/api/bids/created/me": {
-      "get": {
-        "description": "\nFetches all bids created by the authenticated **Buyer**.  \nThe bids are sorted by creation date (latest first).  \nEach bid includes its buyer information.\n            ",
-        "operationId": "BidController_getMyBids",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "List of bids created by the authenticated buyer.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BidResponseDto"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Buyer not found or invalid request.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Buyer not found",
-                    "error": "Bad Request"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized: Token missing or invalid/expired.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "No token found in cookies",
-                        "error": "Unauthorized"
-                      }
-                    },
-                    {
-                      "example": {
-                        "statusCode": 401,
-                        "message": "Invalid or expired token",
-                        "error": "Unauthorized"
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden: You do not have access to this resource (role mismatch).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "You do not have access to this resource",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          },
-          "423": {
-            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "example": {
-                    "statusCode": 403,
-                    "message": "User email is not verified",
-                    "error": "Forbidden"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "cookie": []
-          },
-          {
-            "token": []
-          },
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Get my created bids (Buyer only)",
-        "tags": [
-          "Bids"
-        ]
-      }
-    },
-    "/api/bids/joined/me": {
-      "get": {
-        "description": "\nFetches all bids that the authenticated **Supplier** has joined through offers.<br>\nUseful for suppliers who want to view only the bids they've participated in.<br><br>\nEach bid includes detailed buyer information.\n            ",
-        "operationId": "BidController_getBidsIJoined",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "List of bids that the supplier has joined.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BidResponseDto"
-                  }
+                  "$ref": "#/components/schemas/AnalyticsResponseDTO"
                 }
               }
             }
@@ -11254,13 +11931,13 @@
             }
           },
           "404": {
-            "description": "Supplier not found or no joined bids.",
+            "description": "Supplier not found or deleted.",
             "content": {
               "application/json": {
                 "schema": {
                   "example": {
                     "statusCode": 404,
-                    "message": "Supplier not found",
+                    "message": "Supplier not found or deleted.",
                     "error": "Not Found"
                   }
                 }
@@ -11293,9 +11970,9 @@
             "bearer": []
           }
         ],
-        "summary": "Get bids I joined (Supplier only)",
+        "summary": "Get supplier analytics data",
         "tags": [
-          "Bids"
+          "Analytics"
         ]
       }
     }
@@ -13261,7 +13938,7 @@
           },
           "priceBasedQuantity": {
             "type": "number",
-            "description": "Total price for this line item (quantity × unit price).",
+            "description": "Total price for this line item (quantity x unit price).",
             "example": 1000
           },
           "relatedProduct": {
@@ -13291,6 +13968,198 @@
           "priceBasedQuantity"
         ]
       },
+      "BidResponseDto": {
+        "type": "object",
+        "properties": {
+          "bidId": {
+            "type": "string",
+            "description": "Unique identifier of the bid",
+            "example": "b6fa7c48-9c12-4a5f-a421-57dcf621d932"
+          },
+          "bidName": {
+            "type": "string",
+            "description": "Name of the bid",
+            "example": "Construction Equipment Supply"
+          },
+          "mainActivity": {
+            "type": "string",
+            "description": "The main activity or subject of the bid",
+            "example": "Supplying construction materials and heavy machinery"
+          },
+          "submissionDeadline": {
+            "type": "string",
+            "description": "Deadline for submitting offers for this bid",
+            "example": "2025-12-31T23:59:59Z",
+            "format": "date-time"
+          },
+          "expectedResponseTime": {
+            "type": "string",
+            "description": "Expected response time from suppliers",
+            "enum": [
+              "ONE_WEEK",
+              "TWO_WEEKS",
+              "FOUR_WEEKS",
+              "SIX_WEEKS"
+            ],
+            "example": "ONE_WEEK"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the bid",
+            "enum": [
+              "OPEN",
+              "CLOSED"
+            ],
+            "example": "OPEN"
+          },
+          "buyer": {
+            "description": "Information about the buyer who created this bid",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BuyerResponseDto"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time when this bid was created",
+            "example": "2025-10-17T10:00:00Z",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "bidId",
+          "bidName",
+          "mainActivity",
+          "submissionDeadline",
+          "expectedResponseTime",
+          "status",
+          "buyer",
+          "createdAt"
+        ]
+      },
+      "OfferResponseDto": {
+        "type": "object",
+        "properties": {
+          "offerId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "description": "Unique identifier for the offer."
+          },
+          "proposedAmount": {
+            "type": "number",
+            "example": 5000,
+            "description": "The proposed amount by the supplier for completing the bid."
+          },
+          "expectedCompletionTime": {
+            "type": "string",
+            "example": "2025-12-01",
+            "description": "Expected completion time proposed by the supplier.",
+            "format": "date"
+          },
+          "offerDetails": {
+            "type": "string",
+            "example": "We can deliver the requested items within two weeks.",
+            "description": "Details of the offer provided by the supplier.",
+            "maxLength": 500
+          },
+          "executionDetails": {
+            "type": "string",
+            "example": "Execution will be carried out in two phases: procurement and delivery.",
+            "description": "Explanation of how the supplier plans to execute the offer.",
+            "maxLength": 500
+          },
+          "notes": {
+            "type": "string",
+            "example": "Please note, prices may vary slightly with market fluctuations.",
+            "description": "Optional notes or remarks from the supplier.",
+            "maxLength": 500
+          },
+          "status": {
+            "type": "string",
+            "example": "PENDING",
+            "enum": [
+              "PENDING",
+              "ACCEPTED",
+              "DECLINED"
+            ],
+            "description": "Current status of the offer."
+          },
+          "supplier": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SupplierResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/InactiveSupplierResponseDto"
+              }
+            ],
+            "description": "Supplier who made the offer."
+          },
+          "bid": {
+            "description": "Bid associated with this offer.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BidResponseDto"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2025-10-10T14:48:00Z",
+            "description": "Timestamp when the offer was created.",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "offerId",
+          "proposedAmount",
+          "expectedCompletionTime",
+          "offerDetails",
+          "executionDetails",
+          "status",
+          "supplier",
+          "bid",
+          "createdAt"
+        ]
+      },
+      "GroupPurchaseBuyerResponseDto": {
+        "type": "object",
+        "properties": {
+          "groupPurchaseBuyerId": {
+            "type": "string",
+            "description": "ID of the group purchase buyer"
+          },
+          "buyer": {
+            "description": "Buyer details",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BuyerResponseDto"
+              }
+            ]
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity chosen by the buyer"
+          },
+          "priceBasedQuantity": {
+            "type": "number",
+            "description": "Price based on chosen quantity"
+          },
+          "joinedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date and time when the buyer joined"
+          }
+        },
+        "required": [
+          "groupPurchaseBuyerId",
+          "buyer",
+          "quantity",
+          "priceBasedQuantity",
+          "joinedAt"
+        ]
+      },
       "PreInvoiceResponseDto": {
         "type": "object",
         "properties": {
@@ -13318,7 +14187,7 @@
             "example": "PENDING"
           },
           "buyer": {
-            "description": "Buyer who owns this pre-invoice (null if his account is deleted).",
+            "description": "Buyer who owns this pre-invoice (null if account is deleted).",
             "allOf": [
               {
                 "$ref": "#/components/schemas/BuyerResponseDto"
@@ -13326,7 +14195,7 @@
             ]
           },
           "supplier": {
-            "description": "Supplier associated with this pre-invoice (null if his account is deleted).",
+            "description": "Supplier associated with this pre-invoice (null if account is deleted).",
             "allOf": [
               {
                 "$ref": "#/components/schemas/SupplierResponseDto"
@@ -13338,6 +14207,22 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/ProductResponseDto"
+              }
+            ]
+          },
+          "offer": {
+            "description": "The offer associated with this pre-invoice, if any.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OfferResponseDto"
+              }
+            ]
+          },
+          "groupPurchaseBuyer": {
+            "description": "The group purchase buyer relation for this pre-invoice, if any.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GroupPurchaseBuyerResponseDto"
               }
             ]
           },
@@ -13357,8 +14242,6 @@
           "preInvoiceId",
           "type",
           "status",
-          "buyer",
-          "supplier",
           "amount",
           "createdAt"
         ]
@@ -13572,6 +14455,179 @@
           "deliveryDate",
           "termsOfPayment",
           "items"
+        ]
+      },
+      "CreateOfferDto": {
+        "type": "object",
+        "properties": {
+          "proposedAmount": {
+            "type": "number",
+            "description": "Proposed amount for the bid.",
+            "example": 25000,
+            "minimum": 1
+          },
+          "expectedCompletionTime": {
+            "type": "string",
+            "description": "Expected completion time (must be a future date).",
+            "example": "2025-12-01",
+            "format": "date"
+          },
+          "offerDetails": {
+            "type": "string",
+            "description": "Details of the offer.",
+            "example": "We will complete the project within 2 weeks using our experienced team.",
+            "maxLength": 500
+          },
+          "executionDetails": {
+            "type": "string",
+            "description": "Execution details explaining how the supplier will perform the work.",
+            "example": "Execution includes planning, sourcing materials, and on-site installation.",
+            "maxLength": 500
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes or remarks.",
+            "example": "Delivery may vary depending on customs clearance.",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "proposedAmount",
+          "expectedCompletionTime",
+          "offerDetails",
+          "executionDetails"
+        ]
+      },
+      "CreateBidDto": {
+        "type": "object",
+        "properties": {
+          "bidName": {
+            "type": "string",
+            "description": "Name of the bid",
+            "example": "IT Hardware Supply",
+            "maxLength": 100
+          },
+          "mainActivity": {
+            "type": "string",
+            "description": "Main activity or purpose of the bid",
+            "example": "Supplying laptops and accessories for company use",
+            "maxLength": 500
+          },
+          "submissionDeadline": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Deadline for suppliers to submit offers (must be a future date)",
+            "example": "2025-11-30"
+          },
+          "expectedResponseTime": {
+            "type": "string",
+            "description": "Expected response time",
+            "enum": [
+              "ONE_WEEK",
+              "TWO_WEEKS",
+              "FOUR_WEEKS",
+              "SIX_WEEKS"
+            ],
+            "example": "ONE_WEEK"
+          }
+        },
+        "required": [
+          "bidName",
+          "mainActivity",
+          "submissionDeadline",
+          "expectedResponseTime"
+        ]
+      },
+      "GroupPurchaseResponseDto": {
+        "type": "object",
+        "properties": {
+          "groupPurchaseId": {
+            "type": "string",
+            "description": "ID of the group purchase"
+          },
+          "city": {
+            "type": "string",
+            "description": "City of the buyers in this group purchase"
+          },
+          "minGroupQuantity": {
+            "type": "number",
+            "description": "Minimum group quantity set by the supplier"
+          },
+          "actualGroupQuantity": {
+            "type": "number",
+            "description": "Actual cumulative quantity joined so far"
+          },
+          "remainingQuantity": {
+            "type": "number",
+            "description": "Remaining quantity to reach the minimum"
+          },
+          "totalPrice": {
+            "type": "number",
+            "description": "Total price of the group purchase"
+          },
+          "groupUnitPrice": {
+            "type": "number",
+            "description": "Discounted price per unit for the group purchase"
+          },
+          "discountPercentage": {
+            "type": "number",
+            "description": "Discount percentage compared to product regular price"
+          },
+          "deadline": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Deadline for the group purchase"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "CLOSED"
+            ],
+            "description": "Status of the group purchase"
+          },
+          "product": {
+            "$ref": "#/components/schemas/ProductResponseDto"
+          },
+          "supplier": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SupplierResponseDto"
+              },
+              {
+                "$ref": "#/components/schemas/InactiveSupplierResponseDto"
+              }
+            ],
+            "description": "Supplier details (active or inactive)"
+          },
+          "joinedBuyers": {
+            "description": "List of buyers who joined this group purchase",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GroupPurchaseBuyerResponseDto"
+            }
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date and time when the group purchase was created"
+          }
+        },
+        "required": [
+          "groupPurchaseId",
+          "city",
+          "minGroupQuantity",
+          "actualGroupQuantity",
+          "remainingQuantity",
+          "totalPrice",
+          "groupUnitPrice",
+          "discountPercentage",
+          "deadline",
+          "status",
+          "product",
+          "supplier",
+          "joinedBuyers",
+          "createdAt"
         ]
       },
       "SupplierReviewResponseDto": {
@@ -13977,112 +15033,180 @@
           "notificationIds"
         ]
       },
-      "BidResponseDto": {
+      "RevenueByMonthResponseDTO": {
         "type": "object",
         "properties": {
-          "bidId": {
+          "month": {
             "type": "string",
-            "description": "Unique identifier of the bid",
-            "example": "b6fa7c48-9c12-4a5f-a421-57dcf621d932"
+            "description": "Month name for which the revenue and orders are calculated, e.g., \"July\", \"August\", \"September\".",
+            "example": "July"
           },
-          "bidName": {
-            "type": "string",
-            "description": "Name of the bid",
-            "example": "Construction Equipment Supply"
+          "totalOrders": {
+            "type": "number",
+            "description": "Total number of orders in this month.",
+            "example": 120
           },
-          "mainActivity": {
-            "type": "string",
-            "description": "The main activity or subject of the bid",
-            "example": "Supplying construction materials and heavy machinery"
+          "orderRevenue": {
+            "type": "number",
+            "description": "Revenue generated from orders only in this month.",
+            "example": 5000
           },
-          "submissionDeadline": {
+          "totalRevenue": {
+            "type": "number",
+            "description": "Total revenue including orders, invoices, and any other sources for this month.",
+            "example": 7500
+          }
+        },
+        "required": [
+          "month",
+          "totalOrders",
+          "orderRevenue",
+          "totalRevenue"
+        ]
+      },
+      "TopItemResponseDTO": {
+        "type": "object",
+        "properties": {
+          "itemId": {
             "type": "string",
-            "description": "Deadline for submitting offers for this bid",
-            "example": "2025-12-31T23:59:59Z",
-            "format": "date-time"
+            "description": "Unique identifier of the product or service.",
+            "example": "abc123"
           },
-          "expectedResponseTime": {
+          "name": {
             "type": "string",
-            "description": "Expected response time from suppliers",
+            "description": "Name of the product or service.",
+            "example": "Premium Service"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the item, either PRODUCT or SERVICE.",
             "enum": [
-              "ONE_WEEK",
-              "TWO_WEEKS",
-              "FOUR_WEEKS",
-              "SIX_WEEKS"
+              "PRODUCT",
+              "SERVICE"
             ],
-            "example": "ONE_WEEK"
+            "example": "PRODUCT"
           },
-          "status": {
-            "type": "string",
-            "description": "Current status of the bid",
-            "enum": [
-              "OPEN",
-              "CLOSED"
-            ],
-            "example": "OPEN"
+          "paidCount": {
+            "type": "number",
+            "description": "Number of times this item was purchase.",
+            "example": 35
           },
-          "buyer": {
-            "description": "Information about the buyer who created this bid",
+          "wishlistCount": {
+            "type": "number",
+            "description": "Number of times this item was wish-listed, only returned for subscribed suppliers.",
+            "example": 20
+          }
+        },
+        "required": [
+          "itemId",
+          "name",
+          "type",
+          "paidCount"
+        ]
+      },
+      "TopItemsResponseDTO": {
+        "type": "object",
+        "properties": {
+          "mostOrdered": {
+            "description": "Array of the most ordered items (products or services) for the supplier.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopItemResponseDTO"
+            }
+          },
+          "mostWishlisted": {
+            "description": "Array of the most wish-listed items, returned only if the supplier is subscribed.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopItemResponseDTO"
+            }
+          }
+        },
+        "required": [
+          "mostOrdered"
+        ]
+      },
+      "OverallReviewsResponseDTO": {
+        "type": "object",
+        "properties": {
+          "averageStars": {
+            "type": "number",
+            "description": "Average star rating of the supplier based on all received reviews.",
+            "example": 4.5
+          },
+          "totalReviews": {
+            "type": "number",
+            "description": "Total number of reviews the supplier has received.",
+            "example": 120
+          }
+        },
+        "required": [
+          "averageStars",
+          "totalReviews"
+        ]
+      },
+      "ReviewsResponseDTO": {
+        "type": "object",
+        "properties": {
+          "overallRating": {
+            "description": "Overall reviews summary for the supplier.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/BuyerResponseDto"
+                "$ref": "#/components/schemas/OverallReviewsResponseDTO"
               }
             ]
           },
-          "createdAt": {
-            "type": "string",
-            "description": "Date and time when this bid was created",
-            "example": "2025-10-17T10:00:00Z",
-            "format": "date-time"
+          "recentReviews": {
+            "description": "Recent reviews received by the supplier in the past three months.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SupplierReviewResponseDto"
+            }
           }
         },
         "required": [
-          "bidId",
-          "bidName",
-          "mainActivity",
-          "submissionDeadline",
-          "expectedResponseTime",
-          "status",
-          "buyer",
-          "createdAt"
+          "overallRating",
+          "recentReviews"
         ]
       },
-      "CreateBidDto": {
+      "AnalyticsResponseDTO": {
         "type": "object",
         "properties": {
-          "bidName": {
-            "type": "string",
-            "description": "Name of the bid",
-            "example": "IT Hardware Supply"
+          "totalRevenue": {
+            "description": "Revenue and orders data per month for the past three months.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RevenueByMonthResponseDTO"
+            }
           },
-          "mainActivity": {
-            "type": "string",
-            "description": "Main activity or purpose of the bid",
-            "example": "Supplying laptops and accessories for company use"
+          "totalOrderSales": {
+            "description": "Revenue from orders only per month, optional if total revenue already includes all sources.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RevenueByMonthResponseDTO"
+            }
           },
-          "submissionDeadline": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Deadline for suppliers to submit offers",
-            "example": "2025-11-30"
+          "topItems": {
+            "description": "Top products and services insights for the supplier.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TopItemsResponseDTO"
+              }
+            ]
           },
-          "expectedResponseTime": {
-            "type": "string",
-            "description": "Expected response time",
-            "enum": [
-              "ONE_WEEK",
-              "TWO_WEEKS",
-              "FOUR_WEEKS",
-              "SIX_WEEKS"
-            ],
-            "example": "ONE_WEEK"
+          "reviews": {
+            "description": "Supplier reviews and ratings data.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReviewsResponseDTO"
+              }
+            ]
           }
         },
         "required": [
-          "bidName",
-          "mainActivity",
-          "submissionDeadline",
-          "expectedResponseTime"
+          "totalRevenue",
+          "topItems",
+          "reviews"
         ]
       },
       "InactiveSupplierResponseDto": {

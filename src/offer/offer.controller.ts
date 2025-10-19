@@ -23,6 +23,12 @@ import { VerifiedGuard } from 'src/auth/guards/verified.guard';
 import { Request } from 'express';
 import { CreateOfferDto } from './dtos/createOffer.dto';
 import { OfferStatus } from '@prisma/client';
+import {
+    ApiDocsCreateOffer,
+    ApiDocsGetOfferById,
+    ApiDocsGetOffersForBid,
+    ApiDocsUpdateOfferStatus,
+} from './offer.docs';
 
 @ApiTags('Offers')
 @Controller('offers')
@@ -30,6 +36,7 @@ export class OfferController {
     constructor(private readonly offerService: OfferService) {}
 
     @Get(':id')
+    @ApiDocsGetOfferById()
     async getOfferById(@Param('id') offerId: string) {
         return this.offerService.getOfferById(offerId);
     }
@@ -40,6 +47,7 @@ export class OfferController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Get('bid/:id')
+    @ApiDocsGetOffersForBid()
     async getOffersForBid(@Req() req: Request, @Param('id') bidId: string) {
         const userId = req.tokenData!.sub;
         return this.offerService.getOffersForBid(userId, bidId);
@@ -50,10 +58,15 @@ export class OfferController {
     @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
-    @Post()
-    async createOffer(@Req() req: Request, @Body() dto: CreateOfferDto) {
+    @Post('bid/:id')
+    @ApiDocsCreateOffer()
+    async createOffer(
+        @Req() req: Request,
+        @Param('id') bidId: string,
+        @Body() dto: CreateOfferDto,
+    ) {
         const userId = req.tokenData!.sub;
-        return this.offerService.createOffer(userId, dto);
+        return this.offerService.createOffer(userId, bidId, dto);
     }
 
     @ApiDocsJwtAuthGuard()
@@ -62,6 +75,7 @@ export class OfferController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Patch(':id')
+    @ApiDocsUpdateOfferStatus()
     async updateOfferStatus(
         @Req() req: Request,
         @Param('id') offerId: string,

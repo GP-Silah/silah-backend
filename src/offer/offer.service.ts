@@ -29,30 +29,9 @@ export class OfferService {
     ) {}
 
     async toOfferResponseDto(offer: any): Promise<OfferResponseDto> {
-        if (
-            !offer.supplier ||
-            !offer.supplier.user ||
-            !offer.bid ||
-            !offer.bid.buyer ||
-            !offer.bid.buyer.user ||
-            !offer.bid.bueyr.card
-        ) {
-            offer = await this.prisma.offer.findUnique({
-                where: { id: offer.offerId },
-                include: {
-                    supplier: { include: { user: true } },
-                    bid: {
-                        include: {
-                            buyer: { include: { user: true, card: true } },
-                        },
-                    },
-                },
-            });
-        }
-
         const dto = new OfferResponseDto();
 
-        dto.offerId = offer.offerId;
+        dto.offerId = offer.id;
         dto.proposedAmount = offer.proposedAmount;
         dto.expectedCompletionTime = offer.expectedCompletionTime;
         dto.offerDetails = offer.offerDetails;
@@ -108,7 +87,7 @@ export class OfferService {
         const bid = await this.prisma.bid.findUnique({
             where: { id: bidId },
             include: {
-                buyer: true,
+                buyer: { include: { user: true, card: true } },
                 offers: {
                     include: {
                         supplier: {
@@ -151,6 +130,7 @@ export class OfferService {
 
     async createOffer(
         userId: string,
+        bidId: string,
         dto: CreateOfferDto,
     ): Promise<OfferResponseDto> {
         // 1. Validate supplier existence
@@ -164,7 +144,7 @@ export class OfferService {
 
         // 2. Validate bid existence
         const bid = await this.prisma.bid.findUnique({
-            where: { id: dto.bidId },
+            where: { id: bidId },
             include: { buyer: { include: { user: true } } },
         });
         if (!bid) {
@@ -182,7 +162,7 @@ export class OfferService {
         // 4. Ensure supplier didn’t already submit an offer for this bid
         const existingOffer = await this.prisma.offer.findFirst({
             where: {
-                bidId: dto.bidId,
+                bidId: bidId,
                 supplierId: supplier.id,
             },
         });
@@ -195,7 +175,7 @@ export class OfferService {
         // 5. Create offer
         const newOffer = await this.prisma.offer.create({
             data: {
-                bidId: dto.bidId,
+                bidId,
                 supplierId: supplier.id,
                 proposedAmount: dto.proposedAmount,
                 expectedCompletionTime: new Date(dto.expectedCompletionTime),

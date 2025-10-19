@@ -19,6 +19,13 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/enums/userRole.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { VerifiedGuard } from 'src/auth/guards/verified.guard';
+import {
+    ApiDocsGetAllGroupPurchaseForProduct,
+    ApiDocsGetGroupById,
+    ApiDocsGetSuitableGroupPurchasesForProduct,
+    ApiDocsJoinGroupPurchase,
+    ApiDocsStartGroupPurchase,
+} from './group-purchase.docs';
 
 @ApiTags('Group Purchases')
 @Controller('group-purchases')
@@ -26,6 +33,7 @@ export class GroupPurchaseController {
     constructor(private readonly groupPurchaseService: GroupPurchaseService) {}
 
     @Get('products/:id')
+    @ApiDocsGetAllGroupPurchaseForProduct()
     async getAllGroupPurchaseForProduct(@Param('id') productId: string) {
         return this.groupPurchaseService.getAllGroupPurchaseForProduct(
             productId,
@@ -33,6 +41,7 @@ export class GroupPurchaseController {
     }
 
     @Get(':id')
+    @ApiDocsGetGroupById()
     async getGroupById(@Param('id') groupId: string) {
         return this.groupPurchaseService.getGroupById(groupId);
     }
@@ -40,6 +49,7 @@ export class GroupPurchaseController {
     @ApiDocsJwtAuthGuard()
     @UseGuards(JwtAuthGuard)
     @Get('products/:id/suitable-groups')
+    @ApiDocsGetSuitableGroupPurchasesForProduct()
     async getSuitableGroupPurchasesForProduct(
         @Req() req: Request,
         @Param('id') productId: string,
@@ -57,6 +67,7 @@ export class GroupPurchaseController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Post('products/:id/start')
+    @ApiDocsStartGroupPurchase()
     async startGroupPurchase(
         @Req() req: Request,
         @Param('id') productId: string,
@@ -84,6 +95,7 @@ export class GroupPurchaseController {
     @Roles(UserRole.BUYER)
     @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Post('groups/:id/join')
+    @ApiDocsJoinGroupPurchase()
     async joinGroupPurchase(
         @Req() req: Request,
         @Param('id') groupId: string,

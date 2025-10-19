@@ -54,24 +54,6 @@ export class GroupPurchaseService {
     async toGroupPurchaseResponseDto(
         groupPurchase: any,
     ): Promise<GroupPurchaseResponseDto> {
-        // Load relations if not included
-        if (
-            !groupPurchase.product ||
-            !groupPurchase.supplier ||
-            !groupPurchase.buyers
-        ) {
-            groupPurchase = await this.prisma.groupPurchase.findUnique({
-                where: { id: groupPurchase.id },
-                include: {
-                    product: { include: { category: true } },
-                    supplier: { include: { user: true } },
-                    joinedBuyers: {
-                        include: { buyer: { include: { user: true } } },
-                    },
-                },
-            });
-        }
-
         const product = groupPurchase.product;
         const supplier = groupPurchase.supplier;
 
@@ -82,7 +64,7 @@ export class GroupPurchaseService {
 
         const discountPercentage = product.price
             ? Math.round(
-                  ((product.price - groupPurchase.groupUnitPrice) /
+                  ((product.price - product.groupPurchasePrice) /
                       product.price) *
                       100,
               )
@@ -149,8 +131,15 @@ export class GroupPurchaseService {
     }
 
     async getGroupById(groupId: string) {
-        const group = this.prisma.groupPurchase.findUnique({
+        const group = await this.prisma.groupPurchase.findUnique({
             where: { id: groupId },
+            include: {
+                product: { include: { category: true } },
+                supplier: { include: { user: true } },
+                joinedBuyers: {
+                    include: { buyer: { include: { user: true } } },
+                },
+            },
         });
         if (!group) {
             throw new NotFoundException(

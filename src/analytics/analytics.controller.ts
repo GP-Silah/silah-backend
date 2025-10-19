@@ -10,6 +10,7 @@ import { UserRole } from 'src/enums/userRole.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { VerifiedGuard } from 'src/auth/guards/verified.guard';
+import { ApiDocsGetMyAnalytics } from './analytics.docs';
 
 @ApiTags('Analytics')
 @Controller('analytics')
@@ -22,6 +23,7 @@ export class AnalyticsController {
     @Roles(UserRole.SUPPLIER)
     @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
     @Get('me')
+    @ApiDocsGetMyAnalytics()
     async getMyAnalytics(@Req() req: Request) {
         const userId = req.tokenData!.sub;
         return this.analyticsService.getMyAnalytics(userId);

@@ -12,13 +12,6 @@ import { IsFutureDate } from 'src/invoice/dtos/createInvoice.dto';
 
 export class CreateOfferDto {
     @ApiProperty({
-        description: 'ID of the bid to which this offer belongs.',
-        example: '123e4567-e89b-12d3-a456-426614174000',
-    })
-    @IsUUID()
-    bidId: string;
-
-    @ApiProperty({
         description: 'Proposed amount for the bid.',
         example: 25000,
         minimum: 1,
