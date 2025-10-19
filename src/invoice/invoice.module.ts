@@ -6,6 +6,8 @@ import { SupplierModule } from 'src/supplier/supplier.module';
 import { ProductModule } from 'src/product/product.module';
 import { ServiceModule } from 'src/service/service.module';
 import { TapPaymentsModule } from 'src/tap-payments/tap-payments.module';
+import { OfferModule } from 'src/offer/offer.module';
+import { GroupPurchaseModule } from 'src/group-purchase/group-purchase.module';
 
 @Module({
     imports: [
@@ -14,6 +16,8 @@ import { TapPaymentsModule } from 'src/tap-payments/tap-payments.module';
         ProductModule,
         ServiceModule,
         TapPaymentsModule,
+        OfferModule,
+        GroupPurchaseModule,
     ],
     controllers: [InvoiceController],
     providers: [InvoiceService],

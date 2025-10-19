@@ -29,6 +29,10 @@ import { InvoiceModule } from './invoice/invoice.module';
 import { ReviewModule } from './review/review.module';
 import { NotificationModule } from './notification/notification.module';
 import { ChatModule } from './chat/chat.module';
+import { GroupPurchaseModule } from './group-purchase/group-purchase.module';
+import { BidModule } from './bid/bid.module';
+import { OfferModule } from './offer/offer.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
     imports: [
@@ -61,6 +65,10 @@ import { ChatModule } from './chat/chat.module';
         ReviewModule,
         NotificationModule,
         ChatModule,
+        GroupPurchaseModule,
+        BidModule,
+        OfferModule,
+        AnalyticsModule,
     ],
     controllers: [AppController, HealthController],
     providers: [

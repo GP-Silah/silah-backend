@@ -75,6 +75,8 @@ model Supplier {
   preInvoices     PreInvoice[]
   invoices        Invoice[]
   recievedReviews Review[]
+  groupPurchases  GroupPurchase[]
+  writtenOffers   Offer[]
 }
 
 // ============ 🛂 SUBSCRIPTIONS ==============
@@ -97,13 +99,15 @@ model Buyer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  carts               Cart[]
-  orders              Order[]
-  wishlist            Wishlist[]
-  preInvoices         PreInvoice[]
-  invoices            Invoice[]
-  writtenReviews      Review[]
-  writtenItemsReviews ItemReview[]
+  carts                Cart[]
+  orders               Order[]
+  wishlist             Wishlist[]
+  preInvoices          PreInvoice[]
+  invoices             Invoice[]
+  writtenReviews       Review[]
+  writtenItemsReviews  ItemReview[]
+  joinedGroupPurchases GroupPurchaseBuyer[]
+  createdBids          Bid[]
 }
 
 // ============  💳 CARD ===============
@@ -189,10 +193,11 @@ model Product {
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 
-  cartItems    CartItem[]
-  orderItems   OrderItem[]
-  invoiceItems InvoiceItem[]
-  preInoivces  PreInvoice[]
+  cartItems      CartItem[]
+  orderItems     OrderItem[]
+  invoiceItems   InvoiceItem[]
+  preInoivces    PreInvoice[]
+  groupPurchases GroupPurchase[]
 }
 
 // ============ ✋ SERVICES ===============
@@ -311,6 +316,77 @@ model OrderItem {
   itemReview ItemReview?
 }
 
+// ============ 👥 GROUP PURCHASE ===========
+model GroupPurchase {
+  id                  String              @id @default(uuid())
+  productId           String
+  product             Product             @relation(fields: [productId], references: [id])
+  supplierId          String
+  supplier            Supplier            @relation(fields: [supplierId], references: [id])
+  city                String
+  minGroupQuantity    Int
+  actualGroupQuantity Int
+  totalPrice          Float // sum of all buyers totalPrice
+  deadline            DateTime
+  status              GroupPurchaseStatus @default(OPEN)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  joinedBuyers GroupPurchaseBuyer[]
+}
+
+// ============ 👥 GROUP PURCHASE BUYER ===========
+model GroupPurchaseBuyer {
+  id                 String        @id @default(uuid())
+  groupPurchaseId    String
+  groupPurchase      GroupPurchase @relation(fields: [groupPurchaseId], references: [id])
+  buyerId            String
+  buyer              Buyer         @relation(fields: [buyerId], references: [id])
+  quantity           Int
+  priceBasedQuantity Float
+  totalPrice         Float // priceBasedQuantity + supplier deliveryFees
+  joinedAt           DateTime      @default(now())
+
+  preinvoice PreInvoice?
+
+  @@unique([groupPurchaseId, buyerId])
+}
+
+// =========== ⚖️ BID ===========
+model Bid {
+  id                   String                  @id @default(uuid())
+  buyerId              String
+  buyer                Buyer                   @relation(fields: [buyerId], references: [id])
+  bidName              String                  @db.VarChar(100)
+  mainActivity         String                  @db.VarChar(500)
+  submissionDeadline   DateTime
+  expectedResponseTime BidExpectedResponseTime
+  status               BidStatus               @default(OPEN)
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+
+  offers Offer[]
+}
+
+// =========== 💼 OFFER ===========
+model Offer {
+  id                     String      @id @default(uuid())
+  bidId                  String
+  bid                    Bid         @relation(fields: [bidId], references: [id], onDelete: Cascade)
+  supplierId             String
+  supplier               Supplier    @relation(fields: [supplierId], references: [id])
+  proposedAmount         Float
+  expectedCompletionTime DateTime
+  offerDetails           String      @db.VarChar(500)
+  executionDetails       String      @db.VarChar(500)
+  notes                  String?     @db.VarChar(500)
+  status                 OfferStatus @default(PENDING)
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+
+  preinvoice PreInvoice?
+}
+
 // ============ 🧾 INVOICE ===============
 model Invoice {
   id                    String                @id @default(uuid())
@@ -337,7 +413,7 @@ model Invoice {
 // ============ 🧾 INVOICE ITEM ===============
 model InvoiceItem {
   id                 Int      @id @default(autoincrement())
-  invoiceId          String // how is the relation
+  invoiceId          String
   invoice            Invoice  @relation(fields: [invoiceId], references: [id])
   name               String   @db.VarChar(60)
   description        String   @db.VarChar(100)
@@ -355,19 +431,22 @@ model InvoiceItem {
 
 // ============ 🧾 PRE-INVOICE ===============
 model PreInvoice {
-  id              String           @id @default(uuid())
-  invoiceId       String?          @unique
-  invoice         Invoice?         @relation(fields: [invoiceId], references: [id])
-  groupPurchaseId String? //TODO: link with groups later
-  buyerId         String?
-  buyer           Buyer?           @relation(fields: [buyerId], references: [id], onDelete: SetNull)
-  supplierId      String?
-  supplier        Supplier?        @relation(fields: [supplierId], references: [id], onDelete: SetNull)
-  productId       String?
-  product         Product?         @relation(fields: [productId], references: [id], onDelete: SetNull)
-  amount          Float //TODO: price_based_quantity at Group_Purchase_Bueyrs + delivery fees when linked with groups later
-  status          PreInvoiceStatus @default(PENDING)
-  createdAt       DateTime         @default(now())
+  id                   String              @id @default(uuid())
+  invoiceId            String?             @unique
+  invoice              Invoice?            @relation(fields: [invoiceId], references: [id])
+  groupPurchaseBuyerId String?             @unique
+  groupPurchaseBuyer   GroupPurchaseBuyer? @relation(fields: [groupPurchaseBuyerId], references: [id])
+  offerId              String?             @unique
+  offer                Offer?              @relation(fields: [offerId], references: [id])
+  buyerId              String?
+  buyer                Buyer?              @relation(fields: [buyerId], references: [id], onDelete: SetNull)
+  supplierId           String?
+  supplier             Supplier?           @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  productId            String?
+  product              Product?            @relation(fields: [productId], references: [id], onDelete: SetNull)
+  amount               Float
+  status               PreInvoiceStatus    @default(PENDING)
+  createdAt            DateTime            @default(now())
 }
 
 // ============ ✍️ REVIEW ===============
@@ -455,14 +534,14 @@ model Notification {
 
 // =========== ✉️ CHAT ===============
 model Chat {
-  id            String    @id @default(uuid())
-  user1Id       String
-  user1         User      @relation("FirstUser", fields: [user1Id], references: [id])
-  user2Id       String
-  user2         User      @relation("SecondUser", fields: [user2Id], references: [id])
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  messages      Message[]
+  id        String    @id @default(uuid())
+  user1Id   String
+  user1     User      @relation("FirstUser", fields: [user1Id], references: [id])
+  user2Id   String
+  user2     User      @relation("SecondUser", fields: [user2Id], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
 
   @@unique([user1Id, user2Id])
 }
@@ -582,4 +661,27 @@ enum NotificationEntityType {
   OFFER
   BID
   GROUP_PURCHASE
+}
+
+enum GroupPurchaseStatus {
+  OPEN
+  CLOSED
+}
+
+enum BidStatus {
+  OPEN
+  CLOSED
+}
+
+enum BidExpectedResponseTime {
+  ONE_WEEK
+  TWO_WEEKS
+  FOUR_WEEKS
+  SIX_WEEKS
+}
+
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
 }
