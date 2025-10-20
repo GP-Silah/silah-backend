@@ -25,6 +25,6 @@ jobs:
                       git reset --hard origin/main
                       npm ci --prefer-offline
                       npm run build
-                      npx prisma migrate deploy || true
+                      npx prisma migrate deploy
                       pm2 reload silah-backend --update-env || pm2 start ecosystem.config.js
                       pm2 status
