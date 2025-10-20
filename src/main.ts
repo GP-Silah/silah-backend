@@ -7,6 +7,7 @@ import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as fs from 'fs';
+import cors from 'cors';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { SupplierResponseDto } from './supplier/dtos/supplierResponse.dto';
 import { InactiveSupplierResponseDto } from './supplier/dtos/inactiveSupplierResponse.dto';
@@ -35,13 +36,23 @@ async function bootstrap() {
 
     app.useGlobalFilters(new AllExceptionsFilter());
 
+    const allowedOrigins = [
+        'https://silah.site',
+        'https://www.silah.site',
+        'http://localhost:5173',
+    ];
+
     app.enableCors({
-        origin:
-            process.env.NODE_ENV === 'production'
-                ? process.env.FRONTEND_URL?.split(',')
-                      .map((o) => o.trim())
-                      .filter(Boolean)
-                : ['http://localhost:5173'], // explicit React dev origin so SSE work
+        origin: (origin, callback) => {
+            // allow requests with no origin (like mobile apps or curl)
+            if (!origin) return callback(null, true);
+
+            if (allowedOrigins.includes(origin)) {
+                callback(null, true); // allow this origin
+            } else {
+                callback(new Error(`Origin ${origin} not allowed by CORS`));
+            }
+        },
         credentials: true,
     });
 
