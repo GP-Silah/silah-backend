@@ -54,14 +54,20 @@ export class AuthController {
     @ApiDocsSignUp()
     async signUp(
         @Body() dto: SignupDto,
+        @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ) {
         const token = await this.authService.signUp(dto);
+        // Detect if request is secure (HTTPS) or from localhost
+        const isSecure =
+            req.secure ||
+            req.headers['x-forwarded-proto'] === 'https' ||
+            req.hostname === 'localhost';
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // only enforce HTTPS in prod
-            sameSite: 'lax', // mitigates CSRF while allowing same-site requests
-            path: '/', // cookie is available site-wide
+            secure: isSecure, // only enforce HTTPS when really secure
+            sameSite: isSecure ? 'none' : 'lax', // cross-site only on HTTPS
+            path: '/',
         });
         return { message: 'Signup successful' };
     }
@@ -70,14 +76,20 @@ export class AuthController {
     @ApiDocsLogin()
     async login(
         @Body() dto: LoginDto,
+        @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ) {
         const token = await this.authService.login(dto);
+        // Detect if request is secure (HTTPS) or from localhost
+        const isSecure =
+            req.secure ||
+            req.headers['x-forwarded-proto'] === 'https' ||
+            req.hostname === 'localhost';
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // only enforce HTTPS in prod
-            sameSite: 'lax', // mitigates CSRF while allowing same-site requests
-            path: '/', // cookie is available site-wide
+            secure: isSecure, // only enforce HTTPS when really secure
+            sameSite: isSecure ? 'none' : 'lax', // cross-site only on HTTPS
+            path: '/',
         });
         return { message: 'Login successful' };
     }
