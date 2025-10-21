@@ -66,6 +66,7 @@ export class AuthController {
             secure: isCrossSite ? true : isSecure, // force secure for cross-site
             sameSite: isCrossSite ? 'none' : 'lax', // must be 'none' for cross-site
             path: '/',
+            partitioned: true,
         });
         return { message: 'Signup successful' };
     }
@@ -86,6 +87,7 @@ export class AuthController {
             secure: isCrossSite ? true : isSecure, // force secure for cross-site
             sameSite: isCrossSite ? 'none' : 'lax', // must be 'none' for cross-site
             path: '/',
+            partitioned: true,
         });
         return { message: 'Login successful' };
     }
