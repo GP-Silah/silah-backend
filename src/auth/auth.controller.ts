@@ -58,15 +58,13 @@ export class AuthController {
         @Res({ passthrough: true }) res: Response,
     ) {
         const token = await this.authService.signUp(dto);
-        // Detect if request is secure (HTTPS) or from localhost
+        const isCrossSite = req.hostname !== 'localhost'; // backend is prod
         const isSecure =
-            req.secure ||
-            req.headers['x-forwarded-proto'] === 'https' ||
-            req.hostname === 'localhost';
+            req.secure || req.headers['x-forwarded-proto'] === 'https';
         res.cookie('token', token, {
             httpOnly: true,
-            secure: isSecure, // only enforce HTTPS when really secure
-            sameSite: isSecure ? 'none' : 'lax', // cross-site only on HTTPS
+            secure: isCrossSite ? true : isSecure, // force secure for cross-site
+            sameSite: isCrossSite ? 'none' : 'lax', // must be 'none' for cross-site
             path: '/',
         });
         return { message: 'Signup successful' };
@@ -80,15 +78,13 @@ export class AuthController {
         @Res({ passthrough: true }) res: Response,
     ) {
         const token = await this.authService.login(dto);
-        // Detect if request is secure (HTTPS) or from localhost
+        const isCrossSite = req.hostname !== 'localhost'; // backend is prod
         const isSecure =
-            req.secure ||
-            req.headers['x-forwarded-proto'] === 'https' ||
-            req.hostname === 'localhost';
+            req.secure || req.headers['x-forwarded-proto'] === 'https';
         res.cookie('token', token, {
             httpOnly: true,
-            secure: isSecure, // only enforce HTTPS when really secure
-            sameSite: isSecure ? 'none' : 'lax', // cross-site only on HTTPS
+            secure: isCrossSite ? true : isSecure, // force secure for cross-site
+            sameSite: isCrossSite ? 'none' : 'lax', // must be 'none' for cross-site
             path: '/',
         });
         return { message: 'Login successful' };
