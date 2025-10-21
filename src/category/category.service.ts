@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Category } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CategoryResponseDto } from './dtos/categoryResponse.dto';
 import { TranslationService } from 'src/translation/translation.service';
+import { Category } from '@prisma/client';
 
 @Injectable()
 export class CategoryService {
@@ -21,72 +21,65 @@ export class CategoryService {
         return lang === 'ar' || lang === 'en' ? lang : null;
     }
 
-    /** Convert category model to DTO (with recursive translation) */
-    private async toCategoryResponse(
-        category: Category,
-        targetLang?: 'ar' | 'en',
-    ): Promise<CategoryResponseDto> {
-        // Translate name if targetLang provided
-        const translatedName =
-            targetLang && targetLang !== 'en'
-                ? await this.translationService.translateText(
-                      category.name,
-                      targetLang,
-                  )
-                : category.name;
+    /** Builds a nested tree from a flat list */
+    private buildCategoryTree(categories: Category[]): CategoryResponseDto[] {
+        const map = new Map<number, CategoryResponseDto>();
 
-        // Fetch parent category name if it exists
-        let parentCategoryDto: { id: number; name: string } | undefined =
-            undefined;
-        if (category.parentCategoryId) {
-            const parent = await this.prisma.category.findUnique({
-                where: { id: category.parentCategoryId },
-                select: { id: true, name: true },
+        for (const cat of categories) {
+            map.set(cat.id, {
+                id: cat.id,
+                name: cat.name,
+                usedFor: cat.usedFor,
+                parentCategory: undefined,
+                subcategories: [],
             });
-            if (parent) {
-                const parentTranslatedName =
-                    targetLang && targetLang !== 'en'
-                        ? await this.translationService.translateText(
-                              parent.name,
-                              targetLang,
-                          )
-                        : parent.name;
+        }
 
-                parentCategoryDto = {
-                    id: parent.id,
-                    name: parentTranslatedName,
-                };
+        const roots: CategoryResponseDto[] = [];
+
+        for (const cat of categories) {
+            const dto = map.get(cat.id)!;
+            if (cat.parentCategoryId) {
+                const parent = map.get(cat.parentCategoryId);
+                if (parent) {
+                    parent.subcategories!.push(dto);
+                    dto.parentCategory = { id: parent.id, name: parent.name };
+                }
+            } else {
+                roots.push(dto);
             }
         }
 
-        // Fetch subcategories recursively
-        const subcategories = await this.prisma.category.findMany({
-            where: { parentCategoryId: category.id },
-        });
-
-        const subcategoriesDto: CategoryResponseDto[] = [];
-        for (const sub of subcategories) {
-            subcategoriesDto.push(
-                await this.toCategoryResponse(sub, targetLang),
-            );
-        }
-
-        return {
-            id: category.id,
-            name: translatedName,
-            usedFor: category.usedFor,
-            parentCategory: parentCategoryDto,
-            subcategories: subcategoriesDto.length
-                ? subcategoriesDto
-                : undefined,
-        } as CategoryResponseDto;
+        return roots;
     }
 
+    /** Batch-translate category names (only if needed) */
+    private async translateCategories(
+        categories: Category[],
+        targetLang?: 'ar' | 'en',
+    ): Promise<Category[]> {
+        if (!targetLang || targetLang === 'en') return categories;
+
+        const uniqueNames = Array.from(new Set(categories.map((c) => c.name)));
+        const translated = await this.translationService.translateBatch(
+            uniqueNames,
+            targetLang,
+        );
+        const translatedMap = new Map(
+            uniqueNames.map((n, i) => [n, translated[i]]),
+        );
+
+        return categories.map((c) => ({
+            ...c,
+            name: translatedMap.get(c.name) || c.name,
+        }));
+    }
+
+    /** ✅ Get all categories (with tree + translations) */
     async getAllCategories(
         usedFor?: 'products' | 'services',
         targetLang?: 'ar' | 'en',
     ): Promise<CategoryResponseDto[]> {
-        // Map the query value to Prisma ItemType
         const usedForEnum =
             usedFor === 'products'
                 ? 'PRODUCT'
@@ -94,25 +87,15 @@ export class CategoryService {
                   ? 'SERVICE'
                   : undefined;
 
-        // Fetch all main categories (parentCategoryId = null)
-        const mainCategories = await this.prisma.category.findMany({
-            where: {
-                parentCategoryId: null,
-                ...(usedForEnum ? { usedFor: usedForEnum } : {}),
-            },
+        let categories = await this.prisma.category.findMany({
+            where: usedForEnum ? { usedFor: usedForEnum } : {},
         });
 
-        // Map each main category to DTO including subcategories recursively
-        const categoriesDto: CategoryResponseDto[] = [];
-        for (const category of mainCategories) {
-            categoriesDto.push(
-                await this.toCategoryResponse(category, targetLang),
-            );
-        }
-
-        return categoriesDto;
+        categories = await this.translateCategories(categories, targetLang);
+        return this.buildCategoryTree(categories);
     }
 
+    /** ✅ Get main categories (with their subcategories) */
     async getMainCategories(
         usedFor?: 'products' | 'services',
         targetLang?: 'ar' | 'en',
@@ -123,19 +106,20 @@ export class CategoryService {
                 : usedFor === 'services'
                   ? 'SERVICE'
                   : undefined;
-        const mainCategories = await this.prisma.category.findMany({
-            where: {
-                parentCategoryId: null,
-                ...(usedForEnum ? { usedFor: usedForEnum } : {}),
-            },
+
+        // Fetch ALL categories, not only main
+        let categories = await this.prisma.category.findMany({
+            where: usedForEnum ? { usedFor: usedForEnum } : {},
         });
-        const dto: CategoryResponseDto[] = [];
-        for (const cat of mainCategories) {
-            dto.push(await this.toCategoryResponse(cat, targetLang));
-        }
-        return dto;
+
+        categories = await this.translateCategories(categories, targetLang);
+        const tree = this.buildCategoryTree(categories);
+
+        // Return only the main roots
+        return tree;
     }
 
+    /** ✅ Get subcategories (flat list) */
     async getSubCategories(
         usedFor?: 'products' | 'services',
         targetLang?: 'ar' | 'en',
@@ -146,19 +130,36 @@ export class CategoryService {
                 : usedFor === 'services'
                   ? 'SERVICE'
                   : undefined;
-        const subCategories = await this.prisma.category.findMany({
+
+        let categories = await this.prisma.category.findMany({
             where: {
                 NOT: { parentCategoryId: null },
                 ...(usedForEnum ? { usedFor: usedForEnum } : {}),
             },
         });
-        const dto: CategoryResponseDto[] = [];
-        for (const cat of subCategories) {
-            dto.push(await this.toCategoryResponse(cat, targetLang));
-        }
-        return dto;
+
+        categories = await this.translateCategories(categories, targetLang);
+
+        // Attach parent info manually
+        const parents = await this.prisma.category.findMany({
+            select: { id: true, name: true },
+        });
+        const parentMap = new Map(parents.map((p) => [p.id, p.name]));
+
+        return categories.map((cat) => ({
+            id: cat.id,
+            name: cat.name,
+            usedFor: cat.usedFor,
+            parentCategory: cat.parentCategoryId
+                ? {
+                      id: cat.parentCategoryId,
+                      name: parentMap.get(cat.parentCategoryId) ?? '',
+                  }
+                : undefined,
+        }));
     }
 
+    /** ✅ Get category by ID (with sub-tree) */
     async getCategoryById(
         id: number,
         targetLang?: 'ar' | 'en',
@@ -166,9 +167,31 @@ export class CategoryService {
         const category = await this.prisma.category.findUnique({
             where: { id },
         });
-        if (!category) {
+        if (!category)
             throw new NotFoundException(`Category with ID ${id} not found`);
-        }
-        return this.toCategoryResponse(category, targetLang);
+
+        let categories = await this.prisma.category.findMany();
+        categories = await this.translateCategories(categories, targetLang);
+        const fullTree = this.buildCategoryTree(categories);
+
+        // Recursively search
+        const findCategory = (
+            nodes: CategoryResponseDto[],
+        ): CategoryResponseDto | undefined => {
+            for (const node of nodes) {
+                if (node.id === id) return node;
+                const found =
+                    node.subcategories && findCategory(node.subcategories);
+                if (found) return found;
+            }
+            return undefined;
+        };
+
+        const result = findCategory(fullTree);
+        if (!result)
+            throw new NotFoundException(
+                `Category with ID ${id} not found in tree`,
+            );
+        return result;
     }
 }
