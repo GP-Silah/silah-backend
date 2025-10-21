@@ -13,6 +13,7 @@ import { SignupDto } from './dtos/signup.dto';
 import { LoginDto } from './dtos/login.dto';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
 import { ChangePasswordDto } from './dtos/changePassword.dto';
+import { EmailDto } from './dtos/email.dto';
 
 export function ApiDocsSignUp() {
     return applyDecorators(
@@ -281,7 +282,7 @@ export function ApiDocsResendVerificationEmail() {
         }),
         ApiBody({
             description: 'Email to resend verification to',
-            schema: { example: { email: 'example@email.com' } },
+            type: EmailDto,
             required: true,
         }),
         ApiResponse({
@@ -327,7 +328,7 @@ export function ApiDocsRequestPasswordReset() {
         ApiBody({
             description:
                 'The email address of the user who wants to reset their password.',
-            schema: { example: { email: 'user@example.com' } },
+            type: EmailDto,
             required: true,
         }),
         ApiResponse({
