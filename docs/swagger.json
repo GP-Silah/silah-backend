@@ -526,9 +526,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "example": {
-                  "email": "example@email.com"
-                }
+                "$ref": "#/components/schemas/EmailDto"
               }
             }
           }
@@ -592,9 +590,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "example": {
-                  "email": "user@example.com"
-                }
+                "$ref": "#/components/schemas/EmailDto"
               }
             }
           }
@@ -12170,6 +12166,18 @@
         "required": [
           "password",
           "emailOrCrnCheck"
+        ]
+      },
+      "EmailDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          }
+        },
+        "required": [
+          "email"
         ]
       },
       "ResetPasswordDto": {

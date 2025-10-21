@@ -21,6 +21,7 @@ import { TapPaymentsService } from 'src/tap-payments/tap-payments.service';
 import { WathqService } from 'src/wathq/wathq.service';
 import { ChangePasswordDto } from './dtos/changePassword.dto';
 import { Languages } from '@prisma/client';
+import { EmailDto } from './dtos/email.dto';
 
 /**
  * AuthService contains all authentication-related business logic,
@@ -584,7 +585,8 @@ export class AuthService {
      * @throws {NotFoundException} If no user with the given email is found.
      * @throws {BadRequestException} If the user's email is already verified.
      */
-    async resendVerificationEmail(email: string) {
+    async resendVerificationEmail(dto: EmailDto) {
+        const email = dto.email;
         const user = await this.prisma.user.findUnique({
             where: { email },
         });
@@ -662,7 +664,8 @@ export class AuthService {
      *
      * @returns {{ message: string }} A success message indicating that the email was sent (if applicable).
      */
-    async requestPasswordReset(email: string) {
+    async requestPasswordReset(dto: EmailDto) {
+        const email = dto.email;
         // Check if the user exists in the database
         const user = await this.prisma.user.findUnique({
             where: { email },

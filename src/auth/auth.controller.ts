@@ -14,7 +14,6 @@ import { SignupDto } from './dtos/signup.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dtos/login.dto';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
-import { ParseEmailPipe } from '../pipes/parse-email.pipe';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ApiDocsJwtAuthGuard } from './decorators/jwt-auth-guard.docs';
 import { Request } from 'express';
@@ -32,6 +31,7 @@ import {
 import { ApiDocsVerifiedGuard } from './decorators/verified-guard.docs';
 import { VerifiedGuard } from './guards/verified.guard';
 import { ChangePasswordDto } from './dtos/changePassword.dto';
+import { EmailDto } from './dtos/email.dto';
 
 /**
  * AuthController handles incoming authentication-related requests,
@@ -100,13 +100,13 @@ export class AuthController {
     // In case the user missed the mail or the token expired, the frontend can call this route to resend the verification email.
     @Post('resend-verification-email')
     @ApiDocsResendVerificationEmail()
-    async resendVerificationEmail(@Body(ParseEmailPipe) email: string) {
+    async resendVerificationEmail(@Body() email: EmailDto) {
         return await this.authService.resendVerificationEmail(email);
     }
 
     @Post('request-password-reset')
     @ApiDocsRequestPasswordReset()
-    async requestPasswordReset(@Body(ParseEmailPipe) email: string) {
+    async requestPasswordReset(@Body() email: EmailDto) {
         return await this.authService.requestPasswordReset(email);
     }
 
