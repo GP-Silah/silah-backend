@@ -395,7 +395,8 @@
               "application/json": {
                 "schema": {
                   "example": {
-                    "message": "Login successful"
+                    "message": "Login successful",
+                    "role": "BUYER"
                   }
                 }
               }
