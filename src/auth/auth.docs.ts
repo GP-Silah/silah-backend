@@ -14,6 +14,7 @@ import { LoginDto } from './dtos/login.dto';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
 import { ChangePasswordDto } from './dtos/changePassword.dto';
 import { EmailDto } from './dtos/email.dto';
+import { UserRole } from '@prisma/client';
 
 export function ApiDocsSignUp() {
     return applyDecorators(
@@ -183,6 +184,7 @@ export function ApiDocsLogin() {
             schema: {
                 example: {
                     message: 'Login successful',
+                    role: UserRole.BUYER,
                 },
             },
         }),

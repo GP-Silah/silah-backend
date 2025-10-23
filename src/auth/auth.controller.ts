@@ -78,18 +78,18 @@ export class AuthController {
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ) {
-        const token = await this.authService.login(dto);
+        const data = await this.authService.login(dto);
         const isCrossSite = req.hostname !== 'localhost'; // backend is prod
         const isSecure =
             req.secure || req.headers['x-forwarded-proto'] === 'https';
-        res.cookie('token', token, {
+        res.cookie('token', data.token, {
             httpOnly: true,
             secure: isCrossSite ? true : isSecure, // force secure for cross-site
             sameSite: isCrossSite ? 'none' : 'lax', // must be 'none' for cross-site
             path: '/',
             partitioned: true,
         });
-        return { message: 'Login successful' };
+        return { message: 'Login successful', role: data.role };
     }
 
     @Post('/logout')

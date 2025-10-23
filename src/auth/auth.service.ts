@@ -648,7 +648,7 @@ export class AuthService {
             isVerified: user.isEmailVerified, // For verified-only accesss
             jti: crypto.randomUUID(),
         });
-        return { token };
+        return { token, role: user.role };
     }
 
     /**
