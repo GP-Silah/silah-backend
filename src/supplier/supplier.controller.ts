@@ -120,9 +120,8 @@ export class SupplierController {
 
     @ApiDocsJwtAuthGuard()
     @ApiDocsRolesGuard()
-    @ApiDocsVerifiedGuard()
     @Roles(UserRole.SUPPLIER)
-    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch('me/favorite-categories')
     @ApiDocsToggleFavoriteCategory()
     async toggleFavoriteCategory(
