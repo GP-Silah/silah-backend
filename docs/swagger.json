@@ -6202,7 +6202,7 @@
             "name": "usedFor",
             "required": false,
             "in": "query",
-            "description": "Filter categories by type",
+            "description": "Filter categories by type (products or services)",
             "schema": {
               "example": "products",
               "type": "string"
@@ -6287,7 +6287,7 @@
             "name": "usedFor",
             "required": false,
             "in": "query",
-            "description": "Filter categories by type",
+            "description": "Filter categories by type (products or services)",
             "schema": {
               "example": "services",
               "type": "string"
@@ -6359,7 +6359,7 @@
             "name": "usedFor",
             "required": false,
             "in": "query",
-            "description": "Filter subcategories by type",
+            "description": "Filter subcategories by type (products or services)",
             "schema": {
               "example": "products",
               "type": "string"

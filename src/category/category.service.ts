@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CategoryResponseDto } from './dtos/categoryResponse.dto';
 import { TranslationService } from 'src/translation/translation.service';
@@ -164,6 +168,9 @@ export class CategoryService {
         id: number,
         targetLang?: 'ar' | 'en',
     ): Promise<CategoryResponseDto> {
+        if (isNaN(id)) {
+            throw new BadRequestException(`Id must be a number, found: ${id}`);
+        }
         const category = await this.prisma.category.findUnique({
             where: { id },
         });

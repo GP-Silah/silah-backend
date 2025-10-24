@@ -13,7 +13,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dtos/login.dto';
 import * as crypto from 'crypto';
-import * as nodemailer from 'nodemailer';
 import { ResetPasswordDto } from './dtos/resetPassword.dto';
 import { UserRole } from '../enums/userRole.enum';
 import { Request, Response } from 'express';
@@ -22,6 +21,9 @@ import { WathqService } from 'src/wathq/wathq.service';
 import { ChangePasswordDto } from './dtos/changePassword.dto';
 import { Languages } from '@prisma/client';
 import { EmailDto } from './dtos/email.dto';
+import * as sgMail from '@sendgrid/mail';
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 /**
  * AuthService contains all authentication-related business logic,
@@ -199,17 +201,6 @@ export class AuthService {
         // this is not a private function because it is used in the user service
         const verifyUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
 
-        // Create reusable transporter object using SMTP transport
-        const transporter = nodemailer.createTransport({
-            host: process.env.MAIL_HOST,
-            port: Number(process.env.MAIL_PORT),
-            secure: process.env.MAIL_SECURE === 'true', // convert string to boolean
-            auth: {
-                user: process.env.MAIL_USER,
-                pass: process.env.MAIL_PASS,
-            },
-        });
-
         // Get user langauge preference
         const lang = await this.prisma.user.findUnique({
             where: { email },
@@ -335,8 +326,7 @@ export class AuthService {
         }
 
         try {
-            const info = await transporter.sendMail(mailOptions);
-            console.log('Email sent:', info.response);
+            const info = await sgMail.send(mailOptions);
         } catch (error) {
             console.error('Error sending email:', error);
             throw new InternalServerErrorException(
@@ -354,17 +344,7 @@ export class AuthService {
      * @throws {InternalServerErrorException} Thrown if sending the reset password email fails due to transport or configuration errors.
      */
     private async sendResetPasswordEmail(email: string, token: string) {
-        const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
-
-        const transporter = nodemailer.createTransport({
-            host: process.env.MAIL_HOST,
-            port: Number(process.env.MAIL_PORT),
-            secure: process.env.MAIL_SECURE === 'true', // convert string to boolean
-            auth: {
-                user: process.env.MAIL_USER,
-                pass: process.env.MAIL_PASS,
-            },
-        });
+        const resetUrl = `${process.env.FRONTEND_URL}/password-reset?token=${token}`;
 
         // Get user langauge preference
         const lang = await this.prisma.user.findUnique({
@@ -475,8 +455,7 @@ export class AuthService {
         }
 
         try {
-            const info = await transporter.sendMail(mailOptions);
-            console.log('Email sent:', info.response);
+            const info = await sgMail.send(mailOptions);
         } catch (error) {
             console.error('Error sending email:', error);
             throw new InternalServerErrorException(
