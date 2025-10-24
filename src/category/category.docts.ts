@@ -41,7 +41,7 @@ export function ApiDocsGetAllCategories() {
         ApiDocsLanguageSupport(),
         ApiQuery({
             name: 'usedFor',
-            description: 'Filter categories by type',
+            description: 'Filter categories by type (products or services)',
             required: false,
             example: 'products',
         }),
@@ -92,7 +92,7 @@ export function ApiDocsGetMainCategories() {
         ApiDocsLanguageSupport(),
         ApiQuery({
             name: 'usedFor',
-            description: 'Filter categories by type',
+            description: 'Filter categories by type (products or services)',
             required: false,
             example: 'services',
         }),
@@ -130,7 +130,7 @@ export function ApiDocsGetSubCategories() {
         ApiDocsLanguageSupport(),
         ApiQuery({
             name: 'usedFor',
-            description: 'Filter subcategories by type',
+            description: 'Filter subcategories by type (products or services)',
             required: false,
             example: 'products',
         }),
