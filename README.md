@@ -1,6 +1,6 @@
 # Silah Backend
 
-_Last Updated: September 2025_
+_Last Updated: October 2025_
 
 This is the backend API server for [Silah](https://github.com/GP-Silah), an AI-augmented full-stack B2B platform that connects suppliers and buyers. Built using [NestJS](https://nestjs.com/), a progressive Node.js framework for building efficient and scalable server-side applications.
 
@@ -54,6 +54,7 @@ Before you start, make sure you have:
 
 You'll need accounts and API keys for:
 
+- SendGrid (sending emails)
 - Tap Payments (payment processing)
 - Cloudflare R2 (file storage)
 - Wathq API (Saudi Commercial Registration verification)
