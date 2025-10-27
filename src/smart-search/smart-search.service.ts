@@ -14,8 +14,19 @@ import axios from 'axios';
 export class SmartSearchService {
     constructor(private readonly prisma: PrismaService) {}
 
+    /** Helper: fetch user's preferred language */
+    async getUserLanguage(userId: string): Promise<'ar' | 'en' | null> {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { preferredLanguage: true },
+        });
+        const lang = user?.preferredLanguage?.toLowerCase();
+        return lang === 'ar' || lang === 'en' ? lang : null;
+    }
+
     async getSimilarItems(
         dto: SmartSearchRequestDto,
+        targetLang?: 'ar' | 'en',
     ): Promise<SmartSearchResponseDto[]> {
         const { itemId, text } = dto;
 

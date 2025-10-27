@@ -21,6 +21,16 @@ export class SearchService {
         private readonly chatService: ChatService,
     ) {}
 
+    /** Helper: fetch user's preferred language */
+    async getUserLanguage(userId: string): Promise<'ar' | 'en' | null> {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { preferredLanguage: true },
+        });
+        const lang = user?.preferredLanguage?.toLowerCase();
+        return lang === 'ar' || lang === 'en' ? lang : null;
+    }
+
     async searchUsers(name?: string) {
         // If no name is provided, return all users normally
         if (!name || name.trim() === '') {
@@ -172,6 +182,7 @@ export class SearchService {
         subCategoryId?: string,
         minPrice: string = '1',
         maxPrice?: string,
+        targetLang?: 'ar' | 'en',
     ) {
         // Convert query params safely
         const mainId = mainCategoryId ? Number(mainCategoryId) : undefined;
@@ -250,7 +261,9 @@ export class SearchService {
 
         // 6. Map to DTOs
         return Promise.all(
-            products.map((p) => this.productService.toProductResponseDto(p)),
+            products.map((p) =>
+                this.productService.toProductResponseDto(p, targetLang),
+            ),
         );
     }
 
@@ -258,6 +271,7 @@ export class SearchService {
         name?: string,
         mainCategoryId?: string,
         subCategoryId?: string,
+        targetLang?: 'ar' | 'en',
     ) {
         // Convert query params safely
         const mainId = mainCategoryId ? Number(mainCategoryId) : undefined;
@@ -322,7 +336,9 @@ export class SearchService {
 
         // 5. Map to DTOs
         return Promise.all(
-            services.map((s) => this.serviceService.toServiceResponseDto(s)),
+            services.map((s) =>
+                this.serviceService.toServiceResponseDto(s, targetLang),
+            ),
         );
     }
 

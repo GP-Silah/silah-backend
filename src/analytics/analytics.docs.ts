@@ -13,7 +13,7 @@ export function ApiDocsGetMyAnalytics() {
             description: `Retrieves a comprehensive analytics report for the authenticated supplier account.<br><br>
 Includes:
 <ul>
-  <li><b>Revenue by Month:</b> Orders & invoices totals for the past 3 full months.</li>
+  <li><b>Revenue by Month:</b> Orders & invoices totals for the past 3 months (including this month).</li>
   <li><b>Top Items:</b> Most ordered and wishlisted products/services.</li>
   <li><b>Reviews:</b> Average rating and recent reviews in the same period.</li>
 </ul>`,

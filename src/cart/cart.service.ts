@@ -500,7 +500,7 @@ export class CartService {
             token.id,
             buyer.card.tapCardId,
             cart.cartTotal, // major units
-            'http://localhost:5137/payment/cart/callback', // TODO: real redirect URL
+            `${process.env.FRONTEND_URL}/buyer/payment/callback?type=cart`,
         );
 
         // --- Redirect for 3DS if necessary ---
