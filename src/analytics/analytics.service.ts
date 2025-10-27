@@ -31,8 +31,8 @@ export class AnalyticsService {
         const now = new Date();
         const currentMonthStart = startOfMonth(now);
 
-        // Past 3 full months (excluding current month)
-        const monthRanges = [1, 2, 3].map((monthsAgo) => {
+        // ✅ Include current month + previous 2 full months
+        const monthRanges = [0, 1, 2].map((monthsAgo) => {
             const start = startOfMonth(subMonths(currentMonthStart, monthsAgo));
             const end = endOfMonth(subMonths(currentMonthStart, monthsAgo));
             return { start, end };
@@ -120,7 +120,6 @@ export class AnalyticsService {
             services.map(async (s) => {
                 const paidCount = await this.prisma.invoiceItem.count({
                     where: {
-                        // use the actual FK name in your schema (seems to be relatedServiceId in your schema)
                         relatedServiceId: s.id,
                         invoice: {
                             supplierId: supplier.id,
@@ -145,8 +144,6 @@ export class AnalyticsService {
 
         // combine and drop zero-paid items, then sort & slice
         const combined = [...productCounts, ...serviceCounts];
-
-        // filter out items with paidCount === 0 (they should not appear)
         const nonZero = combined.filter((it) => (it.paidCount ?? 0) > 0);
 
         const topItemsMapped: TopItemResponseDTO[] = nonZero;
