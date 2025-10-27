@@ -622,7 +622,7 @@ export class InvoiceService {
                 token.id,
                 buyer.card.tapCardId,
                 chargeAmount,
-                'http://localhost:5137/payment/invoice/callback', // TODO: replace with real callback URL
+                `${process.env.FRONTEND_URL}/buyer/payment/callback?type=invoice`,
             );
 
             // --- 6. Redirect for 3DS if needed ---

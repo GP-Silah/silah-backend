@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+    ApiHeader,
     ApiOkResponse,
     ApiOperation,
     ApiQuery,
@@ -10,6 +11,29 @@ import { ProductResponseDto } from 'src/product/dtos/productResponse.dto';
 import { ServiceResponseDto } from 'src/service/dtos/serviceResponse.dto';
 import { SupplierResponseDto } from 'src/supplier/dtos/supplierResponse.dto';
 import { UserResponseDTO } from 'src/user/dtos/userResponse.dto';
+
+/**
+ * Common language query/header docs for category endpoints.
+ * Use this in every endpoint decorator to stay consistent.
+ */
+function ApiDocsLanguageSupport() {
+    return applyDecorators(
+        ApiQuery({
+            name: 'lang',
+            description:
+                "Optional language code for translation (e.g., `ar` or `en`). If omitted, system will use the user's preferred language or default to English.",
+            required: false,
+            example: 'ar',
+        }),
+        ApiHeader({
+            name: 'accept-language',
+            description:
+                'Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.',
+            required: false,
+            example: 'ar',
+        }),
+    );
+}
 
 export function ApiDocsGetSearchUsers() {
     return applyDecorators(
@@ -107,6 +131,7 @@ Returned products are only those that are **published** and **not deleted**.
             example: '100',
             required: false,
         }),
+        ApiDocsLanguageSupport(),
         ApiOkResponse({
             description: 'List of matching products',
             type: [ProductResponseDto],
@@ -142,6 +167,7 @@ export function ApiDocsGetSearchServices() {
             example: '4',
             required: false,
         }),
+        ApiDocsLanguageSupport(),
         ApiOkResponse({
             description: 'List of matching services',
             type: [ServiceResponseDto],

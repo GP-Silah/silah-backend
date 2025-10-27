@@ -5006,7 +5006,27 @@
       "post": {
         "description": "Performs a smart similarity search between items (products or services) using AI embeddings.<br>\n            You can either:\n            <ul>\n                <li>Provide an existing <strong>itemId</strong> to find similar alternatives.</li>\n                <li>Or provide free-text <strong>text</strong> to perform a semantic search across all products and services.</li>\n            </ul>\n            The backend automatically determines whether the provided item belongs to products or services.<br><br>\n            The AI service (FastAPI backend) computes similarity scores using embeddings and returns the most relevant matches.<br><br>\n            <strong>Behavior:</strong>\n            <ul>\n                <li>If <code>itemId</code> is provided → search is limited to the same type (products or services).</li>\n                <li>If <code>text</code> is provided → searches both products and services simultaneously.</li>\n                <li>If both are missing → request will fail with a <code>400 Bad Request</code>.</li>\n            </ul>\n            <strong>Note:</strong> This endpoint depends on the <code>AI_BACKEND_URL</code> environment variable and will throw a <code>502 Bad Gateway</code> if the AI service is offline.",
         "operationId": "SmartSearchController_getSimilarItems",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Optional language code for translation (e.g., `ar` or `en`). If omitted, system will use the user's preferred language or default to English.",
+            "schema": {
+              "example": "ar",
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "description": "Provide either an itemId or a text. If itemId is provided, it will automatically detect the item type (product or service).",
@@ -8079,6 +8099,25 @@
         "operationId": "SearchController_searchProducts",
         "parameters": [
           {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Optional language code for translation (e.g., `ar` or `en`). If omitted, system will use the user's preferred language or default to English.",
+            "schema": {
+              "example": "ar",
+              "type": "string"
+            }
+          },
+          {
             "name": "name",
             "required": false,
             "in": "query",
@@ -8155,6 +8194,25 @@
         "description": "Performs fuzzy search on service names and filters by main or subcategory. Returns only published and active services.",
         "operationId": "SearchController_searchServices",
         "parameters": [
+          {
+            "name": "accept-language",
+            "required": false,
+            "in": "header",
+            "description": "Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "description": "Optional language code for translation (e.g., `ar` or `en`). If omitted, system will use the user's preferred language or default to English.",
+            "schema": {
+              "example": "ar",
+              "type": "string"
+            }
+          },
           {
             "name": "name",
             "required": false,
@@ -11874,7 +11932,7 @@
     },
     "/api/analytics/me": {
       "get": {
-        "description": "Retrieves a comprehensive analytics report for the authenticated supplier account.<br><br>\nIncludes:\n<ul>\n  <li><b>Revenue by Month:</b> Orders & invoices totals for the past 3 full months.</li>\n  <li><b>Top Items:</b> Most ordered and wishlisted products/services.</li>\n  <li><b>Reviews:</b> Average rating and recent reviews in the same period.</li>\n</ul>",
+        "description": "Retrieves a comprehensive analytics report for the authenticated supplier account.<br><br>\nIncludes:\n<ul>\n  <li><b>Revenue by Month:</b> Orders & invoices totals for the past 3 months (including this month).</li>\n  <li><b>Top Items:</b> Most ordered and wishlisted products/services.</li>\n  <li><b>Reviews:</b> Average rating and recent reviews in the same period.</li>\n</ul>",
         "operationId": "AnalyticsController_getMyAnalytics",
         "parameters": [],
         "responses": {

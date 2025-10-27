@@ -5,6 +5,8 @@ import {
     ApiBadRequestResponse,
     ApiBadGatewayResponse,
     ApiBody,
+    ApiQuery,
+    ApiHeader,
 } from '@nestjs/swagger';
 import { SmartSearchRequestDto } from './dtos/smartSearchRequest.dto';
 import { SmartSearchResponseDto } from './dtos/smartSearchResponse.dto';
@@ -28,6 +30,20 @@ export function ApiDocsSmartSearch() {
                 <li>If both are missing → request will fail with a <code>400 Bad Request</code>.</li>
             </ul>
             <strong>Note:</strong> This endpoint depends on the <code>AI_BACKEND_URL</code> environment variable and will throw a <code>502 Bad Gateway</code> if the AI service is offline.`,
+        }),
+        ApiQuery({
+            name: 'lang',
+            description:
+                "Optional language code for translation (e.g., `ar` or `en`). If omitted, system will use the user's preferred language or default to English.",
+            required: false,
+            example: 'ar',
+        }),
+        ApiHeader({
+            name: 'accept-language',
+            description:
+                'Optional header to specify response translation language (e.g., `ar`, `en`). Used if `lang` query param not provided.',
+            required: false,
+            example: 'ar',
         }),
         ApiBody({
             type: SmartSearchRequestDto,
