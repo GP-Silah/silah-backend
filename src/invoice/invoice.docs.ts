@@ -15,6 +15,7 @@ import {
     PreInvoiceResponseDto,
 } from './dtos/invoiceResponse.dto';
 import { CreateInvoiceDto } from './dtos/createInvoice.dto';
+import { PayInvoiceDto } from './dtos/payInvoice.dto';
 
 export function ApiDocsGetMyInvoices() {
     return applyDecorators(
@@ -241,10 +242,9 @@ Allows a buyer to pay an accepted or partially paid invoice using a saved card i
             example: '123e4567-e89b-12d3-a456-426614174000',
         }),
         ApiBody({
-            description: 'Optional existing charge ID if already created.',
-            schema: {
-                example: { chargeId: 'chg_abc123' },
-            },
+            description:
+                'Optional existing charge ID if already created, if not provide the redirectUrl that Tap will redirect the user back to after authentication.',
+            type: PayInvoiceDto,
         }),
         ApiResponse({
             status: 200,
