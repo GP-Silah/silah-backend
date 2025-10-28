@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 
-export class CheckoutCartDto {
+export class PayInvoiceDto {
     @ApiPropertyOptional({
         description:
             'Existing chargeId to confirm payment instead of creating a new one (Step 2)',

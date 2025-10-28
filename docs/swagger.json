@@ -7213,7 +7213,7 @@
     },
     "/api/carts/me/checkout": {
       "post": {
-        "description": "Finalizes the buyer's cart by creating a Tap Payments token from the saved card, charging the card, and creating orders for each supplier. Marks the cart as bought and returns checkout details. If 3DS authentication is required, returns the redirect URL and charge ID.",
+        "description": "Finalizes the buyer's cart by creating a Tap Payments token from the saved card, charging the card, and creating orders for each supplier. Marks the cart as bought and returns checkout details. If 3DS authentication is required, returns the redirect URL and charge ID.Provice the redirectUrl (on checkoutCart) that Tap will use to return the user to that page after authentication.",
         "operationId": "CartController_checkoutCart",
         "parameters": [],
         "requestBody": {
@@ -9402,13 +9402,11 @@
         ],
         "requestBody": {
           "required": true,
-          "description": "Optional existing charge ID if already created.",
+          "description": "Optional existing charge ID if already created, if not provide the redirectUrl that Tap will redirect the user back to after authentication.",
           "content": {
             "application/json": {
               "schema": {
-                "example": {
-                  "chargeId": "chg_abc123"
-                }
+                "$ref": "#/components/schemas/PayInvoiceDto"
               }
             }
           }
@@ -12519,7 +12517,7 @@
           "redirectUrl": {
             "type": "string",
             "description": "Frontend redirect URL where the user will be sent after completing the OTP/3DS flow",
-            "example": "https://yourapp.com/payment/callback or http://localhost:5137/payment/callback in testing environment"
+            "example": "https://yourapp.com/buyer/payment/callback or http://localhost:5137/buyer/payment/callback in testing environment"
           }
         },
         "required": [
@@ -13627,8 +13625,13 @@
         "properties": {
           "chargeId": {
             "type": "string",
-            "description": "Existing chargeId to confirm payment instead of creating a new one",
+            "description": "Existing chargeId to confirm payment instead of creating a new one (Step 2)",
             "example": "chg_TS00022120250302grEG302115114"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "description": "Frontend redirect URL where the user will be sent after completing the OTP/3DS flow (Step 1)",
+            "example": "https://yourapp.com/buyer/payment/callback or http://localhost:5137/buyer/payment/callback in testing environment"
           }
         }
       },
@@ -14523,6 +14526,21 @@
           "termsOfPayment",
           "items"
         ]
+      },
+      "PayInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "chargeId": {
+            "type": "string",
+            "description": "Existing chargeId to confirm payment instead of creating a new one (Step 2)",
+            "example": "chg_TS00022120250302grEG302115114"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "description": "Frontend redirect URL where the user will be sent after completing the OTP/3DS flow (Step 1)",
+            "example": "https://yourapp.com/buyer/payment/callback or http://localhost:5137/buyer/payment/callback in testing environment"
+          }
+        }
       },
       "CreateOfferDto": {
         "type": "object",

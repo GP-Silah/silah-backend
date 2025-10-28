@@ -27,6 +27,7 @@ import { CreateInvoiceDto } from './dtos/createInvoice.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { OfferService } from 'src/offer/offer.service';
 import { GroupPurchaseService } from 'src/group-purchase/group-purchase.service';
+import { PayInvoiceDto } from './dtos/payInvoice.dto';
 
 @Injectable()
 export class InvoiceService {
@@ -508,7 +509,7 @@ export class InvoiceService {
         )) as InvoiceResponseDto;
     }
 
-    async payInvoice(userId: string, id: string, chargeId?: string) {
+    async payInvoice(userId: string, id: string, dto?: PayInvoiceDto) {
         // --- 1. Verify invoice exists and belongs to the buyer ---
         const invoice = await this.prisma.invoice.findUnique({
             where: { id },
@@ -585,8 +586,8 @@ export class InvoiceService {
         let charge: any;
 
         // --- 4. Path 1: Use existing charge if chargeId is provided ---
-        if (chargeId) {
-            charge = await this.tapPaymentService.getCharge(chargeId);
+        if (dto && dto.chargeId) {
+            charge = await this.tapPaymentService.getCharge(dto.chargeId);
             await this.tapPaymentService.validateCharge(charge);
             if (!['CAPTURED', 'AUTHORIZED'].includes(charge.status)) {
                 throw new BadRequestException(
@@ -622,7 +623,8 @@ export class InvoiceService {
                 token.id,
                 buyer.card.tapCardId,
                 chargeAmount,
-                `${process.env.FRONTEND_URL}/buyer/payment/callback?type=invoice`,
+                dto?.redirectUrl ||
+                    `${process.env.FRONTEND_URL}/buyer/payment/callback?type=invoice`,
             );
 
             // --- 6. Redirect for 3DS if needed ---

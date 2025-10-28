@@ -16,7 +16,7 @@ export class CreateCardStep1Dto {
         description:
             'Frontend redirect URL where the user will be sent after completing the OTP/3DS flow',
         example:
-            'https://yourapp.com/payment/callback or http://localhost:5137/payment/callback in testing environment',
+            'https://yourapp.com/buyer/payment/callback or http://localhost:5137/buyer/payment/callback in testing environment',
     })
     @IsNotEmpty()
     @IsString()
