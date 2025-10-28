@@ -500,7 +500,8 @@ export class CartService {
             token.id,
             buyer.card.tapCardId,
             cart.cartTotal, // major units
-            `${process.env.FRONTEND_URL}/buyer/payment/callback?type=cart`,
+            dto.redirectUrl ||
+                `${process.env.FRONTEND_URL}/buyer/payment/callback?type=cart`,
         );
 
         // --- Redirect for 3DS if necessary ---

@@ -291,7 +291,8 @@ export function ApiDocsCheckoutCart() {
             summary: 'Checkout cart',
             description:
                 "Finalizes the buyer's cart by creating a Tap Payments token from the saved card, charging the card, and creating orders for each supplier. Marks the cart as bought and returns checkout details. " +
-                'If 3DS authentication is required, returns the redirect URL and charge ID.',
+                'If 3DS authentication is required, returns the redirect URL and charge ID.' +
+                'Provice the redirectUrl (on checkoutCart) that Tap will use to return the user to that page after authentication.',
         }),
         ApiOkResponse({
             description:

@@ -145,14 +145,6 @@ export class NotificationController {
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ): Observable<MessageEvent> {
-        const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:5173';
-        // Set SSE + CORS headers
-        res.setHeader('Content-Type', 'text/event-stream');
-        res.setHeader('Cache-Control', 'no-cache');
-        res.setHeader('Connection', 'keep-alive');
-        res.setHeader('Access-Control-Allow-Origin', frontendUrl); // exact frontend URL
-        res.setHeader('Access-Control-Allow-Credentials', 'true'); // important for cookies
-
         const userId = req.tokenData!.sub;
 
         const disconnect$ = new Subject<void>(); // This will signal when to stop

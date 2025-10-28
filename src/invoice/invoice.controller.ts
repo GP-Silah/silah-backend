@@ -30,6 +30,7 @@ import {
 } from './invoice.docs';
 import { ApiDocsVerifiedGuard } from 'src/auth/decorators/verified-guard.docs';
 import { VerifiedGuard } from 'src/auth/guards/verified.guard';
+import { PayInvoiceDto } from './dtos/payInvoice.dto';
 
 @ApiTags('Invoices')
 @Controller('invoices')
@@ -137,9 +138,9 @@ export class InvoiceController {
     async payInvoice(
         @Req() req: Request,
         @Param('id') id: string,
-        @Body('chargeId') chargeId?: string,
+        @Body() dto?: PayInvoiceDto,
     ) {
         const userId = req.tokenData!.sub;
-        return this.invoiceService.payInvoice(userId, id, chargeId);
+        return this.invoiceService.payInvoice(userId, id, dto);
     }
 }
