@@ -267,3 +267,31 @@ socket.on("new_message", (message) => console.log(message));
         }),
     );
 }
+
+export function ApiDocsGetChatById() {
+    return applyDecorators(
+        ApiBearerAuth(),
+        ApiOperation({
+            summary: 'Get a specific chat by ID',
+            description: `Retrieves the full details of a specific <code>chatId</code> that the logged-in user is part of.<br><br>
+                <b>Access control:</b> Only participants (user1 or user2) can access this chat.<br>
+                <b>Error handling:</b> Returns a 403 error if the user is not part of the chat.`,
+        }),
+        ApiResponse({
+            status: 200,
+            description:
+                'Returns a single chat object containing participants and all messages',
+            type: ChatResponseDto,
+        }),
+        ApiNotFoundResponse({
+            description: 'Chat not found or user not authorized',
+            schema: {
+                example: {
+                    statusCode: 403,
+                    message: 'You are not part of this chat.',
+                    error: 'Forbidden',
+                },
+            },
+        }),
+    );
+}

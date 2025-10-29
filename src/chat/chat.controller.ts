@@ -27,6 +27,7 @@ import { ChatGateway } from './chat.gateway';
 import {
     ApiDocsFakeWebSocketGuide,
     ApiDocsGetAllChats,
+    ApiDocsGetChatById,
     ApiDocsGetMessagesForChat,
     ApiDocsMarkMessagesAsRead,
     ApiDocsSendImageMessage,
@@ -52,6 +53,16 @@ export class ChatController {
     ) {
         const userId = req.tokenData!.sub;
         return this.chatService.getAllChats(userId, date, status);
+    }
+
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsVerifiedGuard()
+    @UseGuards(JwtAuthGuard, VerifiedGuard)
+    @ApiDocsGetChatById()
+    @Get('me/:id')
+    async getChatById(@Req() req: Request, @Param('id') chatId: string) {
+        const userId = req.tokenData!.sub;
+        return this.chatService.getChatById(userId, chatId);
     }
 
     @ApiDocsJwtAuthGuard()

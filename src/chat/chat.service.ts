@@ -212,6 +212,28 @@ export class ChatService {
         return dtos;
     }
 
+    async getChatById(userId: string, chatId: string) {
+        // 1. Verify the user belongs to the chat and fetch full data
+        const chat = await this.prisma.chat.findUnique({
+            where: { id: chatId },
+            include: {
+                user1: true,
+                user2: true,
+                messages: {
+                    orderBy: { createdAt: 'desc' }, // newest first
+                },
+            },
+        });
+
+        // 2. Check membership
+        if (!chat || (chat.user1Id !== userId && chat.user2Id !== userId)) {
+            throw new ForbiddenException('You are not part of this chat.');
+        }
+
+        // 3. Return chat response DTO
+        return this.toChatResponseDto(chat, userId);
+    }
+
     async getMessagesForChatById(
         userId: string,
         chatId: string,
