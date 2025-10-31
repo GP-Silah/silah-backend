@@ -9,6 +9,7 @@ import {
     Service,
     Supplier,
     SupplierPlan,
+    SupplierStatus,
     User,
 } from '@prisma/client';
 import { FileService } from 'src/file/file.service';
@@ -118,7 +119,10 @@ export class ServiceService {
         const services = await this.prisma.service.findMany({
             where: {
                 isDeleted: false,
-                supplier: { isStoreClosed: false },
+                supplier: {
+                    isStoreClosed: false,
+                    status: SupplierStatus.ACTIVE,
+                },
                 ...(isPublishedFilter !== undefined
                     ? { isPublished: isPublishedFilter }
                     : {}),

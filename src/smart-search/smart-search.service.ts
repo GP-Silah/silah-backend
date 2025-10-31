@@ -7,7 +7,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SmartSearchRequestDto } from './dtos/smartSearchRequest.dto';
 import { SmartSearchResponseDto } from './dtos/smartSearchResponse.dto';
-import { ItemType } from '@prisma/client';
+import { ItemType, SupplierStatus } from '@prisma/client';
 import axios from 'axios';
 
 @Injectable()
@@ -47,14 +47,28 @@ export class SmartSearchService {
         if (itemId) {
             // try both tables
             const product = await this.prisma.product.findFirst({
-                where: { id: itemId, isDeleted: false },
+                where: {
+                    id: itemId,
+                    isDeleted: false,
+                    supplier: {
+                        isStoreClosed: false,
+                        status: SupplierStatus.ACTIVE,
+                    },
+                },
                 include: {
                     supplier: { include: { user: true } },
                     category: true,
                 },
             });
             const service = await this.prisma.service.findFirst({
-                where: { id: itemId, isDeleted: false },
+                where: {
+                    id: itemId,
+                    isDeleted: false,
+                    supplier: {
+                        isStoreClosed: false,
+                        status: SupplierStatus.ACTIVE,
+                    },
+                },
                 include: {
                     supplier: { include: { user: true } },
                     category: true,
@@ -67,7 +81,13 @@ export class SmartSearchService {
 
                 // fetch all products
                 const allProducts = await this.prisma.product.findMany({
-                    where: { isDeleted: false },
+                    where: {
+                        isDeleted: false,
+                        supplier: {
+                            isStoreClosed: false,
+                            status: SupplierStatus.ACTIVE,
+                        },
+                    },
                     include: { category: true },
                 });
 
@@ -92,7 +112,13 @@ export class SmartSearchService {
 
                 // fetch all services
                 const allServices = await this.prisma.service.findMany({
-                    where: { isDeleted: false },
+                    where: {
+                        isDeleted: false,
+                        supplier: {
+                            isStoreClosed: false,
+                            status: SupplierStatus.ACTIVE,
+                        },
+                    },
                     include: { category: true },
                 });
 
@@ -138,11 +164,23 @@ export class SmartSearchService {
         if (!itemId) {
             const [allProducts, allServices] = await Promise.all([
                 this.prisma.product.findMany({
-                    where: { isDeleted: false },
+                    where: {
+                        isDeleted: false,
+                        supplier: {
+                            isStoreClosed: false,
+                            status: SupplierStatus.ACTIVE,
+                        },
+                    },
                     include: { category: true },
                 }),
                 this.prisma.service.findMany({
-                    where: { isDeleted: false },
+                    where: {
+                        isDeleted: false,
+                        supplier: {
+                            isStoreClosed: false,
+                            status: SupplierStatus.ACTIVE,
+                        },
+                    },
                     include: { category: true },
                 }),
             ]);
