@@ -10,6 +10,7 @@ import {
     Product,
     Supplier,
     SupplierPlan,
+    SupplierStatus,
     User,
 } from '@prisma/client';
 import { ProductResponseDto } from './dtos/productResponse.dto';
@@ -142,7 +143,10 @@ export class ProductService {
         const products = await this.prisma.product.findMany({
             where: {
                 isDeleted: false,
-                supplier: { isStoreClosed: false },
+                supplier: {
+                    isStoreClosed: false,
+                    status: SupplierStatus.ACTIVE,
+                },
                 ...(isPublishedFilter !== undefined
                     ? { isPublished: isPublishedFilter }
                     : {}),
