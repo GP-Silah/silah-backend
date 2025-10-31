@@ -197,6 +197,7 @@
     },
     "/api/auth/signup": {
       "post": {
+        "description": "\nRegisters a new user and returns a JWT token.  \nThis endpoint validates the following:\n- Category IDs must exist and be main categories (no parentCategoryId).  \n- NID, CRN, and Email must be unique in the system.  \n- CRN must exist and be **active** in the official Wathq registry.  \n- On success, a JWT is returned (and stored as a cookie in the controller).",
         "operationId": "AuthController_signUp",
         "parameters": [],
         "requestBody": {
@@ -216,14 +217,15 @@
               "application/json": {
                 "schema": {
                   "example": {
-                    "message": "Signup successful"
+                    "message": "Signup successful",
+                    "token": "<jwt_token>"
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Bad Request - validation or conflict",
+            "description": "Bad Request - validation, duplication, or Wathq inactive CRN",
             "content": {
               "application/json": {
                 "schema": {
@@ -255,6 +257,20 @@
                         "message": "Email already exists",
                         "error": "Bad Request"
                       }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "The provided CRN does not exist in Wathq records",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "The CRN exists but is not active (status: suspended)",
+                        "error": "Bad Request"
+                      }
                     }
                   ]
                 },
@@ -263,7 +279,7 @@
                     "summary": "Invalid Categories",
                     "value": {
                       "statusCode": 400,
-                      "message": "These categories are invalid: Cleaning, Laundry",
+                      "message": "These categories are invalid or not main categories: 33, 44",
                       "error": "Bad Request"
                     }
                   },
@@ -290,13 +306,29 @@
                       "message": "Email already exists",
                       "error": "Bad Request"
                     }
+                  },
+                  "crnNotFound": {
+                    "summary": "CRN does not exist in Wathq",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "The provided CRN does not exist in Wathq records",
+                      "error": "Bad Request"
+                    }
+                  },
+                  "crnInactive": {
+                    "summary": "CRN exists but not active",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "The CRN exists but is not active (status: suspended)",
+                      "error": "Bad Request"
+                    }
                   }
                 }
               }
             }
           },
           "404": {
-            "description": "Commercial Registration not found (from Wathiq API).",
+            "description": "Commercial Registration not found (from Wathq API)",
             "content": {
               "application/json": {
                 "schema": {
@@ -306,12 +338,40 @@
                   }
                 },
                 "examples": {
-                  "crnNotFound": {
-                    "summary": "CRN not found in Wathiq",
+                  "notFound": {
+                    "summary": "Wathq returned no results",
                     "value": {
                       "code": "404.2.1",
                       "message": "No Results Found"
                     }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected internal error during signup or Wathq request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 500,
+                    "message": "Failed to contact Wathq service",
+                    "error": "Internal Server Error"
+                  }
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Temporary issue with Wathq provider or connection failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 502,
+                    "message": "Temporary issue with provider",
+                    "error": "Bad Gateway"
                   }
                 }
               }
