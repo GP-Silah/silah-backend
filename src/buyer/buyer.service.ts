@@ -177,7 +177,12 @@ export class BuyerService {
             );
         }
 
-        // 3. Save in DB directly from charge.card
+        // 3. Delete old card (if exists)
+        await this.prisma.card.deleteMany({
+            where: { buyerId: buyer.id },
+        });
+
+        // 4. Save in DB directly from charge.card
         const savedCard = await this.prisma.card.create({
             data: {
                 tapCardId: card.id,

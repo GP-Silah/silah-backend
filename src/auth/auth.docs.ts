@@ -2,6 +2,7 @@ import { applyDecorators } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
     ApiBody,
+    ApiGatewayTimeoutResponse,
     ApiInternalServerErrorResponse,
     ApiNotFoundResponse,
     ApiOkResponse,
@@ -20,24 +21,36 @@ export function ApiDocsSignUp() {
     return applyDecorators(
         ApiOperation({
             summary: 'Registers a new user and returns a JWT token in a cookie',
+            description: `
+Registers a new user and returns a JWT token.  
+This endpoint validates the following:
+- Category IDs must exist and be main categories (no parentCategoryId).  
+- NID, CRN, and Email must be unique in the system.  
+- CRN must exist and be **active** in the official Wathq registry.  
+- On success, a JWT is returned (and stored as a cookie in the controller).`,
         }),
+
         ApiBody({ type: SignupDto }),
+
         ApiResponse({
             status: 201,
             description: 'User signed up successfully. JWT sent in cookie.',
             schema: {
                 example: {
                     message: 'Signup successful',
+                    token: '<jwt_token>',
                 },
             },
         }),
+
+        // 400 - Validation / Conflict errors
         ApiBadRequestResponse({
-            description: 'Bad Request - validation or conflict',
+            description:
+                'Bad Request - validation, duplication, or Wathq inactive CRN',
             content: {
                 'application/json': {
                     schema: {
                         oneOf: [
-                            // Optional: if you want typed schema matching different error shapes
                             {
                                 example: {
                                     statusCode: 400,
@@ -67,6 +80,22 @@ export function ApiDocsSignUp() {
                                     error: 'Bad Request',
                                 },
                             },
+                            {
+                                example: {
+                                    statusCode: 400,
+                                    message:
+                                        'The provided CRN does not exist in Wathq records',
+                                    error: 'Bad Request',
+                                },
+                            },
+                            {
+                                example: {
+                                    statusCode: 400,
+                                    message:
+                                        'The CRN exists but is not active (status: suspended)',
+                                    error: 'Bad Request',
+                                },
+                            },
                         ],
                     },
                     examples: {
@@ -75,7 +104,7 @@ export function ApiDocsSignUp() {
                             value: {
                                 statusCode: 400,
                                 message:
-                                    'These categories are invalid: Cleaning, Laundry',
+                                    'These categories are invalid or not main categories: 33, 44',
                                 error: 'Bad Request',
                             },
                         },
@@ -103,12 +132,32 @@ export function ApiDocsSignUp() {
                                 error: 'Bad Request',
                             },
                         },
+                        crnNotFound: {
+                            summary: 'CRN does not exist in Wathq',
+                            value: {
+                                statusCode: 400,
+                                message:
+                                    'The provided CRN does not exist in Wathq records',
+                                error: 'Bad Request',
+                            },
+                        },
+                        crnInactive: {
+                            summary: 'CRN exists but not active',
+                            value: {
+                                statusCode: 400,
+                                message:
+                                    'The CRN exists but is not active (status: suspended)',
+                                error: 'Bad Request',
+                            },
+                        },
                     },
                 },
             },
         }),
+
+        // 404 - Explicitly document Wathq “No Results Found” (404.2.1)
         ApiNotFoundResponse({
-            description: 'Commercial Registration not found (from Wathiq API).',
+            description: 'Commercial Registration not found (from Wathq API)',
             content: {
                 'application/json': {
                     schema: {
@@ -118,12 +167,46 @@ export function ApiDocsSignUp() {
                         },
                     },
                     examples: {
-                        crnNotFound: {
-                            summary: 'CRN not found in Wathiq',
+                        notFound: {
+                            summary: 'Wathq returned no results',
                             value: {
                                 code: '404.2.1',
                                 message: 'No Results Found',
                             },
+                        },
+                    },
+                },
+            },
+        }),
+
+        // 502 - Provider down or Wathq internal errors
+        ApiGatewayTimeoutResponse({
+            description:
+                'Temporary issue with Wathq provider or connection failure',
+            content: {
+                'application/json': {
+                    schema: {
+                        example: {
+                            statusCode: 502,
+                            message: 'Temporary issue with provider',
+                            error: 'Bad Gateway',
+                        },
+                    },
+                },
+            },
+        }),
+
+        // 500 - Unexpected backend failure
+        ApiInternalServerErrorResponse({
+            description:
+                'Unexpected internal error during signup or Wathq request',
+            content: {
+                'application/json': {
+                    schema: {
+                        example: {
+                            statusCode: 500,
+                            message: 'Failed to contact Wathq service',
+                            error: 'Internal Server Error',
                         },
                     },
                 },

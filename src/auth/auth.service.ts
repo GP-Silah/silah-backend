@@ -111,9 +111,23 @@ export class AuthService {
             }
         }
 
-        // Validate CRN is real and its status is active through Wathq API
-        // const wathqRes = await this.wathqService.getBasicInfo(payload.crn);
-        // return wathqRes; // to test
+        // Validate CRN is real and active via Wathq API
+        const wathqRes = await this.wathqService.getBasicInfo(payload.crn);
+        console.log(wathqRes);
+
+        if (!wathqRes) {
+            throw new BadRequestException(
+                'The provided CRN does not exist in Wathq records',
+            );
+        }
+
+        // Ensure it's active (status name in Arabic or English)
+        const status = wathqRes.status?.name?.trim();
+        if (status !== 'فعال' && status.toLowerCase() !== 'active') {
+            throw new BadRequestException(
+                `The CRN exists but is not active (status: ${status})`,
+            );
+        }
 
         // Create a Customer on Tap Payments API of the user
         const tapCustomerId = await this.tapPaymentsService.createCustomer({
