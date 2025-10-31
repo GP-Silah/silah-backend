@@ -1,6 +1,5 @@
-import { query } from 'winston';
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { SupplierStatus, User } from '@prisma/client';
 import { ChatService } from 'src/chat/chat.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductService } from 'src/product/product.service';
@@ -82,6 +81,10 @@ export class SearchService {
             (!businessName || businessName.trim() === '')
         ) {
             const allSuppliers = await this.prisma.supplier.findMany({
+                where: {
+                    isStoreClosed: false,
+                    status: SupplierStatus.ACTIVE,
+                },
                 include: { user: true },
             });
 
@@ -200,6 +203,10 @@ export class SearchService {
         const whereClause: any = {
             isDeleted: false,
             isPublished: true,
+            supplier: {
+                isStoreClosed: false,
+                status: SupplierStatus.ACTIVE,
+            },
         };
 
         // 2. Handle category filters
@@ -285,6 +292,10 @@ export class SearchService {
         const whereClause: any = {
             isDeleted: false,
             isPublished: true,
+            supplier: {
+                isStoreClosed: false,
+                status: SupplierStatus.ACTIVE,
+            },
         };
 
         // 2. Handle category filters
