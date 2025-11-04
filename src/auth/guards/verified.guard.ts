@@ -1,4 +1,3 @@
-// src/common/guards/verified.guard.ts
 import {
     CanActivate,
     ExecutionContext,
