@@ -13,7 +13,7 @@ export class TranslationService {
      */
     async translateText(
         text: string,
-        targetLang: string,
+        targetLang: 'ar' | 'en',
         sourceLang?: string,
     ): Promise<string> {
         if (!text || !targetLang) return text;

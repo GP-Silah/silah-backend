@@ -75,7 +75,7 @@ export class SearchService {
     }
 
     async searchSuppliers(name?: string, businessName?: string) {
-        // If no query is provided, return all suppliers
+        // If no query, return all active suppliers
         if (
             (!name || name.trim() === '') &&
             (!businessName || businessName.trim() === '')
@@ -87,7 +87,6 @@ export class SearchService {
                 },
                 include: { user: true },
             });
-
             return Promise.all(
                 allSuppliers.map(({ user, ...supplier }) =>
                     this.toSupplierResponseSafe(user, supplier),
@@ -95,46 +94,78 @@ export class SearchService {
             );
         }
 
-        // FTS + fuzzy search for name or businessName
-        const suppliers = await this.prisma.$queryRaw<any[]>`
-        SELECT 
-            s.id AS "supplierId",
-            s."userId",
-            s."status",
-            s."plan",
-            s."isStoreClosed",
-            s."storeClosedMsg",
-            s."storeBio",
-            s."storeBannerFileName",
-            s."deliveryFees",
-            s."avgRating",
-            s."ratingsCount",
-            s."usedFreeTrail",
-            u.id AS "userId",
-            u."tapCustomerId",
-            u.name,
-            u.email,
-            u.crn,
-            u."businessName",
-            u.role,
-            u.city,
-            u."pfpFileName",
-            u."isEmailVerified",
-            u."preferredLanguage",
-            u."createdAt",
-            u."updatedAt"
-        FROM "Supplier" s
-        JOIN "User" u ON s."userId" = u.id
-        WHERE (
-            (${name} IS NOT NULL AND to_tsvector('english', u.name) @@ plainto_tsquery('english', ${name}))
-            OR (${name} IS NOT NULL AND u.name % ${name})
-            OR (${businessName} IS NOT NULL AND to_tsvector('english', u."businessName") @@ plainto_tsquery('english', ${businessName}))
-            OR (${businessName} IS NOT NULL AND u."businessName" % ${businessName})
-        )
-        ORDER BY 
-            ts_rank(to_tsvector('english', u.name), plainto_tsquery('english', ${name})) DESC,
-            similarity(u.name, ${name}) DESC;
-    `;
+        // Sanitize inputs
+        const qName = name?.trim() || null;
+        const qBusiness = businessName?.trim() || null;
+
+        // Build conditions safely
+        const conditions: string[] = [];
+        const params: any[] = [];
+
+        if (qName) {
+            conditions.push(
+                `to_tsvector('english', u.name) @@ plainto_tsquery('english', $1)`,
+            );
+            conditions.push(`u.name % $2`);
+            params.push(qName, qName);
+        }
+
+        if (qBusiness) {
+            conditions.push(
+                `to_tsvector('english', u."businessName") @@ plainto_tsquery('english', $${params.length + 1})`,
+            );
+            conditions.push(`u."businessName" % $${params.length + 2}`);
+            params.push(qBusiness, qBusiness);
+        }
+
+        if (conditions.length === 0) {
+            return []; // Should not happen
+        }
+
+        const whereClause = conditions.join(' OR ');
+
+        const query = `
+    SELECT
+      s.id AS "supplierId",
+      s."userId",
+      s."status",
+      s."plan",
+      s."isStoreClosed",
+      s."storeClosedMsg",
+      s."storeBio",
+      s."storeBannerFileName",
+      s."deliveryFees",
+      s."avgRating",
+      s."ratingsCount",
+      s."usedFreeTrail",
+      u.id AS "userId",
+      u."tapCustomerId",
+      u.name,
+      u.email,
+      u.crn,
+      u."businessName",
+      u.role,
+      u.city,
+      u."pfpFileName",
+      u."isEmailVerified",
+      u."preferredLanguage",
+      u."createdAt",
+      u."updatedAt"
+    FROM "Supplier" s
+    JOIN "User" u ON s."userId" = u.id
+    WHERE (${whereClause})
+      AND s."isStoreClosed" = false
+      AND s."status" = 'ACTIVE'
+    ORDER BY
+      ts_rank(to_tsvector('english', u.name), plainto_tsquery('english', $1)) DESC NULLS LAST,
+      similarity(u.name, $2) DESC NULLS LAST
+    LIMIT 50;
+  `;
+
+        const suppliers = await this.prisma.$queryRawUnsafe<any[]>(
+            query,
+            ...params,
+        );
 
         return Promise.all(
             suppliers.map((row) => {
@@ -153,7 +184,6 @@ export class SearchService {
                     createdAt: row.createdAt,
                     updatedAt: row.updatedAt,
                 };
-
                 const supplier = {
                     id: row.supplierId,
                     userId: row.userId,
@@ -168,7 +198,6 @@ export class SearchService {
                     ratingsCount: row.ratingsCount,
                     usedFreeTrail: row.usedFreeTrail,
                 };
-
                 return this.toSupplierResponseSafe(user, supplier);
             }),
         );
