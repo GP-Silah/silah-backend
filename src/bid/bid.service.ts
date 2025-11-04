@@ -48,6 +48,11 @@ export class BidService {
 
     async getAllBids() {
         const bids = await this.prisma.bid.findMany({
+            where: {
+                submissionDeadline: {
+                    gt: new Date(), // greater than now → deadline hasn't passed
+                },
+            },
             include: { buyer: { include: { user: true, card: true } } },
         });
         return Promise.all(bids.map((b) => this.toBidResponseDto(b)));
