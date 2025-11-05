@@ -50,6 +50,7 @@ export class SmartSearchService {
                 where: {
                     id: itemId,
                     isDeleted: false,
+                    isPublished: true,
                     supplier: {
                         isStoreClosed: false,
                         status: SupplierStatus.ACTIVE,
@@ -64,6 +65,7 @@ export class SmartSearchService {
                 where: {
                     id: itemId,
                     isDeleted: false,
+                    isPublished: true,
                     supplier: {
                         isStoreClosed: false,
                         status: SupplierStatus.ACTIVE,
@@ -83,6 +85,7 @@ export class SmartSearchService {
                 const allProducts = await this.prisma.product.findMany({
                     where: {
                         isDeleted: false,
+                        isPublished: true,
                         supplier: {
                             isStoreClosed: false,
                             status: SupplierStatus.ACTIVE,
@@ -114,6 +117,7 @@ export class SmartSearchService {
                 const allServices = await this.prisma.service.findMany({
                     where: {
                         isDeleted: false,
+                        isPublished: true,
                         supplier: {
                             isStoreClosed: false,
                             status: SupplierStatus.ACTIVE,
@@ -166,6 +170,7 @@ export class SmartSearchService {
                 this.prisma.product.findMany({
                     where: {
                         isDeleted: false,
+                        isPublished: true,
                         supplier: {
                             isStoreClosed: false,
                             status: SupplierStatus.ACTIVE,
@@ -176,6 +181,7 @@ export class SmartSearchService {
                 this.prisma.service.findMany({
                     where: {
                         isDeleted: false,
+                        isPublished: true,
                         supplier: {
                             isStoreClosed: false,
                             status: SupplierStatus.ACTIVE,
