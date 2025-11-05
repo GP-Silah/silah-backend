@@ -1,6 +1,6 @@
 # Silah Backend
 
-_Last Updated: October 2025_
+_Last Updated: November 2025_
 
 This is the backend API server for [Silah](https://github.com/GP-Silah), an AI-augmented full-stack B2B platform that connects suppliers and buyers. Built using [NestJS](https://nestjs.com/), a progressive Node.js framework for building efficient and scalable server-side applications.
 
@@ -158,8 +158,13 @@ CREATE DATABASE silah_dev OWNER silah_user;
 CREATE DATABASE silah_test OWNER silah_user;
 GRANT ALL PRIVILEGES ON DATABASE silah_dev TO silah_user;
 GRANT ALL PRIVILEGES ON DATABASE silah_test TO silah_user;
+```
 
-# (Optional) Enable fuzzy search with pg_trgm extension
+#### Enable Fuzzy Search Extension (`pg_trgm`)
+
+To enable typo-tolerant search (e.g., "Candle" → "Candl"), you **must** enable the `pg_trgm` extension in both databases:
+
+````sql
 \c silah_dev
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
@@ -167,7 +172,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 ```
 
-**Note:** The `pg_trgm` extension is optional. Only enable it if you want typo-tolerant search in users, products, or suppliers.
+> Warning: This extension is required for full-text fuzzy search in products, suppliers, and categories. Without it, search queries will fail.
 
 #### 5. Set Up Prisma and Database
 
@@ -180,7 +185,7 @@ npm run prisma:dev
 
 # Seed the database with categories (REQUIRED)
 npm run prisma:seed:category
-```
+````
 
 **Important:** The category seeding step is crucial. It inserts ~50 predefined categories that the application relies on. Skipping this will break category-related features.
 

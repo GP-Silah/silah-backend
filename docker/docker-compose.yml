@@ -5,18 +5,23 @@ services:
         container_name: silah_db_dev
         restart: always
         ports:
-            - '5432:5432'
+            - "5432:5432"
         env_file:
             - ../.env
             - ../.env.dev
             - ../.env.merged
         volumes:
             - silah_dev_data:/var/lib/postgresql/data
+            - ./docker/init-pg-trgm.sql:/docker-entrypoint-initdb.d/init-pg-trgm.sql
+        command: >
+            postgres
+            -c max_connections=200
+            -c shared_buffers=256MB
         healthcheck:
             test:
                 [
-                    'CMD-SHELL',
-                    'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB_DEV}',
+                    "CMD-SHELL",
+                    "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB_DEV}",
                 ]
             interval: 5s
             timeout: 5s
@@ -29,16 +34,20 @@ services:
         container_name: silah_db_test
         restart: always
         ports:
-            - '5433:5432'
+            - "5433:5432"
         env_file:
             - ../.env
             - ../.env.test
             - ../.env.merged
+        command: >
+            postgres
+            -c max_connections=200
+            -c shared_buffers=256MB
         healthcheck:
             test:
                 [
-                    'CMD-SHELL',
-                    'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB_TEST}',
+                    "CMD-SHELL",
+                    "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB_TEST}",
                 ]
             interval: 5s
             timeout: 5s
@@ -52,7 +61,7 @@ services:
         container_name: silah_backend
         restart: unless-stopped
         ports:
-            - '3000:3000'
+            - "3000:3000"
         env_file:
             - ../.env
             - ../${ENV_FILE:-.env.dev}
@@ -65,7 +74,7 @@ services:
             - ..:/app
             - ./logs:/app/logs
             - /app/node_modules
-        entrypoint: ['sh', './docker/docker-entrypoint.sh']
+        entrypoint: ["sh", "./docker/docker-entrypoint.sh"]
 
 volumes:
     silah_dev_data:
