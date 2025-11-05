@@ -78,7 +78,7 @@ export class ServiceController {
     @Get('supplier/:supplierId')
     @ApiDocsGetAllSupplierServices()
     async getAllSupplierServices(
-        @Param('souplierId') supplierId: string,
+        @Param('supplierId') supplierId: string,
         @Req() req: Request,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
