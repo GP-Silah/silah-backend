@@ -79,7 +79,7 @@ export class ProductController {
     @Get('supplier/:supplierId')
     @ApiDocsGetAllSupplierProducts()
     async getAllSupplierProducts(
-        @Param('souplierId') supplierId: string,
+        @Param('supplierId') supplierId: string,
         @Req() req: Request,
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
