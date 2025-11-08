@@ -1,5 +1,7 @@
 import {
     BadRequestException,
+    forwardRef,
+    Inject,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -28,6 +30,7 @@ export class ServiceService {
         private readonly fileService: FileService,
         private readonly supplierService: SupplierService,
         private readonly translationService: TranslationService,
+        @Inject(forwardRef(() => SmartSearchService))
         private readonly smartSearchService: SmartSearchService,
     ) {}
 

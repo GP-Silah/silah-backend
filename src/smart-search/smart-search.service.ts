@@ -1,7 +1,9 @@
 import {
     BadRequestException,
+    forwardRef,
     HttpException,
     HttpStatus,
+    Inject,
     Injectable,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -9,10 +11,18 @@ import { SmartSearchRequestDto } from './dtos/smartSearchRequest.dto';
 import { SmartSearchResponseDto } from './dtos/smartSearchResponse.dto';
 import { ItemType, SupplierStatus } from '@prisma/client';
 import axios from 'axios';
+import { ProductService } from 'src/product/product.service';
+import { ServiceService } from 'src/service/service.service';
 
 @Injectable()
 export class SmartSearchService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        @Inject(forwardRef(() => ProductService))
+        private readonly productService: ProductService,
+        @Inject(forwardRef(() => ServiceService))
+        private readonly serviceService: ServiceService,
+    ) {}
 
     /** Helper: fetch user's preferred language */
     async getUserLanguage(userId: string): Promise<'ar' | 'en' | null> {
@@ -318,13 +328,30 @@ export class SmartSearchService {
         }
 
         // Merge ranking score from FastAPI with DB items
-        return items
-            .map((item) => {
+        const mappedItems = await Promise.all(
+            items.map(async (item) => {
                 const match = aiResults.find((r: any) => r.id === item.id);
-                if (!match) return null; // filter out invalid IDs
-                return { text: dto.text, item, rank: match.rank };
-            })
-            .filter(Boolean) as SmartSearchResponseDto[];
+                if (!match) return null;
+
+                let dtoItem;
+                // Use category.usedFor to determine type
+                if (item.category?.usedFor === 'PRODUCT') {
+                    dtoItem = await this.productService.toProductResponseDto(
+                        item,
+                        targetLang,
+                    );
+                } else {
+                    dtoItem = await this.serviceService.toServiceResponseDto(
+                        item,
+                        targetLang,
+                    );
+                }
+
+                return { text: dto.text, item: dtoItem, rank: match.rank };
+            }),
+        );
+
+        return mappedItems.filter(Boolean) as SmartSearchResponseDto[];
     }
 
     // --- Embedding helpers
