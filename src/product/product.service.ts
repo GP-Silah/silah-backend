@@ -9,6 +9,7 @@ import {
 import {
     Category,
     ItemType,
+    Prisma,
     Product,
     Supplier,
     SupplierPlan,
@@ -219,44 +220,51 @@ export class ProductService {
         targetLang: 'ar' | 'en',
         userId?: string,
     ): Promise<ProductResponseDto[]> {
-        let isPublishedFilter: boolean | undefined = true; // default for buyers
+        // ------------------------------------------------------------------
+        // 1. Decide whether we should filter by isPublished
+        // ------------------------------------------------------------------
+        let whereClause: Prisma.ProductWhereInput = {
+            supplierId,
+            isDeleted: false,
+        };
 
         if (userId) {
-            const user = await this.prisma.user.findUnique({
+            // Fetch the caller **once** – we need both roles and language
+            const caller = await this.prisma.user.findUnique({
                 where: { id: userId },
-                include: { supplier: true, buyer: true },
+                select: {
+                    supplier: { select: { id: true } }, // only need the relation
+                    buyer: { select: { id: true } },
+                    preferredLanguage: true,
+                },
             });
-            if (user?.supplier) {
-                isPublishedFilter = undefined; // supplier sees all products
+
+            if (caller?.supplier?.id === supplierId) {
+                // The caller IS the supplier whose products we are listing → show everything
+                // (nothing to add to whereClause)
+            } else {
+                // Caller is a buyer or unrelated user → only published products
+                whereClause.isPublished = true;
             }
+        } else {
+            // No userId → treat as a buyer (public API)
+            whereClause.isPublished = true;
         }
 
+        // ------------------------------------------------------------------
+        // 3. Fetch the products
+        // ------------------------------------------------------------------
         const products = await this.prisma.product.findMany({
-            where: {
-                supplierId,
-                isDeleted: false,
-                ...(isPublishedFilter !== undefined
-                    ? { isPublished: isPublishedFilter }
-                    : {}),
-            },
+            where: whereClause,
             include: {
                 supplier: { include: { user: true } },
                 category: true,
             },
         });
 
-        if (userId) {
-            const user = await this.prisma.user.findUnique({
-                where: { id: userId },
-            });
-            if (user) {
-                const lang = user.preferredLanguage.toLocaleLowerCase();
-                if (lang === 'ar' || lang === 'en') {
-                    targetLang = lang;
-                }
-            }
-        }
-
+        // ------------------------------------------------------------------
+        // 4. Map to DTOs
+        // ------------------------------------------------------------------
         return Promise.all(
             products.map((p) => this.toProductResponseDto(p, targetLang)),
         );
