@@ -2962,7 +2962,7 @@
         "operationId": "ProductController_getAllSupplierProducts",
         "parameters": [
           {
-            "name": "souplierId",
+            "name": "supplierId",
             "required": true,
             "in": "path",
             "schema": {
@@ -5762,7 +5762,7 @@
         "operationId": "ServiceController_getAllSupplierServices",
         "parameters": [
           {
-            "name": "souplierId",
+            "name": "supplierId",
             "required": true,
             "in": "path",
             "schema": {

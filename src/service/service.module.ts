@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ServiceService } from './service.service';
 import { ServiceController } from './service.controller';
 import { FileModule } from 'src/file/file.module';
@@ -7,7 +7,12 @@ import { TranslationModule } from 'src/translation/translation.module';
 import { SmartSearchModule } from 'src/smart-search/smart-search.module';
 
 @Module({
-    imports: [FileModule, SupplierModule, TranslationModule, SmartSearchModule],
+    imports: [
+        FileModule,
+        SupplierModule,
+        TranslationModule,
+        forwardRef(() => SmartSearchModule),
+    ],
     controllers: [ServiceController],
     providers: [ServiceService],
     exports: [ServiceService],
