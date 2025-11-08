@@ -17,6 +17,7 @@ import {
     UploadedFiles,
     BadRequestException,
     UploadedFile,
+    Inject,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -45,11 +46,15 @@ import { UpdateProductDto } from './dtos/updateProduct.dto';
 import { validateOrReject, ValidationError } from 'class-validator';
 import { ApiDocsVerifiedGuard } from 'src/auth/decorators/verified-guard.docs';
 import { VerifiedGuard } from 'src/auth/guards/verified.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @ApiTags('Products')
 @Controller('products')
 export class ProductController {
-    constructor(private readonly productService: ProductService) {}
+    constructor(
+        private readonly productService: ProductService,
+        @Inject(JwtService) private jwtService: JwtService,
+    ) {}
 
     @Get()
     @ApiDocsGetAllProducts()
@@ -84,7 +89,25 @@ export class ProductController {
         @Headers('accept-language') langHeader?: 'ar' | 'en',
         @Query('lang') lang?: 'ar' | 'en',
     ) {
-        const userId = req.tokenData?.sub;
+        let userId: string | undefined = undefined;
+
+        // === DUPLICATE JwtAuthGuard LOGIC ===
+        const tokenObj = req.cookies?.token;
+        const token = typeof tokenObj === 'string' ? tokenObj : tokenObj?.token;
+
+        if (token && typeof token === 'string') {
+            try {
+                const payload = await this.jwtService.verifyAsync(token);
+                userId = payload.sub;
+                req.tokenData = payload; // optional: keep for consistency
+            } catch (err) {
+                console.log('Invalid/expired token, treating as public');
+                // Silently ignore — it's public endpoint
+            }
+        } else {
+            console.log('No token in cookies, public access');
+        }
+
         const finalLang = lang || langHeader || 'en';
         return this.productService.getAllSupplierProducts(
             supplierId,

@@ -14,6 +14,7 @@ import {
     SupplierPlan,
     SupplierStatus,
     User,
+    UserRole,
 } from '@prisma/client';
 import { FileService } from 'src/file/file.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -194,9 +195,6 @@ export class ServiceService {
         targetLang: 'ar' | 'en',
         userId?: string,
     ): Promise<ServiceResponseDto[]> {
-        // ------------------------------------------------------------------
-        // 1. Build the base where clause
-        // ------------------------------------------------------------------
         const whereClause: Prisma.ServiceWhereInput = {
             supplierId,
             isDeleted: false,
@@ -204,34 +202,45 @@ export class ServiceService {
 
         let finalTargetLang = targetLang;
 
-        // ------------------------------------------------------------------
-        // 2. If userId is provided, check role + language in ONE query
-        // ------------------------------------------------------------------
         if (userId) {
             const caller = await this.prisma.user.findUnique({
                 where: { id: userId },
                 select: {
+                    id: true,
+                    role: true,
                     supplier: { select: { id: true } },
                     buyer: { select: { id: true } },
                     preferredLanguage: true,
                 },
             });
 
-            if (caller?.supplier?.id === supplierId) {
-                // Caller IS the supplier → show all services (published + unpublished)
-                // No need to add isPublished filter
-            } else {
-                // Caller is a buyer or unrelated → only published services
+            if (!caller) {
                 whereClause.isPublished = true;
+            } else {
+                const isSupplierOwner = caller.supplier?.id === supplierId;
+
+                if (isSupplierOwner) {
+                    // Do NOT set isPublished
+                    if (caller.role !== UserRole.SUPPLIER) {
+                        whereClause.isPublished = true; // edge case safety
+                    }
+                } else {
+                    whereClause.isPublished = true;
+                }
+
+                // Language override
+                if (caller.preferredLanguage) {
+                    const lang = caller.preferredLanguage.toLowerCase();
+                    if (lang === 'ar' || lang === 'en') {
+                        finalTargetLang = lang;
+                    } else {
+                    }
+                }
             }
         } else {
-            // No userId → treat as public/buyer view
             whereClause.isPublished = true;
         }
 
-        // ------------------------------------------------------------------
-        // 3. Fetch services
-        // ------------------------------------------------------------------
         const services = await this.prisma.service.findMany({
             where: whereClause,
             include: {
@@ -240,12 +249,11 @@ export class ServiceService {
             },
         });
 
-        // ------------------------------------------------------------------
-        // 4. Map to DTOs with correct language
-        // ------------------------------------------------------------------
-        return Promise.all(
+        const dtos = await Promise.all(
             services.map((s) => this.toServiceResponseDto(s, finalTargetLang)),
         );
+
+        return dtos;
     }
 
     async createService(
