@@ -8,6 +8,7 @@ import {
 import {
     Category,
     ItemType,
+    Prisma,
     Service,
     Supplier,
     SupplierPlan,
@@ -193,46 +194,57 @@ export class ServiceService {
         targetLang: 'ar' | 'en',
         userId?: string,
     ): Promise<ServiceResponseDto[]> {
-        let isPublishedFilter: boolean | undefined = true; // default for buyers
+        // ------------------------------------------------------------------
+        // 1. Build the base where clause
+        // ------------------------------------------------------------------
+        const whereClause: Prisma.ServiceWhereInput = {
+            supplierId,
+            isDeleted: false,
+        };
 
+        let finalTargetLang = targetLang;
+
+        // ------------------------------------------------------------------
+        // 2. If userId is provided, check role + language in ONE query
+        // ------------------------------------------------------------------
         if (userId) {
-            const user = await this.prisma.user.findUnique({
+            const caller = await this.prisma.user.findUnique({
                 where: { id: userId },
-                include: { supplier: true, buyer: true },
+                select: {
+                    supplier: { select: { id: true } },
+                    buyer: { select: { id: true } },
+                    preferredLanguage: true,
+                },
             });
-            if (user?.supplier) {
-                isPublishedFilter = undefined; // supplier sees all services
+
+            if (caller?.supplier?.id === supplierId) {
+                // Caller IS the supplier → show all services (published + unpublished)
+                // No need to add isPublished filter
+            } else {
+                // Caller is a buyer or unrelated → only published services
+                whereClause.isPublished = true;
             }
+        } else {
+            // No userId → treat as public/buyer view
+            whereClause.isPublished = true;
         }
 
+        // ------------------------------------------------------------------
+        // 3. Fetch services
+        // ------------------------------------------------------------------
         const services = await this.prisma.service.findMany({
-            where: {
-                supplierId,
-                isDeleted: false,
-                ...(isPublishedFilter !== undefined
-                    ? { isPublished: isPublishedFilter }
-                    : {}),
-            },
+            where: whereClause,
             include: {
                 supplier: { include: { user: true } },
                 category: true,
             },
         });
 
-        if (userId) {
-            const user = await this.prisma.user.findUnique({
-                where: { id: userId },
-            });
-            if (user) {
-                const lang = user.preferredLanguage.toLocaleLowerCase();
-                if (lang === 'ar' || lang === 'en') {
-                    targetLang = lang;
-                }
-            }
-        }
-
+        // ------------------------------------------------------------------
+        // 4. Map to DTOs with correct language
+        // ------------------------------------------------------------------
         return Promise.all(
-            services.map((s) => this.toServiceResponseDto(s, targetLang)),
+            services.map((s) => this.toServiceResponseDto(s, finalTargetLang)),
         );
     }
 
