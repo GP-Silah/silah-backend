@@ -1,6 +1,8 @@
 import { SupplierService } from './../supplier/supplier.service';
 import {
     BadRequestException,
+    forwardRef,
+    Inject,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -28,6 +30,7 @@ export class ProductService {
         private readonly fileService: FileService,
         private readonly supplierService: SupplierService,
         private readonly translationService: TranslationService,
+        @Inject(forwardRef(() => SmartSearchService))
         private readonly smartSearchService: SmartSearchService,
     ) {}
 
