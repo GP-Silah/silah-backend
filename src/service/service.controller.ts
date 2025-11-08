@@ -99,7 +99,6 @@ export class ServiceController {
                 const payload = await this.jwtService.verifyAsync(token);
                 userId = payload.sub;
                 req.tokenData = payload; // optional: keep for consistency
-                console.log('Token verified, userId:', userId);
             } catch (err) {
                 console.log('Invalid/expired token, treating as public');
                 // Silently ignore — it's public endpoint
