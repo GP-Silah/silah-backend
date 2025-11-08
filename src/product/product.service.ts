@@ -15,6 +15,7 @@ import {
     SupplierPlan,
     SupplierStatus,
     User,
+    UserRole,
 } from '@prisma/client';
 import { ProductResponseDto } from './dtos/productResponse.dto';
 import { FileService } from 'src/file/file.service';
@@ -220,40 +221,52 @@ export class ProductService {
         targetLang: 'ar' | 'en',
         userId?: string,
     ): Promise<ProductResponseDto[]> {
-        // ------------------------------------------------------------------
-        // 1. Decide whether we should filter by isPublished
-        // ------------------------------------------------------------------
-        let whereClause: Prisma.ProductWhereInput = {
+        const whereClause: Prisma.ProductWhereInput = {
             supplierId,
             isDeleted: false,
         };
 
+        let finalTargetLang = targetLang;
+
         if (userId) {
-            // Fetch the caller **once** – we need both roles and language
             const caller = await this.prisma.user.findUnique({
                 where: { id: userId },
                 select: {
-                    supplier: { select: { id: true } }, // only need the relation
+                    id: true,
+                    role: true,
+                    supplier: { select: { id: true } },
                     buyer: { select: { id: true } },
                     preferredLanguage: true,
                 },
             });
 
-            if (caller?.supplier?.id === supplierId) {
-                // The caller IS the supplier whose products we are listing → show everything
-                // (nothing to add to whereClause)
-            } else {
-                // Caller is a buyer or unrelated user → only published products
+            if (!caller) {
                 whereClause.isPublished = true;
+            } else {
+                const isSupplierOwner = caller.supplier?.id === supplierId;
+
+                if (isSupplierOwner) {
+                    // Do NOT set isPublished → show drafts
+                    if (caller.role !== UserRole.SUPPLIER) {
+                        whereClause.isPublished = true; // edge case safety
+                    }
+                } else {
+                    whereClause.isPublished = true; // buyer or other supplier
+                }
+
+                // Language override
+                if (caller.preferredLanguage) {
+                    const lang = caller.preferredLanguage.toLowerCase();
+                    if (lang === 'ar' || lang === 'en') {
+                        finalTargetLang = lang;
+                    }
+                }
             }
         } else {
-            // No userId → treat as a buyer (public API)
+            // Public access → only published
             whereClause.isPublished = true;
         }
 
-        // ------------------------------------------------------------------
-        // 3. Fetch the products
-        // ------------------------------------------------------------------
         const products = await this.prisma.product.findMany({
             where: whereClause,
             include: {
@@ -262,12 +275,11 @@ export class ProductService {
             },
         });
 
-        // ------------------------------------------------------------------
-        // 4. Map to DTOs
-        // ------------------------------------------------------------------
-        return Promise.all(
-            products.map((p) => this.toProductResponseDto(p, targetLang)),
+        const dtos = await Promise.all(
+            products.map((p) => this.toProductResponseDto(p, finalTargetLang)),
         );
+
+        return dtos;
     }
 
     async createProduct(
