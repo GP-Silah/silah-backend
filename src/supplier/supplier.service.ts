@@ -1,6 +1,8 @@
 import { UpdateSupplierDto } from './dtos/updateSupplier.dto';
 import {
     BadRequestException,
+    forwardRef,
+    Inject,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -28,6 +30,7 @@ export class SupplierService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly fileService: FileService,
+        @Inject(forwardRef(() => UserService))
         private readonly userService: UserService,
     ) {}
 
