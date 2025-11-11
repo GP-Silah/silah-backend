@@ -392,7 +392,7 @@ export class InvoiceService {
         // Compute upon-delivery amount
         let uponDeliveryAmount: number;
         if (dto.termsOfPayment === 'FULL') {
-            uponDeliveryAmount = 0;
+            uponDeliveryAmount = totalAmount;
         } else {
             uponDeliveryAmount = totalAmount - upfrontAmount;
         }
