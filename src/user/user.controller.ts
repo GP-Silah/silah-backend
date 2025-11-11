@@ -44,7 +44,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
-    @Get(':id')
+    @Get('id/:id')
     @ApiDocsGetUserById()
     async getUserById(@Param('id') userId: string) {
         return this.userService.getUserById(userId);
