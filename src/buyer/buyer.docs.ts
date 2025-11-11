@@ -21,7 +21,6 @@ export function ApiDocsGetBuyerById() {
             description:
                 'Retrieves the details of a specific buyer by their unique ID, including their associated user and saved card information.',
         }),
-        ApiBearerAuth(),
         ApiParam({
             name: 'id',
             description: 'The unique identifier of the buyer',
