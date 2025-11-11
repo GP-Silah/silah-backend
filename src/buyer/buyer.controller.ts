@@ -23,6 +23,7 @@ import { CreateCardStep1Dto, CreateCardStep2Dto } from './dtos/createCard.dto';
 import { ApiDocsRolesGuard } from 'src/auth/decorators/roles-guard.docs';
 import {
     ApiDocsDeleteCurrentBuyerCard,
+    ApiDocsGetBuyerById,
     ApiDocsGetCurrentBuyerCard,
     ApiDocsGetCurrentBuyerData,
     ApiDocsGetCurrentBuyerWishlist,
@@ -37,6 +38,12 @@ import { VerifiedGuard } from 'src/auth/guards/verified.guard';
 @Controller('buyers')
 export class BuyerController {
     constructor(private readonly buyerService: BuyerService) {}
+
+    @ApiDocsGetBuyerById()
+    @Get(':id')
+    async getBuyerById(@Param('id') buyerId: string) {
+        return this.buyerService.getBuyerById(buyerId);
+    }
 
     @ApiDocsJwtAuthGuard()
     @ApiDocsRolesGuard()
