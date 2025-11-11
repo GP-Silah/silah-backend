@@ -8,12 +8,52 @@ import {
     ApiOkResponse,
     ApiOperation,
     ApiParam,
-    ApiQuery,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { UserResponseDTO } from './dtos/userResponse.dto';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { Languages } from '@prisma/client';
+
+export function ApiDocsGetUserById() {
+    return applyDecorators(
+        ApiOperation({
+            summary: 'Get user by ID',
+            description:
+                'Retrieves the details of a specific user by their unique ID.',
+        }),
+        ApiParam({
+            name: 'id',
+            description: 'The unique identifier of the user',
+            required: true,
+            type: 'string',
+            example: 'b1a2c3d4-e5f6-7890-ab12-34567890cdef',
+        }),
+        ApiOkResponse({
+            description: 'User retrieved successfully',
+            type: UserResponseDTO,
+        }),
+        ApiNotFoundResponse({
+            description: 'User not found',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'User not found',
+                    error: 'Not Found',
+                },
+            },
+        }),
+        ApiBadRequestResponse({
+            description: 'Invalid user ID format',
+            schema: {
+                example: {
+                    statusCode: 400,
+                    message: 'Invalid user ID format',
+                    error: 'Bad Request',
+                },
+            },
+        }),
+    );
+}
 
 export function ApiDocsGetUserByEmail() {
     return applyDecorators(

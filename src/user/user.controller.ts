@@ -35,6 +35,7 @@ import {
     ApiDocsDeleteProfilePicture,
     ApiDocsUploadProfilePicture,
     ApiDocsSwitchPreferredLanguage,
+    ApiDocsGetUserById,
 } from './user.docs';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -42,6 +43,12 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('users')
 export class UserController {
     constructor(private readonly userService: UserService) {}
+
+    @Get(':id')
+    @ApiDocsGetUserById()
+    async getUserById(@Param('id') userId: string) {
+        return this.userService.getUserById(userId);
+    }
 
     @Get('email/:email')
     @ApiDocsGetUserByEmail()
