@@ -47,7 +47,7 @@ export class UserController {
     @Get('id/:id')
     @ApiDocsGetUserById()
     async getUserById(@Param('id') userId: string) {
-        return this.userService.getUserById(userId);
+        return this.userService.exposedGetUserById(userId);
     }
 
     @Get('email/:email')

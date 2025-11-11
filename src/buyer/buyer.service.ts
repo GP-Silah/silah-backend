@@ -1,6 +1,8 @@
 import { UserService } from 'src/user/user.service';
 import {
     BadRequestException,
+    forwardRef,
+    Inject,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -18,6 +20,7 @@ import { ServiceService } from 'src/service/service.service';
 export class BuyerService {
     constructor(
         private readonly prisma: PrismaService,
+        @Inject(forwardRef(() => UserService))
         private readonly userService: UserService,
         private readonly tapPaymentsService: TapPaymentsService,
         private readonly productService: ProductService,

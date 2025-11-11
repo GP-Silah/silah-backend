@@ -13,13 +13,14 @@ import {
 import { UserResponseDTO } from './dtos/userResponse.dto';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { Languages } from '@prisma/client';
+import { UserWithRelationsResponseDTO } from './dtos/userWithRelationsResponse.dto';
 
 export function ApiDocsGetUserById() {
     return applyDecorators(
         ApiOperation({
             summary: 'Get user by ID',
             description:
-                'Retrieves the details of a specific user by their unique ID.',
+                'Retrieves user details by their unique ID, including buyer and supplier data if available.',
         }),
         ApiParam({
             name: 'id',
@@ -29,8 +30,9 @@ export function ApiDocsGetUserById() {
             example: 'b1a2c3d4-e5f6-7890-ab12-34567890cdef',
         }),
         ApiOkResponse({
-            description: 'User retrieved successfully',
-            type: UserResponseDTO,
+            description:
+                'User retrieved successfully with buyer and supplier info',
+            type: UserWithRelationsResponseDTO,
         }),
         ApiNotFoundResponse({
             description: 'User not found',
