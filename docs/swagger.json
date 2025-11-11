@@ -1624,6 +1624,73 @@
         ]
       }
     },
+    "/api/buyers/{id}": {
+      "get": {
+        "description": "Retrieves the details of a specific buyer by their unique ID, including their associated user and saved card information.",
+        "operationId": "BuyerController_getBuyerById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The unique identifier of the buyer",
+            "schema": {
+              "example": "b1a2c3d4-e5f6-7890-ab12-34567890cdef",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Buyer retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuyerResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid buyer ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Invalid buyer ID format",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Buyer not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Buyer not found",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get buyer by ID",
+        "tags": [
+          "Buyers"
+        ]
+      }
+    },
     "/api/buyers/me": {
       "get": {
         "description": "Returns the currently authenticated buyer's user details and saved card information (if available).",

@@ -51,6 +51,22 @@ export class BuyerService {
         };
     }
 
+    async getBuyerById(buyerId: string) {
+        const buyer = await this.prisma.buyer.findUnique({
+            where: { id: buyerId },
+            include: {
+                user: true,
+                card: true,
+            },
+        });
+
+        if (!buyer) {
+            throw new NotFoundException('Buyer not found');
+        }
+
+        return this.toBuyerResponseDto(buyer.user, buyer);
+    }
+
     async getCurrentBuyerData(email: string): Promise<BuyerResponseDto> {
         const user = await this.prisma.user.findUnique({
             where: { email },

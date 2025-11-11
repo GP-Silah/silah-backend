@@ -14,6 +14,48 @@ import { CreateCardStep1Dto, CreateCardStep2Dto } from './dtos/createCard.dto';
 import { WishlistItemResponseDto } from './dtos/wishlistItemResponse.dto';
 import { ProductResponseDto } from 'src/product/dtos/productResponse.dto';
 
+export function ApiDocsGetBuyerById() {
+    return applyDecorators(
+        ApiOperation({
+            summary: 'Get buyer by ID',
+            description:
+                'Retrieves the details of a specific buyer by their unique ID, including their associated user and saved card information.',
+        }),
+        ApiBearerAuth(),
+        ApiParam({
+            name: 'id',
+            description: 'The unique identifier of the buyer',
+            required: true,
+            type: 'string',
+            example: 'b1a2c3d4-e5f6-7890-ab12-34567890cdef',
+        }),
+        ApiOkResponse({
+            description: 'Buyer retrieved successfully',
+            type: BuyerResponseDto,
+        }),
+        ApiNotFoundResponse({
+            description: 'Buyer not found',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'Buyer not found',
+                    error: 'Not Found',
+                },
+            },
+        }),
+        ApiBadRequestResponse({
+            description: 'Invalid buyer ID format',
+            schema: {
+                example: {
+                    statusCode: 400,
+                    message: 'Invalid buyer ID format',
+                    error: 'Bad Request',
+                },
+            },
+        }),
+    );
+}
+
 export function ApiDocsGetCurrentBuyerData() {
     return applyDecorators(
         ApiOperation({
