@@ -13,6 +13,9 @@ import { UpdateUserDto } from './dtos/updateUser.dto';
 import { AuthService } from '../auth/auth.service';
 import { FileService } from '../file/file.service';
 import * as sharp from 'sharp'; // converts SVG → PNG
+import { BuyerService } from 'src/buyer/buyer.service';
+import { SupplierService } from 'src/supplier/supplier.service';
+import { UserWithRelationsResponseDTO } from './dtos/userWithRelationsResponse.dto';
 
 @Injectable()
 export class UserService {
@@ -21,6 +24,10 @@ export class UserService {
         @Inject(forwardRef(() => AuthService))
         private readonly auth: AuthService,
         private readonly fileService: FileService,
+        @Inject(forwardRef(() => BuyerService))
+        private readonly buyerService: BuyerService,
+        @Inject(forwardRef(() => SupplierService))
+        private readonly supplierService: SupplierService,
     ) {}
 
     /**
@@ -69,6 +76,39 @@ export class UserService {
             throw new NotFoundException(`User not found`);
         }
         return this.toUserResponseDTO(user);
+    }
+
+    /**
+     * Retrieves a user by their ID, including buyer and supplier data if available.
+     * @param {string} id - The ID of the user to retrieve.
+     * @throws {NotFoundException} If the user with the given ID is not found.
+     * @returns {Promise<UserWithRelationsResponseDTO>} The found user with buyer and supplier data.
+     */
+    async exposedGetUserById(
+        id: string,
+    ): Promise<UserWithRelationsResponseDTO> {
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+            include: {
+                buyer: { include: { card: true } },
+                supplier: true,
+            },
+        });
+
+        if (!user) throw new NotFoundException(`User not found`);
+
+        const userDto = await this.toUserResponseDTO(user);
+        const buyerDto = user.buyer
+            ? await this.buyerService.toBuyerResponseDto(user, user.buyer)
+            : null;
+        const supplierDto = user.supplier
+            ? await this.supplierService.toSupplierResponseDTO(
+                  user,
+                  user.supplier,
+              )
+            : null;
+
+        return { user: userDto, buyer: buyerDto, supplier: supplierDto };
     }
 
     /**
