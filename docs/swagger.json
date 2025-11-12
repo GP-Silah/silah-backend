@@ -9197,14 +9197,14 @@
     },
     "/api/invoices/me": {
       "get": {
-        "description": "\nFetches all invoices and pre-invoices associated with the authenticated user.<br><br>\nOptional query parameters allow filtering:<br>\n<ul>\n    <li><strong>status</strong> - filter by invoice status (e.g., PENDING, ACCEPTED, REJECTED).</li>\n    <li><strong>showFor</strong> - filter by type of items: 'all', 'products', 'services', 'bids', 'groups'.</li>\n</ul>\nInvoices are automatically sorted with the latest first. Pre-invoices are also included when applicable.\n",
+        "description": "\nFetches all invoices and pre-invoices associated with the authenticated user.<br><br>\nOptional query parameters allow filtering:<br>\n<ul>\n    <li><strong>status</strong> - filter by invoice or pre-invoice status:\n        <ul>\n            <li>InvoiceStatus: PENDING, ACCEPTED, REJECTED, PARTIALLY_PAID, FULLY_PAID</li>\n            <li>PreInvoiceStatus: PENDING, SUCCESSFUL, FAILED</li>\n        </ul>\n    </li>\n    <li><strong>showFor</strong> - filter by item type:\n        <ul>\n            <li><strong>products</strong> - invoices only</li>\n            <li><strong>services</strong> - invoices only</li>\n            <li><strong>bids</strong> - pre-invoices only</li>\n            <li><strong>groups</strong> - pre-invoices only</li>\n            <li><strong>all</strong> - both invoices and pre-invoices</li>\n        </ul>\n    </li>\n</ul>\nInvoices and pre-invoices are automatically sorted with the latest first.\n",
         "operationId": "InvoiceController_getMyInvoices",
         "parameters": [
           {
             "name": "status",
             "required": false,
             "in": "query",
-            "description": "Filter invoices by status. Allowed values: PENDING, ACCEPTED, REJECTED, PARTIALLY_PAID, FULLY_PAID.",
+            "description": "Filter by status. Can be an InvoiceStatus or a PreInvoiceStatus. Note: PENDING exists in both types, others are exclusive.",
             "schema": {
               "example": "PENDING",
               "type": "string"
@@ -9214,7 +9214,7 @@
             "name": "showFor",
             "required": false,
             "in": "query",
-            "description": "Filter invoices by item type. Allowed values: 'all', 'products', 'services', 'bids', 'groups'.",
+            "description": "Filter invoices/pre-invoices by item type. Allowed values: 'all', 'products' (invoices only), 'services' (invoices only), 'bids' (pre-invoices only), 'groups' (pre-invoices only).",
             "schema": {
               "example": "products",
               "type": "string"
@@ -9244,7 +9244,7 @@
                     {
                       "example": {
                         "statusCode": 400,
-                        "message": "Invalid invoice status: wrongStatus",
+                        "message": "Invalid status: wrongStatus",
                         "error": "Bad Request"
                       }
                     },
@@ -9252,6 +9252,20 @@
                       "example": {
                         "statusCode": 400,
                         "message": "Invalid showFor choice: unknown",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Cannot filter invoices by \"bids\" showFor with status \"ACCEPTED\". Use a pre-invoice status instead.",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Cannot filter pre-invoices by \"products\" showFor with status \"FAILED\". Use an invoice status instead.",
                         "error": "Bad Request"
                       }
                     }
@@ -9297,7 +9311,7 @@
             "bearer": []
           }
         ],
-        "summary": "Get my invoices",
+        "summary": "Get my invoices and pre-invoices",
         "tags": [
           "Invoices"
         ]
