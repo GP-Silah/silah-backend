@@ -177,8 +177,15 @@ export class InvoiceService {
 
         if (showFor && showFor !== 'all') {
             const itemCondition = this.buildItemFilter(showFor);
-            invoiceWhere.items = itemCondition;
-            preInvoiceWhere.items = itemCondition;
+
+            // Apply to Invoice
+            if (itemCondition && itemCondition.items) {
+                invoiceWhere.items = itemCondition.items;
+            }
+
+            // Apply to PreInvoice — remove the "items" key if present
+            const { items, ...rest } = itemCondition;
+            Object.assign(preInvoiceWhere, rest);
         }
 
         // Fetch both invoices and pre-invoices
@@ -250,7 +257,7 @@ export class InvoiceService {
             case 'bids':
                 return { offerId: { not: null } };
             default:
-                return undefined;
+                return {};
         }
     }
 
