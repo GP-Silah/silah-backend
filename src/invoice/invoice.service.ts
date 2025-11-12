@@ -173,9 +173,8 @@ export class InvoiceService {
             throw new BadRequestException('Invalid user role');
         }
 
-        // Apply status filter
+        // ——————————————————————— APPLY STATUS FILTER ———————————————————————
         if (status) {
-            // Check which enum the status belongs to
             const preInvoiceStatuses: PreInvoiceStatus[] = [
                 PreInvoiceStatus.PENDING,
                 PreInvoiceStatus.SUCCESSFUL,
@@ -191,24 +190,27 @@ export class InvoiceService {
 
             if (preInvoiceStatuses.includes(status as PreInvoiceStatus)) {
                 preInvoiceWhere.status = status;
-                invoiceWhere.status = undefined; // DO NOT filter invoices
+                invoiceWhere = null; // Skip invoices entirely
             } else if (invoiceStatuses.includes(status as InvoiceStatus)) {
                 invoiceWhere.status = status;
-                preInvoiceWhere = null; // skip pre-invoices
+                preInvoiceWhere = null; // Skip pre-invoices entirely
             } else {
                 throw new BadRequestException('Invalid status value');
             }
         }
 
-        // Apply showFor filter
+        // ——————————————————————— APPLY SHOWFOR FILTER ———————————————————————
         if (showFor && showFor !== 'all') {
-            invoiceWhere = {
-                ...invoiceWhere,
-                ...this.buildItemFilter(showFor, true),
-            };
             if (['products', 'services'].includes(showFor)) {
-                preInvoiceWhere = null; // skip pre-invoices, these types don't exist there
-            } else if (preInvoiceWhere) {
+                // Only invoices
+                invoiceWhere = {
+                    ...invoiceWhere,
+                    ...this.buildItemFilter(showFor, true),
+                };
+                preInvoiceWhere = null; // Skip pre-invoices
+            } else if (['bids', 'groups'].includes(showFor)) {
+                // Only pre-invoices
+                invoiceWhere = null; // Skip invoices
                 preInvoiceWhere = {
                     ...preInvoiceWhere,
                     ...this.buildItemFilter(showFor, false),
@@ -216,32 +218,35 @@ export class InvoiceService {
             }
         }
 
-        // Fetch both invoices and pre-invoices
+        // ——————————————————————— FETCH DATA ———————————————————————
         const [invoices, preInvoices] = await Promise.all([
-            this.prisma.invoice.findMany({
-                where: invoiceWhere,
-                include: {
-                    buyer: { include: { user: true } },
-                    supplier: { include: { user: true } },
-                    items: {
-                        include: {
-                            relatedProduct: {
-                                include: {
-                                    category: true,
-                                    supplier: { include: { user: true } },
-                                },
-                            },
-                            relatedService: {
-                                include: {
-                                    category: true,
-                                    supplier: { include: { user: true } },
-                                },
-                            },
-                        },
-                    },
-                },
-                orderBy: { createdAt: 'desc' },
-            }),
+            invoiceWhere
+                ? this.prisma.invoice.findMany({
+                      where: invoiceWhere,
+                      include: {
+                          buyer: { include: { user: true } },
+                          supplier: { include: { user: true } },
+                          items: {
+                              include: {
+                                  relatedProduct: {
+                                      include: {
+                                          category: true,
+                                          supplier: { include: { user: true } },
+                                      },
+                                  },
+                                  relatedService: {
+                                      include: {
+                                          category: true,
+                                          supplier: { include: { user: true } },
+                                      },
+                                  },
+                              },
+                          },
+                      },
+                      orderBy: { createdAt: 'desc' },
+                  })
+                : Promise.resolve([]),
+
             preInvoiceWhere
                 ? this.prisma.preInvoice.findMany({
                       where: preInvoiceWhere,
@@ -257,25 +262,19 @@ export class InvoiceService {
                       },
                       orderBy: { createdAt: 'desc' },
                   })
-                : Promise.resolve([]), // return empty array if preInvoiceWhere is null
+                : Promise.resolve([]),
         ]);
 
-        // Merge and map
-        const all = await Promise.all([
+        // ——————————————————————— MAP TO DTO ———————————————————————
+        const result = await Promise.all([
             ...invoices.map((inv) => this.toInvoiceResponseDto(inv, 'INVOICE')),
             ...preInvoices.map((pre) =>
                 this.toInvoiceResponseDto(pre, 'PRE_INVOICE'),
             ),
         ]);
 
-        // Apply frontend-style filter ONLY if showFor is bids or groups
-        const filtered =
-            showFor && ['bids', 'groups'].includes(showFor)
-                ? filterInvoices(all, status as string, showFor as ShowFor)
-                : all;
-
-        // Sort by date
-        return filtered.sort(
+        // ——————————————————————— FINAL SORT ———————————————————————
+        return result.sort(
             (a, b) =>
                 new Date(b.createdAt).getTime() -
                 new Date(a.createdAt).getTime(),
@@ -294,18 +293,15 @@ export class InvoiceService {
                         items: { some: { relatedServiceId: { not: null } } },
                     };
                 default:
-                    // Bids/groups don't exist in invoices → no filter
                     return {};
             }
         } else {
-            // pre-invoices root fields
             switch (showFor) {
                 case 'bids':
                     return { offerId: { not: null } };
                 case 'groups':
                     return { groupPurchaseBuyerId: { not: null } };
                 default:
-                    // products/services don't exist in pre-invoices → no filter
                     return {};
             }
         }
@@ -815,41 +811,4 @@ export class InvoiceService {
             totalAmount: invoice.amount,
         };
     }
-}
-
-type InvoiceType = 'INVOICE' | 'PRE_INVOICE';
-type ShowFor = 'all' | 'products' | 'services' | 'bids' | 'groups';
-
-function filterInvoices(
-    invoices: (InvoiceResponseDto | PreInvoiceResponseDto)[],
-    status?: string,
-    showFor: ShowFor = 'all',
-) {
-    return invoices.filter((inv) => {
-        // 1️⃣ Filter by status if provided
-        if (status && inv.status !== status) return false;
-
-        // 2️⃣ Filter by showFor
-        if (showFor === 'all') return true;
-
-        if (inv.type === 'INVOICE') {
-            if (
-                showFor === 'products' &&
-                !inv.items?.some((i) => i.relatedProduct)
-            )
-                return false;
-            if (
-                showFor === 'services' &&
-                !inv.items?.some((i) => i.relatedService)
-            )
-                return false;
-            // Bids/groups don’t exist in invoices → skip filter
-        } else if (inv.type === 'PRE_INVOICE') {
-            if (showFor === 'bids' && !inv.offer) return false;
-            if (showFor === 'groups' && !inv.groupPurchaseBuyer) return false;
-            // products/services don’t exist in pre-invoices → skip filter
-        }
-
-        return true;
-    });
 }
