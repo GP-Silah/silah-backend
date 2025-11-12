@@ -127,7 +127,7 @@ export class OrderService {
 
         // Apply status filter only if valid
         if (status) {
-            whereCondition.status;
+            whereCondition.status = status;
         }
 
         // Fetch orders including cart and cart items
