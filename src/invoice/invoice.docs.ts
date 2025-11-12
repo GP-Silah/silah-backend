@@ -20,18 +20,26 @@ import { PayInvoiceDto } from './dtos/payInvoice.dto';
 export function ApiDocsGetMyInvoices() {
     return applyDecorators(
         ApiOperation({
-            summary: 'Get my invoices',
+            summary: 'Get my invoices and pre-invoices',
             description: `
 Fetches all invoices and pre-invoices associated with the authenticated user.<br><br>
 Optional query parameters allow filtering:<br>
 <ul>
-    <li><strong>status</strong> - filter by invoice status (InvoiceStatus: PENDING, ACCEPTED, REJECTED, PARTIALLY_PAID, FULLY_PAID) or pre-invoice status (PreInvoiceStatus: PENDING, SUCCESSFUL, FAILED).</li>
-    <li><strong>showFor</strong> - filter by item type: 'all', 'products', 'services', 'bids', 'groups'.</li>
-</ul>
-<b>Important:</b> Some combinations are invalid and will return a 400 error:<br>
-<ul>
-    <li><strong>showFor = 'bids'</strong> cannot be used with an <strong>InvoiceStatus</strong> (bids exist only in pre-invoices).</li>
-    <li><strong>showFor = 'products' or 'services'</strong> cannot be used with a <strong>PreInvoiceStatus</strong> (pre-invoices never have products or services).</li>
+    <li><strong>status</strong> - filter by invoice or pre-invoice status:
+        <ul>
+            <li>InvoiceStatus: PENDING, ACCEPTED, REJECTED, PARTIALLY_PAID, FULLY_PAID</li>
+            <li>PreInvoiceStatus: PENDING, SUCCESSFUL, FAILED</li>
+        </ul>
+    </li>
+    <li><strong>showFor</strong> - filter by item type:
+        <ul>
+            <li><strong>products</strong> - invoices only</li>
+            <li><strong>services</strong> - invoices only</li>
+            <li><strong>bids</strong> - pre-invoices only</li>
+            <li><strong>groups</strong> - pre-invoices only</li>
+            <li><strong>all</strong> - both invoices and pre-invoices</li>
+        </ul>
+    </li>
 </ul>
 Invoices and pre-invoices are automatically sorted with the latest first.
 `,
@@ -40,14 +48,14 @@ Invoices and pre-invoices are automatically sorted with the latest first.
             name: 'status',
             required: false,
             description:
-                'Filter by status. Can be an InvoiceStatus (PENDING, ACCEPTED, REJECTED, PARTIALLY_PAID, FULLY_PAID) or a PreInvoiceStatus (PENDING, SUCCESSFUL, FAILED).',
+                'Filter by status. Can be an InvoiceStatus or a PreInvoiceStatus. Note: PENDING exists in both types, others are exclusive.',
             example: 'PENDING',
         }),
         ApiQuery({
             name: 'showFor',
             required: false,
             description:
-                "Filter invoices by item type. Allowed values: 'all', 'products', 'services', 'bids', 'groups'.",
+                "Filter invoices/pre-invoices by item type. Allowed values: 'all', 'products' (invoices only), 'services' (invoices only), 'bids' (pre-invoices only), 'groups' (pre-invoices only).",
             example: 'products',
         }),
         ApiResponse({
@@ -57,14 +65,13 @@ Invoices and pre-invoices are automatically sorted with the latest first.
             type: [InvoiceResponseDto],
         }),
         ApiBadRequestResponse({
-            description:
-                'Invalid query parameters or incompatible status/showFor combination.',
+            description: 'Invalid query parameters (status or showFor).',
             schema: {
                 oneOf: [
                     {
                         example: {
                             statusCode: 400,
-                            message: 'Invalid invoice status: wrongStatus',
+                            message: 'Invalid status: wrongStatus',
                             error: 'Bad Request',
                         },
                     },
@@ -79,7 +86,7 @@ Invoices and pre-invoices are automatically sorted with the latest first.
                         example: {
                             statusCode: 400,
                             message:
-                                'Cannot filter invoices by "bids" showFor with status "PENDING". Use a pre-invoice status instead.',
+                                'Cannot filter invoices by "bids" showFor with status "ACCEPTED". Use a pre-invoice status instead.',
                             error: 'Bad Request',
                         },
                     },
@@ -87,7 +94,7 @@ Invoices and pre-invoices are automatically sorted with the latest first.
                         example: {
                             statusCode: 400,
                             message:
-                                'Cannot filter pre-invoices by "products" showFor with status "SUCCESSFUL".',
+                                'Cannot filter pre-invoices by "products" showFor with status "FAILED". Use an invoice status instead.',
                             error: 'Bad Request',
                         },
                     },

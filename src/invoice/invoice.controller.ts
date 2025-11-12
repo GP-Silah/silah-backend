@@ -65,6 +65,16 @@ export class InvoiceController {
             }
         }
 
+        if (
+            showFor === 'all' &&
+            normalizedStatus &&
+            normalizedStatus !== InvoiceStatus.PENDING
+        ) {
+            throw new BadRequestException(
+                `When showFor is "all", the only allowed status is "${InvoiceStatus.PENDING}".`,
+            );
+        }
+
         if (showFor) {
             const acceptedValues = [
                 'all',
@@ -79,31 +89,35 @@ export class InvoiceController {
                 );
             }
 
-            // 🚨 Prevent incompatible combinations
-            if (
-                showFor === 'bids' &&
-                normalizedStatus &&
-                Object.values(InvoiceStatus).includes(
-                    normalizedStatus as InvoiceStatus,
-                )
-            ) {
-                // Bids only exist in PreInvoices
-                throw new BadRequestException(
-                    `Cannot filter invoices by "bids" showFor with status "${normalizedStatus}". Use a pre-invoice status instead.`,
-                );
+            if (['bids', 'groups'].includes(showFor) && normalizedStatus) {
+                // Bids/groups only exist in pre-invoices
+                const validPreInvoiceStatuses = Object.values(PreInvoiceStatus);
+                if (
+                    !validPreInvoiceStatuses.includes(
+                        normalizedStatus as PreInvoiceStatus,
+                    )
+                ) {
+                    throw new BadRequestException(
+                        `Cannot filter invoices by "${showFor}" showFor with status "${normalizedStatus}". Use a pre-invoice status instead.`,
+                    );
+                }
             }
 
             if (
                 ['products', 'services'].includes(showFor) &&
-                normalizedStatus &&
-                Object.values(PreInvoiceStatus).includes(
-                    normalizedStatus as PreInvoiceStatus,
-                )
+                normalizedStatus
             ) {
-                // Products/services never exist in pre-invoices
-                throw new BadRequestException(
-                    `Cannot filter pre-invoices by "${showFor}" showFor with status "${normalizedStatus}".`,
-                );
+                // Products/services only exist in invoices
+                const validInvoiceStatuses = Object.values(InvoiceStatus);
+                if (
+                    !validInvoiceStatuses.includes(
+                        normalizedStatus as InvoiceStatus,
+                    )
+                ) {
+                    throw new BadRequestException(
+                        `Cannot filter pre-invoices by "${showFor}" showFor with status "${normalizedStatus}". Use an invoice status instead.`,
+                    );
+                }
             }
         }
 

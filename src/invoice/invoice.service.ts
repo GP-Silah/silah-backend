@@ -175,38 +175,43 @@ export class InvoiceService {
 
         // Apply status filter
         if (status) {
-            invoiceWhere.status = status;
-
-            // Apply preInvoiceWhere.status only if status belongs to preInvoice statuses
+            // Check which enum the status belongs to
             const preInvoiceStatuses: PreInvoiceStatus[] = [
-                'PENDING',
-                'SUCCESSFUL',
-                'FAILED',
+                PreInvoiceStatus.PENDING,
+                PreInvoiceStatus.SUCCESSFUL,
+                PreInvoiceStatus.FAILED,
             ];
+            const invoiceStatuses: InvoiceStatus[] = [
+                InvoiceStatus.PENDING,
+                InvoiceStatus.REJECTED,
+                InvoiceStatus.ACCEPTED,
+                InvoiceStatus.PARTIALLY_PAID,
+                InvoiceStatus.FULLY_PAID,
+            ];
+
             if (preInvoiceStatuses.includes(status as PreInvoiceStatus)) {
                 preInvoiceWhere.status = status;
+                invoiceWhere.status = undefined; // DO NOT filter invoices
+            } else if (invoiceStatuses.includes(status as InvoiceStatus)) {
+                invoiceWhere.status = status;
+                preInvoiceWhere = null; // skip pre-invoices
             } else {
-                // Otherwise, skip fetching preInvoices
-                preInvoiceWhere = null;
+                throw new BadRequestException('Invalid status value');
             }
         }
 
         // Apply showFor filter
         if (showFor && showFor !== 'all') {
-            // Invoice filters
             invoiceWhere = {
                 ...invoiceWhere,
-                ...this.buildItemFilter(showFor, true), // true = invoice
+                ...this.buildItemFilter(showFor, true),
             };
-
-            // Pre-invoice filters
             if (['products', 'services'].includes(showFor)) {
-                // pre-invoices never have products/services, skip fetching
-                preInvoiceWhere = null;
-            } else {
+                preInvoiceWhere = null; // skip pre-invoices, these types don't exist there
+            } else if (preInvoiceWhere) {
                 preInvoiceWhere = {
                     ...preInvoiceWhere,
-                    ...this.buildItemFilter(showFor, false), // false = pre-invoice
+                    ...this.buildItemFilter(showFor, false),
                 };
             }
         }
@@ -263,8 +268,14 @@ export class InvoiceService {
             ),
         ]);
 
-        // Sort by date (latest first)
-        return all.sort(
+        // Apply frontend-style filter ONLY if showFor is bids or groups
+        const filtered =
+            showFor && ['bids', 'groups'].includes(showFor)
+                ? filterInvoices(all, status as string, showFor as ShowFor)
+                : all;
+
+        // Sort by date
+        return filtered.sort(
             (a, b) =>
                 new Date(b.createdAt).getTime() -
                 new Date(a.createdAt).getTime(),
@@ -282,26 +293,20 @@ export class InvoiceService {
                     return {
                         items: { some: { relatedServiceId: { not: null } } },
                     };
-                case 'groups':
-                    return {
-                        items: {
-                            some: { groupPurchaseBuyerId: { not: null } },
-                        },
-                    };
-                case 'bids':
-                    return { items: { some: { offerId: { not: null } } } };
                 default:
+                    // Bids/groups don't exist in invoices → no filter
                     return {};
             }
         } else {
-            // pre-invoices don't have items; only 'groups' and 'bids' make sense
+            // pre-invoices root fields
             switch (showFor) {
-                case 'groups':
-                    return { groupPurchaseBuyerId: { not: null } };
                 case 'bids':
                     return { offerId: { not: null } };
+                case 'groups':
+                    return { groupPurchaseBuyerId: { not: null } };
                 default:
-                    return {}; // products/services don't exist in pre-invoices
+                    // products/services don't exist in pre-invoices → no filter
+                    return {};
             }
         }
     }
@@ -810,4 +815,41 @@ export class InvoiceService {
             totalAmount: invoice.amount,
         };
     }
+}
+
+type InvoiceType = 'INVOICE' | 'PRE_INVOICE';
+type ShowFor = 'all' | 'products' | 'services' | 'bids' | 'groups';
+
+function filterInvoices(
+    invoices: (InvoiceResponseDto | PreInvoiceResponseDto)[],
+    status?: string,
+    showFor: ShowFor = 'all',
+) {
+    return invoices.filter((inv) => {
+        // 1️⃣ Filter by status if provided
+        if (status && inv.status !== status) return false;
+
+        // 2️⃣ Filter by showFor
+        if (showFor === 'all') return true;
+
+        if (inv.type === 'INVOICE') {
+            if (
+                showFor === 'products' &&
+                !inv.items?.some((i) => i.relatedProduct)
+            )
+                return false;
+            if (
+                showFor === 'services' &&
+                !inv.items?.some((i) => i.relatedService)
+            )
+                return false;
+            // Bids/groups don’t exist in invoices → skip filter
+        } else if (inv.type === 'PRE_INVOICE') {
+            if (showFor === 'bids' && !inv.offer) return false;
+            if (showFor === 'groups' && !inv.groupPurchaseBuyer) return false;
+            // products/services don’t exist in pre-invoices → skip filter
+        }
+
+        return true;
+    });
 }
