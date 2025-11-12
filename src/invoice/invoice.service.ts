@@ -190,8 +190,18 @@ export class InvoiceService {
                     supplier: { include: { user: true } },
                     items: {
                         include: {
-                            relatedProduct: { include: { category: true } },
-                            relatedService: { include: { category: true } },
+                            relatedProduct: {
+                                include: {
+                                    category: true,
+                                    supplier: { include: { user: true } },
+                                },
+                            },
+                            relatedService: {
+                                include: {
+                                    category: true,
+                                    supplier: { include: { user: true } },
+                                },
+                            },
                         },
                     },
                 },
@@ -275,8 +285,18 @@ export class InvoiceService {
                 supplier: { include: { user: true } },
                 items: {
                     include: {
-                        relatedProduct: { include: { category: true } },
-                        relatedService: { include: { category: true } },
+                        relatedProduct: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
+                        relatedService: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
                     },
                 },
             },
@@ -495,8 +515,18 @@ export class InvoiceService {
                 supplier: { include: { user: true } },
                 items: {
                     include: {
-                        relatedProduct: { include: { category: true } },
-                        relatedService: { include: { category: true } },
+                        relatedProduct: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
+                        relatedService: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
                     },
                 },
             },
