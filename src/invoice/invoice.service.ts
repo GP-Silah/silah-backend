@@ -11,6 +11,7 @@ import {
     InvoiceTermsOfPayment,
     NotificationEntityType,
     NotificationType,
+    PreInvoiceStatus,
     UserRole,
 } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -144,7 +145,7 @@ export class InvoiceService {
 
     async getMyInvoices(
         userId: string,
-        status?: InvoiceStatus,
+        status?: InvoiceStatus | PreInvoiceStatus,
         showFor?: string,
     ): Promise<(InvoiceResponseDto | PreInvoiceResponseDto)[]> {
         // Find user and their role
@@ -172,20 +173,42 @@ export class InvoiceService {
             throw new BadRequestException('Invalid user role');
         }
 
-        // Apply filters
-        if (status) invoiceWhere.status = status;
+        // Apply status filter
+        if (status) {
+            invoiceWhere.status = status;
 
-        if (showFor && showFor !== 'all') {
-            const itemCondition = this.buildItemFilter(showFor);
-
-            // Apply to Invoice
-            if (itemCondition && itemCondition.items) {
-                invoiceWhere.items = itemCondition.items;
+            // Apply preInvoiceWhere.status only if status belongs to preInvoice statuses
+            const preInvoiceStatuses: PreInvoiceStatus[] = [
+                'PENDING',
+                'SUCCESSFUL',
+                'FAILED',
+            ];
+            if (preInvoiceStatuses.includes(status as PreInvoiceStatus)) {
+                preInvoiceWhere.status = status;
+            } else {
+                // Otherwise, skip fetching preInvoices
+                preInvoiceWhere = null;
             }
+        }
 
-            // Apply to PreInvoice — remove the "items" key if present
-            const { items, ...rest } = itemCondition;
-            Object.assign(preInvoiceWhere, rest);
+        // Apply showFor filter
+        if (showFor && showFor !== 'all') {
+            // Invoice filters
+            invoiceWhere = {
+                ...invoiceWhere,
+                ...this.buildItemFilter(showFor, true), // true = invoice
+            };
+
+            // Pre-invoice filters
+            if (['products', 'services'].includes(showFor)) {
+                // pre-invoices never have products/services, skip fetching
+                preInvoiceWhere = null;
+            } else {
+                preInvoiceWhere = {
+                    ...preInvoiceWhere,
+                    ...this.buildItemFilter(showFor, false), // false = pre-invoice
+                };
+            }
         }
 
         // Fetch both invoices and pre-invoices
@@ -214,20 +237,22 @@ export class InvoiceService {
                 },
                 orderBy: { createdAt: 'desc' },
             }),
-            this.prisma.preInvoice.findMany({
-                where: preInvoiceWhere,
-                include: {
-                    buyer: { include: { user: true } },
-                    supplier: { include: { user: true } },
-                    product: {
-                        include: {
-                            category: true,
-                            supplier: { include: { user: true } },
-                        },
-                    },
-                },
-                orderBy: { createdAt: 'desc' },
-            }),
+            preInvoiceWhere
+                ? this.prisma.preInvoice.findMany({
+                      where: preInvoiceWhere,
+                      include: {
+                          buyer: { include: { user: true } },
+                          supplier: { include: { user: true } },
+                          product: {
+                              include: {
+                                  category: true,
+                                  supplier: { include: { user: true } },
+                              },
+                          },
+                      },
+                      orderBy: { createdAt: 'desc' },
+                  })
+                : Promise.resolve([]), // return empty array if preInvoiceWhere is null
         ]);
 
         // Merge and map
@@ -246,18 +271,38 @@ export class InvoiceService {
         );
     }
 
-    private buildItemFilter(showFor: string) {
-        switch (showFor) {
-            case 'products':
-                return { items: { some: { relatedProductId: { not: null } } } };
-            case 'services':
-                return { items: { some: { relatedServiceId: { not: null } } } };
-            case 'groups':
-                return { groupPurchaseBuyerId: { not: null } };
-            case 'bids':
-                return { offerId: { not: null } };
-            default:
-                return {};
+    private buildItemFilter(showFor: string, isInvoice: boolean) {
+        if (isInvoice) {
+            switch (showFor) {
+                case 'products':
+                    return {
+                        items: { some: { relatedProductId: { not: null } } },
+                    };
+                case 'services':
+                    return {
+                        items: { some: { relatedServiceId: { not: null } } },
+                    };
+                case 'groups':
+                    return {
+                        items: {
+                            some: { groupPurchaseBuyerId: { not: null } },
+                        },
+                    };
+                case 'bids':
+                    return { items: { some: { offerId: { not: null } } } };
+                default:
+                    return {};
+            }
+        } else {
+            // pre-invoices don't have items; only 'groups' and 'bids' make sense
+            switch (showFor) {
+                case 'groups':
+                    return { groupPurchaseBuyerId: { not: null } };
+                case 'bids':
+                    return { offerId: { not: null } };
+                default:
+                    return {}; // products/services don't exist in pre-invoices
+            }
         }
     }
 

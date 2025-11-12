@@ -9197,14 +9197,14 @@
     },
     "/api/invoices/me": {
       "get": {
-        "description": "\nFetches all invoices and pre-invoices associated with the authenticated user.<br><br>\nOptional query parameters allow filtering:<br>\n<ul>\n    <li><strong>status</strong> - filter by invoice status (e.g., PENDING, ACCEPTED, REJECTED).</li>\n    <li><strong>showFor</strong> - filter by type of items: 'all', 'products', 'services', 'bids', 'groups'.</li>\n</ul>\nInvoices are automatically sorted with the latest first. Pre-invoices are also included when applicable.\n",
+        "description": "\nFetches all invoices and pre-invoices associated with the authenticated user.<br><br>\nOptional query parameters allow filtering:<br>\n<ul>\n    <li><strong>status</strong> - filter by invoice status (InvoiceStatus: PENDING, ACCEPTED, REJECTED, PARTIALLY_PAID, FULLY_PAID) or pre-invoice status (PreInvoiceStatus: PENDING, SUCCESSFUL, FAILED).</li>\n    <li><strong>showFor</strong> - filter by item type: 'all', 'products', 'services', 'bids', 'groups'.</li>\n</ul>\n<b>Important:</b> Some combinations are invalid and will return a 400 error:<br>\n<ul>\n    <li><strong>showFor = 'bids'</strong> cannot be used with an <strong>InvoiceStatus</strong> (bids exist only in pre-invoices).</li>\n    <li><strong>showFor = 'products' or 'services'</strong> cannot be used with a <strong>PreInvoiceStatus</strong> (pre-invoices never have products or services).</li>\n</ul>\nInvoices and pre-invoices are automatically sorted with the latest first.\n",
         "operationId": "InvoiceController_getMyInvoices",
         "parameters": [
           {
             "name": "status",
             "required": false,
             "in": "query",
-            "description": "Filter invoices by status. Allowed values: PENDING, ACCEPTED, REJECTED, PARTIALLY_PAID, FULLY_PAID.",
+            "description": "Filter by status. Can be an InvoiceStatus (PENDING, ACCEPTED, REJECTED, PARTIALLY_PAID, FULLY_PAID) or a PreInvoiceStatus (PENDING, SUCCESSFUL, FAILED).",
             "schema": {
               "example": "PENDING",
               "type": "string"
@@ -9236,7 +9236,7 @@
             }
           },
           "400": {
-            "description": "Invalid query parameters (status or showFor).",
+            "description": "Invalid query parameters or incompatible status/showFor combination.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9252,6 +9252,20 @@
                       "example": {
                         "statusCode": 400,
                         "message": "Invalid showFor choice: unknown",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Cannot filter invoices by \"bids\" showFor with status \"PENDING\". Use a pre-invoice status instead.",
+                        "error": "Bad Request"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 400,
+                        "message": "Cannot filter pre-invoices by \"products\" showFor with status \"SUCCESSFUL\".",
                         "error": "Bad Request"
                       }
                     }

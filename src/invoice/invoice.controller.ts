@@ -19,7 +19,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/enums/userRole.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { InvoiceStatus } from '@prisma/client';
+import { InvoiceStatus, PreInvoiceStatus } from '@prisma/client';
 import { CreateInvoiceDto } from './dtos/createInvoice.dto';
 import {
     ApiDocsCreateInvoice,
@@ -46,16 +46,25 @@ export class InvoiceController {
         @Query('status') status?: string,
         @Query('showFor') showFor?: string,
     ) {
+        let normalizedStatus: string | undefined;
+
         if (status) {
-            const normalized = status.toUpperCase();
-            const validStatuses = Object.values(InvoiceStatus);
-            if (!validStatuses.includes(normalized as InvoiceStatus)) {
-                throw new BadRequestException(
-                    `Invalid invoice status: ${status}`,
-                );
+            normalizedStatus = status.toUpperCase();
+            const validInvoiceStatuses = Object.values(InvoiceStatus);
+            const validPreInvoiceStatuses = Object.values(PreInvoiceStatus);
+
+            if (
+                !validInvoiceStatuses.includes(
+                    normalizedStatus as InvoiceStatus,
+                ) &&
+                !validPreInvoiceStatuses.includes(
+                    normalizedStatus as PreInvoiceStatus,
+                )
+            ) {
+                throw new BadRequestException(`Invalid status: ${status}`);
             }
-            status = normalized as InvoiceStatus;
         }
+
         if (showFor) {
             const acceptedValues = [
                 'all',
@@ -69,11 +78,39 @@ export class InvoiceController {
                     `Invalid showFor choice: ${showFor}`,
                 );
             }
+
+            // 🚨 Prevent incompatible combinations
+            if (
+                showFor === 'bids' &&
+                normalizedStatus &&
+                Object.values(InvoiceStatus).includes(
+                    normalizedStatus as InvoiceStatus,
+                )
+            ) {
+                // Bids only exist in PreInvoices
+                throw new BadRequestException(
+                    `Cannot filter invoices by "bids" showFor with status "${normalizedStatus}". Use a pre-invoice status instead.`,
+                );
+            }
+
+            if (
+                ['products', 'services'].includes(showFor) &&
+                normalizedStatus &&
+                Object.values(PreInvoiceStatus).includes(
+                    normalizedStatus as PreInvoiceStatus,
+                )
+            ) {
+                // Products/services never exist in pre-invoices
+                throw new BadRequestException(
+                    `Cannot filter pre-invoices by "${showFor}" showFor with status "${normalizedStatus}".`,
+                );
+            }
         }
+
         const userId = req.tokenData!.sub;
         return this.invoiceService.getMyInvoices(
             userId,
-            status as InvoiceStatus,
+            normalizedStatus as InvoiceStatus | PreInvoiceStatus,
             showFor,
         );
     }
