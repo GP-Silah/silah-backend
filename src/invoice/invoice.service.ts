@@ -212,7 +212,12 @@ export class InvoiceService {
                 include: {
                     buyer: { include: { user: true } },
                     supplier: { include: { user: true } },
-                    product: true,
+                    product: {
+                        include: {
+                            category: true,
+                            supplier: { include: { user: true } },
+                        },
+                    },
                 },
                 orderBy: { createdAt: 'desc' },
             }),
@@ -312,7 +317,12 @@ export class InvoiceService {
             include: {
                 buyer: { include: { user: true } },
                 supplier: { include: { user: true } },
-                product: true,
+                product: {
+                    include: {
+                        category: true,
+                        supplier: { include: { user: true } },
+                    },
+                },
             },
         });
 
