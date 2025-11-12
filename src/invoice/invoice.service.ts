@@ -521,10 +521,17 @@ export class InvoiceService {
                 items: {
                     include: {
                         relatedProduct: {
-                            include: { category: true, supplier: true },
+                            include: {
+              category: true,
+              supplier: { include: { user: true } } 
+            }
                         },
                         relatedService: {
-                            include: { category: true, supplier: true },
+                            include: {
+              category: true,
+              supplier: { include: { user: true } } 
+            }
+                        },
                         },
                     },
                 },
