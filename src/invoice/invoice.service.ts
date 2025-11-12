@@ -259,6 +259,17 @@ export class InvoiceService {
                                   supplier: { include: { user: true } },
                               },
                           },
+                          offer: {
+                              include: {
+                                  bid: {
+                                      include: {
+                                          buyer: { include: { user: true } },
+                                      },
+                                  },
+                                  supplier: { include: { user: true } },
+                              },
+                          },
+                          groupPurchaseBuyer: true,
                       },
                       orderBy: { createdAt: 'desc' },
                   })
