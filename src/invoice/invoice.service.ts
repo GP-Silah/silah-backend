@@ -422,8 +422,18 @@ export class InvoiceService {
                 supplier: { include: { user: true } },
                 items: {
                     include: {
-                        relatedProduct: { include: { category: true } },
-                        relatedService: { include: { category: true } },
+                        relatedProduct: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
+                        relatedService: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
                     },
                 },
             },
@@ -516,22 +526,25 @@ export class InvoiceService {
             include: {
                 buyer: { include: { user: true, card: true } },
                 preInvoice: {
-                    include: { product: { include: { supplier: true } } },
+                    include: {
+                        product: {
+                            include: { supplier: { include: { user: true } } },
+                        },
+                    },
                 },
                 items: {
                     include: {
                         relatedProduct: {
                             include: {
-              category: true,
-              supplier: { include: { user: true } } 
-            }
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
                         },
                         relatedService: {
                             include: {
-              category: true,
-              supplier: { include: { user: true } } 
-            }
-                        },
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
                         },
                     },
                 },
