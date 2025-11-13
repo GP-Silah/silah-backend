@@ -11543,6 +11543,121 @@
         ]
       }
     },
+    "/api/reviews/has-reviewed/{id}": {
+      "get": {
+        "description": "Returns whether the currently authenticated buyer has already submitted a review for the specified order or invoice ID.\n                - Only buyers can access this endpoint.\n                - Returns **true** if a review exists, otherwise **false**.",
+        "operationId": "ReviewController_hasReviewed",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Whether the buyer has already reviewed the given entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "hasReviewed": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: Token missing or invalid/expired.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "No token found in cookies",
+                        "error": "Unauthorized"
+                      }
+                    },
+                    {
+                      "example": {
+                        "statusCode": 401,
+                        "message": "Invalid or expired token",
+                        "error": "Unauthorized"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden: You do not have access to this resource (role mismatch).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "You do not have access to this resource",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order or invoice not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "No order or invoice found with ID: 123",
+                    "error": "Not Found"
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email not verified. <br>Note: The actual response returned by the API is 403 Forbidden, but Swagger UI does not allow multiple identical status codes for different errors, so 423 Locked is used here as a workaround for documentation purposes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 403,
+                    "message": "User email is not verified",
+                    "error": "Forbidden"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          },
+          {
+            "token": []
+          },
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Check if the logged-in buyer has reviewed an order or invoice",
+        "tags": [
+          "Reviews"
+        ]
+      }
+    },
     "/api/notifications/me/preferences": {
       "get": {
         "description": "Fetches the notification preferences for the authenticated user. \n            Only fields relevant to the user's role are returned:\n                <ul>\n                    <li><strong>Suppliers:</strong> allowNotifications, newMessageNotify, newOrderNotify, newReviewNotify, biddingStatusNotify, invoiceStatusNotify</li>\n                    <li><strong>Buyers:</strong> allowNotifications, newMessageNotify, newInvoiceNotify, newOfferNotify, orderStatusNotify, groupPurchaseStatusNotify</li>\n                </ul>",

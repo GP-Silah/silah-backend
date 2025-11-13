@@ -221,3 +221,44 @@ export function ApiDocsCreateReview() {
         }),
     );
 }
+
+export function ApiDocsHasReviewed() {
+    return applyDecorators(
+        ApiBearerAuth(),
+        ApiOperation({
+            summary:
+                'Check if the logged-in buyer has reviewed an order or invoice',
+            description: `Returns whether the currently authenticated buyer has already submitted a review for the specified order or invoice ID.
+                - Only buyers can access this endpoint.
+                - Returns **true** if a review exists, otherwise **false**.`,
+        }),
+        ApiResponse({
+            status: 200,
+            description:
+                'Whether the buyer has already reviewed the given entity',
+            schema: {
+                example: { hasReviewed: true },
+            },
+        }),
+        ApiForbiddenResponse({
+            description: 'User is not a buyer',
+            schema: {
+                example: {
+                    statusCode: 403,
+                    message: 'Only buyers can check review status.',
+                    error: 'Forbidden',
+                },
+            },
+        }),
+        ApiNotFoundResponse({
+            description: 'Order or invoice not found',
+            schema: {
+                example: {
+                    statusCode: 404,
+                    message: 'No order or invoice found with ID: 123',
+                    error: 'Not Found',
+                },
+            },
+        }),
+    );
+}

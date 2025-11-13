@@ -26,6 +26,7 @@ import {
     ApiDocsGetItemReviews,
     ApiDocsGetReviewById,
     ApiDocsGetSupplierReviews,
+    ApiDocsHasReviewed,
 } from './review.docs';
 
 @ApiTags('Reviews')
@@ -100,5 +101,17 @@ export class ReviewController {
     ) {
         const userId = req.tokenData!.sub;
         return this.reviewService.createReview(userId, id, dto);
+    }
+
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
+    @Roles(UserRole.BUYER)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
+    @Get('has-reviewed/:id') // order or invoice id
+    @ApiDocsHasReviewed()
+    async hasReviewed(@Param('id') id: string, @Req() req: Request) {
+        const userId = req.tokenData!.sub;
+        return this.reviewService.hasReviewed(id, userId);
     }
 }

@@ -601,4 +601,50 @@ export class ReviewService {
 
         return this.toReviewResponseDto(reviewWithItems);
     }
+
+    async hasReviewed(
+        id: string,
+        userId: string,
+    ): Promise<{ hasReviewed: boolean }> {
+        // Find the user and ensure they are a buyer
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { buyer: true },
+        });
+
+        if (!user || !user.buyer) {
+            throw new ForbiddenException(
+                'Only buyers can check review status.',
+            );
+        }
+
+        const buyerId = user.buyer.id;
+
+        // Check if the ID belongs to an order or invoice
+        const [order, invoice] = await Promise.all([
+            this.prisma.order.findUnique({ where: { id } }),
+            this.prisma.invoice.findUnique({ where: { id } }),
+        ]);
+
+        if (!order && !invoice) {
+            throw new NotFoundException(
+                `No order or invoice found with ID: ${id}`,
+            );
+        }
+
+        // Query the review table
+        const existingReview = await this.prisma.review.findFirst({
+            where: {
+                buyerId,
+                OR: [
+                    { orderId: order ? order.id : undefined },
+                    { invoiceId: invoice ? invoice.id : undefined },
+                ],
+            },
+            select: { id: true },
+        });
+
+        // Return true if review exists, false otherwise
+        return { hasReviewed: !!existingReview };
+    }
 }
