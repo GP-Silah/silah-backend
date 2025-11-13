@@ -269,7 +269,7 @@ export class InvoiceService {
                                   supplier: { include: { user: true } },
                               },
                           },
-                          groupPurchaseBuyer: true,
+                          groupPurchaseBuyer: { include: { buyer: { include: { user: true }, }, }, },
                       },
                       orderBy: { createdAt: 'desc' },
                   })
