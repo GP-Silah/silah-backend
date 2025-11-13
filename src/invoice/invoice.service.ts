@@ -269,7 +269,9 @@ export class InvoiceService {
                                   supplier: { include: { user: true } },
                               },
                           },
-                          groupPurchaseBuyer: { include: { buyer: { include: { user: true }, }, }, },
+                          groupPurchaseBuyer: {
+                              include: { buyer: { include: { user: true } } },
+                          },
                       },
                       orderBy: { createdAt: 'desc' },
                   })
@@ -386,6 +388,19 @@ export class InvoiceService {
                         category: true,
                         supplier: { include: { user: true } },
                     },
+                },
+                offer: {
+                    include: {
+                        bid: {
+                            include: {
+                                buyer: { include: { user: true } },
+                            },
+                        },
+                        supplier: { include: { user: true } },
+                    },
+                },
+                groupPurchaseBuyer: {
+                    include: { buyer: { include: { user: true } } },
                 },
             },
         });
