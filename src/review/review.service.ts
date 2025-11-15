@@ -84,6 +84,7 @@ export class ReviewService {
                   }
                 : undefined,
             buyerId: itemReviewEntity.buyerId,
+            buyerBusinessName: itemReviewEntity.buyer.user.businessName,
             itemRating: itemReviewEntity.itemRating,
             writtenReviewOfItem: targetLang
                 ? await this.translationService.translateText(
@@ -205,6 +206,7 @@ export class ReviewService {
                 supplier: { include: { user: true } },
                 itemsReview: {
                     include: {
+                        buyer: { include: { user: true } },
                         orderItem: {
                             include: {
                                 product: { include: { category: true } },
@@ -265,6 +267,7 @@ export class ReviewService {
                         relatedService: { include: { category: true } },
                     },
                 },
+                buyer: { include: { user: true } },
             },
             orderBy: { createdAt: 'desc' },
         });

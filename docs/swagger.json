@@ -15251,6 +15251,11 @@
             "description": "ID of the buyer who wrote this review",
             "example": "y1x2w3v4-5678-90ab-cdef-1234567890ab"
           },
+          "buyerBusinessName": {
+            "type": "string",
+            "description": "Business name of the buyer who wrote this review",
+            "example": "Good Business"
+          },
           "itemRating": {
             "type": "number",
             "description": "Rating given for this item",
@@ -15272,6 +15277,7 @@
           "itemReviewId",
           "reviewId",
           "buyerId",
+          "buyerBusinessName",
           "itemRating",
           "createdAt"
         ]

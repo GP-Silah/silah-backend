@@ -43,6 +43,12 @@ export class ItemReviewResponseDto {
     buyerId: string;
 
     @ApiProperty({
+        description: 'Business name of the buyer who wrote this review',
+        example: 'Good Business',
+    })
+    buyerBusinessName: string;
+
+    @ApiProperty({
         description: 'Rating given for this item',
         example: 5,
     })
