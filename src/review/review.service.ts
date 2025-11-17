@@ -561,6 +561,7 @@ export class ReviewService {
                 supplier: { include: { user: true } },
                 itemsReview: {
                     include: {
+                        buyer: { include: { user: true } },
                         orderItem: {
                             include: {
                                 product: { include: { category: true } },
