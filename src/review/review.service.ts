@@ -255,8 +255,15 @@ export class ReviewService {
         // Fetch item reviews for this product or service
         const itemReviews = await this.prisma.itemReview.findMany({
             where: product
-                ? { orderItem: { productId: itemId } }
-                : { invoiceItem: { relatedServiceId: itemId } },
+                ? {
+              OR: [
+                  { orderItem: { productId: itemId } },               // reviews from orders
+                  { invoiceItem: { relatedProductId: itemId } },      // reviews from invoices
+              ],
+          }
+        : {
+              invoiceItem: { relatedServiceId: itemId },              // service reviews
+          },
             include: {
                 orderItem: {
                     include: { product: { include: { category: true } } },
