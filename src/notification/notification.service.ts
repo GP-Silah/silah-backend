@@ -465,10 +465,16 @@ export class NotificationService {
         // Step 2: Convert to DTO
         const dto = await this.toNotificationResponseDto(notification);
 
-        // Step 2.5: Load notification preferences
-        const preference = await this.prisma.notificationPreference.findUnique({
-            where: { userId: data.receiverUserId },
-        });
+        // Step 2.5: Load notification preferences + receiver role
+        const [preference, receiver] = await Promise.all([
+            this.prisma.notificationPreference.findUnique({
+                where: { userId: data.receiverUserId },
+            }),
+            this.prisma.user.findUnique({
+                where: { id: data.receiverUserId },
+                select: { role: true },
+            }),
+        ]);
 
         const userLang = await this.getUserLanguage(data.receiverUserId);
 
@@ -477,6 +483,38 @@ export class NotificationService {
             userLang && userLang !== 'en'
                 ? await this.translateNotification(dto, userLang)
                 : dto;
+
+        if (!receiver) {
+            // Silently skip real-time if user doesn't exist (notification still saved)
+            return translatedDto;
+        }
+
+        // Define allowed types per role (same as in getMyNotifications — keep in sync!)
+        const ALLOWED_BY_ROLE: Record<string, NotificationType[]> = {
+            SUPPLIER: [
+                'NEW_MESSAGE',
+                'NEW_ORDER',
+                'NEW_REVIEW',
+                'BID_STATUS_CHANGED',
+                'INVOICE_STATUS_CHANGED',
+            ],
+            BUYER: [
+                'NEW_MESSAGE',
+                'NEW_INVOICE',
+                'NEW_OFFER',
+                'ORDER_STATUS_CHANGED',
+                'GROUP_PURCHASE_STATUS_CHANGED',
+            ],
+        };
+
+        const allowedTypes = ALLOWED_BY_ROLE[receiver.role] || [];
+
+        // Block real-time emit if type is not allowed for this role
+        if (!allowedTypes.includes(data.type)) {
+            // We still return the DTO (in case caller expects it)
+            // But we DO NOT emit to the stream — this fixes the ghost notifications!
+            return translatedDto;
+        }
 
         // Step 3: Emit based on preference
         if (preference?.allowNotifications) {
