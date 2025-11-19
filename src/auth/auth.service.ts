@@ -718,16 +718,17 @@ export class AuthService {
         });
 
         // Overwrite the token cookie with the SAME options as login/signup
-const isCrossSite = req.hostname !== 'localhost';
-const isSecure = req.secure || req.headers['x-forwarded-proto'] === 'https';
+        const isCrossSite = req.hostname !== 'localhost';
+        const isSecure =
+            req.secure || req.headers['x-forwarded-proto'] === 'https';
 
-res.cookie('token', newToken, {
-    httpOnly: true,
-    secure: isCrossSite ? true : isSecure,
-    sameSite: isCrossSite ? 'none' : 'lax',
-    path: '/',
-    partitioned: true, // important for Chrome third-party cookies
-});
+        res.cookie('token', newToken, {
+            httpOnly: true,
+            secure: isCrossSite ? true : isSecure,
+            sameSite: isCrossSite ? 'none' : 'lax',
+            path: '/',
+            partitioned: true, // important for Chrome third-party cookies
+        });
 
         return { message: 'Role switched successfully', newRole };
     }
