@@ -174,6 +174,7 @@ export class GroupPurchaseService {
         const city = buyer.user.city.toLowerCase();
 
         // Find open & suitable group purchases
+        const now = new Date();
         const groupPurchases = await this.prisma.groupPurchase.findMany({
             where: {
                 productId,
