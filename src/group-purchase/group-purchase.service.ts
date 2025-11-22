@@ -174,7 +174,6 @@ export class GroupPurchaseService {
         const city = buyer.user.city.toLowerCase();
 
         // Find open & suitable group purchases
-        const now = new Date();
         const groupPurchases = await this.prisma.groupPurchase.findMany({
             where: {
                 productId,
@@ -191,16 +190,9 @@ export class GroupPurchaseService {
             orderBy: [{ deadline: 'asc' }, { createdAt: 'desc' }],
         });
 
-        // Compute dynamic filter: actual < minGroup
-        // Prisma can’t compare two columns directly, so we filter manually
-        // Note: no need for this filter really..
-        const suitableGroups = groupPurchases.filter(
-            (gp) => gp.actualGroupQuantity < gp.minGroupQuantity,
-        );
-
         // Map to DTOs
         const dtoList = await Promise.all(
-            suitableGroups.map((gp) => this.toGroupPurchaseResponseDto(gp)),
+            groupPurchases.map((gp) => this.toGroupPurchaseResponseDto(gp)),
         );
 
         return dtoList;
