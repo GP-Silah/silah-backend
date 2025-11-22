@@ -92,11 +92,25 @@ export class AuthController {
         return { message: 'Login successful', role: data.role };
     }
 
-    @Post('/logout')
+    @Post('logout')
     @ApiDocsLogout()
-    logout(@Res({ passthrough: true }) res: Response) {
-        res.clearCookie('token');
-        res.send('Successfully logged out');
+    async logout(
+      @Req() req: Request,
+      @Res({ passthrough: true }) res: Response,
+    ) {
+          const isCrossSite = req.hostname !== 'localhost';
+          const isSecure = req.secure || req.headers['x-forwarded-proto'] === 'https';
+
+          // Clear cookie with EXACT same flags it was set with
+          res.clearCookie('token', {
+            httpOnly: true,
+            secure: isCrossSite ? true : isSecure,
+            sameSite: isCrossSite ? 'none' : 'lax',
+            path: '/',
+            partitioned: true,
+          });
+
+          return res.status(204).send();
     }
 
     // After signup the system will send an email with a verification link to the user's email address.
