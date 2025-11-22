@@ -249,7 +249,7 @@ export class GroupPurchaseService {
                 city,
                 status: GroupPurchaseStatus.OPEN,
                 deadline: { gt: now }, // still valid
-            });
+            }});
         if (existingOpenGroup)
             throw new ConflictException(
                 'There is already an open group purchase for this product',
