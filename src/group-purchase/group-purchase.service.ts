@@ -242,9 +242,14 @@ export class GroupPurchaseService {
         }
 
         // 3. Check if an open group purchase already exists
+        const now = new Date();
         const existingOpenGroup = await this.prisma.groupPurchase.findFirst({
-            where: { productId, status: 'OPEN', city },
-        });
+            where: {
+                productId,
+                city,
+                status: GroupPurchaseStatus.OPEN,
+                deadline: { gt: now }, // still valid
+            });
         if (existingOpenGroup)
             throw new ConflictException(
                 'There is already an open group purchase for this product',
