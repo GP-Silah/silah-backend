@@ -179,6 +179,7 @@ export class GroupPurchaseService {
                 productId,
                 city,
                 status: GroupPurchaseStatus.OPEN,
+                deadline: { gt: now }, // still valid
             },
             include: {
                 product: { include: { category: true } },
