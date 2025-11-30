@@ -30,6 +30,7 @@
         "prisma:test": "dotenv -e .env.test -- npx prisma migrate deploy",
         "env:dev:merge": "rm -f .env.merged && cat .env .env.dev > .env.merged",
         "env:test:merge": "rm -f .env.merged && cat .env .env.test > .env.merged",
+"test:int:local": "npm run env:test:merge && jest --no-coverage --runInBand --testRegex=\"int-spec\\.ts$\"",
         "docker:dev": "npm run kill:5432 && npm run docker:cleanup && npm run env:dev:merge && DB_SERVICE=postgres_dev docker compose --env-file .env.merged -f docker/docker-compose.yml -f docker/docker-compose.override.yml up --build app && npm run db:wait:dev",
         "docker:dev:d": "npm run kill:5432 && npm run docker:cleanup && npm run env:dev:merge && DB_SERVICE=postgres_dev docker compose --env-file .env.merged -f docker/docker-compose.yml -f docker/docker-compose.override.yml up --build -d app && npm run db:wait:dev",
         "docker:test": "npm run kill:5432 && npm run docker:cleanup && npm run env:test:merge && DB_SERVICE=postgres_test docker compose --env-file .env.merged -f docker/docker-compose.yml -f docker/docker-compose.override.yml up --build -d app && npm run db:wait:test",
@@ -117,7 +118,7 @@
     },
     "jest": {
         "moduleNameMapper": {
-            "src/(.*)": "<rootDir>/src/$1",
+            "^src/(.*)": "<rootDir>/src/$1",
             "^@sendgrid/mail$": "<rootDir>/test/mocks/sendgrid.mock.js"
         },
         "moduleFileExtensions": [

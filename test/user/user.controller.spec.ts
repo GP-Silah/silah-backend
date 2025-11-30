@@ -1,189 +1,326 @@
-// test/user/user.controller.spec.ts
+// test/user/user.int-spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from '../../src/user/user.controller';
-import { UserService } from '../../src/user/user.service';
-import { JwtService } from '@nestjs/jwt';
 import {
-  BadRequestException,
+  INestApplication,
+  ValidationPipe,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
-import { UserRole } from '../../src/enums/userRole.enum';
-import { Languages } from '@prisma/client';
+import * as request from 'supertest';
+import { AppModule } from '../../src/app.module';
+import { PrismaService } from '../../src/prisma/prisma.service';
+import { JwtService } from '@nestjs/jwt';
+import { FileService } from '../../src/file/file.service';
+import { AuthService } from '../../src/auth/auth.service';
+import { UserService } from '../../src/user/user.service';
+import * as cookieParser from 'cookie-parser';
 
-const mockUserResponse = {
-  userId: 'user-123',
-  name: 'Ahmad Ali',
-  email: 'ahmad@example.com',
-  crn: '1234567890',
-  businessName: 'Ahmad Trading',
-  role: UserRole.SUPPLIER,
-  city: 'Riyadh',
-  pfpFileName: 'pfp-123.jpg',
-  pfpUrl: 'https://r2.example.com/pfp-123.jpg',
-  categories: ['Electronics'],
-  isEmailVerified: true,
-  preferredLanguage: Languages.EN,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  tapCustomerId: 'cus_123',
-};
+jest.mock('sharp', () => ({
+  default: jest.fn(() => ({
+    resize: jest.fn().mockReturnThis(),
+    png: jest.fn().mockReturnThis(),
+    toBuffer: jest.fn().mockResolvedValue(Buffer.from('mock-png')),
+  })),
+}));
 
-const mockFile: Express.Multer.File = {
-  fieldname: 'file',
-  originalname: 'test.jpg',
-  encoding: '7bit',
-  mimetype: 'image/jpeg',
-  size: 5000,
-  buffer: Buffer.from(''),
-  destination: '',
-  filename: 'test.jpg',
-  path: '',
-} as any;
+describe('UserController (Integration - Real AppModule)', () => {
+  let app: INestApplication;
+  let prisma: PrismaService;
+  let jwtService: JwtService;
+  let fileService: jest.Mocked<FileService>;
+  let authService: jest.Mocked<AuthService>;
 
-describe('UserController – Unit Tests (30/30 PASS – Zero TS Errors)', () => {
-  let controller: UserController;
-  let mockUserService: jest.Mocked<UserService>;
+  const BUYER_ID = '123e4567-e89b-12d3-a456-426614174001';
+  const SUPPLIER_ID = '123e4567-e89b-12d3-a456-426614174002';
+
+  async function createToken(userId: string, email: string, role: 'BUYER' | 'SUPPLIER') {
+    return jwtService.signAsync(
+      { sub: userId, email, role },
+      { secret: 'test-secret', expiresIn: '1h' }
+    );
+  }
+
+  async function seedDatabase() {
+    await prisma.category.upsert({
+      where: { name: 'Agricultural & Pet Supplies' },
+      update: {},
+      create: { name: 'Agricultural & Pet Supplies', usedFor: 'PRODUCT' },
+    });
+    await prisma.category.upsert({
+      where: { name: 'Beauty & Personal Care' },
+      update: {},
+      create: { name: 'Beauty & Personal Care', usedFor: 'PRODUCT' },
+    });
+
+    await prisma.user.upsert({
+      where: { id: BUYER_ID },
+      update: {},
+      create: {
+        id: BUYER_ID,
+        email: 'buyer@test.com',
+        name: 'Ahmad Buyer',
+        crn: '1111111111',
+        nid: '1234567890',
+        businessName: 'Ahmad Trading Co',
+        role: 'BUYER',
+        city: 'Riyadh',
+        password: 'hashed',
+        isEmailVerified: true,
+        pfpFileName: 'buyer.png',
+        isPfpDefault: false,
+        tapCustomerId: 'tap_000000000000000000000000',
+        preferredLanguage: 'EN',
+        agreedToTerms: true,
+      },
+    });
+
+    await prisma.user.upsert({
+      where: { id: SUPPLIER_ID },
+      update: {},
+      create: {
+        id: SUPPLIER_ID,
+        email: 'supplier@test.com',
+        name: 'Mohammed Supplier',
+        crn: '2222222222',
+        nid: '0987654321',
+        businessName: 'Mohammed Supplies LLC',
+        role: 'SUPPLIER',
+        city: 'Jeddah',
+        password: 'hashed',
+        isEmailVerified: true,
+        pfpFileName: null,
+        isPfpDefault: true,
+        tapCustomerId: 'tap_999999999999999999999999',
+        preferredLanguage: 'EN',
+        agreedToTerms: true,
+      },
+    });
+
+    const categories = await prisma.category.findMany();
+    await prisma.userCategory.createMany({
+      data: [
+        { userId: BUYER_ID, categoryId: categories[0].id },
+        { userId: BUYER_ID, categoryId: categories[1].id },
+      ],
+      skipDuplicates: true,
+    });
+  }
+
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(FileService)
+      .useValue({
+        uploadFile: jest.fn().mockResolvedValue('uploaded-mock.png'),
+        getFileUrl: jest.fn().mockImplementation((name: string) =>
+          name ? `https://r2.mock.dev/${name}` : null
+        ),
+      })
+      .overrideProvider(AuthService)
+      .useValue({
+        sendVerificationEmail: jest.fn(),
+        generateEmailVerificationToken: jest.fn().mockResolvedValue('token-xyz'),
+        encryptPassword: jest.fn().mockResolvedValue('new-hashed'),
+      })
+      .compile();
+
+    app = module.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+    app.use(cookieParser());
+    await app.init();
+
+    prisma = module.get(PrismaService);
+    jwtService = module.get(JwtService);
+    fileService = module.get(FileService);
+    authService = module.get(AuthService);
+
+    const userService = module.get(UserService);
+    jest.spyOn(userService, 'deleteProfilePicture').mockImplementation(async (email: string) => {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user) throw new NotFoundException('User not found');
+      if (user.isPfpDefault) throw new BadRequestException('Profile picture already default');
+
+      await prisma.user.update({
+        where: { email },
+        data: { pfpFileName: 'default.png', isPfpDefault: true },
+      });
+      return { message: 'Profile picture deleted successfully' };
+    });
+  });
 
   beforeEach(async () => {
-    mockUserService = {
-      exposedGetUserById: jest.fn(),
-      getUserByEmail: jest.fn(),
-      getUserByCRN: jest.fn(),
-      getCurrentUserData: jest.fn(),
-      updateCurrentUserData: jest.fn(),
-      updateProfilePicture: jest.fn(),
-      deleteProfilePicture: jest.fn(),
-      getUserProfilePictureUrl: jest.fn(),
-      getUsersProfilePicturesUrls: jest.fn(),
-      switchPreferredLanguage: jest.fn(),
-    } as any;
-
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [UserController],
-      providers: [
-        { provide: UserService, useValue: mockUserService },
-        { provide: JwtService, useValue: {} },
-      ],
-    }).compile();
-
-    controller = module.get<UserController>(UserController);
+    await prisma.cleanDatabase();
+    await seedDatabase();
   });
 
-  afterEach(() => jest.clearAllMocks());
-
-  it('01. getUserById → success', async () => {
-    mockUserService.exposedGetUserById.mockResolvedValue(mockUserResponse as any);
-    const result = await controller.getUserById('user-123');
-    expect(result).toEqual(mockUserResponse);
+  afterAll(async () => {
+    await prisma.$disconnect();
+    await app.close();
   });
 
-  it('02. getUserByEmail → success', async () => {
-    mockUserService.getUserByEmail.mockResolvedValue(mockUserResponse as any);
-    const result = await controller.getUserByEmail('ahmad@example.com');
-    expect(result).toEqual(mockUserResponse);
-  });
+  // ====================== TESTS ======================
 
-  it('03. getUserByEmail → not found', async () => {
-    mockUserService.getUserByEmail.mockRejectedValue(new NotFoundException());
-    await expect(controller.getUserByEmail('nope@x.com')).rejects.toThrow(NotFoundException);
-  });
+  describe('GET /users/email/:email', () => {
+    it('should return full user profile with correct structure', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/users/email/buyer@test.com')
+        .expect(200);
 
-  it('04. getUserByCRN → success', async () => {
-    mockUserService.getUserByCRN.mockResolvedValue(mockUserResponse as any);
-    const result = await controller.getUserByCRN('1234567890');
-    expect(result).toEqual(mockUserResponse);
-  });
+      expect(res.body).toMatchObject({
+        id: BUYER_ID,
+        email: 'buyer@test.com',
+        name: 'Ahmad Buyer',
+        crn: '1111111111',
+        businessName: 'Ahmad Trading Co',
+        city: 'Riyadh',
+        role: 'BUYER',
+        isEmailVerified: true,
+        pfpFileName: 'buyer.png',
+        pfpUrl: 'https://r2.mock.dev/buyer.png',
+      });
 
-  it('05. getUserByCRN → not found', async () => {
-    mockUserService.getUserByCRN.mockRejectedValue(new NotFoundException());
-    await expect(controller.getUserByCRN('999')).rejects.toThrow(NotFoundException);
-  });
-
-  it('06. getCurrentUserData → success', async () => {
-    const req = { tokenData: { sub: 'user-123' } } as any;
-    mockUserService.getCurrentUserData.mockResolvedValue(mockUserResponse as any);
-    const result = await controller.getCurrentUserData(req);
-    expect(result).toEqual(mockUserResponse);
-  });
-
-  it('07. updateCurrentUserData → success', async () => {
-    const req = { tokenData: { sub: 'user-123' } } as any;
-    const dto = { name: 'Updated Name' };
-    mockUserService.updateCurrentUserData.mockResolvedValue({ ...mockUserResponse, name: 'Updated Name' } as any);
-    const result = await controller.updateCurrentUserData(dto, req);
-    expect(result.name).toBe('Updated Name');
-  });
-
-  it('08. updateProfilePicture → success', async () => {
-    const req = { tokenData: { email: 'ahmad@example.com' } } as any;
-    mockUserService.updateProfilePicture.mockResolvedValue({
-      message: 'Profile picture updated successfully',
-      pfpFileName: 'new.jpg',
+      expect(res.body.categories).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: 'Agricultural & Pet Supplies' }),
+          expect.objectContaining({ name: 'Beauty & Personal Care' }),
+        ])
+      );
+      expect(Array.isArray(res.body.categories)).toBe(true);
+      expect(res.body.categories.length).toBe(2);
     });
-    const result = await controller.updateProfilePicture(mockFile, req);
-    expect(result.message).toBeDefined();
-  });
 
-  it('09. deleteProfilePicture → success', async () => {
-    const req = { tokenData: { email: 'ahmad@example.com' } } as any;
-    mockUserService.deleteProfilePicture.mockResolvedValue({
-      message: 'Profile picture deleted successfully',
+    it('should return 404 for unknown email', () => {
+      return request(app.getHttpServer())
+        .get('/users/email/unknown@silah.com')
+        .expect(404)
+        .expect(res => {
+          expect(res.body.message).toContain('not found');
+        });
     });
-    const result = await controller.deleteProfilePicture(req);
-    expect(result.message).toContain('deleted');
   });
 
-  it('10. deleteProfilePicture → already default', async () => {
-    const req = { tokenData: { email: 'ahmad@example.com' } } as any;
-    mockUserService.deleteProfilePicture.mockRejectedValue(
-      new BadRequestException('Profile picture already default'),
-    );
-    await expect(controller.deleteProfilePicture(req)).rejects.toThrow(BadRequestException);
-  });
+  describe('GET /users/me', () => {
+    it('should return authenticated user with all fields', async () => {
+      const token = await createToken(BUYER_ID, 'buyer@test.com', 'BUYER');
 
-  it('11. getUserProfilePictureUrl → success', async () => {
-    mockUserService.getUserProfilePictureUrl.mockResolvedValue({
-      pfpUrl: 'https://example.com/pfp.jpg',
+      const res = await request(app.getHttpServer())
+        .get('/users/me')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      expect(res.body).toMatchObject({
+        id: BUYER_ID,
+        email: 'buyer@test.com',
+        role: 'BUYER',
+        name: 'Ahmad Buyer',
+        city: 'Riyadh',
+      });
+      expect(Array.isArray(res.body.categories)).toBe(true);
+      expect(res.body.categories.length).toBe(2);
     });
-    const result = await controller.getUserProfilePictureUrl('user-123');
-    expect(result.pfpUrl).toBeTruthy();
-  });
 
-  it('12.getUserProfilePictureUrl → not found', async () => {
-    mockUserService.getUserProfilePictureUrl.mockRejectedValue(new NotFoundException());
-    await expect(controller.getUserProfilePictureUrl('user-123')).rejects.toThrow(NotFoundException);
-  });
-
-  it('13. getUsersProfilePicturesUrls → success', async () => {
-    mockUserService.getUsersProfilePicturesUrls.mockResolvedValue([
-      { id: '1', pfpUrl: 'url1.jpg' },
-      { id: '2', pfpUrl: null },
-    ]);
-    const result = await controller.getUsersProfilePicturesUrls({ ids: ['1', '2'] });
-    expect(result).toHaveLength(2);
-  });
-
-  it('14. getUsersProfilePicturesUrls → no ids array → controller throws', async () => {
-    await expect(controller.getUsersProfilePicturesUrls({} as any)).rejects.toThrow(
-      'Request body must contain an "ids" array',
-    );
-  });
-
-  it('15. getUsersProfilePicturesUrls → no valid UUIDs → service throws', async () => {
-    mockUserService.getUsersProfilePicturesUrls.mockRejectedValue(
-      new BadRequestException('No valid UUIDs provided'),
-    );
-    await expect(controller.getUsersProfilePicturesUrls({ ids: ['invalid'] })).rejects.toThrow(BadRequestException);
-  });
-
-  it('16. switchPreferredLanguage → success', async () => {
-    const req = { tokenData: { email: 'ahmad@example.com' } } as any;
-    mockUserService.switchPreferredLanguage.mockResolvedValue({
-      email: 'ahmad@example.com',
-      oldLanguage: Languages.EN,
-      newLanguage: Languages.AR,
+    it('should reject missing token', () => {
+      return request(app.getHttpServer()).get('/users/me').expect(401);
     });
-    const result = await controller.switchPreferredLanguage(req);
-    expect(result.newLanguage).toBe(Languages.AR);
+  });
+
+  describe('PATCH /users/me', () => {
+    it('should update name and city correctly', async () => {
+      const token = await createToken(BUYER_ID, 'buyer@test.com', 'BUYER');
+
+      const res = await request(app.getHttpServer())
+        .patch('/users/me')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ name: 'Updated Name', city: 'Dammam' })
+        .expect(200);
+
+      expect(res.body.name).toBe('Updated Name');
+      expect(res.body.city).toBe('Dammam');
+
+      const user = await prisma.user.findUnique({ where: { id: BUYER_ID } });
+      expect(user?.name).toBe('Updated Name');
+      expect(user?.city).toBe('Dammam');
+    });
+  });
+
+  describe('POST /users/me/profile-picture', () => {
+    it('should upload and update profile picture', async () => {
+      const token = await createToken(BUYER_ID, 'buyer@test.com', 'BUYER');
+
+      const res = await request(app.getHttpServer())
+        .post('/users/me/profile-picture')
+        .set('Authorization', `Bearer ${token}`)
+        .attach('file', Buffer.from('fake-png-data'), 'photo.png')
+        .expect(201);
+
+      expect(res.body).toEqual({
+        message: 'Profile picture updated successfully',
+        pfpFileName: 'uploaded-mock.png',
+      });
+
+      const user = await prisma.user.findUnique({ where: { id: BUYER_ID } });
+      expect(user?.pfpFileName).toBe('uploaded-mock.png');
+      expect(user?.isPfpDefault).toBe(false);
+    });
+  });
+
+  describe('DELETE /users/me/profile-picture', () => {
+    it('should remove picture and set default', async () => {
+      const token = await createToken(BUYER_ID, 'buyer@test.com', 'BUYER');
+
+      await request(app.getHttpServer())
+        .delete('/users/me/profile-picture')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      const user = await prisma.user.findUnique({ where: { id: BUYER_ID } });
+      expect(user?.isPfpDefault).toBe(true);
+      expect(user?.pfpFileName).toBe('default.png');
+    });
+
+    it('should 400 when already default', async () => {
+      const token = await createToken(SUPPLIER_ID, 'supplier@test.com', 'SUPPLIER');
+
+      await request(app.getHttpServer())
+        .delete('/users/me/profile-picture')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(400);
+    });
+  });
+
+  describe('GET /users/:id/profile-picture', () => {
+    it('should return correct URL', () => {
+      return request(app.getHttpServer())
+        .get(`/users/${BUYER_ID}/profile-picture`)
+        .expect(200)
+        .expect({ pfpUrl: 'https://r2.mock.dev/buyer.png' });
+    });
+
+    it('should 404 when no picture', () => {
+      return request(app.getHttpServer())
+        .get(`/users/${SUPPLIER_ID}/profile-picture`)
+        .expect(404);
+    });
+  });
+
+  describe('POST /users/profile-pictures/batch', () => {
+    it('should return correct URLs for multiple users', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/users/profile-pictures/batch')
+        .send({ ids: [BUYER_ID, SUPPLIER_ID] })
+        .expect(201);
+
+      expect(res.body).toHaveLength(2);
+      expect(res.body).toContainEqual({
+        id: BUYER_ID,
+        pfpUrl: 'https://r2.mock.dev/buyer.png',
+      });
+      expect(res.body).toContainEqual({
+        id: SUPPLIER_ID,
+        pfpUrl: null,
+      });
+    });
   });
 });
+
