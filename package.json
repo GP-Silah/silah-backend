@@ -117,7 +117,8 @@
     },
     "jest": {
         "moduleNameMapper": {
-            "src/(.*)": "<rootDir>/src/$1"
+            "src/(.*)": "<rootDir>/src/$1",
+            "^@sendgrid/mail$": "<rootDir>/test/mocks/sendgrid.mock.js"
         },
         "moduleFileExtensions": [
             "js",
