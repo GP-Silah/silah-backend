@@ -24,107 +24,107 @@
 <title>cluster_ReviewModule</title>
 <polygon fill="none" stroke="black" stroke-dasharray="1,5" points="8,-70 8,-268 802,-268 802,-70 8,-70"/>
 </g>
-<g id="clust6" class="cluster">
-<title>cluster_ReviewModule_providers</title>
-<polygon fill="none" stroke="black" points="640,-78 640,-130 794,-130 794,-78 640,-78"/>
-</g>
 <g id="clust3" class="cluster">
 <title>cluster_ReviewModule_imports</title>
-<polygon fill="none" stroke="black" points="16,-78 16,-130 632,-130 632,-78 16,-78"/>
+<polygon fill="none" stroke="black" points="178,-78 178,-130 794,-130 794,-78 178,-78"/>
 </g>
 <g id="clust4" class="cluster">
 <title>cluster_ReviewModule_exports</title>
-<polygon fill="none" stroke="black" points="341,-208 341,-260 461,-260 461,-208 341,-208"/>
+<polygon fill="none" stroke="black" points="382,-208 382,-260 502,-260 502,-208 382,-208"/>
+</g>
+<g id="clust6" class="cluster">
+<title>cluster_ReviewModule_providers</title>
+<polygon fill="none" stroke="black" points="16,-78 16,-130 170,-130 170,-78 16,-78"/>
 </g>
 <!-- BuyerModule -->
 <g id="node1" class="node">
 <title>BuyerModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="623.76,-122 620.76,-126 599.76,-126 596.76,-122 530.24,-122 530.24,-86 623.76,-86 623.76,-122"/>
-<text text-anchor="middle" x="577" y="-99.8" font-family="Times,serif" font-size="14.00">BuyerModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="785.76,-122 782.76,-126 761.76,-126 758.76,-122 692.24,-122 692.24,-86 785.76,-86 785.76,-122"/>
+<text text-anchor="middle" x="739" y="-99.8" font-family="Times,serif" font-size="14.00">BuyerModule</text>
 </g>
 <!-- ReviewModule -->
 <g id="node6" class="node">
 <title>ReviewModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="452.31,-187 449.31,-191 428.31,-191 425.31,-187 349.69,-187 349.69,-151 452.31,-151 452.31,-187"/>
-<text text-anchor="middle" x="401" y="-164.8" font-family="Times,serif" font-size="14.00">ReviewModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="493.31,-187 490.31,-191 469.31,-191 466.31,-187 390.69,-187 390.69,-151 493.31,-151 493.31,-187"/>
+<text text-anchor="middle" x="442" y="-164.8" font-family="Times,serif" font-size="14.00">ReviewModule</text>
 </g>
 <!-- BuyerModule&#45;&gt;ReviewModule -->
 <g id="edge1" class="edge">
 <title>BuyerModule&#45;&gt;ReviewModule</title>
-<path fill="none" stroke="black" d="M577,-122.02C577,-139.37 577,-163 577,-163 577,-163 462.38,-163 462.38,-163"/>
-<polygon fill="black" stroke="black" points="462.38,-159.5 452.38,-163 462.38,-166.5 462.38,-159.5"/>
+<path fill="none" stroke="black" d="M739,-122.28C739,-143.32 739,-175 739,-175 739,-175 503.39,-175 503.39,-175"/>
+<polygon fill="black" stroke="black" points="503.39,-171.5 493.39,-175 503.39,-178.5 503.39,-171.5"/>
 </g>
 <!-- ProductModule -->
 <g id="node2" class="node">
 <title>ProductModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="512.6,-122 509.6,-126 488.6,-126 485.6,-122 409.4,-122 409.4,-86 512.6,-86 512.6,-122"/>
-<text text-anchor="middle" x="461" y="-99.8" font-family="Times,serif" font-size="14.00">ProductModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="674.6,-122 671.6,-126 650.6,-126 647.6,-122 571.4,-122 571.4,-86 674.6,-86 674.6,-122"/>
+<text text-anchor="middle" x="623" y="-99.8" font-family="Times,serif" font-size="14.00">ProductModule</text>
 </g>
 <!-- ProductModule&#45;&gt;ReviewModule -->
 <g id="edge2" class="edge">
 <title>ProductModule&#45;&gt;ReviewModule</title>
-<path fill="none" stroke="black" d="M430.8,-122.11C430.8,-122.11 430.8,-140.99 430.8,-140.99"/>
-<polygon fill="black" stroke="black" points="427.3,-140.99 430.8,-150.99 434.3,-140.99 427.3,-140.99"/>
+<path fill="none" stroke="black" d="M623,-122.02C623,-139.37 623,-163 623,-163 623,-163 503.38,-163 503.38,-163"/>
+<polygon fill="black" stroke="black" points="503.38,-159.5 493.38,-163 503.38,-166.5 503.38,-159.5"/>
 </g>
 <!-- ServiceModule -->
 <g id="node3" class="node">
 <title>ServiceModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="391.53,-122 388.53,-126 367.53,-126 364.53,-122 290.47,-122 290.47,-86 391.53,-86 391.53,-122"/>
-<text text-anchor="middle" x="341" y="-99.8" font-family="Times,serif" font-size="14.00">ServiceModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="553.53,-122 550.53,-126 529.53,-126 526.53,-122 452.47,-122 452.47,-86 553.53,-86 553.53,-122"/>
+<text text-anchor="middle" x="503" y="-99.8" font-family="Times,serif" font-size="14.00">ServiceModule</text>
 </g>
 <!-- ServiceModule&#45;&gt;ReviewModule -->
 <g id="edge3" class="edge">
 <title>ServiceModule&#45;&gt;ReviewModule</title>
-<path fill="none" stroke="black" d="M370.8,-122.11C370.8,-122.11 370.8,-140.99 370.8,-140.99"/>
-<polygon fill="black" stroke="black" points="367.3,-140.99 370.8,-150.99 374.3,-140.99 367.3,-140.99"/>
+<path fill="none" stroke="black" d="M472.7,-122.11C472.7,-122.11 472.7,-140.99 472.7,-140.99"/>
+<polygon fill="black" stroke="black" points="469.2,-140.99 472.7,-150.99 476.2,-140.99 469.2,-140.99"/>
 </g>
 <!-- SupplierModule -->
 <g id="node4" class="node">
 <title>SupplierModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="272.49,-122 269.49,-126 248.49,-126 245.49,-122 165.51,-122 165.51,-86 272.49,-86 272.49,-122"/>
-<text text-anchor="middle" x="219" y="-99.8" font-family="Times,serif" font-size="14.00">SupplierModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="434.49,-122 431.49,-126 410.49,-126 407.49,-122 327.51,-122 327.51,-86 434.49,-86 434.49,-122"/>
+<text text-anchor="middle" x="381" y="-99.8" font-family="Times,serif" font-size="14.00">SupplierModule</text>
 </g>
 <!-- SupplierModule&#45;&gt;ReviewModule -->
 <g id="edge4" class="edge">
 <title>SupplierModule&#45;&gt;ReviewModule</title>
-<path fill="none" stroke="black" d="M219,-122.02C219,-139.37 219,-163 219,-163 219,-163 339.82,-163 339.82,-163"/>
-<polygon fill="black" stroke="black" points="339.82,-166.5 349.82,-163 339.82,-159.5 339.82,-166.5"/>
+<path fill="none" stroke="black" d="M412.67,-122.11C412.67,-122.11 412.67,-140.99 412.67,-140.99"/>
+<polygon fill="black" stroke="black" points="409.17,-140.99 412.67,-150.99 416.17,-140.99 409.17,-140.99"/>
 </g>
 <!-- TranslationModule -->
 <g id="node5" class="node">
 <title>TranslationModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="147.81,-122 144.81,-126 123.81,-126 120.81,-122 24.19,-122 24.19,-86 147.81,-86 147.81,-122"/>
-<text text-anchor="middle" x="86" y="-99.8" font-family="Times,serif" font-size="14.00">TranslationModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="309.81,-122 306.81,-126 285.81,-126 282.81,-122 186.19,-122 186.19,-86 309.81,-86 309.81,-122"/>
+<text text-anchor="middle" x="248" y="-99.8" font-family="Times,serif" font-size="14.00">TranslationModule</text>
 </g>
 <!-- TranslationModule&#45;&gt;ReviewModule -->
 <g id="edge5" class="edge">
 <title>TranslationModule&#45;&gt;ReviewModule</title>
-<path fill="none" stroke="black" d="M86,-122.28C86,-143.32 86,-175 86,-175 86,-175 339.69,-175 339.69,-175"/>
-<polygon fill="black" stroke="black" points="339.69,-178.5 349.69,-175 339.69,-171.5 339.69,-178.5"/>
+<path fill="none" stroke="black" d="M248,-122.02C248,-139.37 248,-163 248,-163 248,-163 380.78,-163 380.78,-163"/>
+<polygon fill="black" stroke="black" points="380.78,-166.5 390.78,-163 380.77,-159.5 380.78,-166.5"/>
 </g>
 <!-- ReviewService  -->
 <g id="node7" class="node">
 <title>ReviewService </title>
-<polygon fill="#fb8072" stroke="black" points="453.24,-252 348.76,-252 348.76,-216 453.24,-216 453.24,-252"/>
-<text text-anchor="middle" x="401" y="-229.8" font-family="Times,serif" font-size="14.00">ReviewService </text>
+<polygon fill="#fb8072" stroke="black" points="494.24,-252 389.76,-252 389.76,-216 494.24,-216 494.24,-252"/>
+<text text-anchor="middle" x="442" y="-229.8" font-family="Times,serif" font-size="14.00">ReviewService </text>
 </g>
 <!-- ReviewModule&#45;&gt;ReviewService  -->
 <g id="edge6" class="edge">
 <title>ReviewModule&#45;&gt;ReviewService </title>
-<path fill="none" stroke="black" stroke-dasharray="5,2" d="M401,-187.11C401,-187.11 401,-205.99 401,-205.99"/>
-<polygon fill="black" stroke="black" points="397.5,-205.99 401,-215.99 404.5,-205.99 397.5,-205.99"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M442,-187.11C442,-187.11 442,-205.99 442,-205.99"/>
+<polygon fill="black" stroke="black" points="438.5,-205.99 442,-215.99 445.5,-205.99 438.5,-205.99"/>
 </g>
 <!-- ReviewService -->
 <g id="node8" class="node">
 <title>ReviewService</title>
-<ellipse fill="#fdb462" stroke="black" cx="717" cy="-104" rx="69.48" ry="18"/>
-<text text-anchor="middle" x="717" y="-99.8" font-family="Times,serif" font-size="14.00">ReviewService</text>
+<ellipse fill="#fdb462" stroke="black" cx="93" cy="-104" rx="69.48" ry="18"/>
+<text text-anchor="middle" x="93" y="-99.8" font-family="Times,serif" font-size="14.00">ReviewService</text>
 </g>
 <!-- ReviewService&#45;&gt;ReviewModule -->
 <g id="edge7" class="edge">
 <title>ReviewService&#45;&gt;ReviewModule</title>
-<path fill="none" stroke="black" d="M717,-122.28C717,-143.32 717,-175 717,-175 717,-175 462.47,-175 462.47,-175"/>
-<polygon fill="black" stroke="black" points="462.47,-171.5 452.47,-175 462.47,-178.5 462.47,-171.5"/>
+<path fill="none" stroke="black" d="M93,-122.28C93,-143.32 93,-175 93,-175 93,-175 380.5,-175 380.5,-175"/>
+<polygon fill="black" stroke="black" points="380.5,-178.5 390.5,-175 380.5,-171.5 380.5,-178.5"/>
 </g>
 </g>
 </svg>

@@ -1,8 +1,11 @@
 # Silah Backend
 
-_Last Updated: November 2025_
+_Last Updated: January 2026_
 
 This is the backend API server for [Silah](https://github.com/GP-Silah), an AI-augmented full-stack B2B platform that connects suppliers and buyers. Built using [NestJS](https://nestjs.com/), a progressive Node.js framework for building efficient and scalable server-side applications.
+
+- 📘 [Compodoc Documentation](https://gp-silah.github.io/silah-backend)
+- 📙 [Swagger API Reference](https://gp-silah.github.io/silah-backend/swagger)
 
 > **Silah** (Arabic: صِلَة) _[noun]_ Connection, bond, link; often used to describe the ties between people, family, or communities.
 
@@ -473,13 +476,13 @@ npm run lint && npm run test && npm run build
 
 ---
 
-## API Documentation
+## API Documentation (Swagger UI)
 
-Once your server is running, comprehensive API documentation is available:
+- **Local (runtime):** http://localhost:3000/api/docs
+- **Static (GitHub Pages):** https://gp-silah.github.io/silah-backend/swagger
 
-### Swagger UI
-
-**URL:** `http://localhost:3000/api/docs`
+> Local means once your server is running comprehensive API documentation is available at:
+> **URL:** `http://localhost:3000/api/docs`
 
 **Features:**
 
