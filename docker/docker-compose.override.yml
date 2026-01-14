@@ -1,6 +1,0 @@
-services:
-    app:
-        volumes:
-            - ..:/app # Mount entire project
-            - /app/node_modules # Exclude node_modules
-        command: ['./docker/docker-entrypoint.sh']
