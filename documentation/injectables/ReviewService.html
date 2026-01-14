@@ -1,0 +1,1805 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >ReviewService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/review/review.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createReview" >createReview</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getItemReviews" >getItemReviews</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getReviewById" >getReviewById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSupplierReviews" >getSupplierReviews</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUserLanguage" >getUserLanguage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#hasReviewed" >hasReviewed</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#toItemReviewResponseDto" >toItemReviewResponseDto</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toReviewResponseDto" >toReviewResponseDto</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toSupplierReviewResponseDto" >toSupplierReviewResponseDto</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prisma: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, buyerService: <a href="../injectables/BuyerService.html" target="_self">BuyerService</a>, supplierService: <a href="../injectables/SupplierService.html" target="_self">SupplierService</a>, productService: <a href="../injectables/ProductService.html" target="_self">ProductService</a>, serviceService: <a href="../injectables/ServiceService.html" target="_self">ServiceService</a>, notificationService: <a href="../injectables/NotificationService.html" target="_self">NotificationService</a>, translationService: <a href="../injectables/TranslationService.html" target="_self">TranslationService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/review/review.service.ts:30</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prisma</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>buyerService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/BuyerService.html" target="_self" >BuyerService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>supplierService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SupplierService.html" target="_self" >SupplierService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>productService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ProductService.html" target="_self" >ProductService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>serviceService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ServiceService.html" target="_self" >ServiceService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>notificationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/NotificationService.html" target="_self" >NotificationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>translationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TranslationService.html" target="_self" >TranslationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createReview"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createReview</b></span>
+                        <a href="#createReview"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createReview(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/CreateReviewDto.html" target="_self">CreateReviewDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="289"
+                                    class="link-to-prism">src/review/review.service.ts:289</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateReviewDto.html" target="_self" >CreateReviewDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ReviewResponseDto.html" target="_self" >Promise&lt;ReviewResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getItemReviews"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getItemReviews</b></span>
+                        <a href="#getItemReviews"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getItemReviews(itemId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, targetLang?: "ar" | "en")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="234"
+                                    class="link-to-prism">src/review/review.service.ts:234</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>itemId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;ItemReviewResponseDto[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getReviewById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getReviewById</b></span>
+                        <a href="#getReviewById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getReviewById(reviewId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="200"
+                                    class="link-to-prism">src/review/review.service.ts:200</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>reviewId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ReviewResponseDto.html" target="_self" >Promise&lt;ReviewResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSupplierReviews"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getSupplierReviews</b></span>
+                        <a href="#getSupplierReviews"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSupplierReviews(supplierId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, targetLang?: "ar" | "en")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="156"
+                                    class="link-to-prism">src/review/review.service.ts:156</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>supplierId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;SupplierReviewResponseDto[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUserLanguage"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getUserLanguage</b></span>
+                        <a href="#getUserLanguage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUserLanguage(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="42"
+                                    class="link-to-prism">src/review/review.service.ts:42</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Helper: fetch user&#39;s preferred language</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;&quot;ar&quot; | &quot;en&quot; | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasReviewed"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>hasReviewed</b></span>
+                        <a href="#hasReviewed"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>hasReviewed(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="616"
+                                    class="link-to-prism">src/review/review.service.ts:616</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toItemReviewResponseDto"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>toItemReviewResponseDto</b></span>
+                        <a href="#toItemReviewResponseDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toItemReviewResponseDto(itemReviewEntity: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, targetLang?: "ar" | "en")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="51"
+                                    class="link-to-prism">src/review/review.service.ts:51</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>itemReviewEntity</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;ItemReviewResponseDto&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toReviewResponseDto"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toReviewResponseDto</b></span>
+                        <a href="#toReviewResponseDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toReviewResponseDto(reviewEntity: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/review/review.service.ts:99</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>reviewEntity</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ReviewResponseDto.html" target="_self" >Promise&lt;ReviewResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toSupplierReviewResponseDto"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toSupplierReviewResponseDto</b></span>
+                        <a href="#toSupplierReviewResponseDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toSupplierReviewResponseDto(review: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, supplier: unknown, userId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="126"
+                                    class="link-to-prism">src/review/review.service.ts:126</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>review</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>supplier</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;SupplierReviewResponseDto&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from &#x27;@nestjs/common&#x27;;
+import { PrismaService } from &#x27;src/prisma/prisma.service&#x27;;
+import {
+    ItemReviewResponseDto,
+    ReviewResponseDto,
+    SupplierReviewResponseDto,
+} from &#x27;./dtos/reviewResponse.dto&#x27;;
+import { BuyerService } from &#x27;src/buyer/buyer.service&#x27;;
+import { SupplierService } from &#x27;src/supplier/supplier.service&#x27;;
+import { ProductService } from &#x27;src/product/product.service&#x27;;
+import { ServiceService } from &#x27;src/service/service.service&#x27;;
+import { CreateReviewDto } from &#x27;./dtos/createReview.dto&#x27;;
+import {
+    InvoiceStatus,
+    NotificationEntityType,
+    NotificationType,
+    OrderStatus,
+    User,
+} from &#x27;@prisma/client&#x27;;
+import { NotificationService } from &#x27;src/notification/notification.service&#x27;;
+import { TranslationService } from &#x27;src/translation/translation.service&#x27;;
+
+@Injectable()
+export class ReviewService {
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly buyerService: BuyerService,
+        private readonly supplierService: SupplierService,
+        private readonly productService: ProductService,
+        private readonly serviceService: ServiceService,
+        private readonly notificationService: NotificationService,
+        private readonly translationService: TranslationService,
+    ) {}
+
+    /** Helper: fetch user&#x27;s preferred language */
+    async getUserLanguage(userId: string): Promise&lt;&#x27;ar&#x27; | &#x27;en&#x27; | null&gt; {
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { preferredLanguage: true },
+        });
+        const lang &#x3D; user?.preferredLanguage?.toLowerCase();
+        return lang &#x3D;&#x3D;&#x3D; &#x27;ar&#x27; || lang &#x3D;&#x3D;&#x3D; &#x27;en&#x27; ? lang : null;
+    }
+
+    private async toItemReviewResponseDto(
+        itemReviewEntity: any,
+        targetLang?: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ): Promise&lt;ItemReviewResponseDto&gt; {
+        return {
+            itemReviewId: itemReviewEntity.id,
+            reviewId: itemReviewEntity.reviewId,
+            orderItemReview: itemReviewEntity.orderItem
+                ? {
+                      orderItemId: itemReviewEntity.orderItem.id,
+                      product: itemReviewEntity.orderItem.product
+                          ? await this.productService.toProductResponseDto(
+                                itemReviewEntity.orderItem.product,
+                            )
+                          : undefined,
+                  }
+                : undefined,
+            invoiceItemReview: itemReviewEntity.invoiceItem
+                ? {
+                      invoiceItemId: itemReviewEntity.invoiceItem.id,
+                      name: itemReviewEntity.invoiceItem.name,
+                      relatedProduct: itemReviewEntity.invoiceItem
+                          .relatedProduct
+                          ? await this.productService.toProductResponseDto(
+                                itemReviewEntity.invoiceItem.relatedProduct,
+                            )
+                          : undefined,
+                      relatedService: itemReviewEntity.invoiceItem
+                          .relatedService
+                          ? await this.serviceService.toServiceResponseDto(
+                                itemReviewEntity.invoiceItem.relatedService,
+                            )
+                          : undefined,
+                  }
+                : undefined,
+            buyerId: itemReviewEntity.buyerId,
+            buyerBusinessName: itemReviewEntity.buyer.user.businessName,
+            itemRating: itemReviewEntity.itemRating,
+            writtenReviewOfItem: targetLang
+                ? await this.translationService.translateText(
+                      itemReviewEntity.writtenReviewOfItem,
+                      targetLang,
+                  )
+                : itemReviewEntity.writtenReviewOfItem,
+            createdAt: itemReviewEntity.createdAt,
+        };
+    }
+
+    async toReviewResponseDto(reviewEntity: any): Promise&lt;ReviewResponseDto&gt; {
+        return {
+            reviewId: reviewEntity.id,
+            orderId: reviewEntity.orderId ?? undefined,
+            invoiceId: reviewEntity.invoiceId ?? undefined,
+            buyer: await this.buyerService.toBuyerResponseDto(
+                reviewEntity.buyer.user,
+                reviewEntity.buyer,
+            ),
+            supplier: await this.supplierService.toSupplierResponseDTO(
+                reviewEntity.supplier.user,
+                reviewEntity.supplier,
+            ),
+            supplierRating: reviewEntity.supplierRating,
+            writtenReviewOfSupplier:
+                reviewEntity.writtenReviewOfSupplier ?? undefined,
+            itemsReview: reviewEntity.itemsReview
+                ? await Promise.all(
+                      reviewEntity.itemsReview.map((item: any) &#x3D;&gt;
+                          this.toItemReviewResponseDto(item),
+                      ),
+                  )
+                : [],
+            createdAt: reviewEntity.createdAt,
+        };
+    }
+
+    async toSupplierReviewResponseDto(
+        review: any,
+        supplier: any &amp; { user: User },
+        userId?: string,
+    ): Promise&lt;SupplierReviewResponseDto&gt; {
+        let targetLang: &#x27;ar&#x27; | &#x27;en&#x27; | null &#x3D; &#x27;en&#x27;;
+        if (userId) {
+            targetLang &#x3D; await this.getUserLanguage(userId);
+        }
+        return {
+            reviewId: review.id,
+            orderId: review.orderId ?? undefined,
+            invoiceId: review.invoiceId ?? undefined,
+            buyerId: review.buyerId ?? undefined,
+            supplierRating: review.supplierRating,
+            writtenReviewOfSupplier:
+                targetLang &amp;&amp; review.writtenReviewOfSupplier
+                    ? await this.translationService.translateText(
+                          review.writtenReviewOfSupplier,
+                          targetLang,
+                      )
+                    : (review.writtenReviewOfSupplier ?? undefined),
+            createdAt: review.createdAt,
+            supplier: await this.supplierService.toSupplierResponseDTO(
+                supplier.user,
+                supplier,
+            ),
+        };
+    }
+
+    async getSupplierReviews(
+        supplierId: string,
+        targetLang?: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ): Promise&lt;SupplierReviewResponseDto[]&gt; {
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { id: supplierId },
+            include: { user: true },
+        });
+        if (!supplier) {
+            throw new NotFoundException(
+                &#x60;No supplier found with ID: ${supplierId}&#x60;,
+            );
+        }
+
+        // Fetch all reviews for this supplier without item reviews
+        const reviews &#x3D; await this.prisma.review.findMany({
+            where: { supplierId },
+            include: {
+                buyer: {
+                    include: {
+                        user: true, // needed for buyer DTO
+                    },
+                },
+                supplier: {
+                    include: {
+                        user: true, // needed for supplier DTO
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: &#x27;desc&#x27;, // latest reviews first
+            },
+        });
+
+        return Promise.all(
+            reviews.map(async (review) &#x3D;&gt; {
+                return this.toSupplierReviewResponseDto(
+                    review,
+                    review.supplier,
+                );
+            }),
+        );
+    }
+
+    async getReviewById(reviewId: string): Promise&lt;ReviewResponseDto&gt; {
+        // Fetch the review including buyer, supplier, and item reviews
+        const review &#x3D; await this.prisma.review.findUnique({
+            where: { id: reviewId },
+            include: {
+                buyer: { include: { user: true } },
+                supplier: { include: { user: true } },
+                itemsReview: {
+                    include: {
+                        buyer: { include: { user: true } },
+                        orderItem: {
+                            include: {
+                                product: { include: { category: true } },
+                            },
+                        },
+                        invoiceItem: {
+                            include: {
+                                relatedProduct: { include: { category: true } },
+                                relatedService: { include: { category: true } },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!review) {
+            throw new NotFoundException(&#x60;No review found with ID: ${reviewId}&#x60;);
+        }
+
+        // Map to DTO
+        return this.toReviewResponseDto(review);
+    }
+
+    async getItemReviews(
+        itemId: string,
+        targetLang?: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ): Promise&lt;ItemReviewResponseDto[]&gt; {
+        // First, check if the itemId is a product or a service
+        const product &#x3D; await this.prisma.product.findUnique({
+            where: { id: itemId },
+        });
+
+        const service &#x3D; !product
+            ? await this.prisma.service.findUnique({
+                  where: { id: itemId },
+              })
+            : null;
+
+        if (!product &amp;&amp; !service) {
+            throw new NotFoundException(
+                &#x60;No product or service found with ID: ${itemId}&#x60;,
+            );
+        }
+
+        // Fetch item reviews for this product or service
+        const itemReviews &#x3D; await this.prisma.itemReview.findMany({
+            where: product
+                ? {
+                      OR: [
+                          { orderItem: { productId: itemId } }, // reviews from orders
+                          { invoiceItem: { relatedProductId: itemId } }, // reviews from invoices
+                      ],
+                  }
+                : {
+                      invoiceItem: { relatedServiceId: itemId }, // service reviews
+                  },
+            include: {
+                orderItem: {
+                    include: { product: { include: { category: true } } },
+                },
+                invoiceItem: {
+                    include: {
+                        relatedProduct: { include: { category: true } },
+                        relatedService: { include: { category: true } },
+                    },
+                },
+                buyer: { include: { user: true } },
+            },
+            orderBy: { createdAt: &#x27;desc&#x27; },
+        });
+
+        return Promise.all(
+            itemReviews.map((item) &#x3D;&gt;
+                this.toItemReviewResponseDto(item, targetLang),
+            ),
+        );
+    }
+
+    async createReview(
+        userId: string,
+        id: string,
+        dto: CreateReviewDto,
+    ): Promise&lt;ReviewResponseDto&gt; {
+        // Identify if order or invoice. NOTE: we only include buyer &amp; supplier here.
+        const order &#x3D; await this.prisma.order.findUnique({
+            where: { id },
+            include: {
+                buyer: { include: { user: true } },
+                supplier: { include: { user: true } },
+            },
+        });
+
+        const invoice &#x3D; await this.prisma.invoice.findUnique({
+            where: { id },
+            include: {
+                buyer: { include: { user: true } },
+                supplier: { include: { user: true } },
+                preInvoice: true,
+            },
+        });
+
+        if (!order &amp;&amp; !invoice) {
+            throw new NotFoundException(
+                &#x60;No order or invoice found with ID: ${id}&#x60;,
+            );
+        }
+
+        if (invoice &amp;&amp; invoice.preInvoice) {
+            throw new BadRequestException(
+                &#x27;Cannot write a review for this invoice because it was created by upgrading a pre-invoice. Reviews are only allowed for invoices tied to actual products or services.&#x27;,
+            );
+        }
+
+        const buyer &#x3D; order ? order.buyer : invoice!.buyer;
+        const supplier &#x3D; order ? order.supplier : invoice!.supplier;
+
+        // Validate the request user is the buyer who made the order/invoice
+        const toValidateUser &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { buyer: true },
+        });
+
+        if (!buyer || !supplier) {
+            throw new NotFoundException(&#x27;Buyer or Supplier not found&#x27;);
+        }
+        // compare ids (not object references)
+        if (
+            !toValidateUser ||
+            !toValidateUser.buyer ||
+            toValidateUser.buyer.id !&#x3D;&#x3D; buyer.id
+        ) {
+            throw new ForbiddenException(
+                &quot;You can&#x27;t write a review to an order or an invoice you haven&#x27;t made&quot;,
+            );
+        }
+
+        if (order) {
+            const validateReview &#x3D; await this.prisma.review.findFirst({
+                where: { orderId: order.id },
+            });
+            if (validateReview) {
+                throw new BadRequestException(
+                    &#x60;You already reviewd order with ID: ${order.id}&#x60;,
+                );
+            }
+
+            if (order.status !&#x3D;&#x3D; OrderStatus.COMPLETED) {
+                throw new BadRequestException(
+                    &#x60;Order must be marked as completed before writting a review. Current status: ${order.status}&#x60;,
+                );
+            }
+
+            for (const itemDto of dto.itemsReview || []) {
+                // order-based item review -&gt; expect orderItemId
+                if (!itemDto.orderItemId) {
+                    throw new BadRequestException(
+                        &#x27;orderItemId is required for order-based reviews&#x27;,
+                    );
+                }
+
+                // Directly fetch the OrderItem
+                const orderItem &#x3D; await this.prisma.orderItem.findUnique({
+                    where: { id: itemDto.orderItemId },
+                    include: { product: true },
+                });
+
+                if (!orderItem) {
+                    throw new InternalServerErrorException(
+                        &#x60;OrderItem ${itemDto.orderItemId} not found&#x60;,
+                    );
+                }
+
+                if (orderItem.orderId !&#x3D;&#x3D; order.id) {
+                    throw new ForbiddenException(
+                        &#x60;OrderItem ${orderItem.id} does not belong to order ${order.id}&#x60;,
+                    );
+                }
+            }
+        }
+        if (invoice) {
+            const validateReview &#x3D; await this.prisma.review.findFirst({
+                where: { invoiceId: invoice.id },
+            });
+            if (validateReview) {
+                throw new BadRequestException(
+                    &#x60;You already reviewd invoice with ID: ${invoice.id}&#x60;,
+                );
+            }
+
+            if (invoice.status !&#x3D;&#x3D; InvoiceStatus.FULLY_PAID) {
+                throw new BadRequestException(
+                    &#x60;Invoice must be fully paid before writting a review. Current status: ${invoice.status}&#x60;,
+                );
+            }
+
+            for (const itemDto of dto.itemsReview || []) {
+                // invoice-based
+                if (!itemDto.invoiceItemId) {
+                    throw new BadRequestException(
+                        &#x27;invoiceItemId is required for invoice-based reviews&#x27;,
+                    );
+                }
+
+                const invoiceItem &#x3D; await this.prisma.invoiceItem.findUnique({
+                    where: { id: itemDto.invoiceItemId },
+                });
+                if (!invoiceItem) {
+                    throw new InternalServerErrorException(
+                        &#x60;Invoice Item not found for invoice ${invoice!.id}&#x60;,
+                    );
+                }
+
+                if (invoiceItem.relatedProductId) {
+                    const product &#x3D; await this.prisma.product.findUnique({
+                        where: { id: invoiceItem!.relatedProductId },
+                    });
+                    if (!product) {
+                        throw new InternalServerErrorException(
+                            &#x60;Related Product not found for invoice ${invoice!.id}&#x60;,
+                        );
+                    }
+                }
+
+                if (invoiceItem.relatedServiceId) {
+                    const service &#x3D; await this.prisma.service.findUnique({
+                        where: { id: invoiceItem.relatedServiceId },
+                    });
+                    if (!service) {
+                        throw new InternalServerErrorException(
+                            &#x60;Related Service not found for invoice ${invoice!.id}&#x60;,
+                        );
+                    }
+                }
+            }
+        }
+
+        // Create Review
+        const review &#x3D; await this.prisma.review.create({
+            data: {
+                buyerId: buyer.id,
+                supplierId: supplier.id,
+                orderId: order?.id,
+                invoiceId: invoice?.id,
+                supplierRating: dto.supplierRating,
+                writtenReviewOfSupplier: dto.writtenReviewOfSupplier,
+            },
+        });
+
+        // Create Item Reviews
+        for (const itemDto of dto.itemsReview || []) {
+            if (order) {
+                // Directly fetch the OrderItem
+                const orderItem &#x3D; await this.prisma.orderItem.findUnique({
+                    where: { id: itemDto.orderItemId },
+                    include: { product: true },
+                });
+
+                const itemReview &#x3D; await this.prisma.itemReview.create({
+                    data: {
+                        reviewId: review.id,
+                        buyerId: buyer.id,
+                        itemRating: itemDto.itemRating,
+                        writtenReviewOfItem: itemDto.writtenReviewOfItem,
+                        orderItemId: orderItem!.id,
+                    },
+                });
+
+                // Update Product rating if this item has a product
+                if (orderItem!.product) {
+                    const product &#x3D; orderItem!.product;
+                    // compute new average
+                    const newCount &#x3D; product.ratingsCount + 1;
+                    const newAvg &#x3D;
+                        (product.avgRating * product.ratingsCount +
+                            itemDto.itemRating) /
+                        newCount;
+
+                    await this.prisma.product.update({
+                        where: { id: product.id },
+                        data: {
+                            ratingsCount: { increment: 1 },
+                            avgRating: newAvg,
+                        },
+                    });
+                }
+            } else {
+                const invoiceItem &#x3D; await this.prisma.invoiceItem.findUnique({
+                    where: { id: itemDto.invoiceItemId },
+                });
+
+                const itemReview &#x3D; await this.prisma.itemReview.create({
+                    data: {
+                        reviewId: review.id,
+                        buyerId: buyer.id,
+                        itemRating: itemDto.itemRating,
+                        writtenReviewOfItem: itemDto.writtenReviewOfItem,
+                        invoiceItemId: invoiceItem!.id,
+                    },
+                });
+
+                // Update product/service ratings for invoice item
+                if (invoiceItem!.relatedProductId) {
+                    const product &#x3D; await this.prisma.product.findUnique({
+                        where: { id: invoiceItem!.relatedProductId },
+                    });
+                    const newCount &#x3D; product!.ratingsCount + 1;
+                    const newAvg &#x3D;
+                        (product!.avgRating * product!.ratingsCount +
+                            itemDto.itemRating) /
+                        newCount;
+
+                    await this.prisma.product.update({
+                        where: { id: product!.id },
+                        data: {
+                            ratingsCount: { increment: 1 },
+                            avgRating: newAvg,
+                        },
+                    });
+                }
+                if (invoiceItem!.relatedServiceId) {
+                    const service &#x3D; await this.prisma.service.findUnique({
+                        where: { id: invoiceItem!.relatedServiceId },
+                    });
+                    const newCount &#x3D; service!.ratingsCount + 1;
+                    const newAvg &#x3D;
+                        (service!.avgRating * service!.ratingsCount +
+                            itemDto.itemRating) /
+                        newCount;
+
+                    await this.prisma.service.update({
+                        where: { id: service!.id },
+                        data: {
+                            ratingsCount: { increment: 1 },
+                            avgRating: newAvg,
+                        },
+                    });
+                }
+            }
+        }
+
+        // Update Supplier rating
+        await this.prisma.supplier.update({
+            where: { id: supplier.id },
+            data: {
+                ratingsCount: { increment: 1 },
+                avgRating:
+                    (supplier.avgRating * supplier.ratingsCount +
+                        dto.supplierRating) /
+                    (supplier.ratingsCount + 1),
+            },
+        });
+
+        // Re-fetch the review with items (include product categories)
+        const reviewWithItems &#x3D; await this.prisma.review.findUnique({
+            where: { id: review.id },
+            include: {
+                buyer: { include: { user: true } },
+                supplier: { include: { user: true } },
+                itemsReview: {
+                    include: {
+                        buyer: { include: { user: true } },
+                        orderItem: {
+                            include: {
+                                product: { include: { category: true } },
+                            },
+                        },
+                        invoiceItem: {
+                            include: {
+                                relatedProduct: { include: { category: true } },
+                                relatedService: { include: { category: true } },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (order) {
+            // Send a notification for the supplier
+            await this.notificationService.createNotification({
+                senderUserId: buyer.userId,
+                receiverUserId: supplier.userId,
+                type: NotificationType.NEW_REVIEW,
+                title: &#x27;New Review!&#x27;,
+                content: &#x60;You have received a new review from ${buyer.user.name}&#x60;,
+                entityId: order.id,
+                entityType: NotificationEntityType.ORDER,
+            });
+        }
+        if (invoice) {
+            // Send a notification for the supplier
+            await this.notificationService.createNotification({
+                senderUserId: buyer.userId,
+                receiverUserId: supplier.userId,
+                type: NotificationType.NEW_REVIEW,
+                title: &#x27;New Review!&#x27;,
+                content: &#x60;You have received a new review from ${buyer.user.name}&#x60;,
+                entityId: invoice.id,
+                entityType: NotificationEntityType.INVOICE,
+            });
+        }
+
+        return this.toReviewResponseDto(reviewWithItems);
+    }
+
+    async hasReviewed(
+        id: string,
+        userId: string,
+    ): Promise&lt;{ hasReviewed: boolean }&gt; {
+        // Find the user and ensure they are a buyer
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { buyer: true },
+        });
+
+        if (!user || !user.buyer) {
+            throw new ForbiddenException(
+                &#x27;Only buyers can check review status.&#x27;,
+            );
+        }
+
+        const buyerId &#x3D; user.buyer.id;
+
+        // Check if the ID belongs to an order or invoice
+        const [order, invoice] &#x3D; await Promise.all([
+            this.prisma.order.findUnique({ where: { id } }),
+            this.prisma.invoice.findUnique({ where: { id } }),
+        ]);
+
+        if (!order &amp;&amp; !invoice) {
+            throw new NotFoundException(
+                &#x60;No order or invoice found with ID: ${id}&#x60;,
+            );
+        }
+
+        // Query the review table
+        const existingReview &#x3D; await this.prisma.review.findFirst({
+            where: {
+                buyerId,
+                OR: [
+                    { orderId: order ? order.id : undefined },
+                    { invoiceId: invoice ? invoice.id : undefined },
+                ],
+            },
+            select: { id: true },
+        });
+
+        // Return true if review exists, false otherwise
+        return { hasReviewed: !!existingReview };
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'ReviewService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

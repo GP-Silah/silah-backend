@@ -1,0 +1,1670 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >SearchService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/search/search.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUserLanguage" >getUserLanguage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#searchChats" >searchChats</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#searchProducts" >searchProducts</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#searchServices" >searchServices</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#searchSupplierCatalog" >searchSupplierCatalog</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#searchSuppliers" >searchSuppliers</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#searchUsers" >searchUsers</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#toSupplierResponseSafe" >toSupplierResponseSafe</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prisma: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, supplierService: <a href="../injectables/SupplierService.html" target="_self">SupplierService</a>, productService: <a href="../injectables/ProductService.html" target="_self">ProductService</a>, serviceService: <a href="../injectables/ServiceService.html" target="_self">ServiceService</a>, chatService: <a href="../injectables/ChatService.html" target="_self">ChatService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/search/search.service.ts:13</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prisma</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>userService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/UserService.html" target="_self" >UserService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>supplierService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SupplierService.html" target="_self" >SupplierService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>productService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ProductService.html" target="_self" >ProductService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>serviceService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ServiceService.html" target="_self" >ServiceService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>chatService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ChatService.html" target="_self" >ChatService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUserLanguage"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getUserLanguage</b></span>
+                        <a href="#getUserLanguage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUserLanguage(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="24"
+                                    class="link-to-prism">src/search/search.service.ts:24</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Helper: fetch user&#39;s preferred language</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;&quot;ar&quot; | &quot;en&quot; | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchChats"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>searchChats</b></span>
+                        <a href="#searchChats"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>searchChats(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, text: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="385"
+                                    class="link-to-prism">src/search/search.service.ts:385</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>text</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchProducts"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>searchProducts</b></span>
+                        <a href="#searchProducts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>searchProducts(name?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, mainCategoryId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, subCategoryId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, minPrice: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, maxPrice?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, targetLang?: "ar" | "en")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="211"
+                                    class="link-to-prism">src/search/search.service.ts:211</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>mainCategoryId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>subCategoryId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>minPrice</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&#x27;1&#x27;</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>maxPrice</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchServices"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>searchServices</b></span>
+                        <a href="#searchServices"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>searchServices(name?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, mainCategoryId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, subCategoryId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, targetLang?: "ar" | "en")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="306"
+                                    class="link-to-prism">src/search/search.service.ts:306</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>mainCategoryId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>subCategoryId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchSupplierCatalog"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>searchSupplierCatalog</b></span>
+                        <a href="#searchSupplierCatalog"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>searchSupplierCatalog(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="440"
+                                    class="link-to-prism">src/search/search.service.ts:440</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchSuppliers"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>searchSuppliers</b></span>
+                        <a href="#searchSuppliers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>searchSuppliers(name?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, businessName?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/search/search.service.ts:77</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>businessName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="searchUsers"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>searchUsers</b></span>
+                        <a href="#searchUsers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>searchUsers(name?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/search/search.service.ts:33</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toSupplierResponseSafe"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>toSupplierResponseSafe</b></span>
+                        <a href="#toSupplierResponseSafe"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toSupplierResponseSafe(user: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, supplier: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="207"
+                                    class="link-to-prism">src/search/search.service.ts:207</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>supplier</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@nestjs/common&#x27;;
+import { SupplierStatus, User } from &#x27;@prisma/client&#x27;;
+import { ChatService } from &#x27;src/chat/chat.service&#x27;;
+import { PrismaService } from &#x27;src/prisma/prisma.service&#x27;;
+import { ProductService } from &#x27;src/product/product.service&#x27;;
+import { ServiceService } from &#x27;src/service/service.service&#x27;;
+import { SupplierService } from &#x27;src/supplier/supplier.service&#x27;;
+import { UserService } from &#x27;src/user/user.service&#x27;;
+import { ProductResponseDto } from &#x27;src/product/dtos/productResponse.dto&#x27;;
+import { ServiceResponseDto } from &#x27;src/service/dtos/serviceResponse.dto&#x27;;
+
+@Injectable()
+export class SearchService {
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly userService: UserService,
+        private readonly supplierService: SupplierService,
+        private readonly productService: ProductService,
+        private readonly serviceService: ServiceService,
+        private readonly chatService: ChatService,
+    ) {}
+
+    /** Helper: fetch user&#x27;s preferred language */
+    async getUserLanguage(userId: string): Promise&lt;&#x27;ar&#x27; | &#x27;en&#x27; | null&gt; {
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { preferredLanguage: true },
+        });
+        const lang &#x3D; user?.preferredLanguage?.toLowerCase();
+        return lang &#x3D;&#x3D;&#x3D; &#x27;ar&#x27; || lang &#x3D;&#x3D;&#x3D; &#x27;en&#x27; ? lang : null;
+    }
+
+    async searchUsers(name?: string) {
+        // If no name is provided, return all users normally
+        if (!name || name.trim() &#x3D;&#x3D;&#x3D; &#x27;&#x27;) {
+            const allUsers &#x3D; await this.prisma.user.findMany();
+            return Promise.all(
+                allUsers.map((user) &#x3D;&gt;
+                    this.userService.toUserResponseDTO(user),
+                ),
+            );
+        }
+
+        // FTS + fuzzy search
+        const users &#x3D; await this.prisma.$queryRaw&lt;any[]&gt;&#x60;
+        SELECT 
+            u.id AS &quot;userId&quot;,
+            u.&quot;tapCustomerId&quot;,
+            u.name,
+            u.email,
+            u.crn,
+            u.&quot;businessName&quot;,
+            u.role,
+            u.city,
+            u.&quot;pfpFileName&quot;,
+            u.&quot;isEmailVerified&quot;,
+            u.&quot;preferredLanguage&quot;,
+            u.&quot;createdAt&quot;,
+            u.&quot;updatedAt&quot;
+        FROM &quot;User&quot; u
+        WHERE to_tsvector(&#x27;english&#x27;, u.name) @@ plainto_tsquery(&#x27;english&#x27;, ${name})
+            OR u.name % ${name}
+        ORDER BY ts_rank(to_tsvector(&#x27;english&#x27;, u.name), plainto_tsquery(&#x27;english&#x27;, ${name})) DESC,
+                similarity(u.name, ${name}) DESC;
+        &#x60;;
+
+        return Promise.all(
+            users.map((user) &#x3D;&gt;
+                this.userService.toUserResponseDTO({
+                    ...user,
+                    id: user.userId, // map userId → id
+                } as User),
+            ),
+        );
+    }
+
+    async searchSuppliers(name?: string, businessName?: string) {
+        // If no query, return all active suppliers
+        if (
+            (!name || name.trim() &#x3D;&#x3D;&#x3D; &#x27;&#x27;) &amp;&amp;
+            (!businessName || businessName.trim() &#x3D;&#x3D;&#x3D; &#x27;&#x27;)
+        ) {
+            const allSuppliers &#x3D; await this.prisma.supplier.findMany({
+                where: {
+                    isStoreClosed: false,
+                    status: SupplierStatus.ACTIVE,
+                },
+                include: { user: true },
+            });
+            return Promise.all(
+                allSuppliers.map(({ user, ...supplier }) &#x3D;&gt;
+                    this.toSupplierResponseSafe(user, supplier),
+                ),
+            );
+        }
+
+        // Sanitize inputs
+        const qName &#x3D; name?.trim() || null;
+        const qBusiness &#x3D; businessName?.trim() || null;
+
+        // Build conditions safely
+        const conditions: string[] &#x3D; [];
+        const params: any[] &#x3D; [];
+
+        if (qName) {
+            conditions.push(
+                &#x60;to_tsvector(&#x27;english&#x27;, u.name) @@ plainto_tsquery(&#x27;english&#x27;, $1)&#x60;,
+            );
+            conditions.push(&#x60;u.name % $2&#x60;);
+            params.push(qName, qName);
+        }
+
+        if (qBusiness) {
+            conditions.push(
+                &#x60;to_tsvector(&#x27;english&#x27;, u.&quot;businessName&quot;) @@ plainto_tsquery(&#x27;english&#x27;, $${params.length + 1})&#x60;,
+            );
+            conditions.push(&#x60;u.&quot;businessName&quot; % $${params.length + 2}&#x60;);
+            params.push(qBusiness, qBusiness);
+        }
+
+        if (conditions.length &#x3D;&#x3D;&#x3D; 0) {
+            return []; // Should not happen
+        }
+
+        const whereClause &#x3D; conditions.join(&#x27; OR &#x27;);
+
+        const query &#x3D; &#x60;
+    SELECT
+      s.id AS &quot;supplierId&quot;,
+      s.&quot;userId&quot;,
+      s.&quot;status&quot;,
+      s.&quot;plan&quot;,
+      s.&quot;isStoreClosed&quot;,
+      s.&quot;storeClosedMsg&quot;,
+      s.&quot;storeBio&quot;,
+      s.&quot;storeBannerFileName&quot;,
+      s.&quot;deliveryFees&quot;,
+      s.&quot;avgRating&quot;,
+      s.&quot;ratingsCount&quot;,
+      s.&quot;usedFreeTrail&quot;,
+      u.id AS &quot;userId&quot;,
+      u.&quot;tapCustomerId&quot;,
+      u.name,
+      u.email,
+      u.crn,
+      u.&quot;businessName&quot;,
+      u.role,
+      u.city,
+      u.&quot;pfpFileName&quot;,
+      u.&quot;isEmailVerified&quot;,
+      u.&quot;preferredLanguage&quot;,
+      u.&quot;createdAt&quot;,
+      u.&quot;updatedAt&quot;
+    FROM &quot;Supplier&quot; s
+    JOIN &quot;User&quot; u ON s.&quot;userId&quot; &#x3D; u.id
+    WHERE (${whereClause})
+      AND s.&quot;isStoreClosed&quot; &#x3D; false
+      AND s.&quot;status&quot; &#x3D; &#x27;ACTIVE&#x27;
+    ORDER BY
+      ts_rank(to_tsvector(&#x27;english&#x27;, u.name), plainto_tsquery(&#x27;english&#x27;, $1)) DESC NULLS LAST,
+      similarity(u.name, $2) DESC NULLS LAST
+    LIMIT 50;
+  &#x60;;
+
+        const suppliers &#x3D; await this.prisma.$queryRawUnsafe&lt;any[]&gt;(
+            query,
+            ...params,
+        );
+
+        return Promise.all(
+            suppliers.map((row) &#x3D;&gt; {
+                const user &#x3D; {
+                    id: row.userId,
+                    tapCustomerId: row.tapCustomerId,
+                    name: row.name,
+                    email: row.email,
+                    crn: row.crn,
+                    businessName: row.businessName,
+                    role: row.role,
+                    city: row.city,
+                    pfpFileName: row.pfpFileName,
+                    isEmailVerified: row.isEmailVerified,
+                    preferredLanguage: row.preferredLanguage,
+                    createdAt: row.createdAt,
+                    updatedAt: row.updatedAt,
+                };
+                const supplier &#x3D; {
+                    id: row.supplierId,
+                    userId: row.userId,
+                    status: row.status,
+                    plan: row.plan,
+                    isStoreClosed: row.isStoreClosed,
+                    storeClosedMsg: row.storeClosedMsg,
+                    storeBio: row.storeBio,
+                    storeBannerFileName: row.storeBannerFileName,
+                    deliveryFees: row.deliveryFees,
+                    avgRating: row.avgRating,
+                    ratingsCount: row.ratingsCount,
+                    usedFreeTrail: row.usedFreeTrail,
+                };
+                return this.toSupplierResponseSafe(user, supplier);
+            }),
+        );
+    }
+
+    // Helper to handle async mapping safely
+    private async toSupplierResponseSafe(user: any, supplier: any) {
+        return this.supplierService.toSupplierResponseDTO(user, supplier);
+    }
+
+    async searchProducts(
+        name?: string,
+        mainCategoryId?: string,
+        subCategoryId?: string,
+        minPrice: string &#x3D; &#x27;1&#x27;,
+        maxPrice?: string,
+        targetLang?: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ) {
+        // Convert query params safely
+        const mainId &#x3D; mainCategoryId ? Number(mainCategoryId) : undefined;
+        const subId &#x3D; subCategoryId ? Number(subCategoryId) : undefined;
+        const minPriceAsNumber &#x3D;
+            minPrice &amp;&amp; Number(minPrice) &gt; 0 ? Number(minPrice) : undefined;
+        const maxPriceAsNumber &#x3D;
+            maxPrice &amp;&amp; Number(maxPrice) &gt; 0 ? Number(maxPrice) : undefined;
+
+        // Sanitize name
+        let q &#x3D; name?.trim()?.replace(/&#x27;/g, &quot;&#x27;&#x27;&quot;) ?? &#x27;&#x27;;
+        if (q.length &gt; 100) q &#x3D; q.substring(0, 100);
+
+        // 1. Build base where
+        const whereClause: any &#x3D; {
+            isDeleted: false,
+            isPublished: true,
+            supplier: {
+                isStoreClosed: false,
+                status: SupplierStatus.ACTIVE,
+            },
+        };
+
+        // 2. Handle category filters
+        if (mainId &amp;&amp; !subId) {
+            const subs &#x3D; await this.prisma.category.findMany({
+                where: { parentCategoryId: mainId },
+                select: { id: true },
+            });
+            if (!subs.length) return [];
+            whereClause.categoryId &#x3D; { in: subs.map((s) &#x3D;&gt; s.id) };
+        } else if (subId) {
+            const exists &#x3D; await this.prisma.category.findUnique({
+                where: { id: subId },
+                select: { id: true },
+            });
+            if (!exists) return [];
+            whereClause.categoryId &#x3D; subId;
+        }
+
+        // 3. Fuzzy search
+        let productIds: string[] &#x3D; [];
+        if (q) {
+            const query &#x3D; &#x60;
+                SELECT p.&quot;id&quot;, similarity(p.&quot;name&quot;, &#x27;${q}&#x27;) AS sim
+                FROM &quot;Product&quot; p
+                JOIN &quot;Supplier&quot; s ON p.&quot;supplierId&quot; &#x3D; s.&quot;id&quot;
+                WHERE p.&quot;isDeleted&quot; &#x3D; false
+                AND p.&quot;isPublished&quot; &#x3D; true
+                AND s.&quot;isStoreClosed&quot; &#x3D; false
+                AND similarity(p.&quot;name&quot;, &#x27;${q}&#x27;) &gt; 0.1
+                ORDER BY sim DESC
+                LIMIT 50;
+            &#x60;;
+
+            const fuzzyRows &#x3D;
+                await this.prisma.$queryRawUnsafe&lt;{ id: string }[]&gt;(query);
+            productIds &#x3D; fuzzyRows.map((r) &#x3D;&gt; r.id);
+            if (!productIds.length) return [];
+            whereClause.id &#x3D; { in: productIds };
+        }
+
+        // 4. Apply price filterss
+        whereClause.price &#x3D; {
+            ...(minPriceAsNumber !&#x3D;&#x3D; undefined
+                ? { gte: minPriceAsNumber }
+                : {}),
+            ...(maxPriceAsNumber !&#x3D;&#x3D; undefined
+                ? { lte: maxPriceAsNumber }
+                : {}),
+        };
+
+        // 5. Fetch products
+        let products &#x3D; await this.prisma.product.findMany({
+            where: whereClause,
+            include: { supplier: { include: { user: true } }, category: true },
+        });
+
+        if (!products.length) return [];
+
+        // 6. Map to DTOs
+        return Promise.all(
+            products.map((p) &#x3D;&gt;
+                this.productService.toProductResponseDto(p, targetLang),
+            ),
+        );
+    }
+
+    async searchServices(
+        name?: string,
+        mainCategoryId?: string,
+        subCategoryId?: string,
+        targetLang?: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ) {
+        // Convert query params safely
+        const mainId &#x3D; mainCategoryId ? Number(mainCategoryId) : undefined;
+        const subId &#x3D; subCategoryId ? Number(subCategoryId) : undefined;
+
+        // Sanitize name
+        let q &#x3D; name?.trim()?.replace(/&#x27;/g, &quot;&#x27;&#x27;&quot;) ?? &#x27;&#x27;;
+        if (q.length &gt; 100) q &#x3D; q.substring(0, 100);
+
+        // 1. Build base where
+        const whereClause: any &#x3D; {
+            isDeleted: false,
+            isPublished: true,
+            supplier: {
+                isStoreClosed: false,
+                status: SupplierStatus.ACTIVE,
+            },
+        };
+
+        // 2. Handle category filters
+        if (mainId &amp;&amp; !subId) {
+            const subs &#x3D; await this.prisma.category.findMany({
+                where: { parentCategoryId: mainId },
+                select: { id: true },
+            });
+            if (!subs.length) return [];
+            whereClause.categoryId &#x3D; { in: subs.map((s) &#x3D;&gt; s.id) };
+        } else if (subId) {
+            const exists &#x3D; await this.prisma.category.findUnique({
+                where: { id: subId },
+                select: { id: true },
+            });
+            if (!exists) return [];
+            whereClause.categoryId &#x3D; subId;
+        }
+
+        // 3. Fuzzy search
+        let servicesIds: string[] &#x3D; [];
+        if (q) {
+            const query &#x3D; &#x60;
+                SELECT s.&quot;id&quot;, similarity(s.&quot;name&quot;, &#x27;${q}&#x27;) AS sim
+                FROM &quot;Service&quot; s
+                JOIN &quot;Supplier&quot; sp ON s.&quot;supplierId&quot; &#x3D; sp.&quot;id&quot;
+                WHERE s.&quot;isDeleted&quot; &#x3D; false
+                AND s.&quot;isPublished&quot; &#x3D; true
+                AND sp.&quot;isStoreClosed&quot; &#x3D; false
+                AND similarity(s.&quot;name&quot;, &#x27;${q}&#x27;) &gt; 0.1
+                ORDER BY sim DESC
+                LIMIT 50;
+            &#x60;;
+
+            const fuzzyRows &#x3D;
+                await this.prisma.$queryRawUnsafe&lt;{ id: string }[]&gt;(query);
+            servicesIds &#x3D; fuzzyRows.map((r) &#x3D;&gt; r.id);
+            if (!servicesIds.length) return [];
+            whereClause.id &#x3D; { in: servicesIds };
+        }
+
+        // 4. Fetch services
+        let services &#x3D; await this.prisma.service.findMany({
+            where: whereClause,
+            include: { supplier: { include: { user: true } }, category: true },
+        });
+
+        if (!services.length) return [];
+
+        // 5. Map to DTOs
+        return Promise.all(
+            services.map((s) &#x3D;&gt;
+                this.serviceService.toServiceResponseDto(s, targetLang),
+            ),
+        );
+    }
+
+    async searchChats(userId: string, text: string) {
+        if (!text || !text.trim()) return [];
+
+        // Sanitize text
+        let q &#x3D; text?.trim()?.replace(/&#x27;/g, &quot;&#x27;&#x27;&quot;) ?? &#x27;&#x27;;
+        if (q.length &gt; 100) q &#x3D; q.substring(0, 100);
+
+        // Build base where
+        const whereClause: any &#x3D; {};
+
+        // Fuzzy search
+        let chatIds: string[] &#x3D; [];
+        if (q) {
+            const query &#x3D; &#x60;
+                SELECT c.&quot;id&quot; AS &quot;chatId&quot;, u1.&quot;id&quot; AS &quot;user1Id&quot;, u2.&quot;id&quot; AS &quot;user2Id&quot;
+                FROM &quot;Chat&quot; c
+                JOIN &quot;User&quot; u1 ON c.&quot;user1Id&quot; &#x3D; u1.&quot;id&quot;
+                JOIN &quot;User&quot; u2 ON c.&quot;user2Id&quot; &#x3D; u2.&quot;id&quot;
+                WHERE (c.&quot;user1Id&quot; &#x3D; &#x27;${userId}&#x27; AND (similarity(u2.name, &#x27;${text}&#x27;) &gt; 0.1 OR similarity(u2.&quot;businessName&quot;, &#x27;${text}&#x27;) &gt; 0.1))
+                OR (c.&quot;user2Id&quot; &#x3D; &#x27;${userId}&#x27; AND (similarity(u1.name, &#x27;${text}&#x27;) &gt; 0.1 OR similarity(u1.&quot;businessName&quot;, &#x27;${text}&#x27;) &gt; 0.1))
+                ORDER BY GREATEST(similarity(u1.name, &#x27;${text}&#x27;), similarity(u1.&quot;businessName&quot;,&#x27;${text}&#x27;),
+                similarity(u2.name, &#x27;${text}&#x27;), similarity(u2.&quot;businessName&quot;, &#x27;${text}&#x27;)) DESC
+                LIMIT 50;
+            &#x60;;
+
+            const fuzzyRows &#x3D;
+                await this.prisma.$queryRawUnsafe&lt;{ chatId: string }[]&gt;(query);
+            chatIds &#x3D; fuzzyRows.map((r) &#x3D;&gt; r.chatId);
+            if (!chatIds.length) return [];
+            whereClause.id &#x3D; { in: chatIds };
+        }
+
+        // Fetch chats
+        let chats &#x3D; await this.prisma.chat.findMany({
+            where: whereClause,
+            include: {
+                user1: { include: { firstChatUser: true } },
+                user2: { include: { secondChatUser: true } },
+                messages: {
+                    orderBy: { createdAt: &#x27;desc&#x27; },
+                    take: 1,
+                },
+            },
+            orderBy: { updatedAt: &#x27;desc&#x27; },
+        });
+
+        if (!chats.length) return [];
+
+        return Promise.all(
+            chats.map((c) &#x3D;&gt;
+                this.chatService.toChatResponseDto(c as any, userId),
+            ),
+        );
+    }
+
+    async searchSupplierCatalog(userId: string, name: string) {
+        if (!name || !name.trim()) return [];
+
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+            select: { id: true },
+        });
+        if (!supplier) return [];
+
+        // Sanitize text
+        let q &#x3D; name?.trim()?.replace(/&#x27;/g, &quot;&#x27;&#x27;&quot;) ?? &#x27;&#x27;;
+        if (q.length &gt; 100) q &#x3D; q.substring(0, 100);
+
+        // Build base where
+        const productWhereClause: any &#x3D; {};
+        const serviceWhereClause: any &#x3D; {};
+
+        // Fuzzy search
+        let productIds: string[] &#x3D; [];
+        let serviceIds: string[] &#x3D; [];
+        if (q) {
+            const productQuery &#x3D; &#x60;
+                SELECT &quot;id&quot;
+                FROM &quot;Product&quot;
+                WHERE &quot;supplierId&quot; &#x3D; &#x27;${supplier.id}&#x27;
+                AND &quot;isDeleted&quot; &#x3D; false
+                AND similarity(&quot;name&quot;, &#x27;${q}&#x27;) &gt; 0.1
+                ORDER BY similarity(&quot;name&quot;, &#x27;${q}&#x27;) DESC
+                LIMIT 50
+            &#x60;;
+
+            const fuzzyProductRows &#x3D;
+                await this.prisma.$queryRawUnsafe&lt;{ id: string }[]&gt;(
+                    productQuery,
+                );
+            productIds &#x3D; fuzzyProductRows.map((r) &#x3D;&gt; r.id);
+            if (productIds) productWhereClause.id &#x3D; { in: productIds };
+
+            const serviceQuery &#x3D; &#x60;
+                SELECT &quot;id&quot;
+                FROM &quot;Service&quot;
+                WHERE &quot;supplierId&quot; &#x3D; &#x27;${supplier.id}&#x27;
+                AND &quot;isDeleted&quot; &#x3D; false
+                AND similarity(&quot;name&quot;, &#x27;${q}&#x27;) &gt; 0.1
+                ORDER BY similarity(&quot;name&quot;, &#x27;${q}&#x27;) DESC
+                LIMIT 50
+            &#x60;;
+
+            const fuzzyServiceRows &#x3D;
+                await this.prisma.$queryRawUnsafe&lt;{ id: string }[]&gt;(
+                    serviceQuery,
+                );
+            serviceIds &#x3D; fuzzyServiceRows.map((r) &#x3D;&gt; r.id);
+            if (serviceIds) serviceWhereClause.id &#x3D; { in: serviceIds };
+
+            if (!productIds &amp;&amp; !serviceIds) return [];
+        }
+
+        // Fetch products + services
+        let products &#x3D; await this.prisma.product.findMany({
+            where: productWhereClause,
+            include: { supplier: { include: { user: true } }, category: true },
+        });
+
+        let services &#x3D; await this.prisma.service.findMany({
+            where: serviceWhereClause,
+            include: { supplier: { include: { user: true } }, category: true },
+        });
+
+        if (!products.length &amp;&amp; !services.length) return [];
+
+        // Map to DTOs
+        let productsDtoPromise: Promise&lt;ProductResponseDto[]&gt; &#x3D; Promise.resolve(
+            [],
+        );
+        let servicesDtoPromise: Promise&lt;ServiceResponseDto[]&gt; &#x3D; Promise.resolve(
+            [],
+        );
+
+        if (products.length &gt; 0) {
+            productsDtoPromise &#x3D; Promise.all(
+                products.map((p) &#x3D;&gt;
+                    this.productService.toProductResponseDto(p as any),
+                ),
+            );
+        }
+
+        if (services.length &gt; 0) {
+            servicesDtoPromise &#x3D; Promise.all(
+                services.map((s) &#x3D;&gt;
+                    this.serviceService.toServiceResponseDto(s as any),
+                ),
+            );
+        }
+
+        // Wait for results
+        const [productsDto, servicesDto] &#x3D; await Promise.all([
+            productsDtoPromise,
+            servicesDtoPromise,
+        ]);
+
+        // Return according to availability
+        if (productsDto.length &amp;&amp; servicesDto.length)
+            return [...productsDto, ...servicesDto];
+        if (productsDto.length) return productsDto;
+        if (servicesDto.length) return servicesDto;
+
+        return [];
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'SearchService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
