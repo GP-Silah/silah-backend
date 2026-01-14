@@ -1,0 +1,45 @@
+<ng-container *ngIf="account">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <h2 class="mat-card-title-text">{{ 'ACCOUNT_PAGE.DETAILS.TITLE' | translate }}</h2>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="mat-card-content-with-actions">
+      <div class="mat-card-content-container">
+        <cs-parameters-pair
+          [name]="'ACCOUNT_PAGE.DETAILS.ID'"
+          [value]="account.id"
+        ></cs-parameters-pair>
+        <cs-parameters-pair
+          [name]="'ACCOUNT_PAGE.DETAILS.ROLE'"
+          [value]="account.rolename"
+        ></cs-parameters-pair>
+        <cs-parameters-pair
+          [name]="'ACCOUNT_PAGE.DETAILS.ROLE_TYPE'"
+          [value]="account.roletype"
+        ></cs-parameters-pair>
+        <cs-parameters-pair
+          [name]="'ACCOUNT_PAGE.DETAILS.DOMAIN'"
+          [value]="account.domain"
+        ></cs-parameters-pair>
+        <cs-parameters-pair
+          [name]="'ACCOUNT_PAGE.DETAILS.VMS'"
+          [value]="account.vmtotal"
+        ></cs-parameters-pair>
+        <cs-parameters-pair
+          [name]="'ACCOUNT_PAGE.DETAILS.IPS'"
+          [value]="account.iptotal"
+        ></cs-parameters-pair>
+        <cs-parameters-pair
+          [name]="'ACCOUNT_PAGE.DETAILS.R_BYTES'"
+          [value]="account.receivedbytes"
+        ></cs-parameters-pair>
+        <cs-parameters-pair
+          [name]="'ACCOUNT_PAGE.DETAILS.S_BYTES'"
+          [value]="account.sentbytes"
+        ></cs-parameters-pair>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</ng-container>

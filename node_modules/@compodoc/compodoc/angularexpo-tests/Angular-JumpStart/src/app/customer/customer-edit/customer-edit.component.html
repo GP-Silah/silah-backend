@@ -1,0 +1,77 @@
+<div class="customer-edit">
+  <div class="edit-header">
+    <h2 class="edit-title">
+      {{ customer.id ? 'Edit Customer' : 'Add New Customer' }}
+    </h2>
+  </div>
+  
+  <div class="edit-content">
+    <form (ngSubmit)="submit()" #customerForm="ngForm" class="customer-form" novalidate>
+      <div class="form-group">
+        <label>First Name</label>
+        <input title="first name" type="text" class="form-control" name="firstName" [(ngModel)]="customer.firstName" #firstName="ngModel" required>
+        <div class="alert alert-danger" [hidden]="firstName.pristine || firstName.valid">First Name is required</div>
+      </div>
+      
+      <div class="form-group">
+        <label>Last Name</label>
+        <input title="last name" type="text" class="form-control" name="lastName" [(ngModel)]="customer.lastName" #lastName="ngModel" required>
+        <div class="alert alert-danger" [hidden]="lastName.pristine || lastName.valid">Last Name is required</div>
+      </div>
+      
+      <div class="form-group">
+        <label>Address</label>
+        <input title="address" type="text" class="form-control" name="address" [(ngModel)]="customer.address" #address="ngModel" required>
+        <div class="alert alert-danger" [hidden]="address.pristine || address.valid">Address is required</div>
+      </div>
+      
+      <div class="form-group">
+        <label>City</label>
+        <input title="city" type="text" class="form-control" name="city" [(ngModel)]="customer.city" #city="ngModel" required>
+        <div class="alert alert-danger" [hidden]="city.pristine || city.valid">City is required</div>
+      </div>
+      
+      <div class="form-group">
+        <label>State</label>
+        <select
+          name="state" 
+          [(ngModel)]="customer.state.abbreviation" 
+          title="states" 
+          class="form-control"
+          required>
+            @for (state of states; track state.abbreviation) {
+                <option [ngValue]="state.abbreviation">{{state.name}}</option>
+            }
+        </select>
+      </div>
+      
+      @if (customer.id && deleteMessageEnabled) {
+          <div class="alert alert-warning">
+            Delete Customer?
+            <div class="button-group delete-actions">
+              <button class="btn btn-danger" (click)="delete($event)">Yes</button>
+              <button class="btn btn-default" (click)="deleteMessageEnabled = false">No</button>
+            </div>
+          </div>
+      }
+      
+      @if (customer && !deleteMessageEnabled) {
+          <div class="form-actions">
+            <div class="delete-section">
+              @if (customer.id) {
+                  <button type="button" class="btn btn-danger" (click)="deleteMessageEnabled = true">Delete</button>
+              }
+            </div>
+            <div class="button-group">
+              <button type="button" class="btn btn-default" (click)="cancel($event)">Cancel</button>
+              <button type="submit" class="btn btn-success" [disabled]="customerForm.pristine || !customerForm.valid">{{ operationText }}</button>
+            </div>
+          </div>
+      }
+      
+      @if (errorMessage) {
+          <div class="error-message">{{ errorMessage }}</div>
+      }
+    </form>
+  </div>
+</div>

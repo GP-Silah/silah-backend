@@ -1,0 +1,15 @@
+@import '../styles/utils/variables';
+
+.site-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  align-items: stretch;
+}
+
+.main {
+  background-color: $mid-grey;
+  flex: 1;
+}

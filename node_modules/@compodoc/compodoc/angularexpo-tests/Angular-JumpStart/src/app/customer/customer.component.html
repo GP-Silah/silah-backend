@@ -1,0 +1,44 @@
+<div class="customer-page">
+    <div class="page-header">
+        <h1 class="page-title">Customer Information</h1>
+    </div>
+    
+    <div class="customer-tabs">
+        <div class="navbar">
+            <ul class="nav">
+                <li class="toolbar-item">
+                    <a routerLink="details" routerLinkActive="active">
+                       <span class="glyphicon glyphicon-list"></span>
+                       Customer Details
+                    </a>
+                </li>
+                <li class="toolbar-item">
+                    <a routerLink="orders" routerLinkActive="active">
+                        <span class="glyphicon glyphicon-tags"></span>
+                        Customer Orders
+                    </a>
+                </li>
+                <li class="toolbar-item">
+                    <a routerLink="edit" routerLinkActive="active">
+                        <span class="glyphicon glyphicon-edit"></span>
+                        Edit Customer
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="content-section">
+        <router-outlet></router-outlet>
+    </div>
+    
+    <a routerLink="/customers" class="back-link">
+        ← View all Customers
+    </a>
+</div>
+
+
+
+
+
+

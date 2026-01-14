@@ -1,0 +1,148 @@
+.customer-edit {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.edit-header {
+  padding: var(--spacing-xl);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--background-secondary);
+}
+
+.edit-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.edit-content {
+  padding: var(--spacing-xl);
+}
+
+.customer-form {
+  width: 100%;
+  max-width: 600px;
+}
+
+.form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.875rem;
+}
+
+/* Form control base styles now handled by global CSS - only keep Angular-specific validation states */
+
+/* Validation States */
+.form-control.ng-invalid.ng-touched {
+  border-left: 3px solid var(--danger-color);
+  border-color: var(--danger-color);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-control.ng-valid.ng-touched {
+  border-left: 3px solid var(--success-color);
+  border-color: var(--success-color);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.form-control.ng-invalid.ng-touched:focus {
+  border-left: 3px solid var(--danger-color);
+  border-color: var(--danger-color);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.form-control.ng-valid.ng-touched:focus {
+  border-left: 3px solid var(--success-color);
+  border-color: var(--success-color);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+/* Alert styles now use global CSS - only keep component-specific overrides */
+.alert-warning {
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Button Groups */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
+  margin-top: var(--spacing-lg);
+}
+
+.delete-section {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.button-group {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.delete-actions {
+  margin-top: var(--spacing-sm);
+}
+
+/* Button styles now use global CSS from styles.css and bootstrap-replacement.css */
+
+/* Utility Classes */
+.pull-right {
+  margin-left: auto;
+}
+
+/* Error Messages */
+.error-message {
+  color: var(--danger-color);
+  font-size: 0.875rem;
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: #FEE2E2;
+  border: 1px solid #FECACA;
+  border-radius: var(--border-radius);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .edit-header {
+    padding: var(--spacing-lg);
+  }
+  
+  .edit-content {
+    padding: var(--spacing-lg);
+  }
+  
+  .edit-title {
+    font-size: 1.25rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: stretch;
+  }
+  
+  .button-group {
+    justify-content: center;
+  }
+  
+  .pull-right {
+    margin-left: 0;
+  }
+}

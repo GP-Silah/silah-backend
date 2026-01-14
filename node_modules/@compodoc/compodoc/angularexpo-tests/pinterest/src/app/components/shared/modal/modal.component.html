@@ -1,0 +1,14 @@
+<div class="{{size}} reveal {{klass}}"
+  data-reveal data-reset-on-close="false"
+  [@flyInDown]="'in'">
+  <h4 class="column">
+    <strong>
+      {{title}}
+    </strong>
+  </h4>
+  <br>
+  <ng-content></ng-content>
+  <button class="close-button" aria-label='Close reveal' data-close=''>
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>

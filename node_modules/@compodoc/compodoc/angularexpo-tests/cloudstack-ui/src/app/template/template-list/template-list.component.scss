@@ -1,0 +1,41 @@
+mat-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  max-height: 370px;
+}
+
+mat-list-item {
+  cursor: pointer;
+}
+
+.selected-template span {
+  font-weight: bold;
+}
+
+mat-list-item .mat-line-secondary {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.template-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: auto;
+  padding: 0;
+}
+
+:host mat-icon img {
+  vertical-align: top;
+}
+
+.template-text {
+  display: inline-block;
+  max-width: 500px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

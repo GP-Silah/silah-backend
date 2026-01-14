@@ -1,0 +1,16 @@
+<section class="flex">
+    <parrot-project-menu [project]="project"></parrot-project-menu>
+    <div class="content">
+        <div class="project-header">
+            <div class="branding">
+                <p>{{"Project"|translate}}: <strong>{{project?.name}}</strong></p>
+            </div>
+            <div class="info">
+                <p><strong>{{project?.keys.length}}</strong> Strings</p>
+            </div>
+        </div>
+        <div class="router-content">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</section>

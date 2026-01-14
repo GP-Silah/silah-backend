@@ -1,0 +1,16 @@
+<toaster-container [toasterconfig]="toasterconfig"></toaster-container>
+<header>
+  <ng2-slim-loading-bar
+    [color]="'rgb(98, 206, 176)'"></ng2-slim-loading-bar>
+  <pin-header></pin-header>
+</header>
+
+<section class="main">
+  <router-outlet></router-outlet>
+</section>
+
+<div class="row"></div>
+
+<section>
+  <pin-footer></pin-footer>
+</section>

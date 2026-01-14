@@ -1,0 +1,6 @@
+.center-align {
+    display: table-cell;
+    height: 100%;
+    text-align: center;
+    vertical-align: middle;
+}

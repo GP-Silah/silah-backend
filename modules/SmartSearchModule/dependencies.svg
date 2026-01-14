@@ -24,59 +24,59 @@
 <title>cluster_SmartSearchModule</title>
 <polygon fill="none" stroke="black" stroke-dasharray="1,5" points="78,-70 78,-268 418,-268 418,-70 78,-70"/>
 </g>
-<g id="clust6" class="cluster">
-<title>cluster_SmartSearchModule_providers</title>
-<polygon fill="none" stroke="black" points="216,-78 216,-130 410,-130 410,-78 216,-78"/>
-</g>
 <g id="clust3" class="cluster">
 <title>cluster_SmartSearchModule_imports</title>
-<polygon fill="none" stroke="black" points="86,-78 86,-130 208,-130 208,-78 86,-78"/>
+<polygon fill="none" stroke="black" points="288,-78 288,-130 410,-130 410,-78 288,-78"/>
 </g>
 <g id="clust4" class="cluster">
 <title>cluster_SmartSearchModule_exports</title>
-<polygon fill="none" stroke="black" points="162,-208 162,-260 312,-260 312,-208 162,-208"/>
+<polygon fill="none" stroke="black" points="184,-208 184,-260 334,-260 334,-208 184,-208"/>
+</g>
+<g id="clust6" class="cluster">
+<title>cluster_SmartSearchModule_providers</title>
+<polygon fill="none" stroke="black" points="86,-78 86,-130 280,-130 280,-78 86,-78"/>
 </g>
 <!-- SupplierModule -->
 <g id="node1" class="node">
 <title>SupplierModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="200.49,-122 197.49,-126 176.49,-126 173.49,-122 93.51,-122 93.51,-86 200.49,-86 200.49,-122"/>
-<text text-anchor="middle" x="147" y="-99.8" font-family="Times,serif" font-size="14.00">SupplierModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="402.49,-122 399.49,-126 378.49,-126 375.49,-122 295.51,-122 295.51,-86 402.49,-86 402.49,-122"/>
+<text text-anchor="middle" x="349" y="-99.8" font-family="Times,serif" font-size="14.00">SupplierModule</text>
 </g>
 <!-- SmartSearchModule -->
 <g id="node2" class="node">
 <title>SmartSearchModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="302.58,-187 299.58,-191 278.58,-191 275.58,-187 171.42,-187 171.42,-151 302.58,-151 302.58,-187"/>
-<text text-anchor="middle" x="237" y="-164.8" font-family="Times,serif" font-size="14.00">SmartSearchModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="324.58,-187 321.58,-191 300.58,-191 297.58,-187 193.42,-187 193.42,-151 324.58,-151 324.58,-187"/>
+<text text-anchor="middle" x="259" y="-164.8" font-family="Times,serif" font-size="14.00">SmartSearchModule</text>
 </g>
 <!-- SupplierModule&#45;&gt;SmartSearchModule -->
 <g id="edge1" class="edge">
 <title>SupplierModule&#45;&gt;SmartSearchModule</title>
-<path fill="none" stroke="black" d="M185.98,-122.11C185.98,-122.11 185.98,-140.99 185.98,-140.99"/>
-<polygon fill="black" stroke="black" points="182.48,-140.99 185.98,-150.99 189.48,-140.99 182.48,-140.99"/>
+<path fill="none" stroke="black" d="M310.02,-122.11C310.02,-122.11 310.02,-140.99 310.02,-140.99"/>
+<polygon fill="black" stroke="black" points="306.52,-140.99 310.02,-150.99 313.52,-140.99 306.52,-140.99"/>
 </g>
 <!-- SmartSearchService  -->
 <g id="node3" class="node">
 <title>SmartSearchService </title>
-<polygon fill="#fb8072" stroke="black" points="303.5,-252 170.5,-252 170.5,-216 303.5,-216 303.5,-252"/>
-<text text-anchor="middle" x="237" y="-229.8" font-family="Times,serif" font-size="14.00">SmartSearchService </text>
+<polygon fill="#fb8072" stroke="black" points="325.5,-252 192.5,-252 192.5,-216 325.5,-216 325.5,-252"/>
+<text text-anchor="middle" x="259" y="-229.8" font-family="Times,serif" font-size="14.00">SmartSearchService </text>
 </g>
 <!-- SmartSearchModule&#45;&gt;SmartSearchService  -->
 <g id="edge2" class="edge">
 <title>SmartSearchModule&#45;&gt;SmartSearchService </title>
-<path fill="none" stroke="black" stroke-dasharray="5,2" d="M237,-187.11C237,-187.11 237,-205.99 237,-205.99"/>
-<polygon fill="black" stroke="black" points="233.5,-205.99 237,-215.99 240.5,-205.99 233.5,-205.99"/>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M259,-187.11C259,-187.11 259,-205.99 259,-205.99"/>
+<polygon fill="black" stroke="black" points="255.5,-205.99 259,-215.99 262.5,-205.99 255.5,-205.99"/>
 </g>
 <!-- SmartSearchService -->
 <g id="node4" class="node">
 <title>SmartSearchService</title>
-<ellipse fill="#fdb462" stroke="black" cx="313" cy="-104" rx="89.16" ry="18"/>
-<text text-anchor="middle" x="313" y="-99.8" font-family="Times,serif" font-size="14.00">SmartSearchService</text>
+<ellipse fill="#fdb462" stroke="black" cx="183" cy="-104" rx="89.16" ry="18"/>
+<text text-anchor="middle" x="183" y="-99.8" font-family="Times,serif" font-size="14.00">SmartSearchService</text>
 </g>
 <!-- SmartSearchService&#45;&gt;SmartSearchModule -->
 <g id="edge3" class="edge">
 <title>SmartSearchService&#45;&gt;SmartSearchModule</title>
-<path fill="none" stroke="black" d="M263.1,-119.08C263.1,-119.08 263.1,-140.76 263.1,-140.76"/>
-<polygon fill="black" stroke="black" points="259.6,-140.76 263.1,-150.76 266.6,-140.76 259.6,-140.76"/>
+<path fill="none" stroke="black" d="M232.9,-119.08C232.9,-119.08 232.9,-140.76 232.9,-140.76"/>
+<polygon fill="black" stroke="black" points="229.4,-140.76 232.9,-150.76 236.4,-140.76 229.4,-140.76"/>
 </g>
 </g>
 </svg>

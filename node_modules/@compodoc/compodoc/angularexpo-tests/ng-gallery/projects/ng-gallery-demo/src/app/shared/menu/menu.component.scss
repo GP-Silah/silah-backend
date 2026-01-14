@@ -1,0 +1,38 @@
+@import "../../../assets/mixin";
+@import "../../../assets/variables";
+
+:host {
+  margin: 0;
+  flex: 0 0 auto;
+  padding: 0;
+}
+
+.menu.menu-toolbar {
+  flex-direction: row;
+
+  a.mdc-button {
+    width: unset;
+    height: 36px;
+    line-height: 36px;
+  }
+}
+
+a.mdc-button {
+  height: var(--header-height);
+  line-height: var(--header-height);
+  width: 220px;
+  color: white;
+
+  &.active {
+    background: rgba(0,0,0,.2);
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, .4);
+  }
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+}

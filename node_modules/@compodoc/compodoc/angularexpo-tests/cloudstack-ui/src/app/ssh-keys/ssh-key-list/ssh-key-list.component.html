@@ -1,0 +1,10 @@
+<cs-grouped-list
+  class="padding"
+  [list]="keys"
+  [groupings]="groupings"
+  [component]="itemComponent"
+  [dynamicInputs]="inputs"
+  [dynamicOutputs]="outputs"
+>
+</cs-grouped-list>
+<cs-no-results *ngIf="!keys || !keys?.length"></cs-no-results>

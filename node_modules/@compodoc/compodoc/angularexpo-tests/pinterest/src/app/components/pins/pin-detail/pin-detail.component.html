@@ -1,0 +1,63 @@
+<pin-modal title='' klass='pinModal-{{pinIndex}}' size='medium'>
+  <div *ngIf="(pin | async)" class="row">
+    <div class="large-5 columns">
+      <a [href]="(pin | async).url" target="_blank">
+        <h5>
+          {{(pin | async).name}}
+        </h5>
+
+        <div class="pin-image">
+          <img [src]="(pin | async).image_url" alt="" width="500" [@flyInRight]="in">
+        </div>
+      </a>
+      <br>
+    </div>
+
+    <div class="large-7 columns">
+      <ul class="dropdown menu pull-right" data-dropdown-menu="" *ngIf="canAccessPin | async">
+        <li class="is-dropdown-submenu-parent">
+          <div>
+            ...
+            <span class="fa fa-cog"></span>
+          </div>
+          <ul class="menu">
+            <li>
+              <a (click)="onEditPin()">
+                Edit
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <br>
+      <p>
+        {{(pin | async).description}}
+      </p>
+
+      <h6>
+        From {{(pin | async).user?.name}}
+        <img aria-hidden=true [src]="(pin | async).user?.avatar" class="avatar"/>
+      </h6>
+
+      <hr>
+
+      <h6 class="text-center">
+        <strong>
+          Comments
+        </strong>
+        <br>
+      </h6>
+
+      <div *ngFor="let comment of comments | async" [@flyInDown]="'in'">
+        <pin-pin-comment [comment]="comment" [authUser]="authUser | async"></pin-pin-comment>
+        <br>
+      </div>
+
+      <pin-pin-comment-new [authUser]="authUser | async" [pin]="pin | async"></pin-pin-comment-new>
+    </div>
+  </div>
+
+  <div>
+    <h4 class="text-center" *ngIf="!(pin | async)">Loading ...</h4>
+  </div>
+</pin-modal>

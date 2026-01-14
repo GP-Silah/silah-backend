@@ -1,0 +1,22 @@
+.button-wrapper {
+  text-align: right;
+}
+
+.flex-container {
+  display: flex;
+  align-content: space-between;
+}
+
+.column {
+  min-width: 300px;
+  max-width: 300px;
+  &:first-child {
+    margin-right: 10px;
+  }
+  &:last-child {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

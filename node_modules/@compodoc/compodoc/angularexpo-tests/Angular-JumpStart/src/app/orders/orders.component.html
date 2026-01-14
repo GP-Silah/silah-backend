@@ -1,0 +1,47 @@
+<div class="orders-page">
+    <div class="page-header">
+        <h1 class="page-title">Orders</h1>
+    </div>
+
+    <div class="content-section">
+        <div class="container">
+            @if (customers && customers.length) {
+
+                @for (customer of customers; track trackbyService.customer($index, customer)) {
+                    <div class="row">
+                        <h4>{{ customer.firstName | capitalize }} {{ customer.lastName | capitalize }}</h4>
+                        <br />
+                        @if (customer.orders && customer.orders.length) {
+                            <table class="table table-striped table-hover orders-table">
+                                @for (order of customer.orders; track trackbyService.order($index, order)) {
+                                    <tr>
+                                        <td>{{order.productName}}</td>
+                                        <td class="text-right">{{ order.itemCost | currency:'USD':'symbol' }}</td>    
+                                    </tr>
+                                }
+                                <tr class="summary-border">
+                                    <td>&nbsp;</td>
+                                    <td class="text-right">{{ customer.orderTotal | currency:'USD':'symbol' }}
+                                </tr>
+                            </table>
+                        } @else {
+                            <div>
+                                No orders found
+                            </div> 
+                        }
+                    </div>
+                }
+
+                <cm-pagination [hidden]="!customers || !customers.length"
+                    [totalItems]="totalRecords" 
+                    [pageSize]="pageSize" 
+                    (pageChanged)="pageChanged($event)"></cm-pagination>
+
+            } @else {
+                <div>
+                    No customers found
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+{
+  "name": "ng-math",
+  "tasks": {
+    "install": "yarn install",
+    "lint": "yarn run lint",
+    "test": "yarn run test",
+    "build": "yarn run build",
+    "build--prod": "yarn run build--prod",
+    "deploy": "yarn run build--prod && firebase deploy"
+  },
+  "external": [
+    "https://yarnpkg.com",
+    "https://firebase.google.com/"
+  ],
+  "dependencies": []
+}

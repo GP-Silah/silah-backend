@@ -1,0 +1,36 @@
+:host {
+  position: relative;
+  display: block;
+
+  .mat-dialog-content {
+    overflow: hidden;
+  }
+
+  .mat-checkbox {
+    padding: 5px 0;
+  }
+}
+
+.column {
+  min-width: 270px;
+  max-width: 270px;
+  &:first-child {
+    margin-right: 10px;
+  }
+  &:last-child {
+    margin-left: 10px;
+  }
+}
+
+.flex-dialog-content {
+  display: flex;
+  padding: 15px 0;
+  justify-content: space-between;
+  overflow: visible;
+}
+
+.additional {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+}

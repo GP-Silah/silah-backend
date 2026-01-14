@@ -1,0 +1,51 @@
+.fix-overlay {
+    overflow-y: inherit !important;
+}
+
+.suggestions{
+    border: solid 1px #eee;
+	width: 100%;
+    position: relative;
+	background: #F1F1F1;
+    z-index: 2000;
+    height: 240px;
+    overflow-y: scroll !important;
+    padding: 10px;
+}
+@media (min-height: 768px) {
+    .suggestions {
+        height: 280px;
+    }
+}
+
+.media.locale {
+    background: white;
+    border-radius: 2px;
+    padding: 5px;
+    box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1);
+}
+.media.locale:hover {
+    background: #f1f1f1;
+    cursor: pointer;
+}
+.media.locale:active {
+    background: #DADADA;
+}
+
+.center-align {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.media-left {
+    margin-right: 20px;
+}
+
+.selection-tag {
+    margin-left: 10px;
+}
+
+.container{
+  width: 100%;
+}

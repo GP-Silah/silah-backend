@@ -1,0 +1,161 @@
+0000000000000000000000000000000000000000 e819fa1c3d35d020316b3fffb96ee6a9f54abad4 Shahad Saad <shahad1saad@gmail.com> 1750767624 +0300	commit (initial): message: "Initial commit"
+e819fa1c3d35d020316b3fffb96ee6a9f54abad4 1a96c9bcf5ca009668b66d1985ff6cfe53b7e07b Shahad Saad <shahad1saad@gmail.com> 1750777771 +0300	pull --tags origin main: Fast-forward
+1a96c9bcf5ca009668b66d1985ff6cfe53b7e07b f64fcfb359716644c73e7e7226e4045c1d0d4df8 Shahad Saad <shahad1saad@gmail.com> 1750827938 +0300	commit: add github issues tempalets
+f64fcfb359716644c73e7e7226e4045c1d0d4df8 a93a608460a9323ba93c47e0dfafed55f789dd2e Shahad Saad <shahad1saad@gmail.com> 1750828108 +0300	pull --no-rebase: Merge made by the 'ort' strategy.
+a93a608460a9323ba93c47e0dfafed55f789dd2e a93a608460a9323ba93c47e0dfafed55f789dd2e Shahad Saad <shahad1saad@gmail.com> 1750828532 +0300	checkout: moving from main to add-issues-templates
+a93a608460a9323ba93c47e0dfafed55f789dd2e 30920e47d19e828e0853b3176f31f58c547c3951 Shahad Saad <shahad1saad@gmail.com> 1750829347 +0300	commit: fixed the issues CodeRabbit cought
+30920e47d19e828e0853b3176f31f58c547c3951 07b1ab505a243b140c2273e7e3482154c88124c1 Shahad Saad <shahad1saad@gmail.com> 1750831238 +0300	commit: fixed linting issues
+07b1ab505a243b140c2273e7e3482154c88124c1 c3da0d7535fc60e1a3abb9a32930c657cb1500e7 Shahad Saad <shahad1saad@gmail.com> 1750833097 +0300	commit: trying to fix not shown github issue templates
+c3da0d7535fc60e1a3abb9a32930c657cb1500e7 a93a608460a9323ba93c47e0dfafed55f789dd2e Shahad Saad <shahad1saad@gmail.com> 1750833667 +0300	checkout: moving from add-issues-templates to main
+a93a608460a9323ba93c47e0dfafed55f789dd2e f4f0fe04c1ce280b52c8ebdf634efc610433a06d Shahad Saad <shahad1saad@gmail.com> 1750833674 +0300	pull --tags origin main: Fast-forward
+f4f0fe04c1ce280b52c8ebdf634efc610433a06d f4f0fe04c1ce280b52c8ebdf634efc610433a06d Shahad Saad <shahad1saad@gmail.com> 1750834253 +0300	checkout: moving from main to update-issue-templates
+f4f0fe04c1ce280b52c8ebdf634efc610433a06d e5759a4ac3ff007e3821bc603d0c0b02aa87d3a7 Shahad Saad <shahad1saad@gmail.com> 1750834254 +0300	commit: update github issue templates to include DOD
+e5759a4ac3ff007e3821bc603d0c0b02aa87d3a7 e819fa1c3d35d020316b3fffb96ee6a9f54abad4 Shahad Saad <shahad1saad@gmail.com> 1750944238 +0300	checkout: moving from update-issue-templates to dev
+e819fa1c3d35d020316b3fffb96ee6a9f54abad4 f4f0fe04c1ce280b52c8ebdf634efc610433a06d Shahad Saad <shahad1saad@gmail.com> 1750944365 +0300	reset: moving to main
+f4f0fe04c1ce280b52c8ebdf634efc610433a06d f4f0fe04c1ce280b52c8ebdf634efc610433a06d Shahad Saad <shahad1saad@gmail.com> 1750944468 +0300	checkout: moving from dev to fix-branches-not-uptodate
+f4f0fe04c1ce280b52c8ebdf634efc610433a06d e5759a4ac3ff007e3821bc603d0c0b02aa87d3a7 Shahad Saad <shahad1saad@gmail.com> 1750944969 +0300	checkout: moving from fix-branches-not-uptodate to update-issue-templates
+e5759a4ac3ff007e3821bc603d0c0b02aa87d3a7 f4f0fe04c1ce280b52c8ebdf634efc610433a06d Shahad Saad <shahad1saad@gmail.com> 1750945328 +0300	checkout: moving from update-issue-templates to dev
+f4f0fe04c1ce280b52c8ebdf634efc610433a06d d1d570201c8a272fde440002e71617ed2020eaa7 Shahad Saad <shahad1saad@gmail.com> 1750945337 +0300	pull: Fast-forward
+d1d570201c8a272fde440002e71617ed2020eaa7 f4f0fe04c1ce280b52c8ebdf634efc610433a06d Shahad Saad <shahad1saad@gmail.com> 1750945344 +0300	checkout: moving from dev to main
+f4f0fe04c1ce280b52c8ebdf634efc610433a06d a268ccf453c57e63b7a2280aacc77fb2dbc18276 Shahad Saad <shahad1saad@gmail.com> 1750945349 +0300	pull: Fast-forward
+a268ccf453c57e63b7a2280aacc77fb2dbc18276 d1d570201c8a272fde440002e71617ed2020eaa7 Shahad Saad <shahad1saad@gmail.com> 1750945356 +0300	checkout: moving from main to dev
+d1d570201c8a272fde440002e71617ed2020eaa7 d1d570201c8a272fde440002e71617ed2020eaa7 Shahad Saad <shahad1saad@gmail.com> 1750945548 +0300	checkout: moving from dev to feature/3-setup-prisma
+d1d570201c8a272fde440002e71617ed2020eaa7 d1b9b79d3e20497dd1ccf7d174663ddfde5a46cb Shahad Saad <shahad1saad@gmail.com> 1750948487 +0300	commit: setup prisma
+d1b9b79d3e20497dd1ccf7d174663ddfde5a46cb d1d570201c8a272fde440002e71617ed2020eaa7 Shahad Saad <shahad1saad@gmail.com> 1750948709 +0300	checkout: moving from feature/3-setup-prisma to dev
+d1d570201c8a272fde440002e71617ed2020eaa7 bf340e069c7da6f4f9bbef5578628ec37ff8ee0a Shahad Saad <shahad1saad@gmail.com> 1750948714 +0300	pull: Fast-forward
+bf340e069c7da6f4f9bbef5578628ec37ff8ee0a a268ccf453c57e63b7a2280aacc77fb2dbc18276 Shahad Saad <shahad1saad@gmail.com> 1750948740 +0300	checkout: moving from dev to main
+a268ccf453c57e63b7a2280aacc77fb2dbc18276 28f47ea852faa5e3518c199c6a9e9a641a555e0d Shahad Saad <shahad1saad@gmail.com> 1750948744 +0300	pull: Fast-forward
+28f47ea852faa5e3518c199c6a9e9a641a555e0d 28f47ea852faa5e3518c199c6a9e9a641a555e0d Shahad Saad <shahad1saad@gmail.com> 1750948801 +0300	checkout: moving from main to docs/setup-swagger
+28f47ea852faa5e3518c199c6a9e9a641a555e0d a27bec0b26a333b24687403cfc2af38e03ed2a70 Shahad Saad <shahad1saad@gmail.com> 1750951219 +0300	commit: setup swagger + generate static files to deploy on silah-api-docs repo
+a27bec0b26a333b24687403cfc2af38e03ed2a70 fed16e20672289714482043890fb6210e3957d08 Shahad Saad <shahad1saad@gmail.com> 1751034697 +0300	commit: add .env.example
+fed16e20672289714482043890fb6210e3957d08 bf340e069c7da6f4f9bbef5578628ec37ff8ee0a Shahad Saad <shahad1saad@gmail.com> 1751034724 +0300	checkout: moving from docs/setup-swagger to dev
+bf340e069c7da6f4f9bbef5578628ec37ff8ee0a 7d1a2d6a6c74f6b63880975e7c5b5b5756e870f7 Shahad Saad <shahad1saad@gmail.com> 1751067853 +0300	pull: Fast-forward
+7d1a2d6a6c74f6b63880975e7c5b5b5756e870f7 28f47ea852faa5e3518c199c6a9e9a641a555e0d Shahad Saad <shahad1saad@gmail.com> 1751067866 +0300	checkout: moving from dev to main
+28f47ea852faa5e3518c199c6a9e9a641a555e0d de8bfff8bd695ba2ef003ba63703aa3d54b79c2a Shahad Saad <shahad1saad@gmail.com> 1751067870 +0300	pull: Fast-forward
+de8bfff8bd695ba2ef003ba63703aa3d54b79c2a de8bfff8bd695ba2ef003ba63703aa3d54b79c2a Shahad Saad <shahad1saad@gmail.com> 1751068168 +0300	checkout: moving from main to feature/15-auth-and-user
+de8bfff8bd695ba2ef003ba63703aa3d54b79c2a 7041d19dcfda9276cdc4732a7cf87c09a8adcb10 Shahad Saad <shahad1saad@gmail.com> 1751071740 +0300	commit: add the user model schema + enums
+7041d19dcfda9276cdc4732a7cf87c09a8adcb10 52aca06d447bbbfc0ca029cb6b4400f2441f8988 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751144403 +0300	commit: add the user module but not imlemented yet
+52aca06d447bbbfc0ca029cb6b4400f2441f8988 7c69f47d12ae5ba7bb43f262e29f8e98a49627f2 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751163734 +0300	commit: add auth module but not implemented yet
+7c69f47d12ae5ba7bb43f262e29f8e98a49627f2 6c6f422ecb4e1305b6987afe71dd948d90c462b8 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751257385 +0300	commit: add the signup logic in the auth module
+6c6f422ecb4e1305b6987afe71dd948d90c462b8 b4745a43426371fbeb21a7b76ccab2d2a1dd0650 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751260213 +0300	commit: fix some naming issues
+b4745a43426371fbeb21a7b76ccab2d2a1dd0650 d8974b4aba12514d5b2954602ba2cd8e84f557a0 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751260955 +0300	commit: update README.md
+d8974b4aba12514d5b2954602ba2cd8e84f557a0 b77016ef412d7436572c6c42e66f7a639e9793ed SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751262958 +0300	commit: docs the signup process (both JSDocs and Swagger)
+b77016ef412d7436572c6c42e66f7a639e9793ed 94b96948535a97e2d1331a4d5fdab9561badf6b7 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751270421 +0300	commit: add login and logout functionalities and api docs them
+94b96948535a97e2d1331a4d5fdab9561badf6b7 7a4284b57582afb81d04c507544cc5bda936ca60 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751278009 +0300	commit: verify-email almost done
+7a4284b57582afb81d04c507544cc5bda936ca60 428b0371ce2d653d75bb5387c1f4f70bf65f1e8b SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751328014 +0300	commit: add email verification logic + docs
+428b0371ce2d653d75bb5387c1f4f70bf65f1e8b 31d0b9495a3f60aa1c63808480fd83346fb6a219 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751343378 +0300	commit: add reset password logic + docs
+31d0b9495a3f60aa1c63808480fd83346fb6a219 489c7b845d84b8ca660228907220f4c674fd2d3b SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751350649 +0300	commit: add auth guards for jwt and roles
+489c7b845d84b8ca660228907220f4c674fd2d3b 90c9822e0a824bc4ab60a95f4aae2f4aaa2d3b42 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751354930 +0300	commit: add switch-role functionality + docs
+90c9822e0a824bc4ab60a95f4aae2f4aaa2d3b42 647c9c61e33d30ae2d0df828a196ce1fac34123b SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751414454 +0300	commit: minor spacing changes
+647c9c61e33d30ae2d0df828a196ce1fac34123b de8bfff8bd695ba2ef003ba63703aa3d54b79c2a SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751414506 +0300	checkout: moving from feature/15-auth-and-user to main
+de8bfff8bd695ba2ef003ba63703aa3d54b79c2a 126344d805f77742e5af13cdb504db57ae7bc81b SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751414512 +0300	pull: Fast-forward
+126344d805f77742e5af13cdb504db57ae7bc81b 7d1a2d6a6c74f6b63880975e7c5b5b5756e870f7 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751414517 +0300	checkout: moving from main to dev
+7d1a2d6a6c74f6b63880975e7c5b5b5756e870f7 5a4afd935401dc27724ab6238750a0201f433754 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751414523 +0300	pull: Fast-forward
+5a4afd935401dc27724ab6238750a0201f433754 5a4afd935401dc27724ab6238750a0201f433754 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751414619 +0300	checkout: moving from dev to feature/18-user-module
+5a4afd935401dc27724ab6238750a0201f433754 979a5916118271f37973734eec49831789c9455c SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751414704 +0300	commit: fix white spacing lol
+979a5916118271f37973734eec49831789c9455c 1c4298548b1a0468be58273769dab130a9059eaa SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751691874 +0300	commit: fix add create supplier when user switch role the first time + fix not updating user's role on the user table
+1c4298548b1a0468be58273769dab130a9059eaa fa4d56eda30a127b464298fcb93a46bfe3083889 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751698430 +0300	commit: add custome pipe
+fa4d56eda30a127b464298fcb93a46bfe3083889 32f18c81fe0abc8ad485dffbfe3c404f7c16bac7 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751707911 +0300	commit: add all functionality of the user module, but the updade is not fully implemented yet
+32f18c81fe0abc8ad485dffbfe3c404f7c16bac7 23c89e46cd2107a0a147be1d95ef45b874bcc824 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751869535 +0300	commit: user module is complete (only missing unit tests)
+23c89e46cd2107a0a147be1d95ef45b874bcc824 c6bcd58c5975741eb578b22690e6a885cfbac38b SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751870086 +0300	commit: updated the github issues templates
+c6bcd58c5975741eb578b22690e6a885cfbac38b 5a4afd935401dc27724ab6238750a0201f433754 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751870481 +0300	checkout: moving from feature/18-user-module to dev
+5a4afd935401dc27724ab6238750a0201f433754 a1cec535fc2e735bfe5c47d11d56d8253c3ed620 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751870488 +0300	pull: Fast-forward
+a1cec535fc2e735bfe5c47d11d56d8253c3ed620 18d07417845ffe7df6bbd350b569417357bb5d9b SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751870857 +0300	commit: refactured the files for the new indent space
+18d07417845ffe7df6bbd350b569417357bb5d9b 444bf467dcc6e9dd2f0443b9719111a487090952 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751871573 +0300	commit: add security tag
+444bf467dcc6e9dd2f0443b9719111a487090952 243963dc70f6948bcade93840053cf044040f408 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751871773 +0300	commit: fix to make the security "cookie" in swagger ui work
+243963dc70f6948bcade93840053cf044040f408 126344d805f77742e5af13cdb504db57ae7bc81b SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751871952 +0300	checkout: moving from dev to main
+126344d805f77742e5af13cdb504db57ae7bc81b db144a53a14f595614c05d01a2945560f614b298 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751871958 +0300	pull: Fast-forward
+db144a53a14f595614c05d01a2945560f614b298 db144a53a14f595614c05d01a2945560f614b298 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751873001 +0300	checkout: moving from main to feature/21-buyer-module
+db144a53a14f595614c05d01a2945560f614b298 4e72f4b6544f549696fdb2d49c117e2d83ff2a6b SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1751958194 +0300	commit: add base structure of the buyer module
+4e72f4b6544f549696fdb2d49c117e2d83ff2a6b c8690676d3a573718ab44b6598a4549578544f78 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755342862 +0300	commit: WIP
+c8690676d3a573718ab44b6598a4549578544f78 c8690676d3a573718ab44b6598a4549578544f78 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755343090 +0300	checkout: moving from feature/21-buyer-module to file-module
+c8690676d3a573718ab44b6598a4549578544f78 205ee5e1dc1904aee46964a95409593164b4eaf0 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755350770 +0300	commit: FileModue is ready
+205ee5e1dc1904aee46964a95409593164b4eaf0 6748d8c099dd97615c5c75b3c1d39deead4f3432 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755352495 +0300	commit: fixed issues by coderabbit
+6748d8c099dd97615c5c75b3c1d39deead4f3432 243963dc70f6948bcade93840053cf044040f408 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755352626 +0300	checkout: moving from file-module to dev
+243963dc70f6948bcade93840053cf044040f408 6748d8c099dd97615c5c75b3c1d39deead4f3432 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755352633 +0300	merge file-module: Fast-forward
+6748d8c099dd97615c5c75b3c1d39deead4f3432 451105d1eddf0df6fb4e604c53a399a4fe62788a SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755352834 +0300	pull --rebase origin dev (start): checkout 451105d1eddf0df6fb4e604c53a399a4fe62788a
+451105d1eddf0df6fb4e604c53a399a4fe62788a 841f5c0867ef47414625a496c137a631848db1ca SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755352834 +0300	pull --rebase origin dev (pick): fixed issues by coderabbit
+841f5c0867ef47414625a496c137a631848db1ca 841f5c0867ef47414625a496c137a631848db1ca SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755352834 +0300	pull --rebase origin dev (finish): returning to refs/heads/dev
+841f5c0867ef47414625a496c137a631848db1ca 841f5c0867ef47414625a496c137a631848db1ca SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755353028 +0300	checkout: moving from dev to swagger-ui-automation
+841f5c0867ef47414625a496c137a631848db1ca 5477a6e0732531f067e9d13f99d73481873fb02e SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755360062 +0300	commit: chores: generate and push updated swagger.json to docs repo
+5477a6e0732531f067e9d13f99d73481873fb02e e51753f5e2b4a6350287fbe1cd1341817e7ce376 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755362338 +0300	commit: fixes coderabbit suggested
+e51753f5e2b4a6350287fbe1cd1341817e7ce376 74c2e54919e9bb473d5c190426d6af8e8a3b2b77 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755363120 +0300	commit: fixes again
+74c2e54919e9bb473d5c190426d6af8e8a3b2b77 841f5c0867ef47414625a496c137a631848db1ca SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755363479 +0300	checkout: moving from swagger-ui-automation to dev
+841f5c0867ef47414625a496c137a631848db1ca a866386e2c54b86636c94bdfbc745b8db0e96e3f SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755363526 +0300	pull origin main: Fast-forward
+a866386e2c54b86636c94bdfbc745b8db0e96e3f db144a53a14f595614c05d01a2945560f614b298 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755363690 +0300	checkout: moving from dev to main
+db144a53a14f595614c05d01a2945560f614b298 a866386e2c54b86636c94bdfbc745b8db0e96e3f SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755363697 +0300	pull: Fast-forward
+a866386e2c54b86636c94bdfbc745b8db0e96e3f c8690676d3a573718ab44b6598a4549578544f78 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755363716 +0300	checkout: moving from main to feature/21-buyer-module
+c8690676d3a573718ab44b6598a4549578544f78 a866386e2c54b86636c94bdfbc745b8db0e96e3f SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755363743 +0300	pull origin main: Fast-forward
+a866386e2c54b86636c94bdfbc745b8db0e96e3f 31b65b114c5bc88fd04cdd820b897641f08c0ce5 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755364768 +0300	commit: update license
+31b65b114c5bc88fd04cdd820b897641f08c0ce5 2bc47cbd8bd6f8b6c11bbcc4d2ddd48b2d61f1a3 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755365093 +0300	commit: remove docs directory and update license
+2bc47cbd8bd6f8b6c11bbcc4d2ddd48b2d61f1a3 6b3d04f83a6a54880baebf161650eb436fe2632a SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755539667 +0300	commit: add more functionality to userMoule + api docs refactor
+6b3d04f83a6a54880baebf161650eb436fe2632a d535c7fd06648f7e15ed46d47322131dfd271595 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755542451 +0300	commit: fixes coderabbit suggested
+d535c7fd06648f7e15ed46d47322131dfd271595 607dfafeeec7ee01cb0a28ba4669be51bb822896 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755551203 +0300	commit: add docker
+607dfafeeec7ee01cb0a28ba4669be51bb822896 c28170e374645026e349a3f05d61da5953ce3f3d SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755557155 +0300	commit: fix docker
+c28170e374645026e349a3f05d61da5953ce3f3d 0000000000000000000000000000000000000000 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755558108 +0300	Branch: renamed refs/heads/feature/21-buyer-module to refs/heads/refactors-and-user-module
+0000000000000000000000000000000000000000 c28170e374645026e349a3f05d61da5953ce3f3d SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1755558108 +0300	Branch: renamed refs/heads/feature/21-buyer-module to refs/heads/refactors-and-user-module
+c28170e374645026e349a3f05d61da5953ce3f3d c9a6c964b5a4045c2f0725b5134b5d4b4a90e32b SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756165165 +0300	commit: finish user module
+c9a6c964b5a4045c2f0725b5134b5d4b4a90e32b f607033fd99532d80d996c82021f3a21f7b37544 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756225688 +0300	commit: finsih auth module
+f607033fd99532d80d996c82021f3a21f7b37544 125a0227b5da4c6491c2d1c2a901c3629fc50da7 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756233132 +0300	commit: add logging
+125a0227b5da4c6491c2d1c2a901c3629fc50da7 07e17b6ef15e7be30a08d1172551442cc22521a5 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756235313 +0300	commit: ready for deployment
+07e17b6ef15e7be30a08d1172551442cc22521a5 a866386e2c54b86636c94bdfbc745b8db0e96e3f SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756235520 +0300	checkout: moving from refactors-and-user-module to dev
+a866386e2c54b86636c94bdfbc745b8db0e96e3f 8b6491675c6ecd577fc96efa34ee99f505c58f01 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756235527 +0300	pull: Fast-forward
+8b6491675c6ecd577fc96efa34ee99f505c58f01 4b9d3a4f4d63c9eaf6aff7655d0c6abe305e7d32 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756291342 +0300	commit: fix changes coderabbit suggested
+4b9d3a4f4d63c9eaf6aff7655d0c6abe305e7d32 f82d66487794e410ba38d6a150a9421d8b118d4e SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756304644 +0300	commit: minor changes
+f82d66487794e410ba38d6a150a9421d8b118d4e cdecc39a0d98bdc993808ea28e86f98756d29809 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756304843 +0300	pull --tags origin dev: Fast-forward
+cdecc39a0d98bdc993808ea28e86f98756d29809 a866386e2c54b86636c94bdfbc745b8db0e96e3f SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756304858 +0300	checkout: moving from dev to main
+a866386e2c54b86636c94bdfbc745b8db0e96e3f cdecc39a0d98bdc993808ea28e86f98756d29809 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756304864 +0300	pull: Fast-forward
+cdecc39a0d98bdc993808ea28e86f98756d29809 cdecc39a0d98bdc993808ea28e86f98756d29809 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756304874 +0300	checkout: moving from main to dev
+cdecc39a0d98bdc993808ea28e86f98756d29809 cdecc39a0d98bdc993808ea28e86f98756d29809 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756304897 +0300	checkout: moving from dev to buyer-module
+cdecc39a0d98bdc993808ea28e86f98756d29809 7f280bdaf875515f685fe6ca051cba9ec3da077f SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1756629616 +0300	commit: changes before working on buyer
+7f280bdaf875515f685fe6ca051cba9ec3da077f e0fc5c5de637ae9b8f945f9959c2ba2d63c27b5d SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1757157422 +0300	commit: fix unit tests
+e0fc5c5de637ae9b8f945f9959c2ba2d63c27b5d 7a7a014e5589a77c3f906a47ab6688fe7b7a6cfc SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1757161917 +0300	commit: changes to prepare for integration w Tap
+7a7a014e5589a77c3f906a47ab6688fe7b7a6cfc 6cf9fd03bf1c8825294b79ada34d5db87835f5a3 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1757170252 +0300	commit: now the users has a tapCustomerId (which allows us to use tap API)
+6cf9fd03bf1c8825294b79ada34d5db87835f5a3 c3225cd9653e4545653f5012fd2b1bb7ec453967 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1757232084 +0300	commit: feat: retrive buyer and card info endpoints
+c3225cd9653e4545653f5012fd2b1bb7ec453967 043e4992adc23812c02b29e909439e4b11409d54 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1757882122 +0300	commit: feat: implement card management with Tap integration and update API documentation
+043e4992adc23812c02b29e909439e4b11409d54 cdecc39a0d98bdc993808ea28e86f98756d29809 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1757882285 +0300	checkout: moving from buyer-module to dev
+cdecc39a0d98bdc993808ea28e86f98756d29809 c85b5534d0bf0e539985e34f6a98eaf34ba27742 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1757882316 +0300	pull --tags origin dev: Fast-forward
+c85b5534d0bf0e539985e34f6a98eaf34ba27742 f93d9c69cb05b21493c889b72966b799bdf3aa64 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1757883303 +0300	commit: enhance CD pipeline
+f93d9c69cb05b21493c889b72966b799bdf3aa64 cdecc39a0d98bdc993808ea28e86f98756d29809 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1757883674 +0300	checkout: moving from dev to main
+cdecc39a0d98bdc993808ea28e86f98756d29809 55fc60b877639a373508375e881343700ed63970 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1757883680 +0300	pull --tags origin main: Fast-forward
+55fc60b877639a373508375e881343700ed63970 55fc60b877639a373508375e881343700ed63970 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1757883713 +0300	checkout: moving from main to feature/supplier
+55fc60b877639a373508375e881343700ed63970 5229817b843885f12df8fe348d6cf21d021830ca SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758049921 +0300	commit: structure of the controller and dtos is done
+5229817b843885f12df8fe348d6cf21d021830ca 601350cd85683e8e0f8c1c2d5fa65ad7d37aa8bf SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758424290 +0300	commit: almost done with the supplier module الحمد لله
+601350cd85683e8e0f8c1c2d5fa65ad7d37aa8bf 449540bcc941d7ed702409ab934dbf0ea34af0f1 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758446090 +0300	commit: suppleir module done
+449540bcc941d7ed702409ab934dbf0ea34af0f1 0c1a4da584cc9ab66cbaf2adf274a9a19db5815a SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758470534 +0300	commit: better swagger for supplier + user categoreis ids
+0c1a4da584cc9ab66cbaf2adf274a9a19db5815a 3ee69feb6cf480b4c183d39e4da8b0125089df93 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758470819 +0300	pull origin feature/supplier --rebase (start): checkout 3ee69feb6cf480b4c183d39e4da8b0125089df93
+3ee69feb6cf480b4c183d39e4da8b0125089df93 1b09fa59612d3ba81737ac0573c9fe2fc2a2e8d8 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758470819 +0300	pull origin feature/supplier --rebase (pick): better swagger for supplier + user categoreis ids
+1b09fa59612d3ba81737ac0573c9fe2fc2a2e8d8 1b09fa59612d3ba81737ac0573c9fe2fc2a2e8d8 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758470819 +0300	pull origin feature/supplier --rebase (finish): returning to refs/heads/feature/supplier
+1b09fa59612d3ba81737ac0573c9fe2fc2a2e8d8 f93d9c69cb05b21493c889b72966b799bdf3aa64 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758470918 +0300	checkout: moving from feature/supplier to dev
+f93d9c69cb05b21493c889b72966b799bdf3aa64 3ee69feb6cf480b4c183d39e4da8b0125089df93 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758470925 +0300	pull: Fast-forward
+3ee69feb6cf480b4c183d39e4da8b0125089df93 1b09fa59612d3ba81737ac0573c9fe2fc2a2e8d8 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758646756 +0300	checkout: moving from dev to feature/supplier
+1b09fa59612d3ba81737ac0573c9fe2fc2a2e8d8 7abd526ec9e5825d759ad0cf7ae7cfeff85f0647 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758646783 +0300	pull origin main --no-rebase: Merge made by the 'ort' strategy.
+7abd526ec9e5825d759ad0cf7ae7cfeff85f0647 1082ec81f03048c5e83ab503cae602a0a038ee15 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758646994 +0300	commit: chores: protect main branch
+1082ec81f03048c5e83ab503cae602a0a038ee15 3ee69feb6cf480b4c183d39e4da8b0125089df93 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758647244 +0300	checkout: moving from feature/supplier to dev
+3ee69feb6cf480b4c183d39e4da8b0125089df93 49fe95d24a02f6a62d4daea3ab157cc8295418aa SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758647251 +0300	pull: Fast-forward
+49fe95d24a02f6a62d4daea3ab157cc8295418aa 55fc60b877639a373508375e881343700ed63970 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758647257 +0300	checkout: moving from dev to main
+55fc60b877639a373508375e881343700ed63970 84f1fe8ac49f221f81fcd00baa0758901fe7aaf3 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758647262 +0300	pull: Fast-forward
+84f1fe8ac49f221f81fcd00baa0758901fe7aaf3 84f1fe8ac49f221f81fcd00baa0758901fe7aaf3 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758647298 +0300	checkout: moving from main to feature/categories
+84f1fe8ac49f221f81fcd00baa0758901fe7aaf3 a76a65ceb00467f06c1afc88ee960440bbf9e189 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758657044 +0300	commit: finished category module
+a76a65ceb00467f06c1afc88ee960440bbf9e189 6cf80ff878e2dd8559f5cd28c23ae5e9275f46e2 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758661376 +0300	commit: almost done with the buyer module
+6cf80ff878e2dd8559f5cd28c23ae5e9275f46e2 951e5546b48165a5b72147bdb5019e1b059716cc SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758698078 +0300	commit: buyer swagger documentation is done
+951e5546b48165a5b72147bdb5019e1b059716cc 6a7650f2abff55c182b3335aeb820168ec4d8e61 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758698406 +0300	commit: fix workflow
+6a7650f2abff55c182b3335aeb820168ec4d8e61 49fe95d24a02f6a62d4daea3ab157cc8295418aa SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758698523 +0300	checkout: moving from feature/categories to dev
+49fe95d24a02f6a62d4daea3ab157cc8295418aa 2d939dcfd16b7a05a8c42c07d5afee5f95d18990 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758698529 +0300	pull: Fast-forward
+2d939dcfd16b7a05a8c42c07d5afee5f95d18990 2d939dcfd16b7a05a8c42c07d5afee5f95d18990 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758698561 +0300	checkout: moving from dev to feature/product
+2d939dcfd16b7a05a8c42c07d5afee5f95d18990 2d939dcfd16b7a05a8c42c07d5afee5f95d18990 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758699929 +0300	checkout: moving from feature/product to temp-to-not-make-mistake
+2d939dcfd16b7a05a8c42c07d5afee5f95d18990 2d939dcfd16b7a05a8c42c07d5afee5f95d18990 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758699941 +0300	checkout: moving from temp-to-not-make-mistake to feature/product
+2d939dcfd16b7a05a8c42c07d5afee5f95d18990 0b365ca579cd352a60025ab13e2cd3795ae04f57 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758702321 +0300	commit: structue of product module
+0b365ca579cd352a60025ab13e2cd3795ae04f57 82439724a4630df620e9f5a4ef3525774c2e5ab7 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758788062 +0300	commit: product structure done
+82439724a4630df620e9f5a4ef3525774c2e5ab7 6a78c30af647dbbc7de08d3cff286a49f1c79698 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758807661 +0300	commit: finished some endpoints
+6a78c30af647dbbc7de08d3cff286a49f1c79698 65f58bd58ba6197af4b246a87c889b6f2120774e SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758938988 +0300	commit: product module is done الحمد لله
+65f58bd58ba6197af4b246a87c889b6f2120774e 2d939dcfd16b7a05a8c42c07d5afee5f95d18990 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758939326 +0300	checkout: moving from feature/product to dev
+2d939dcfd16b7a05a8c42c07d5afee5f95d18990 a52a4618f2a96007fdd7925016237a7f78122f4b SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758939335 +0300	pull: Fast-forward
+a52a4618f2a96007fdd7925016237a7f78122f4b a52a4618f2a96007fdd7925016237a7f78122f4b SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1758939352 +0300	checkout: moving from dev to feature/service
+a52a4618f2a96007fdd7925016237a7f78122f4b 8a1af2df67dae51d672ca695ad7f71bdae9a3546 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1759009392 +0300	commit: service module finished الحمد لله
+8a1af2df67dae51d672ca695ad7f71bdae9a3546 a52a4618f2a96007fdd7925016237a7f78122f4b SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1759009868 +0300	checkout: moving from feature/service to dev
+a52a4618f2a96007fdd7925016237a7f78122f4b 7e73de3c812b4b9a25441097fcafff812a0e9eeb SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1759009875 +0300	pull: Fast-forward
+7e73de3c812b4b9a25441097fcafff812a0e9eeb 84f1fe8ac49f221f81fcd00baa0758901fe7aaf3 SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1759009880 +0300	checkout: moving from dev to main
+84f1fe8ac49f221f81fcd00baa0758901fe7aaf3 0c3d6d62056f2d276bc941e0390c84931855747c SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1759009886 +0300	pull: Fast-forward
+0c3d6d62056f2d276bc941e0390c84931855747c 0c3d6d62056f2d276bc941e0390c84931855747c SHAHAD SAAD <ShahadSaad001.dev@gmail.com> 1759009899 +0300	checkout: moving from main to feature/order
+                                                                                                                                                                       

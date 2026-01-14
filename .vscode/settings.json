@@ -1,9 +1,0 @@
-{
-    "yaml.schemas": {
-        "https://json.schemastore.org/github-issue-forms.json": "file:///home/shahad/coding-projects/silah-backend/.github/ISSUE_TEMPLATE/feature-request.yml"
-    },
-    "editor.tokenColorCustomizations": {
-        "comments": "",
-        "textMateRules": []
-    }
-}

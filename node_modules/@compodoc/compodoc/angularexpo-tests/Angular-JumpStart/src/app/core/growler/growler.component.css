@@ -1,0 +1,57 @@
+    .growler {
+      position: fixed;
+      z-index: 999999;
+    }
+    
+    .growler.close-button:focus {
+      outline: 0;
+    }
+    
+    .growler.top-left {
+      top: 12px;
+      left: 12px;
+    }
+    
+    .growler.top-right {
+      top: 12px;
+      right: 12px;
+    }
+    
+    .growler.bottom-right {
+      bottom: 12px;
+      right: 12px;
+    }
+    
+    .growler.bottom-left {
+      bottom: 12px;
+      left: 12px;
+    }
+    
+    .growler.top-center {
+      top: 12px;
+      left: 50%;
+      transform: translate(-50%, 0%);
+    }
+    
+    .growler.bottom-center {
+      bottom: 12px;
+      left: 50%;
+      transform: translate(-50%, 0%);
+    }
+    
+    .growl {
+      cursor: pointer;
+      padding: 5px;
+      width: 285px;
+      height: 65px; 
+      opacity: 0;      
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1s;        
+    }   
+    
+    .growl.active {        
+      opacity: 1;
+    } 
+    

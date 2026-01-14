@@ -1,0 +1,16 @@
+:host mat-progress-bar {
+  width: 300px;
+}
+
+cs-security-group-creation-rules-manager {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.basic-rules {
+  /deep/ {
+    h5 {
+      font-size: 16px;
+    }
+  }
+}

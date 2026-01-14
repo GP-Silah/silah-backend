@@ -1,0 +1,12 @@
+---
+description: Best practices for using RxJS in Angular applications
+globs: **/*.{ts}
+---
+
+- Use pipeable operators for better readability and performance
+- Implement proper error handling using catchError and throwError
+- Utilize shareReplay for multicasting observables and improving performance
+- Use async pipe in templates to automatically unsubscribe from observables
+- Implement proper subscription management to prevent memory leaks
+- Use RxJS schedulers for controlling the execution context of observables
+- Leverage RxJS's higher-order mapping operators (mergeMap, switchMap, etc.) for handling nested observables

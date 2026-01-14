@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "strictNullChecks": true
+  },
+  "allowSyntheticDefaultImports": false,
+  "exclude": [
+    "**/*.mock.ts",
+    "**/*.mock.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.setup.ts",
+    "dist",
+    "node_modules",
+    "App.tsx",
+    "index.tsx"
+  ]
+}

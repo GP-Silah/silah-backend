@@ -1,0 +1,65 @@
+.problem {
+  position: relative;
+  min-height: 200px;
+
+  &__first, &__second, &__value {
+    font-size: 3em;
+    left: -40px;
+    position: absolute;
+    text-align: right;
+    width: 100%;
+  }
+
+  &__second {
+    top: 80px;
+  }
+
+  &__value {
+    top: 140px;
+  }
+
+  &__operator {
+    left: 10px;
+    top: 83px;
+    font-size: 2.5em;
+    position: absolute;
+  }
+
+  &__line {
+    border-bottom: 1px solid #ccc;
+    width: calc(100% - 30px);
+    position: absolute;
+    top: 140px;
+  }
+
+  &__btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+  }
+
+  @media (min-width: 400px) {
+    font-size: 2em;
+    min-height: 366px;
+    max-width: 360px;
+    max-width: 330px;
+    margin: 0 auto;
+
+    &__second {
+      top: 120px;
+    }
+
+    &__value {
+      top: 240px;
+    }
+
+    &__line {
+      top: 235px;
+      width: calc(100% - 50px);
+    }
+
+    &__operator {
+      top: 135px;
+    }
+  }
+}

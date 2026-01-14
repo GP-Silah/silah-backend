@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "lib": [
+      "es2016"
+    ],
+    "outDir": "../out-tsc/spec",
+    "module": "esnext",
+    "target": "ES2022",
+    "baseUrl": "",
+    "types": [
+      "jasmine",
+      "node"
+    ],
+    "useDefineForClassFields": false
+  },
+  "files": ["test.ts", "polyfills.ts"],
+  "include": ["**/*.spec.ts"]
+}

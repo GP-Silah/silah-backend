@@ -1,0 +1,196 @@
+/* Using global container-card utility class */
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  margin-top: 0;
+}
+
+/* Using global card utility class with extensions */
+.customer-card {
+  position: relative;
+  cursor: pointer;
+  transition: box-shadow var(--transition-fast);
+}
+
+.customer-card:hover {
+  /* Simplified hover - just shadow change for better performance */
+}
+
+.card-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-blue) 100%);
+  color: white;
+  padding: var(--spacing-md);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Removed complex pseudo-element animation for better performance */
+
+.card-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.customer-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.customer-name a {
+  color: white;
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.customer-name a:hover {
+  opacity: 0.9;
+}
+
+.card-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: var(--border-radius);
+  color: white;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+  transform: scale(1.1);
+}
+
+.card-body {
+  padding: var(--spacing-lg);
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.customer-avatar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.customer-image {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--border-color);
+  transition: border-color var(--transition-fast);
+}
+
+.customer-card:hover .customer-image {
+  border-color: var(--primary-color);
+}
+
+.customer-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.customer-location {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+}
+
+.customer-actions {
+  margin-top: var(--spacing-sm);
+}
+
+.view-orders-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--primary-color);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  padding: var(--spacing-xs) 0;
+  border-bottom: 1px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.view-orders-link:hover {
+  color: var(--primary-hover);
+  border-bottom-color: var(--primary-hover);
+}
+
+.view-orders-link::after {
+  content: '→';
+  transition: transform var(--transition-fast);
+}
+
+.view-orders-link:hover::after {
+  transform: translateX(2px);
+}
+
+/* No-records styles now use global utility classes */
+
+/* Delete button */
+.delete-btn {
+  background: rgba(239, 68, 68, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: white;
+  margin-left: 3px;
+}
+
+.delete-btn:hover {
+  background: var(--danger-color);
+  border-color: var(--danger-color);
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Responsive design - container padding handled by global CSS */
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .card-header,
+  .card-body {
+    padding: var(--spacing-md);
+  }
+  
+  .customer-name {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-header-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+  
+  .card-actions {
+    align-self: flex-end;
+  }
+}

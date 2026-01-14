@@ -1,0 +1,29 @@
+mat-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  max-height: 370px;
+}
+
+mat-list-item {
+  cursor: pointer;
+}
+
+mat-list-item .mat-line-secondary {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.security-group-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: auto;
+  padding: 0;
+}
+
+:host mat-icon img {
+  vertical-align: top;
+}
+
+.selected-security-group span {
+  font-weight: bold;
+}

@@ -1,0 +1,36 @@
+.card-container{
+  display: flex;
+  flex-direction: column;
+  margin: 15px;
+}
+.sample-content{
+  flex: 1;
+}
+.card-container md-card{
+  margin: 5px;
+}
+
+md-card-title {
+  display: flex;
+  justify-content: center;
+}
+
+md-card-content {
+  text-align: center;
+}
+
+.fade-shield {
+  opacity: 0.1;
+}
+
+@media screen and (max-width: 865px) {
+  svg {
+    width: 75%;
+  }
+}
+
+@media screen and (min-width: 568px) and (max-width: 1175px) {
+  svg {
+    width: 50%;
+  }
+}

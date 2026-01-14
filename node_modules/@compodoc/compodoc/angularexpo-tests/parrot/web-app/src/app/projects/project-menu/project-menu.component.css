@@ -1,0 +1,73 @@
+.menu.navigation {
+    padding-top: 20px;
+    background: #353535;
+    flex-grow: 1;
+    flex-basis: 200px;
+    margin-left: -200px;
+    width: 200px;
+    position: fixed;
+    height: calc(100vh - 60px);
+    box-shadow: 1px 0 3px rgba(10,10,10,0.25);
+    z-index: 125;
+}
+
+@media screen and (min-width: 769px) {
+    .menu.navigation {
+        margin-left: 0px;
+        transition: margin-left .4s cubic-bezier(0.25,0.8,0.25,1);
+    }
+}
+
+.menu.navigation.is-active {
+    margin-left: 0px;
+    transition: margin-left .4s cubic-bezier(0.25,0.8,0.25,1);
+}
+
+.menu-label {
+    color: #999A9F;
+    font-weight: bold;
+    padding: 10px 20px 0 20px;
+}
+
+.menu-list a {
+    padding: 6px 20px;
+    color: #DCDCDC;
+    border-radius: 0;
+    font-weight: bold;
+}
+
+.menu-list a:hover {
+    color: #FFF;
+    background: rgba(23, 147, 211, 0.8);;
+    transition:  background-color .4s cubic-bezier(0.25,0.8,0.25,1);
+}
+
+li a.is-active:hover {
+    background: #1793d3;
+    color: #FFF;
+}
+
+li a.is-active {
+    background: #1793d3;
+    font-weight: bold;
+    color: #FFF;
+}
+
+.sidenav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: black;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 100;
+    visibility: hidden;
+}
+
+.sidenav-overlay.is-active {
+    opacity: 0.4;
+    visibility: visible;
+    transition:  opacity .4s cubic-bezier(0.25,0.8,0.25,1);
+}

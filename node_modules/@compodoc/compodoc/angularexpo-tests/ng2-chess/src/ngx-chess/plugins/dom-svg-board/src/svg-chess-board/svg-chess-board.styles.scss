@@ -1,0 +1,89 @@
+.no-user-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+:host {
+  @extend .no-user-select;
+  display: block;
+}
+
+.svg-chess-board {
+  position: relative;
+  display: block;
+  overflow-y: hidden;
+  margin: auto;
+  height: 100%;
+  width: 100%;
+}
+
+.chess-board {
+  max-height: 100%;
+  max-width: 100%;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+@media (orientation: portrait) {
+  .chess-board {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.stop-watch-svg circle {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.75);
+}
+.stop-watch-svg rect {
+  fill: rgba(255, 255, 255, 0.75);
+}
+
+.basel {
+  stroke-width: 20;
+  stroke-miterlimit: 10;
+}
+
+.hand {
+  stroke-width: 50;
+  stroke-miterlimit: 10;
+  stroke-dasharray: 160 160;
+  stroke-dashoffset: 160;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  -webkit-animation: 2s stopWatchHandAnimation linear forwards;
+  animation: 2s stopWatchHandAnimation linear forwards;
+  animation-iteration-count: infinite;
+}
+
+.sw-button {
+  -webkit-animation: 4s stopWatchButtonAnimation linear forwards;
+  animation: 4s stopWatchButtonAnimation linear forwards;
+  animation-iteration-count: infinite;
+}
+
+@keyframes stopWatchHandAnimation {
+  0% {
+    stroke-dasharray: 160 160;
+    stroke-dashoffset: 160;
+    stroke-width: 50px;
+  }
+  100% {
+    stroke-dasharray: 160 160;
+    stroke-dashoffset: -160;
+    stroke-width: 50px;
+  }
+}
+
+@keyframes stopWatchButtonAnimation {
+  0% {
+    transform: scale(1, 1);
+  }
+  98% {
+    transform: scale(1, 1);
+  }
+  100% {
+    transform: scale(1, 0.1);
+  }
+}

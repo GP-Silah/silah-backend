@@ -1,0 +1,27 @@
+<nav class="appbar">
+    <div class="appbar-item menu-toggle" [class.hidden]="menuToggleHidden()">
+        <span id="nav-toggle" class="nav-toggle" (click)="toggleMenu()" [class.is-active]="isMenuActive">
+                                <span></span>
+        <span></span>
+        <span></span>
+        </span>
+    </div>
+
+    <div class="appbar-item">
+        <figure class="parrot-logo image is-24x24">
+            <img src="/assets/parrot.png">
+        </figure>
+        <h1 class="parrot-title">{{title}}</h1>
+    </div>
+
+    <div class="appbar-fill-center"></div>
+
+    <div class="appbar-items-right">
+        <a class="appbar-item appbar-link" [routerLink]="['/projects']" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="is-active"
+            [class.is-hidden]="!isAuth">{{'Projects'|translate}}</a>
+        <a class="appbar-item appbar-link" [routerLink]="['/me']" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="is-active"
+            [class.is-hidden]="!isAuth">{{'Account'|translate}}</a>
+        <a class="appbar-item appbar-link" (click)="logout()" [class.is-hidden]="!isAuth">{{'Logout'|translate}}</a>
+    </div>
+
+</nav>

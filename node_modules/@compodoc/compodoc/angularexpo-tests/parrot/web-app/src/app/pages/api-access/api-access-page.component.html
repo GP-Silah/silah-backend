@@ -1,0 +1,28 @@
+<section class="section no-background">
+
+    <div class="spinner centered" *ngIf="loading"></div>
+    <div *ngIf="!loading">
+
+        <nav class="level is-mobile">
+            <div class="level-left">
+                <div class="level-item">
+                    <h1 class="title is-5">{{'API Access'|translate}}</h1>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <p>
+                        <strong>{{projectClients?.length}}</strong> project clients
+                    </p>
+                </div>
+                <p class="level-item">
+                    <register-app [projectId]="projectId"></register-app>
+                </p>
+            </div>
+        </nav>
+
+        <app-list [projectClients]="projectClients"></app-list>
+
+    </div>
+
+</section>

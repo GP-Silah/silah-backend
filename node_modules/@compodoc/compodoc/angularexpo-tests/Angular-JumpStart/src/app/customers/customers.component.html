@@ -1,0 +1,104 @@
+<div class="customers-page">
+        <div class="page-header">
+            <div class="header-content">
+                <h1 class="page-title">{{ title }}</h1>
+                <p class="page-subtitle">Manage your customer relationships</p>
+            </div>
+            <div class="header-actions">
+                <a routerLink="/customers/0/edit" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="16"/>
+                        <line x1="8" y1="12" x2="16" y2="12"/>
+                    </svg>
+                    New Customer
+                </a>
+            </div>
+        </div>
+
+        <div class="page-toolbar">
+            <div class="view-options">
+                <button 
+                    class="view-btn"
+                    [class.active]="displayMode === displayModeEnum.Card"
+                    (click)="changeDisplayMode(displayModeEnum.Card)"
+                    title="Card View">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Cards
+                </button>
+                <button 
+                    class="view-btn"
+                    [class.active]="displayMode === displayModeEnum.Grid"
+                    (click)="changeDisplayMode(displayModeEnum.Grid)"
+                    title="List View">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="8" y1="6" x2="21" y2="6"/>
+                        <line x1="8" y1="12" x2="21" y2="12"/>
+                        <line x1="8" y1="18" x2="21" y2="18"/>
+                        <line x1="3" y1="6" x2="3.01" y2="6"/>
+                        <line x1="3" y1="12" x2="3.01" y2="12"/>
+                        <line x1="3" y1="18" x2="3.01" y2="18"/>
+                    </svg>
+                    List
+                </button>
+                <button 
+                    class="view-btn"
+                    [class.active]="displayMode === displayModeEnum.Map"
+                    (click)="lazyLoadMapComponent()"
+                    title="Map View">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="1,6 1,22 8,18 16,22 23,18 23,2 16,6 8,2"/>
+                        <line x1="8" y1="2" x2="8" y2="18"/>
+                        <line x1="16" y1="6" x2="16" y2="22"/>
+                    </svg>
+                    Map
+                </button>
+            </div>
+            <div class="toolbar-search">
+                <cm-filter-textbox (changed)="filterChanged($event)"></cm-filter-textbox>
+            </div>
+        </div>
+        
+        <cm-customers-card 
+          [customers]="filteredCustomers" 
+          (customerDeleted)="deleteCustomer($event)"
+          [hidden]="displayMode !== displayModeEnum.Card"></cm-customers-card>
+    
+        <cm-customers-grid 
+          [customers]="filteredCustomers" 
+          [hidden]="displayMode !== displayModeEnum.Grid"></cm-customers-grid>
+
+        <!-- lazy load the map component -->
+        <div [hidden]="displayMode !== displayModeEnum.Map">
+            <ng-container #mapsContainer></ng-container>
+        </div>
+
+        <!-- 
+            This could be used to eagerly load the map component.
+            Would need to import MapModule into either SharedModule (and export it) or 
+            into CustomersModule to use it this way.
+        -->
+        <!-- @if (filteredCustomers.length) {
+            <cm-map [zoom]="2" 
+                [enabled]="displayMode === displayModeEnum.Map" 
+                [hidden]="displayMode !== displayModeEnum.Map">
+              @for (customer of filteredCustomers; track customer.id) {
+                <cm-map-point 
+                  [latitude]="customer.latitude" 
+                  [longitude]="customer.longitude"
+                  [markerText]="'<h3>' + customer.firstName + ' ' + customer.lastName + '</h3>' + customer.city + ', ' + customer.state.name"></cm-map-point>
+              }
+            </cm-map>
+        } -->
+
+        <cm-pagination
+            [totalItems]="totalRecords" 
+            [pageSize]="pageSize" 
+            (pageChanged)="pageChanged($event)"></cm-pagination>
+          
+</div>

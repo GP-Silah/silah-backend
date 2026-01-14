@@ -1,0 +1,26 @@
+<table class="table is-bordered is-striped is-narrow">
+    <thead>
+        <tr>
+            <th>{{'Name'|translate}}</th>
+            <th>{{'Email'|translate}}</th>
+            <th>{{'Role'|translate}}</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let user of users">
+            <td class="center-align">{{user.name}}</td>
+            <td class="center-align">{{user.email}}</td>
+            <td class="center-align"><strong><span class="tag is-info is-small">{{user.role}}</span></strong></td>
+            <td class="center-align">
+                <edit-project-user [user]="user" [hidden]="!canUpdateRoles"></edit-project-user>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div *ngIf="users?.length <= 0">
+    <div class="notification is-warning">
+        {{'No Team Members yet.'|translate}}
+    </div>
+</div>

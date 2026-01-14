@@ -24,67 +24,67 @@
 <title>cluster_OrderModule</title>
 <polygon fill="none" stroke="black" stroke-dasharray="1,5" points="8,-70 8,-195 529,-195 529,-70 8,-70"/>
 </g>
-<g id="clust3" class="cluster">
-<title>cluster_OrderModule_imports</title>
-<polygon fill="none" stroke="black" points="166,-78 166,-130 521,-130 521,-78 166,-78"/>
-</g>
 <g id="clust6" class="cluster">
 <title>cluster_OrderModule_providers</title>
-<polygon fill="none" stroke="black" points="16,-78 16,-130 158,-130 158,-78 16,-78"/>
+<polygon fill="none" stroke="black" points="379,-78 379,-130 521,-130 521,-78 379,-78"/>
+</g>
+<g id="clust3" class="cluster">
+<title>cluster_OrderModule_imports</title>
+<polygon fill="none" stroke="black" points="16,-78 16,-130 371,-130 371,-78 16,-78"/>
 </g>
 <!-- BuyerModule -->
 <g id="node1" class="node">
 <title>BuyerModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="512.76,-122 509.76,-126 488.76,-126 485.76,-122 419.24,-122 419.24,-86 512.76,-86 512.76,-122"/>
-<text text-anchor="middle" x="466" y="-99.8" font-family="Times,serif" font-size="14.00">BuyerModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="362.76,-122 359.76,-126 338.76,-126 335.76,-122 269.24,-122 269.24,-86 362.76,-86 362.76,-122"/>
+<text text-anchor="middle" x="316" y="-99.8" font-family="Times,serif" font-size="14.00">BuyerModule</text>
 </g>
 <!-- OrderModule -->
 <g id="node4" class="node">
 <title>OrderModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="334.19,-187 331.19,-191 310.19,-191 307.19,-187 241.81,-187 241.81,-151 334.19,-151 334.19,-187"/>
-<text text-anchor="middle" x="288" y="-164.8" font-family="Times,serif" font-size="14.00">OrderModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="304.19,-187 301.19,-191 280.19,-191 277.19,-187 211.81,-187 211.81,-151 304.19,-151 304.19,-187"/>
+<text text-anchor="middle" x="258" y="-164.8" font-family="Times,serif" font-size="14.00">OrderModule</text>
 </g>
 <!-- BuyerModule&#45;&gt;OrderModule -->
 <g id="edge1" class="edge">
 <title>BuyerModule&#45;&gt;OrderModule</title>
-<path fill="none" stroke="black" d="M466,-122.11C466,-141.34 466,-169 466,-169 466,-169 344.3,-169 344.3,-169"/>
-<polygon fill="black" stroke="black" points="344.3,-165.5 334.3,-169 344.3,-172.5 344.3,-165.5"/>
+<path fill="none" stroke="black" d="M286.61,-122.11C286.61,-122.11 286.61,-140.99 286.61,-140.99"/>
+<polygon fill="black" stroke="black" points="283.11,-140.99 286.61,-150.99 290.11,-140.99 283.11,-140.99"/>
 </g>
 <!-- ProductModule -->
 <g id="node2" class="node">
 <title>ProductModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="401.6,-122 398.6,-126 377.6,-126 374.6,-122 298.4,-122 298.4,-86 401.6,-86 401.6,-122"/>
-<text text-anchor="middle" x="350" y="-99.8" font-family="Times,serif" font-size="14.00">ProductModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="251.6,-122 248.6,-126 227.6,-126 224.6,-122 148.4,-122 148.4,-86 251.6,-86 251.6,-122"/>
+<text text-anchor="middle" x="200" y="-99.8" font-family="Times,serif" font-size="14.00">ProductModule</text>
 </g>
 <!-- ProductModule&#45;&gt;OrderModule -->
 <g id="edge2" class="edge">
 <title>ProductModule&#45;&gt;OrderModule</title>
-<path fill="none" stroke="black" d="M316.27,-122.11C316.27,-122.11 316.27,-140.99 316.27,-140.99"/>
-<polygon fill="black" stroke="black" points="312.77,-140.99 316.27,-150.99 319.77,-140.99 312.77,-140.99"/>
+<path fill="none" stroke="black" d="M231.73,-122.11C231.73,-122.11 231.73,-140.99 231.73,-140.99"/>
+<polygon fill="black" stroke="black" points="228.23,-140.99 231.73,-150.99 235.23,-140.99 228.23,-140.99"/>
 </g>
 <!-- SupplierModule -->
 <g id="node3" class="node">
 <title>SupplierModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="280.49,-122 277.49,-126 256.49,-126 253.49,-122 173.51,-122 173.51,-86 280.49,-86 280.49,-122"/>
-<text text-anchor="middle" x="227" y="-99.8" font-family="Times,serif" font-size="14.00">SupplierModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="130.49,-122 127.49,-126 106.49,-126 103.49,-122 23.51,-122 23.51,-86 130.49,-86 130.49,-122"/>
+<text text-anchor="middle" x="77" y="-99.8" font-family="Times,serif" font-size="14.00">SupplierModule</text>
 </g>
 <!-- SupplierModule&#45;&gt;OrderModule -->
 <g id="edge3" class="edge">
 <title>SupplierModule&#45;&gt;OrderModule</title>
-<path fill="none" stroke="black" d="M261.2,-122.11C261.2,-122.11 261.2,-140.99 261.2,-140.99"/>
-<polygon fill="black" stroke="black" points="257.7,-140.99 261.2,-150.99 264.7,-140.99 257.7,-140.99"/>
+<path fill="none" stroke="black" d="M77,-122.11C77,-141.34 77,-169 77,-169 77,-169 201.86,-169 201.86,-169"/>
+<polygon fill="black" stroke="black" points="201.86,-172.5 211.86,-169 201.86,-165.5 201.86,-172.5"/>
 </g>
 <!-- OrderService -->
 <g id="node5" class="node">
 <title>OrderService</title>
-<ellipse fill="#fdb462" stroke="black" cx="87" cy="-104" rx="62.52" ry="18"/>
-<text text-anchor="middle" x="87" y="-99.8" font-family="Times,serif" font-size="14.00">OrderService</text>
+<ellipse fill="#fdb462" stroke="black" cx="450" cy="-104" rx="62.52" ry="18"/>
+<text text-anchor="middle" x="450" y="-99.8" font-family="Times,serif" font-size="14.00">OrderService</text>
 </g>
 <!-- OrderService&#45;&gt;OrderModule -->
 <g id="edge4" class="edge">
 <title>OrderService&#45;&gt;OrderModule</title>
-<path fill="none" stroke="black" d="M87,-122.11C87,-141.34 87,-169 87,-169 87,-169 231.89,-169 231.89,-169"/>
-<polygon fill="black" stroke="black" points="231.89,-172.5 241.89,-169 231.89,-165.5 231.89,-172.5"/>
+<path fill="none" stroke="black" d="M450,-122.11C450,-141.34 450,-169 450,-169 450,-169 314.48,-169 314.48,-169"/>
+<polygon fill="black" stroke="black" points="314.48,-165.5 304.48,-169 314.48,-172.5 314.48,-165.5"/>
 </g>
 </g>
 </svg>

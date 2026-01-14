@@ -1,0 +1,14 @@
+.mat-dialog-content {
+  table {
+    width: 100%;
+  }
+}
+
+mat-form-field {
+  width: 120px !important;
+  display: inline-block !important;
+  &.form-select-control {
+    width: 170px !important;
+    margin-right: 20px;
+  }
+}

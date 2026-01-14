@@ -1,0 +1,63 @@
+.appbar {
+    top: 0;
+    position: fixed;
+    padding: 0 20px;
+    width: 100% !important;
+    height: 60px !important;
+    background-color: #FFF;
+    display: flex;
+    box-shadow: 0 1px 3px rgba(10, 10, 10, 0.1);
+    z-index: 150;
+}
+
+.appbar-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-toggle.hidden {
+    visibility: hidden;
+}
+
+.appbar-fill-center {
+    flex: 1;
+}
+
+.appbar-items-right {
+    display: flex;
+    flex-flow: row;
+    flex-basis: 180px;
+    justify-content: space-between;
+}
+
+.menu {
+    display: flex;
+    flex-flow: row;
+}
+
+a.appbar-link {
+    color: #1793d3;
+    font-weight: bold;
+}
+
+a.appbar-link.is-active {
+    border-top: solid transparent;
+    border-bottom: solid #1793d3;
+}
+
+.nav-toggle {
+    background-color: #FFF;
+}
+
+.nav-toggle span {
+    background: #1793d3;
+    height: 2px;
+}
+
+.parrot-title {
+    color: #757575;
+    font-weight: bold;
+    margin: 0 5px;
+    font-size: 1.3em;
+}

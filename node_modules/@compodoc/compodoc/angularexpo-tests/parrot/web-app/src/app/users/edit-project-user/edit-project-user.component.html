@@ -1,0 +1,56 @@
+<button class="button is-warning" (click)="openModal()">Edit</button>
+<div class="modal" [class.is-active]="modalOpen">
+    <div class="modal-background" (click)="closeModal()"></div>
+    <div class="modal-content">
+        <div class="box">
+
+            <div class="level is-mobile">
+                <div class="level-left">
+                    <div class="level-item">
+                        <h1 class="title">{{'Edit project user'|translate}}</h1>
+                    </div>
+                </div>
+                <div class="level-right">
+                    <div class="level-item">
+                        <button class="button is-danger" (click)="revokeUser()" [class.is-loading]="loading" [disabled]="loading">{{'Revoke all rights'|translate}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="errors && errors.length > 0">
+                <div class="message is-danger" *ngFor="let err of errors">
+                    <div class="message-body">
+                        {{err}}
+                    </div>
+                </div>
+            </div>
+
+            <form (ngSubmit)="commitChanges()" #editUserForm="ngForm">
+                <div class="control">
+                    <div class="level is-mobile">
+                        <div class="level-left">
+                            <div class="level-item">
+                                <strong>{{user?.name}}</strong> <em>{{user?.email}}</em> <strong><span class="tag is-info is-small">{{user?.role}}</span></strong>
+                            </div>
+                        </div>
+                        <div class="level-right">
+                            <div class="level-item">
+                                <span class="select">
+                                    <select name="role" [(ngModel)]="selectedRole" required>
+                                        <option value="" disabled selected>{{'Select a new role'|translate}}</option>
+                                        <option *ngFor="let role of roles" value="{{role}}">{{role}}</option>
+                                    </select>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="control">
+                    <button type="button" class="button" (click)="closeModal()" [disabled]="loading">{{'Cancel'|translate}}</button>
+                    <button type="submit" class="button is-success" [class.is-loading]="loading" [disabled]="!editUserForm.form.valid || loading">{{'Save changes'|translate}}</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

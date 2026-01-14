@@ -1,0 +1,71 @@
+.top-bar, .top-bar ul {
+  background-color: rgba(white, 0.98);
+}
+
+.top-bar:hover, .top-bar ul:hover {
+  background-color: white;
+}
+
+.top-bar input {
+  max-width: none;
+  margin-right: 1rem;
+}
+
+.input-group{
+  margin-bottom: 0;
+}
+.menu-text{
+  color: rgb(123, 120, 126);
+}
+a{
+  color: rgb(123, 120, 126);
+}
+input{
+  border: none;
+  box-shadow: none;
+  background-color: rgba(190, 181, 181, 0.08);
+  border-radius: 5px;
+}
+
+.top-bar-search-button{
+  background-color: transparent;
+  border: none;
+}
+
+.top-bar-search-button::hover{
+  color: rgb(123, 120, 126);;
+}
+.text-brown{
+  color: rgb(123, 120, 126);
+}
+
+.top-bar-search-label{
+  background-color: transparent;
+  border: none;
+}
+
+.avatar{
+  width: 50%;
+  border-radius: 99px;
+}
+
+.fa-thumb-tack{
+  color: rgb(123, 120, 126);
+  top: -28px;
+  right: -70px;
+  position: relative;
+}
+
+.new-Pin-btn{
+  margin: -5px 0 -14px 0;
+}
+
+.fa-github {
+  top: 3px;
+  left: -11px;
+  position: relative;
+}
+
+.icons-list{
+  height: 2.5rem;
+}

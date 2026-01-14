@@ -1,0 +1,27 @@
+<section class="section no-background">
+    <div class="spinner centered" *ngIf="loading"></div>
+    <div *ngIf="!loading">
+
+        <nav class="level is-mobile">
+            <div class="level-left">
+                <div class="level-item">
+                    <h1 class="title is-5">{{'Project Team'|translate}}</h1>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item">
+                    <p>
+                        <strong>{{projectUsers ? projectUsers.length : 0}}</strong> members
+                    </p>
+                </div>
+                <p class="level-item">
+                    <add-project-user [hidden]="!canAssignRoles"></add-project-user>
+                </p>
+            </div>
+        </nav>
+
+        <project-users-list [users]="projectUsers" [projectId]="projectId" [loading]="loading" [canUpdateRoles]="canUpdateRoles">
+        </project-users-list>
+
+    </div>
+</section>

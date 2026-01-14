@@ -1,0 +1,12 @@
+---
+description: TypeScript coding standards and type safety guidelines for Angular
+globs: **/*.{ts}
+---
+
+- Use strict type checking options in tsconfig.json for better type safety
+- Implement interfaces for defining object shapes and service contracts
+- Use union types and type guards for handling multiple possible types
+- Leverage generics for creating reusable components and services
+- Implement readonly properties and readonly arrays to prevent unintended mutations
+- Use type assertions cautiously and only when necessary
+- Implement proper type inference by using explicit type annotations sparingly

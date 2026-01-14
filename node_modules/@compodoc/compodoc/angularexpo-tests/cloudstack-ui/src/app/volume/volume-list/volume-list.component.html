@@ -1,0 +1,10 @@
+<cs-volume-grouped-list
+  class="padding"
+  [list]="volumes"
+  [groupings]="groupings"
+  [component]="itemComponent"
+  [dynamicInputs]="inputs"
+  [dynamicOutputs]="outputs"
+>
+</cs-volume-grouped-list>
+<cs-no-results *ngIf="!volumes?.length"></cs-no-results>

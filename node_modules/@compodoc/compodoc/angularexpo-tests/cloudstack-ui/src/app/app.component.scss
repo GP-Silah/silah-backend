@@ -1,0 +1,57 @@
+:host {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5 !important;
+}
+
+mat-sidenav-container {
+  flex-grow: 1;
+  min-height: 100%;
+  height: auto !important;
+  max-width: 100%;
+  margin: 0;
+
+  mat-sidenav {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 216px;
+    height: 100%;
+    max-height: 100%;
+    box-sizing: border-box;
+    will-change: transform;
+    color: #424242;
+  }
+}
+
+/deep/ button {
+  &.mat-menu-item {
+    padding: 0 10px;
+    line-height: 44px;
+    height: 44px;
+  }
+}
+
+:host /deep/ .mat-tab-body-content {
+  height: inherit;
+  overflow: hidden;
+}
+
+/deep/ .mat-tab-labels {
+  justify-content: space-around;
+}
+
+/deep/ .mat-tab-tooltip {
+  height: 40px;
+}
+
+.container {
+  display: flex;
+  padding: 15px 0;
+  justify-content: space-between;
+}

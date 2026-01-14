@@ -1,0 +1,13 @@
+---
+description: Best practices for Angular applications
+globs: **/*.{ts}
+---
+
+- Use Angular's dependency injection system for better modularity and testability
+- Implement OnPush change detection strategy for performance optimization
+- Utilize reactive forms for complex form handling and validation
+- Leverage Angular's built-in pipes for data transformation and internationalization
+- Use NgRx or similar state management for large-scale applications to manage global state
+- Implement lazy loading of modules to improve initial load time
+- Use Angular's HttpClient for making HTTP requests and handling responses
+- Implement proper error handling using RxJS operators and Angular's error handling mechanisms

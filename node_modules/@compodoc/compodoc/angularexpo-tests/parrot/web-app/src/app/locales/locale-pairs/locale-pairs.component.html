@@ -1,0 +1,23 @@
+<table class="table is-bordered is-narrow">
+    <thead>
+        <tr>
+            <th>{{'String'|translate}}</th>
+            <th>{{'Translation'|translate}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let pair of pairs">
+            <td>{{pair.key}}</td>
+            <td>
+                <p [hidden]="editable">{{pair.value}}</p>
+                <editable-textfield [pair]="pair" [loading]="updatePending" [hidden]="!editable" [commit]="commitPair"></editable-textfield>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div *ngIf="pairs && pairs.length <= 0">
+    <div class="notification is-warning">
+        {{'Locale translations are empty. Have you created any Project Strings?'|translate}}
+    </div>
+</div>

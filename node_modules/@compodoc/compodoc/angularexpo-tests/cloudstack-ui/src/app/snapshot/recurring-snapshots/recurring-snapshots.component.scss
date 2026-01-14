@@ -1,0 +1,22 @@
+:host {
+  position: relative;
+  display: block;
+}
+
+/deep/ .recurring-snapshots-dialog {
+  width: 730px !important;
+}
+/deep/ .mat-dialog-content {
+  .mat-dialog-actions {
+    margin-bottom: 0px;
+    padding-bottom: 0;
+  }
+}
+
+.editor {
+  margin-top: 10px;
+}
+
+.list {
+  margin-bottom: 30px;
+}

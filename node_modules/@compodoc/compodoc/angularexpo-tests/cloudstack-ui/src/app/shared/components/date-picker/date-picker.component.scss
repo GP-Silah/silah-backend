@@ -1,0 +1,16 @@
+:host {
+  display: inline-flex;
+}
+
+mat-form-field {
+  width: 100px;
+
+  input {
+    font-size: 16px;
+  }
+}
+
+.align-middle {
+  display: flex;
+  align-self: center;
+}

@@ -1,0 +1,11 @@
+.about-page {
+  background: transparent;
+  padding: 0;
+}
+
+/* Page header now uses global base styles */
+
+
+.content-section {
+  margin-bottom: var(--spacing-xl);
+}
