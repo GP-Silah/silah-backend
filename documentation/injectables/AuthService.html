@@ -1,0 +1,2246 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >AuthService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/auth/auth.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>AuthService contains all authentication-related business logic,
+such as signup, password hashing, validation, and JWT generation.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#changePassword" >changePassword</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#encryptPassword" >encryptPassword</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#generateEmailVerificationToken" >generateEmailVerificationToken</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#login" >login</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#requestPasswordReset" >requestPasswordReset</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#resendVerificationEmail" >resendVerificationEmail</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#resetPassword" >resetPassword</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#sendResetPasswordEmail" >sendResetPasswordEmail</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#sendVerificationEmail" >sendVerificationEmail</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#signUp" >signUp</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#switchUserRole" >switchUserRole</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#verifyEmail" >verifyEmail</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prisma: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, jwtService: JwtService, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, tapPaymentsService: <a href="../injectables/TapPaymentsService.html" target="_self">TapPaymentsService</a>, wathqService: <a href="../injectables/WathqService.html" target="_self">WathqService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/auth/auth.service.ts:34</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prisma</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>jwtService</td>
+                                                  
+                                                        <td>
+                                                                    <code>JwtService</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>userService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/UserService.html" target="_self" >UserService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>tapPaymentsService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TapPaymentsService.html" target="_self" >TapPaymentsService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>wathqService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/WathqService.html" target="_self" >WathqService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="changePassword"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>changePassword</b></span>
+                        <a href="#changePassword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>changePassword(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/ChangePasswordDto.html" target="_self">ChangePasswordDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="736"
+                                    class="link-to-prism">src/auth/auth.service.ts:736</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/ChangePasswordDto.html" target="_self" >ChangePasswordDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="encryptPassword"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>encryptPassword</b></span>
+                        <a href="#encryptPassword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>encryptPassword(plainText: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, saltRounds: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="51"
+                                    class="link-to-prism">src/auth/auth.service.ts:51</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Hashes a plain-text password using bcrypt.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>plainText</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>The raw password to hash.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>saltRounds</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>10</code>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>The cost factor for hashing. Default is 10.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>A hashed password string.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateEmailVerificationToken"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>generateEmailVerificationToken</b></span>
+                        <a href="#generateEmailVerificationToken"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>generateEmailVerificationToken(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="194"
+                                    class="link-to-prism">src/auth/auth.service.ts:194</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Generates a JWT token for email verification.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The user&#39;s ID.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The user&#39;s email address.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>A signed JWT token.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="login"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>login</b></span>
+                        <a href="#login"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>login(payload: <a href="../classes/LoginDto.html" target="_self">LoginDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="618"
+                                    class="link-to-prism">src/auth/auth.service.ts:618</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Authenticates a user using their email or CRN and password.</p>
+<ul>
+<li>Validates that the user exists by email or CRN.</li>
+<li>Compares the entered password with the hashed password in the database.</li>
+<li>If valid, returns a signed JWT token.</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>payload</td>
+                                            <td>
+                                                            <code><a href="../classes/LoginDto.html" target="_self" >LoginDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>Contains the user&#39;s login credentials (email/CRN and password).</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The signed JWT token for authenticated access.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="requestPasswordReset"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>requestPasswordReset</b></span>
+                        <a href="#requestPasswordReset"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>requestPasswordReset(dto: <a href="../classes/EmailDto.html" target="_self">EmailDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="660"
+                                    class="link-to-prism">src/auth/auth.service.ts:660</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Handles a password reset request by generating a JWT token and sending it to the user&#39;s email.</p>
+<ul>
+<li>Checks if the user exists and their email is verified.</li>
+<li>Generates a short-lived JWT reset token (5 minutes).</li>
+<li>Sends the reset password email with the token.</li>
+</ul>
+<p>For security reasons, this method returns silently even if the user does not exist or their email is not verified.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/EmailDto.html" target="_self" >EmailDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>A success message indicating that the email was sent (if applicable).</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="resendVerificationEmail"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>resendVerificationEmail</b></span>
+                        <a href="#resendVerificationEmail"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>resendVerificationEmail(dto: <a href="../classes/EmailDto.html" target="_self">EmailDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="581"
+                                    class="link-to-prism">src/auth/auth.service.ts:581</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Generates a new email verification token and sends a verification email.</p>
+<ul>
+<li>Validates the existence of the user and their unverified email status.</li>
+<li>Generates a new JWT token and sends it via email.</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/EmailDto.html" target="_self" >EmailDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>A confirmation message that the email was resent.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="resetPassword"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>resetPassword</b></span>
+                        <a href="#resetPassword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>resetPassword(resetToken: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, payload: <a href="../classes/ResetPasswordDto.html" target="_self">ResetPasswordDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="538"
+                                    class="link-to-prism">src/auth/auth.service.ts:538</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Resets the password of a user using a provided JWT token and a new password.</p>
+<ul>
+<li>Verifies the reset password JWT token.</li>
+<li>Ensures the user exists.</li>
+<li>Hashes and updates the user&#39;s password.</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>resetToken</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The JWT token sent to the user&#39;s email for password reset.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>payload</td>
+                                            <td>
+                                                            <code><a href="../classes/ResetPasswordDto.html" target="_self" >ResetPasswordDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>DTO containing the new password.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>A success message confirming password reset.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sendResetPasswordEmail"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>sendResetPasswordEmail</b></span>
+                        <a href="#sendResetPasswordEmail"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sendResetPasswordEmail(email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, token: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="360"
+                                    class="link-to-prism">src/auth/auth.service.ts:360</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Sends a reset password email to the user with a JWT-based reset link.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The recipient&#39;s email address.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>token</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>A JWT token used to authenticate the password reset request.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sendVerificationEmail"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>sendVerificationEmail</b></span>
+                        <a href="#sendVerificationEmail"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sendVerificationEmail(email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, token: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="214"
+                                    class="link-to-prism">src/auth/auth.service.ts:214</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Sends an email to the user containing a verification link with a JWT token.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The email address of the user to send the verification to.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>token</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The JWT token to be included in the verification link.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="signUp"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>signUp</b></span>
+                        <a href="#signUp"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>signUp(payload: <a href="../classes/SignupDto.html" target="_self">SignupDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="71"
+                                    class="link-to-prism">src/auth/auth.service.ts:71</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Registers a new user in the system.</p>
+<ul>
+<li>Validates categories.</li>
+<li>Ensures uniqueness of NID, CRN, and email.</li>
+<li>Hashes the password.</li>
+<li>Stores the user and links categories.</li>
+<li>Returns a JWT token.</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>payload</td>
+                                            <td>
+                                                            <code><a href="../classes/SignupDto.html" target="_self" >SignupDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The signup data from the user.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>A JWT token to be sent to the client.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="switchUserRole"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>switchUserRole</b></span>
+                        <a href="#switchUserRole"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>switchUserRole(req: Request, res: Response)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="682"
+                                    class="link-to-prism">src/auth/auth.service.ts:682</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>req</td>
+                                            <td>
+                                                        <code>Request</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>res</td>
+                                            <td>
+                                                        <code>Response</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="verifyEmail"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>verifyEmail</b></span>
+                        <a href="#verifyEmail"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>verifyEmail(token: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="495"
+                                    class="link-to-prism">src/auth/auth.service.ts:495</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Verifies the email address of a user using a provided JWT token.</p>
+<ul>
+<li>Decodes and verifies the JWT.</li>
+<li>Confirms the user exists and is not already verified.</li>
+<li>Updates the user&#39;s verification status to <code>true</code>.</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>token</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The JWT token sent to the user&#39;s email.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>A success message confirming email verification.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { UserService } from &#x27;../user/user.service&#x27;;
+import {
+    BadRequestException,
+    forwardRef,
+    Inject,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from &#x27;@nestjs/common&#x27;;
+import { SignupDto } from &#x27;./dtos/signup.dto&#x27;;
+import * as bcrypt from &#x27;bcrypt&#x27;;
+import { PrismaService } from &#x27;../prisma/prisma.service&#x27;;
+import { JwtService } from &#x27;@nestjs/jwt&#x27;;
+import { LoginDto } from &#x27;./dtos/login.dto&#x27;;
+import * as crypto from &#x27;crypto&#x27;;
+import { ResetPasswordDto } from &#x27;./dtos/resetPassword.dto&#x27;;
+import { UserRole } from &#x27;../enums/userRole.enum&#x27;;
+import { Request, Response } from &#x27;express&#x27;;
+import { TapPaymentsService } from &#x27;src/tap-payments/tap-payments.service&#x27;;
+import { WathqService } from &#x27;src/wathq/wathq.service&#x27;;
+import { ChangePasswordDto } from &#x27;./dtos/changePassword.dto&#x27;;
+import { Languages } from &#x27;@prisma/client&#x27;;
+import { EmailDto } from &#x27;./dtos/email.dto&#x27;;
+import * as sgMail from &#x27;@sendgrid/mail&#x27;;
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+
+/**
+ * AuthService contains all authentication-related business logic,
+ * such as signup, password hashing, validation, and JWT generation.
+ */
+
+@Injectable()
+export class AuthService {
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly jwtService: JwtService,
+        @Inject(forwardRef(() &#x3D;&gt; UserService))
+        private readonly userService: UserService,
+        private readonly tapPaymentsService: TapPaymentsService,
+        private readonly wathqService: WathqService,
+    ) {}
+
+    /**
+     * Hashes a plain-text password using bcrypt.
+     *
+     * @param {string} plainText - The raw password to hash.
+     * @param {number} saltRounds - The cost factor for hashing. Default is 10.
+     * @returns {Promise&lt;string&gt;} A hashed password string.
+     */
+    async encryptPassword(
+        // this is not a private function because it is used in the user service
+        plainText: string,
+        saltRounds: number &#x3D; 10,
+    ): Promise&lt;string&gt; {
+        return await bcrypt.hash(plainText, saltRounds);
+    }
+
+    /**
+     * Registers a new user in the system.
+     * - Validates categories.
+     * - Ensures uniqueness of NID, CRN, and email.
+     * - Hashes the password.
+     * - Stores the user and links categories.
+     * - Returns a JWT token.
+     *
+     * @param {SignupDto} payload - The signup data from the user.
+     * @returns {{token: string}} A JWT token to be sent to the client.
+     * @throws BadRequestException if validation fails.
+     */
+    async signUp(payload: SignupDto): Promise&lt;{ token: string }&gt; {
+        // Validate categories: must exist &amp; must be main (no parentCategoryId)
+        const categories &#x3D; await this.prisma.category.findMany({
+            where: {
+                id: { in: payload.categories },
+                parentCategoryId: null, // ensures only main categories
+            },
+        });
+
+        if (categories.length !&#x3D;&#x3D; payload.categories.length) {
+            const foundIds &#x3D; categories.map((c) &#x3D;&gt; c.id);
+            const missing &#x3D; payload.categories.filter(
+                (id) &#x3D;&gt; !foundIds.includes(id),
+            );
+            throw new BadRequestException(
+                &#x60;These categories are invalid or not main categories: ${missing.join(&#x27;, &#x27;)}&#x60;,
+            );
+        }
+
+        const categoryIds &#x3D; categories.map((c) &#x3D;&gt; c.id);
+
+        // Insure that the NID, CRN, Email are unique in DB
+        const existingUser &#x3D; await this.prisma.user.findFirst({
+            where: {
+                OR: [
+                    { nid: payload.nid },
+                    { crn: payload.crn },
+                    { email: payload.email },
+                ],
+            },
+        });
+        if (existingUser) {
+            if (existingUser.nid &#x3D;&#x3D;&#x3D; payload.nid) {
+                throw new BadRequestException(&#x27;NID already exists&#x27;);
+            }
+            if (existingUser.crn &#x3D;&#x3D;&#x3D; payload.crn) {
+                throw new BadRequestException(&#x27;CRN already exists&#x27;);
+            }
+            if (existingUser.email &#x3D;&#x3D;&#x3D; payload.email) {
+                throw new BadRequestException(&#x27;Email already exists&#x27;);
+            }
+        }
+
+        // // Validate CRN is real and active via Wathq API
+        // const wathqRes &#x3D; await this.wathqService.getBasicInfo(payload.crn);
+        // console.log(wathqRes);
+
+        // if (!wathqRes) {
+        //     throw new BadRequestException(
+        //         &#x27;The provided CRN does not exist in Wathq records&#x27;,
+        //     );
+        // }
+
+        // // Ensure it&#x27;s active (status name in Arabic or English)
+        // const status &#x3D; wathqRes.status?.name?.trim();
+        // if (status !&#x3D;&#x3D; &#x27;فعال&#x27; &amp;&amp; status.toLowerCase() !&#x3D;&#x3D; &#x27;active&#x27;) {
+        //     throw new BadRequestException(
+        //         &#x60;The CRN exists but is not active (status: ${status})&#x60;,
+        //     );
+        // }
+
+        // Create a Customer on Tap Payments API of the user
+        const tapCustomerId &#x3D; await this.tapPaymentsService.createCustomer({
+            first_name: payload.name,
+            email: payload.email,
+        });
+
+        // Hash the password and store the user in DB
+        const hashedPassword &#x3D; await this.encryptPassword(payload.password);
+        const user &#x3D; await this.prisma.user.create({
+            data: {
+                ...payload,
+                tapCustomerId,
+                password: hashedPassword,
+                categories: {
+                    create: categoryIds.map((categoryId) &#x3D;&gt; ({
+                        category: {
+                            connect: { id: categoryId },
+                        },
+                    })),
+                },
+            },
+        });
+        await this.userService.generateDefaultAvatar(user.email);
+        await this.prisma.buyer.create({
+            data: {
+                userId: user.id,
+            },
+        });
+        await this.prisma.notificationPreference.create({
+            data: {
+                userId: user.id,
+            },
+        });
+
+        // Generate a JWT token for email verification and send it via email
+        const emailToken &#x3D; this.generateEmailVerificationToken(
+            user.id,
+            user.email,
+        );
+        this.sendVerificationEmail(
+            payload.email,
+            (await emailToken).toString(),
+        );
+
+        // Generate a JWT token and return it to the controller so it sends it as a cookie
+        const token &#x3D; await this.jwtService.signAsync({
+            sub: user.id, // Standard JWT subject claim
+            email: user.email, // Useful for some identity checks
+            role: user.role, // For role-based access
+            isVerified: user.isEmailVerified, // For verified-only access
+            jti: crypto.randomUUID(),
+        });
+        return { token };
+    }
+
+    /**
+     * Generates a JWT token for email verification.
+     *
+     * @param {string} id - The user&#x27;s ID.
+     * @param {string} email - The user&#x27;s email address.
+     * @returns {Promise&lt;string&gt;} A signed JWT token.
+     */
+    async generateEmailVerificationToken(
+        // this is not a private function because it is used in the user service
+        id: string,
+        email: string,
+    ): Promise&lt;string&gt; {
+        return await this.jwtService.signAsync({
+            sub: id,
+            email,
+            jti: crypto.randomUUID(),
+        });
+    }
+
+    /**
+     * Sends an email to the user containing a verification link with a JWT token.
+     *
+     * @param {string} email - The email address of the user to send the verification to.
+     * @param {string} token - The JWT token to be included in the verification link.
+     *
+     * @throws {InternalServerErrorException} Thrown if sending the email fails due to transport issues or misconfiguration.
+     */
+    async sendVerificationEmail(email: string, token: string) {
+        // this is not a private function because it is used in the user service
+        const verifyUrl &#x3D; &#x60;${process.env.FRONTEND_URL}/verify-email?token&#x3D;${token}&#x60;;
+
+        // Get user langauge preference
+        const lang &#x3D; await this.prisma.user.findUnique({
+            where: { email },
+            select: { preferredLanguage: true },
+        });
+
+        let mailOptions &#x3D; {
+            from: &#x60;&quot;Silah Support&quot; &lt;${process.env.MAIL_USER}&gt;&#x60;,
+            to: email,
+            subject: &#x27;Verify your email address&#x27;,
+            html: &#x60;
+  &lt;div style&#x3D;&quot;
+      font-family: Arial, sans-serif;
+      color: #000000;
+      text-align: center;
+      background-color: #ffffff;
+      padding: 30px;
+  &quot;&gt;
+  &lt;img src&#x3D;&quot;https://silah.site/logo.png&quot; alt&#x3D;&quot;Silah Logo&quot; width&#x3D;&quot;120&quot; style&#x3D;&quot;margin-bottom: 20px;&quot; /&gt;
+    &lt;h2 style&#x3D;&quot;color: #000000; margin-bottom: 20px;&quot;&gt;Welcome to &lt;span style&#x3D;&quot;color:#543361;&quot;&gt;Silah&lt;/span&gt;!&lt;/h2&gt;
+    &lt;p style&#x3D;&quot;color: #000000; font-size: 16px; margin-bottom: 25px;&quot;&gt;
+      Please verify your email address by clicking the button below:
+    &lt;/p&gt;
+
+    &lt;a href&#x3D;&quot;${verifyUrl}&quot; 
+      style&#x3D;&quot;
+        display: inline-block;
+        padding: 12px 25px;
+        background-color: #543361;
+        color: #ffffff;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 6px;
+      &quot;&gt;
+      Verify Email
+    &lt;/a&gt;
+
+    &lt;p style&#x3D;&quot;color: #000000; margin-top: 30px; font-size: 14px;&quot;&gt;
+      If the button doesn&#x27;t work, copy and paste the following link in your browser:
+    &lt;/p&gt;
+
+    &lt;p style&#x3D;&quot;color: #000000; font-size: 14px; word-break: break-all;&quot;&gt;
+      &lt;a href&#x3D;&quot;${verifyUrl}&quot; style&#x3D;&quot;color: #543361; text-decoration: none;&quot;&gt;${verifyUrl}&lt;/a&gt;
+    &lt;/p&gt;
+
+    &lt;hr style&#x3D;&quot;margin: 30px 0; border: none; border-top: 1px solid #ddd;&quot; /&gt;
+
+    &lt;small style&#x3D;&quot;color: #555555; font-size: 12px;&quot;&gt;
+      This is an automated message. Please do not reply.
+    &lt;/small&gt;
+  &lt;/div&gt;
+  &#x60;,
+        };
+
+        if (lang &amp;&amp; lang.preferredLanguage &#x3D;&#x3D;&#x3D; Languages.AR) {
+            mailOptions &#x3D; {
+                from: &#x60;&quot;Silah Support&quot; &lt;${process.env.MAIL_USER}&gt;&#x60;,
+                to: email,
+                subject:
+                    &#x27;Verify your email address | تحقق من عنوان بريدك الإلكتروني&#x27;,
+                html: &#x60;
+  &lt;div style&#x3D;&quot;
+      font-family: Arial, sans-serif;
+      color: #000000;
+      text-align: center;
+      background-color: #ffffff;
+      padding: 30px;
+  &quot;&gt;
+  &lt;img src&#x3D;&quot;https://silah.site/logo.png&quot; alt&#x3D;&quot;Silah Logo&quot; width&#x3D;&quot;120&quot; style&#x3D;&quot;margin-bottom: 20px;&quot; /&gt;
+    &lt;h2 style&#x3D;&quot;color: #000000; margin-bottom: 20px;&quot;&gt;
+      Welcome to &lt;span style&#x3D;&quot;color:#543361;&quot;&gt;Silah&lt;/span&gt;!
+    &lt;/h2&gt;
+    &lt;h3 dir&#x3D;&quot;rtl&quot; style&#x3D;&quot;color: #000000; margin-top: 0; font-weight: normal;&quot;&gt;
+      مرحبًا بك في &lt;span style&#x3D;&quot;color:#543361;&quot;&gt;صلة&lt;/span&gt;!
+    &lt;/h3&gt;
+
+    &lt;p style&#x3D;&quot;color: #000000; font-size: 16px; margin-bottom: 25px;&quot;&gt;
+      Please verify your email address by clicking the button below:
+    &lt;/p&gt;
+    &lt;p dir&#x3D;&quot;rtl&quot; style&#x3D;&quot;color: #000000; font-size: 15px; margin-top: -10px; margin-bottom: 25px;&quot;&gt;
+      يرجى تأكيد عنوان بريدك الإلكتروني من خلال النقر على الزر أدناه:
+    &lt;/p&gt;
+
+    &lt;a href&#x3D;&quot;${verifyUrl}&quot; 
+      style&#x3D;&quot;
+        display: inline-block;
+        padding: 12px 25px;
+        background-color: #543361;
+        color: #ffffff;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 6px;
+      &quot;&gt;
+      Verify Email
+    &lt;/a&gt;
+    &lt;p dir&#x3D;&quot;rtl&quot; style&#x3D;&quot;color: #000000; margin-top: 8px; font-size: 14px;&quot;&gt;
+      تأكيد البريد الإلكتروني
+    &lt;/p&gt;
+
+    &lt;p style&#x3D;&quot;color: #000000; margin-top: 30px; font-size: 14px;&quot;&gt;
+      If the button doesn&#x27;t work, copy and paste the following link in your browser:
+    &lt;/p&gt;
+    &lt;p dir&#x3D;&quot;rtl&quot; style&#x3D;&quot;color: #000000; font-size: 14px; margin-top: -10px;&quot;&gt;
+      إذا لم يعمل الزر، انسخ الرابط التالي وضعه في متصفحك:
+    &lt;/p&gt;
+
+    &lt;p style&#x3D;&quot;color: #000000; font-size: 14px; word-break: break-all;&quot;&gt;
+      &lt;a href&#x3D;&quot;${verifyUrl}&quot; style&#x3D;&quot;color: #543361; text-decoration: none;&quot;&gt;${verifyUrl}&lt;/a&gt;
+    &lt;/p&gt;
+
+    &lt;hr style&#x3D;&quot;margin: 30px 0; border: none; border-top: 1px solid #ddd;&quot; /&gt;
+
+    &lt;small style&#x3D;&quot;color: #555555; font-size: 12px;&quot;&gt;
+      This is an automated message. Please do not reply.
+    &lt;/small&gt;
+    &lt;br /&gt;
+    &lt;small dir&#x3D;&quot;rtl&quot; style&#x3D;&quot;color: #555555; font-size: 12px;&quot;&gt;
+      هذه رسالة تلقائية، يُرجى عدم الرد عليها.
+    &lt;/small&gt;
+  &lt;/div&gt;
+  &#x60;,
+            };
+        }
+
+        try {
+            const info &#x3D; await sgMail.send(mailOptions);
+        } catch (error) {
+            console.error(&#x27;Error sending email:&#x27;, error);
+            throw new InternalServerErrorException(
+                &#x27;Failed to send verification email&#x27;,
+            );
+        }
+    }
+
+    /**
+     * Sends a reset password email to the user with a JWT-based reset link.
+     *
+     * @param {string} email - The recipient&#x27;s email address.
+     * @param {string} token - A JWT token used to authenticate the password reset request.
+     *
+     * @throws {InternalServerErrorException} Thrown if sending the reset password email fails due to transport or configuration errors.
+     */
+    private async sendResetPasswordEmail(email: string, token: string) {
+        const resetUrl &#x3D; &#x60;${process.env.FRONTEND_URL}/password-reset?token&#x3D;${token}&#x60;;
+
+        // Get user langauge preference
+        const lang &#x3D; await this.prisma.user.findUnique({
+            where: { email },
+            select: { preferredLanguage: true },
+        });
+
+        let mailOptions &#x3D; {
+            from: &#x60;&quot;Silah Support&quot; &lt;${process.env.MAIL_USER}&gt;&#x60;,
+            to: email,
+            subject: &#x27;Reset Your Silah Account Password&#x27;,
+            html: &#x60;
+        &lt;img src&#x3D;&quot;https://silah.site/logo.png&quot; alt&#x3D;&quot;Silah Logo&quot; width&#x3D;&quot;120&quot; style&#x3D;&quot;margin-bottom: 20px;&quot; /&gt;
+        &lt;h2&gt;Reset Your Password&lt;/h2&gt;
+        &lt;p&gt;We received a request to reset your Silah account password.&lt;/p&gt;
+        &lt;p&gt;Click the button below to reset your password. This link is valid for &lt;strong&gt;5 minutes&lt;/strong&gt; only.&lt;/p&gt;
+        &lt;a href&#x3D;&quot;${resetUrl}&quot; style&#x3D;&quot;display:inline-block; padding:10px 20px; background-color:#543361; color:white; text-decoration:none; border-radius:4px;&quot;&gt;Reset Password&lt;/a&gt;
+        &lt;p&gt;If the button doesn&#x27;t work, copy and paste the following link into your browser:&lt;/p&gt;
+        &lt;p&gt;${resetUrl}&lt;/p&gt;
+        &lt;p&gt;If you did not request a password reset, you can safely ignore this email.&lt;/p&gt;
+        &lt;hr /&gt;
+        &lt;small&gt;This is an automated message. Please do not reply.&lt;/small&gt;
+      &#x60;,
+        };
+
+        if (lang &amp;&amp; lang.preferredLanguage &#x3D;&#x3D;&#x3D; Languages.AR) {
+            mailOptions &#x3D; {
+                from: &#x60;&quot;Silah Support&quot; &lt;${process.env.MAIL_USER}&gt;&#x60;,
+                to: email,
+                subject:
+                    &#x27;Reset Your Silah Account Password | إعادة تعيين كلمة مرور حسابك في صلة&#x27;,
+                html: &#x60;
+  &lt;div style&#x3D;&quot;
+      font-family: Arial, sans-serif;
+      color: #000000;
+      text-align: center;
+      background-color: #ffffff;
+      padding: 30px;
+  &quot;&gt;
+  &lt;img src&#x3D;&quot;https://silah.site/logo.png&quot; alt&#x3D;&quot;Silah Logo&quot; width&#x3D;&quot;120&quot; style&#x3D;&quot;margin-bottom: 20px;&quot; /&gt;
+    &lt;h2 style&#x3D;&quot;color: #000000; margin-bottom: 20px;&quot;&gt;
+      Reset Your Password
+    &lt;/h2&gt;
+    &lt;h3 dir&#x3D;&quot;rtl&quot; style&#x3D;&quot;color: #000000; margin-top: 0; font-weight: normal;&quot;&gt;
+      إعادة تعيين كلمة المرور
+    &lt;/h3&gt;
+
+    &lt;p style&#x3D;&quot;color: #000000; font-size: 16px; margin-bottom: 15px;&quot;&gt;
+      We received a request to reset your Silah account password.
+    &lt;/p&gt;
+    &lt;p dir&#x3D;&quot;rtl&quot; style&#x3D;&quot;color: #000000; font-size: 15px; margin-top: -10px; margin-bottom: 25px;&quot;&gt;
+      تلقّينا طلبًا لإعادة تعيين كلمة مرور حسابك في &lt;span style&#x3D;&quot;color:#543361;&quot;&gt;صلة&lt;/span&gt;.
+    &lt;/p&gt;
+
+    &lt;p style&#x3D;&quot;color: #000000; font-size: 16px; margin-bottom: 25px;&quot;&gt;
+      Click the button below to reset your password. This link is valid for &lt;strong&gt;5 minutes&lt;/strong&gt; only.
+    &lt;/p&gt;
+    &lt;p dir&#x3D;&quot;rtl&quot; style&#x3D;&quot;color: #000000; font-size: 15px; margin-top: -10px; margin-bottom: 25px;&quot;&gt;
+      انقر على الزر أدناه لإعادة تعيين كلمة المرور. هذا الرابط صالح لمدة &lt;strong&gt;5 دقائق&lt;/strong&gt; فقط.
+    &lt;/p&gt;
+
+    &lt;a href&#x3D;&quot;${resetUrl}&quot; 
+      style&#x3D;&quot;
+        display: inline-block;
+        padding: 12px 25px;
+        background-color: #543361;
+        color: #ffffff;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 6px;
+      &quot;&gt;
+      Reset Password
+    &lt;/a&gt;
+    &lt;p dir&#x3D;&quot;rtl&quot; style&#x3D;&quot;color: #000000; margin-top: 8px; font-size: 14px;&quot;&gt;
+      إعادة تعيين كلمة المرور
+    &lt;/p&gt;
+
+    &lt;p style&#x3D;&quot;color: #000000; margin-top: 30px; font-size: 14px;&quot;&gt;
+      If the button doesn&#x27;t work, copy and paste the following link into your browser:
+    &lt;/p&gt;
+    &lt;p dir&#x3D;&quot;rtl&quot; style&#x3D;&quot;color: #000000; font-size: 14px; margin-top: -10px;&quot;&gt;
+      إذا لم يعمل الزر، انسخ الرابط التالي وضعه في متصفحك:
+    &lt;/p&gt;
+
+    &lt;p style&#x3D;&quot;color: #000000; font-size: 14px; word-break: break-all;&quot;&gt;
+      &lt;a href&#x3D;&quot;${resetUrl}&quot; style&#x3D;&quot;color: #543361; text-decoration: none;&quot;&gt;${resetUrl}&lt;/a&gt;
+    &lt;/p&gt;
+
+    &lt;p style&#x3D;&quot;color: #000000; font-size: 14px; margin-top: 30px;&quot;&gt;
+      If you did not request a password reset, you can safely ignore this email.
+    &lt;/p&gt;
+    &lt;p dir&#x3D;&quot;rtl&quot; style&#x3D;&quot;color: #000000; font-size: 14px; margin-top: -10px;&quot;&gt;
+      إذا لم تطلب إعادة تعيين كلمة المرور، يمكنك تجاهل هذه الرسالة بأمان.
+    &lt;/p&gt;
+
+    &lt;hr style&#x3D;&quot;margin: 30px 0; border: none; border-top: 1px solid #ddd;&quot; /&gt;
+
+    &lt;small style&#x3D;&quot;color: #555555; font-size: 12px;&quot;&gt;
+      This is an automated message. Please do not reply.
+    &lt;/small&gt;
+    &lt;br /&gt;
+    &lt;small dir&#x3D;&quot;rtl&quot; style&#x3D;&quot;color: #555555; font-size: 12px;&quot;&gt;
+      هذه رسالة تلقائية، يُرجى عدم الرد عليها.
+    &lt;/small&gt;
+  &lt;/div&gt;
+  &#x60;,
+            };
+        }
+
+        try {
+            const info &#x3D; await sgMail.send(mailOptions);
+        } catch (error) {
+            console.error(&#x27;Error sending email:&#x27;, error);
+            throw new InternalServerErrorException(
+                &#x27;Failed to send reset password email&#x27;,
+            );
+        }
+    }
+
+    /**
+     * Verifies the email address of a user using a provided JWT token.
+     *
+     * - Decodes and verifies the JWT.
+     * - Confirms the user exists and is not already verified.
+     * - Updates the user&#x27;s verification status to &#x60;true&#x60;.
+     *
+     * @param {string} token - The JWT token sent to the user&#x27;s email.
+     *
+     * @returns {{ message: string }} A success message confirming email verification.
+     *
+     * @throws {BadRequestException} If the token is invalid or expired.
+     * @throws {BadRequestException} If the user does not exist or is already verified.
+     */
+    async verifyEmail(token: string) {
+        // Verify the JWT token
+        let decodedToken;
+        try {
+            decodedToken &#x3D; await this.jwtService.verifyAsync(token);
+        } catch (error) {
+            throw new BadRequestException(
+                &#x27;Invalid or expired verification token&#x27;,
+            );
+        }
+
+        // Find the user by ID
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: decodedToken.sub },
+        });
+        if (!user || user.isEmailVerified) {
+            throw new BadRequestException(&#x27;User not found or already verified&#x27;);
+        }
+
+        // Update the user&#x27;s email verification status
+        await this.prisma.user.update({
+            where: { id: user.id },
+            data: { isEmailVerified: true },
+        });
+
+        return { message: &#x27;Email verified successfully&#x27; };
+    }
+
+    /**
+     * Resets the password of a user using a provided JWT token and a new password.
+     *
+     * - Verifies the reset password JWT token.
+     * - Ensures the user exists.
+     * - Hashes and updates the user&#x27;s password.
+     *
+     * @param {string} resetToken - The JWT token sent to the user&#x27;s email for password reset.
+     * @param {ResetPasswordDto} payload - DTO containing the new password.
+     *
+     * @returns {{ message: string }} A success message confirming password reset.
+     *
+     * @throws {BadRequestException} If the token is invalid or expired.
+     * @throws {NotFoundException} If the user does not exist.
+     */
+    async resetPassword(resetToken: string, payload: ResetPasswordDto) {
+        // Verify the JWT token
+        let decodedToken;
+        try {
+            decodedToken &#x3D; await this.jwtService.verifyAsync(resetToken);
+        } catch (error) {
+            throw new BadRequestException(
+                &#x27;Invalid or expired reset password token&#x27;,
+            );
+        }
+
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: decodedToken.sub },
+        });
+        if (!user) {
+            throw new NotFoundException(&#x27;User not found&#x27;);
+        }
+
+        // Hash the new password
+        const hashedPassword &#x3D; await this.encryptPassword(payload.newPassword);
+
+        // Update the user&#x27;s password in the database
+        await this.prisma.user.update({
+            where: { id: user.id },
+            data: { password: hashedPassword },
+        });
+
+        return { message: &#x27;Password reset successfully&#x27; };
+    }
+
+    /**
+     * Generates a new email verification token and sends a verification email.
+     *
+     * - Validates the existence of the user and their unverified email status.
+     * - Generates a new JWT token and sends it via email.
+     *
+     * @param {string} email - The user&#x27;s email address to resend the verification email to.
+     *
+     * @returns {{ message: string }} A confirmation message that the email was resent.
+     *
+     * @throws {NotFoundException} If no user with the given email is found.
+     * @throws {BadRequestException} If the user&#x27;s email is already verified.
+     */
+    async resendVerificationEmail(dto: EmailDto) {
+        const email &#x3D; dto.email;
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { email },
+        });
+        if (!user) {
+            throw new NotFoundException(&#x27;User not found&#x27;);
+        }
+        if (user.isEmailVerified) {
+            throw new BadRequestException(&#x27;Email already verified&#x27;);
+        }
+
+        // Generate a JWT token for email verification and send it via email
+        const emailToken &#x3D; await this.jwtService.signAsync({
+            sub: user.id,
+            email,
+            jti: crypto.randomUUID(),
+        });
+        await this.sendVerificationEmail(email, emailToken);
+
+        return { message: &#x27;Verification email resent successfully&#x27; };
+    }
+
+    /**
+     * Authenticates a user using their email or CRN and password.
+     *
+     * - Validates that the user exists by email or CRN.
+     * - Compares the entered password with the hashed password in the database.
+     * - If valid, returns a signed JWT token.
+     *
+     * @param {LoginDto} payload - Contains the user&#x27;s login credentials (email/CRN and password).
+     *
+     * @returns {{ token: string }} The signed JWT token for authenticated access.
+     *
+     * @throws {BadRequestException} If the user is not found.
+     * @throws {BadRequestException} If the password is incorrect.
+     */
+    async login(payload: LoginDto) {
+        // Check if the user exists in the database
+        const user &#x3D; await this.prisma.user.findFirst({
+            where: {
+                OR: [{ email: payload.email }, { crn: payload.crn }],
+            },
+        });
+        if (!user) {
+            throw new BadRequestException(&#x27;User not found&#x27;);
+        }
+        // Compare between the entered password with the hashed password stored in DB
+        // If the passwords match, generate a JWT token and return it to the controller so it sends it as a cookie
+        const checkPasswords &#x3D; await bcrypt.compare(
+            payload.password,
+            user.password,
+        );
+        if (!checkPasswords) {
+            throw new BadRequestException(&#x27;Invalid credentials&#x27;);
+        }
+        const token &#x3D; await this.jwtService.signAsync({
+            sub: user.id, // Standard JWT subject claim
+            email: user.email, // Useful for some identity checks
+            role: user.role, // For role-based access
+            isVerified: user.isEmailVerified, // For verified-only accesss
+            jti: crypto.randomUUID(),
+        });
+        return { token, role: user.role };
+    }
+
+    /**
+     * Handles a password reset request by generating a JWT token and sending it to the user&#x27;s email.
+     *
+     * - Checks if the user exists and their email is verified.
+     * - Generates a short-lived JWT reset token (5 minutes).
+     * - Sends the reset password email with the token.
+     *
+     * For security reasons, this method returns silently even if the user does not exist or their email is not verified.
+     *
+     * @param {string} email - The email address to send the reset link to.
+     *
+     * @returns {{ message: string }} A success message indicating that the email was sent (if applicable).
+     */
+    async requestPasswordReset(dto: EmailDto) {
+        const email &#x3D; dto.email;
+        // Check if the user exists in the database
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { email },
+        });
+        if (!user || !user.isEmailVerified) return; // for security reasons, we don&#x27;t reveal if the user exists
+
+        // Generate a JWT token for password reset and send it via email
+        const resetToken &#x3D; await this.jwtService.signAsync(
+            {
+                sub: user.id,
+                email: user.email,
+                jti: crypto.randomUUID(),
+            },
+            { expiresIn: &#x27;5m&#x27; },
+        ); // Token expires in 5 minutes
+        await this.sendResetPasswordEmail(user.email, resetToken);
+
+        return { message: &#x27;Password reset email sent successfully&#x27; };
+    }
+
+    async switchUserRole(req: Request, res: Response) {
+        const tokenData &#x3D; req.tokenData!;
+        const { sub: userId, email, role: currentRole, isVerified } &#x3D; tokenData;
+
+        let newRole;
+        if (currentRole &#x3D;&#x3D;&#x3D; UserRole.BUYER) {
+            newRole &#x3D; UserRole.SUPPLIER;
+
+            // If this is the frst time the user is switching to SUPPLIER,
+            // we need to create a supplier account for them
+            const existingSupplier &#x3D; await this.prisma.supplier.findUnique({
+                where: { userId },
+            });
+            if (!existingSupplier) {
+                await this.prisma.supplier.create({ data: { userId } });
+            }
+        } else if (currentRole &#x3D;&#x3D;&#x3D; UserRole.SUPPLIER) {
+            newRole &#x3D; UserRole.BUYER;
+        } else {
+            throw new InternalServerErrorException(
+                &#x27;Unexpected role: GUEST should never reach this endpoint&#x27;,
+            );
+        }
+
+        // Change the user&#x27;s role in the DB
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: { role: newRole },
+        });
+
+        // Generate new JWT
+        const newToken &#x3D; await this.jwtService.signAsync({
+            sub: userId,
+            email,
+            role: newRole,
+            isVerified,
+        });
+
+        // Overwrite the token cookie with the SAME options as login/signup
+        const isCrossSite &#x3D; req.hostname !&#x3D;&#x3D; &#x27;localhost&#x27;;
+        const isSecure &#x3D;
+            req.secure || req.headers[&#x27;x-forwarded-proto&#x27;] &#x3D;&#x3D;&#x3D; &#x27;https&#x27;;
+
+        res.cookie(&#x27;token&#x27;, newToken, {
+            httpOnly: true,
+            secure: isCrossSite ? true : isSecure,
+            sameSite: isCrossSite ? &#x27;none&#x27; : &#x27;lax&#x27;,
+            path: &#x27;/&#x27;,
+            partitioned: true, // important for Chrome third-party cookies
+        });
+
+        return { message: &#x27;Role switched successfully&#x27;, newRole };
+    }
+
+    async changePassword(userId: string, dto: ChangePasswordDto) {
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+        });
+
+        if (!user) {
+            throw new NotFoundException(&#x27;User not found&#x27;);
+        }
+
+        const isMatch &#x3D; await bcrypt.compare(dto.oldPassword, user.password);
+        if (!isMatch) {
+            throw new BadRequestException(&#x27;Current password is incorrect&#x27;);
+        }
+
+        const hashedPassword &#x3D; await this.encryptPassword(dto.newPassword);
+
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: { password: hashedPassword },
+        });
+
+        return {
+            message: &#x27;Password updated successfully.&#x27;,
+        };
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'AuthService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

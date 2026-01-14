@@ -1,0 +1,2458 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >SupplierService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/supplier/supplier.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteStoreBanner" >deleteStoreBanner</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllSuppliers" >getAllSuppliers</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getPendingOrdersCount" >getPendingOrdersCount</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStockLevels" >getStockLevels</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStoreBanner" >getStoreBanner</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSupplierData" >getSupplierData</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSupplierDataById" >getSupplierDataById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSupplierFavoriteCategories" >getSupplierFavoriteCategories</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSupplierPlan" >getSupplierPlan</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSupplierStoreData" >getSupplierStoreData</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSupplierStoreDataById" >getSupplierStoreDataById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#startFreeTrial" >startFreeTrial</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#subscripePremium" >subscripePremium</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toggleFavoriteCategory" >toggleFavoriteCategory</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toStorefrontResponseDTO" >toStorefrontResponseDTO</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toSupplierResponseDTO" >toSupplierResponseDTO</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateStoreBanner" >updateStoreBanner</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateSupplierData" >updateSupplierData</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateSupplierCategories" >validateSupplierCategories</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prisma: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, fileService: <a href="../injectables/FileService.html" target="_self">FileService</a>, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/supplier/supplier.service.ts:29</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prisma</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>fileService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/FileService.html" target="_self" >FileService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>userService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/UserService.html" target="_self" >UserService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteStoreBanner"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteStoreBanner</b></span>
+                        <a href="#deleteStoreBanner"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteStoreBanner(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="434"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:434</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllSuppliers"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllSuppliers</b></span>
+                        <a href="#getAllSuppliers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllSuppliers(status?: "active" | "inactive", subscription?: "subscribed" | "unsubscribed")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="467"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:467</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>status</td>
+                                            <td>
+                                                        <code>&quot;active&quot; | &quot;inactive&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>subscription</td>
+                                            <td>
+                                                        <code>&quot;subscribed&quot; | &quot;unsubscribed&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;unknown[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getPendingOrdersCount"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getPendingOrdersCount</b></span>
+                        <a href="#getPendingOrdersCount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getPendingOrdersCount(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="370"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:370</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStockLevels"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getStockLevels</b></span>
+                        <a href="#getStockLevels"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStockLevels(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="300"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:300</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/StockLevelsResponseDto.html" target="_self" >Promise&lt;StockLevelsResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStoreBanner"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getStoreBanner</b></span>
+                        <a href="#getStoreBanner"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStoreBanner(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="452"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:452</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSupplierData"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getSupplierData</b></span>
+                        <a href="#getSupplierData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSupplierData(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="274"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:274</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Retrieves a supplier data including linked user info.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;SupplierResponseDto | InactiveSupplierResponseDto&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The supplier DTO formatted for responses.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSupplierDataById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getSupplierDataById</b></span>
+                        <a href="#getSupplierDataById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSupplierDataById(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="504"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:504</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;SupplierResponseDto | InactiveSupplierResponseDto&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSupplierFavoriteCategories"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getSupplierFavoriteCategories</b></span>
+                        <a href="#getSupplierFavoriteCategories"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSupplierFavoriteCategories(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="183"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:183</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Retrieves all favorite category IDs for a given supplier.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The ID of the user.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;literal type[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>Array of category objects with IDs and names.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSupplierPlan"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getSupplierPlan</b></span>
+                        <a href="#getSupplierPlan"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSupplierPlan(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="530"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:530</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSupplierStoreData"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getSupplierStoreData</b></span>
+                        <a href="#getSupplierStoreData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSupplierStoreData(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="287"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:287</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;StorefrontResponseDto | InactiveSupplierResponseDto&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSupplierStoreDataById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getSupplierStoreDataById</b></span>
+                        <a href="#getSupplierStoreDataById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSupplierStoreDataById(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="517"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:517</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;StorefrontResponseDto | InactiveSupplierResponseDto&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="startFreeTrial"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>startFreeTrial</b></span>
+                        <a href="#startFreeTrial"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>startFreeTrial(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="564"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:564</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="subscripePremium"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>subscripePremium</b></span>
+                        <a href="#subscripePremium"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>subscripePremium(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="541"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:541</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toggleFavoriteCategory"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toggleFavoriteCategory</b></span>
+                        <a href="#toggleFavoriteCategory"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toggleFavoriteCategory(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, categoryId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="208"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:208</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Toggles a category in the supplier&#39;s favorite categories.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>categoryId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The category&#39;s unique ID.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>Message indicating the result.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toStorefrontResponseDTO"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toStorefrontResponseDTO</b></span>
+                        <a href="#toStorefrontResponseDTO"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toStorefrontResponseDTO(user: User, supplier: Supplier)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="105"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:105</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Converts Prisma User and Supplier models into either:</p>
+<ul>
+<li>SupplierResponseDto (if ACTIVE)</li>
+<li>InactiveSupplierResponseDto (if not ACTIVE)</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                        <code>User</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The user object from the database.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>supplier</td>
+                                            <td>
+                                                        <code>Supplier</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The supplier object from the database.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;SupplierResponseDto | InactiveSupplierResponseDto&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toSupplierResponseDTO"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toSupplierResponseDTO</b></span>
+                        <a href="#toSupplierResponseDTO"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toSupplierResponseDTO(user: User, supplier: Supplier)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="46"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:46</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Converts Prisma User and Supplier models into either:</p>
+<ul>
+<li>SupplierResponseDto (if ACTIVE)</li>
+<li>InactiveSupplierResponseDto (if not ACTIVE)</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                        <code>User</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The user object from the database.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>supplier</td>
+                                            <td>
+                                                        <code>Supplier</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The supplier object from the database.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;SupplierResponseDto | InactiveSupplierResponseDto&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateStoreBanner"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateStoreBanner</b></span>
+                        <a href="#updateStoreBanner"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateStoreBanner(file: Express.Multer.File, userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="422"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:422</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>file</td>
+                                            <td>
+                                                        <code>Express.Multer.File</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateSupplierData"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateSupplierData</b></span>
+                        <a href="#updateSupplierData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateSupplierData(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/UpdateSupplierDto.html" target="_self">UpdateSupplierDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="390"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:390</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateSupplierDto.html" target="_self" >UpdateSupplierDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateSupplierCategories"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>validateSupplierCategories</b></span>
+                        <a href="#validateSupplierCategories"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateSupplierCategories(payload: number[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="156"
+                                    class="link-to-prism">src/supplier/supplier.service.ts:156</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Validates a list of category IDs by checking if they exist in the database.
+Converts valid category IDs into integers for storage.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>payload</td>
+                                            <td>
+                                                        <code>number[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>Array of category IDs to validate.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;number[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>Array of valid category IDs.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { UpdateSupplierDto } from &#x27;./dtos/updateSupplier.dto&#x27;;
+import {
+    BadRequestException,
+    forwardRef,
+    Inject,
+    Injectable,
+    NotFoundException,
+} from &#x27;@nestjs/common&#x27;;
+import {
+    OrderStatus,
+    StoreStatus,
+    Supplier,
+    SupplierPlan,
+    SupplierStatus,
+    User,
+} from &#x27;@prisma/client&#x27;;
+import { PrismaService } from &#x27;src/prisma/prisma.service&#x27;;
+import { SupplierResponseDto } from &#x27;./dtos/supplierResponse.dto&#x27;;
+import { FileService } from &#x27;src/file/file.service&#x27;;
+import { UserService } from &#x27;src/user/user.service&#x27;;
+import { StorefrontResponseDto } from &#x27;./dtos/storefrontResponse.dto&#x27;;
+import { InactiveSupplierResponseDto } from &#x27;./dtos/inactiveSupplierResponse.dto&#x27;;
+import {
+    StockLevelsResponseDto,
+    StockProductDto,
+} from &#x27;./dtos/stockLevelsResponse.dto&#x27;;
+
+@Injectable()
+export class SupplierService {
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly fileService: FileService,
+        @Inject(forwardRef(() &#x3D;&gt; UserService))
+        private readonly userService: UserService,
+    ) {}
+
+    /**
+     * Converts Prisma User and Supplier models into either:
+     *  - SupplierResponseDto (if ACTIVE)
+     *  - InactiveSupplierResponseDto (if not ACTIVE)
+     *
+     * @param {User} user - The user object from the database.
+     * @param {Supplier} supplier - The supplier object from the database.
+     * @returns {Promise&lt;SupplierResponseDto | InactiveSupplierResponseDto&gt;}
+     */
+    async toSupplierResponseDTO(
+        user: User,
+        supplier: Supplier,
+    ): Promise&lt;SupplierResponseDto | InactiveSupplierResponseDto&gt; {
+        // If supplier is NOT active → return minimal inactive DTO
+        if (supplier.status !&#x3D;&#x3D; SupplierStatus.ACTIVE) {
+            return {
+                supplierId: supplier.id,
+                supplierName: user.name,
+                businessName: user.businessName,
+                city: user.city,
+                supplierStatus: supplier.status,
+                message:
+                    &#x27;This supplier is inactive and cannot be accessed until they renew their subscription.&#x27;,
+            } as InactiveSupplierResponseDto;
+        }
+
+        // Active suppliers → return full DTO
+        const favoriteCategories &#x3D; await this.getSupplierFavoriteCategories(
+            user.id,
+        );
+
+        const bannerUrl &#x3D; supplier.storeBannerFileName
+            ? await this.fileService.getFileUrl(supplier.storeBannerFileName)
+            : &#x27;&#x27;;
+
+        return {
+            user: await this.userService.toUserResponseDTO(user),
+            supplierId: supplier.id,
+            supplierName: user.name,
+            supplierEmail: user.email,
+            businessName: user.businessName,
+            city: user.city,
+            storeStatus: supplier.isStoreClosed
+                ? StoreStatus.CLOSED
+                : StoreStatus.OPEN,
+            storeClosedMsg: supplier.storeClosedMsg,
+            storeBio: supplier.storeBio || &#x27;&#x27;,
+            storeBannerFileName: supplier.storeBannerFileName || &#x27;&#x27;,
+            storeBannerFileUrl: bannerUrl || &#x27;&#x27;,
+            deliveryFees: supplier.deliveryFees,
+            avgRating: supplier.avgRating,
+            ratingsCount: supplier.ratingsCount,
+            usedFreeTrail: supplier.usedFreeTrail,
+            supplierStatus: supplier.status,
+            plan: supplier.plan,
+            favoriteCategories,
+        } as SupplierResponseDto;
+    }
+
+    /**
+     * Converts Prisma User and Supplier models into either:
+     *  - SupplierResponseDto (if ACTIVE)
+     *  - InactiveSupplierResponseDto (if not ACTIVE)
+     *
+     * @param {User} user - The user object from the database.
+     * @param {Supplier} supplier - The supplier object from the database.
+     * @returns {Promise&lt;SupplierResponseDto | InactiveSupplierResponseDto&gt;}
+     */
+    async toStorefrontResponseDTO(
+        user: User,
+        supplier: Supplier,
+    ): Promise&lt;SupplierResponseDto | InactiveSupplierResponseDto&gt; {
+        // If supplier is NOT active → return minimal inactive DTO
+        if (supplier.status !&#x3D;&#x3D; SupplierStatus.ACTIVE) {
+            return {
+                supplierId: supplier.id,
+                supplierName: user.name,
+                businessName: user.businessName,
+                city: user.city,
+                supplierStatus: supplier.status,
+                message:
+                    &#x27;This supplier is inactive and cannot be accessed until they renew their subscription.&#x27;,
+            } as InactiveSupplierResponseDto;
+        }
+
+        // Active suppliers → return full storefront DTO
+        const bannerUrl &#x3D; supplier.storeBannerFileName
+            ? await this.fileService.getFileUrl(supplier.storeBannerFileName)
+            : &#x27;&#x27;;
+
+        return {
+            supplierId: supplier.id,
+            supplierName: user.name,
+            supplierEmail: user.email,
+            businessName: user.businessName,
+            city: user.city,
+            storeStatus: supplier.isStoreClosed
+                ? StoreStatus.CLOSED
+                : StoreStatus.OPEN,
+            storeClosedMsg: supplier.storeClosedMsg,
+            storeBio: supplier.storeBio || &#x27;&#x27;,
+            storeBannerFileName: supplier.storeBannerFileName || &#x27;&#x27;,
+            storeBannerFileUrl: bannerUrl || &#x27;&#x27;,
+            deliveryFees: supplier.deliveryFees,
+            avgRating: supplier.avgRating,
+            ratingsCount: supplier.ratingsCount,
+            supplierStatus: supplier.status,
+        } as SupplierResponseDto;
+    }
+
+    /**
+     * Validates a list of category IDs by checking if they exist in the database.
+     * Converts valid category IDs into integers for storage.
+     *
+     * @private
+     * @param {number[]} payload - Array of category IDs to validate.
+     * @throws {BadRequestException} If any category IDs do not exist in the database.
+     * @returns {Promise&lt;number[]&gt;} Array of valid category IDs.
+     */
+    private async validateSupplierCategories(
+        payload: number[],
+    ): Promise&lt;number[]&gt; {
+        if (payload.length &#x3D;&#x3D;&#x3D; 0) return [];
+
+        const categories &#x3D; await this.prisma.category.findMany({
+            where: { id: { in: payload } },
+        });
+
+        if (categories.length !&#x3D;&#x3D; payload.length) {
+            const foundIds &#x3D; categories.map((c) &#x3D;&gt; c.id);
+            const missing &#x3D; payload.filter((id) &#x3D;&gt; !foundIds.includes(id));
+            throw new BadRequestException(
+                &#x60;These category IDs are invalid: ${missing.join(&#x27;, &#x27;)}&#x60;,
+            );
+        }
+
+        return categories.map((c) &#x3D;&gt; c.id);
+    }
+
+    /**
+     * Retrieves all favorite category IDs for a given supplier.
+     *
+     * @param {string} userId - The ID of the user.
+     * @throws {NotFoundException} If the supplier is not found.
+     * @returns {Promise&lt;{id: number; name: string}[]&gt;} Array of category objects with IDs and names.
+     */
+    async getSupplierFavoriteCategories(
+        userId: string,
+    ): Promise&lt;{ id: number; name: string }[]&gt; {
+        const supplierWithCategories &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+            include: { categories: { include: { category: true } } },
+        });
+        if (!supplierWithCategories) {
+            throw new NotFoundException(
+                &#x27;Supplier not found when fetching favorite categories&#x27;,
+            );
+        }
+        return supplierWithCategories.categories.map((sc) &#x3D;&gt; ({
+            id: sc.category.id,
+            name: sc.category.name,
+        }));
+    }
+
+    /**
+     * Toggles a category in the supplier&#x27;s favorite categories.
+     *
+     * @param {string} supplierId - The supplier&#x27;s unique ID.
+     * @param {number} categoryId - The category&#x27;s unique ID.
+     * @returns {Promise&lt;string&gt;} Message indicating the result.
+     */
+    async toggleFavoriteCategory(userId: string, categoryId: number) {
+        if (!categoryId || categoryId &lt;&#x3D; 0) {
+            throw new BadRequestException(&#x27;Invalid category ID provided.&#x27;);
+        }
+        // Validate category existence
+        const valideCategories &#x3D; await this.validateSupplierCategories([
+            categoryId,
+        ]);
+        if (!valideCategories.includes(categoryId)) {
+            throw new BadRequestException(
+                &#x60;Category with ID ${categoryId} does not exist.&#x60;,
+            );
+        }
+        // get the supplier ID
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found.&#x27;);
+        }
+        // Check if category is already in favorites
+        const existing &#x3D; await this.prisma.supplierFavoriteCategory.findUnique({
+            where: {
+                supplierId_categoryId: {
+                    supplierId: supplier.id,
+                    categoryId,
+                },
+            },
+        });
+        if (existing) {
+            // If exists → remove it
+            await this.prisma.supplierFavoriteCategory.delete({
+                where: {
+                    supplierId_categoryId: {
+                        supplierId: supplier.id,
+                        categoryId,
+                    },
+                },
+            });
+            return {
+                message: &#x27;Category removed from favorites.&#x27;,
+                favoriteCategories:
+                    await this.getSupplierFavoriteCategories(userId),
+            };
+        } else {
+            // If not exists → add it
+            await this.prisma.supplierFavoriteCategory.create({
+                data: {
+                    supplierId: supplier.id,
+                    categoryId,
+                },
+            });
+            return {
+                message: &#x27;Category added to favorites.&#x27;,
+                favoriteCategories:
+                    await this.getSupplierFavoriteCategories(userId),
+            };
+        }
+    }
+
+    /**
+     * Retrieves a supplier data including linked user info.
+     * @param {string} id - The supplier ID.
+     * @throws {NotFoundException} If the supplier with the given ID is not found.
+     * @returns {Promise&lt;SupplierResponseDto | InactiveSupplierResponseDto&gt;} The supplier DTO formatted for responses.
+     */
+    async getSupplierData(
+        userId: string,
+    ): Promise&lt;SupplierResponseDto | InactiveSupplierResponseDto&gt; {
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+            include: { user: true }, // because we need user fields
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x60;Supplier with id ${userId} not found&#x60;);
+        }
+        return this.toSupplierResponseDTO(supplier.user, supplier);
+    }
+
+    async getSupplierStoreData(
+        userId: string,
+    ): Promise&lt;StorefrontResponseDto | InactiveSupplierResponseDto&gt; {
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+            include: { user: true }, // because we need user fields
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x60;Supplier with id ${userId} not found&#x60;);
+        }
+        return this.toStorefrontResponseDTO(supplier.user, supplier);
+    }
+
+    async getStockLevels(userId: string): Promise&lt;StockLevelsResponseDto&gt; {
+        // Fetch supplier
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found&#x27;);
+        }
+
+        // Fetch all non-deleted products for this supplier
+        const products &#x3D; await this.prisma.product.findMany({
+            where: { supplierId: supplier.id, isDeleted: false },
+            select: { id: true, name: true, stock: true },
+        });
+
+        // Initialize groups
+        const overview: Record&lt;string, StockProductDto[]&gt; &#x3D; {
+            VERY_LOW: [],
+            LOW: [],
+            AVERAGE: [],
+            GOOD: [],
+        };
+
+        // Define thresholds
+        const STOCK_THRESHOLDS &#x3D; {
+            VERY_LOW: 5,
+            LOW: 10,
+            AVERAGE: 30,
+            GOOD: Infinity,
+        };
+
+        // Assign products to stock groups
+        products.forEach((p) &#x3D;&gt; {
+            const stock &#x3D; p.stock;
+            const productDto: StockProductDto &#x3D; {
+                productId: p.id,
+                name: p.name,
+                stock,
+            };
+
+            if (stock &lt; STOCK_THRESHOLDS.VERY_LOW)
+                overview.VERY_LOW.push(productDto);
+            else if (stock &lt; STOCK_THRESHOLDS.LOW)
+                overview.LOW.push(productDto);
+            else if (stock &lt; STOCK_THRESHOLDS.AVERAGE)
+                overview.AVERAGE.push(productDto);
+            else overview.GOOD.push(productDto);
+        });
+
+        // Build StockGroupDto objects for each group
+        const response: StockLevelsResponseDto &#x3D; {
+            supplierId: supplier.id,
+            overview: {
+                VERY_LOW: {
+                    count: overview.VERY_LOW.length,
+                    products: overview.VERY_LOW,
+                },
+                LOW: { count: overview.LOW.length, products: overview.LOW },
+                AVERAGE: {
+                    count: overview.AVERAGE.length,
+                    products: overview.AVERAGE,
+                },
+                GOOD: { count: overview.GOOD.length, products: overview.GOOD },
+            },
+        };
+
+        return response;
+    }
+
+    async getPendingOrdersCount(userId: string) {
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+            include: { user: true },
+        });
+
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found.&#x27;);
+        }
+
+        const pendingOrdersCount &#x3D; await this.prisma.order.count({
+            where: {
+                supplierId: supplier.id,
+                status: OrderStatus.PENDING,
+            },
+        });
+
+        return { count: pendingOrdersCount };
+    }
+
+    async updateSupplierData(userId: string, dto: UpdateSupplierDto) {
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+            include: { user: true },
+        });
+
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found.&#x27;);
+        }
+
+        const updated &#x3D; await this.prisma.supplier.update({
+            where: { userId },
+            data: {
+                ...(dto.storeStatus !&#x3D;&#x3D; undefined &amp;&amp; {
+                    isStoreClosed: dto.storeStatus &#x3D;&#x3D;&#x3D; &#x27;CLOSED&#x27;,
+                }),
+                ...(dto.storeClosedMsg !&#x3D;&#x3D; undefined &amp;&amp; {
+                    storeClosedMsg: dto.storeClosedMsg,
+                }),
+                ...(dto.storeBio !&#x3D;&#x3D; undefined &amp;&amp; {
+                    storeBio: dto.storeBio,
+                }),
+                ...(dto.deliveryFees !&#x3D;&#x3D; undefined &amp;&amp; {
+                    deliveryFees: dto.deliveryFees,
+                }),
+            },
+            include: { user: true },
+        });
+
+        return this.toSupplierResponseDTO(updated.user, updated);
+    }
+
+    async updateStoreBanner(file: Express.Multer.File, userId: string) {
+        const fileName &#x3D; await this.fileService.uploadFile(file);
+        await this.prisma.supplier.update({
+            where: { userId },
+            data: { storeBannerFileName: fileName },
+        });
+        return {
+            message: &#x27;Store banner updated successfully&#x27;,
+            storeBannerFileName: fileName,
+        };
+    }
+
+    async deleteStoreBanner(userId: string) {
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found.&#x27;);
+        }
+        if (!supplier.storeBannerFileName) {
+            throw new BadRequestException(&#x27;No store banner to delete.&#x27;);
+        }
+        // Future Work ?: Delete the file from the storage (R2)
+        await this.prisma.supplier.update({
+            where: { userId },
+            data: { storeBannerFileName: null },
+        });
+        return { message: &#x27;Store banner deleted successfully&#x27; };
+    }
+
+    async getStoreBanner(id: string) {
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { id },
+        });
+        if (!supplier || !supplier.storeBannerFileName) {
+            throw new NotFoundException(
+                &#x27;No store banner found for this store.&#x27;,
+            );
+        }
+        const fileUrl &#x3D; await this.fileService.getFileUrl(
+            supplier.storeBannerFileName,
+        );
+        return { storeBannerFileUrl: fileUrl };
+    }
+
+    async getAllSuppliers(
+        status?: &#x27;active&#x27; | &#x27;inactive&#x27;,
+        subscription?: &#x27;subscribed&#x27; | &#x27;unsubscribed&#x27;,
+    ): Promise&lt;(SupplierResponseDto | InactiveSupplierResponseDto)[]&gt; {
+        const where: any &#x3D; {};
+
+        // Filter by supplier status
+        if (status) {
+            where.status &#x3D;
+                status &#x3D;&#x3D;&#x3D; &#x27;active&#x27;
+                    ? SupplierStatus.ACTIVE
+                    : SupplierStatus.INACTIVE;
+        }
+
+        // Filter by subscription
+        if (subscription) {
+            if (subscription &#x3D;&#x3D;&#x3D; &#x27;subscribed&#x27;) {
+                where.plan &#x3D; SupplierPlan.PREMIUM;
+            } else if (subscription &#x3D;&#x3D;&#x3D; &#x27;unsubscribed&#x27;) {
+                where.plan &#x3D; SupplierPlan.BASIC;
+            }
+        }
+
+        const suppliers &#x3D; await this.prisma.supplier.findMany({
+            where,
+            include: {
+                user: true,
+            },
+        });
+
+        return Promise.all(
+            suppliers.map((supplier) &#x3D;&gt;
+                this.toSupplierResponseDTO(supplier.user, supplier),
+            ),
+        );
+    }
+
+    async getSupplierDataById(
+        id: string,
+    ): Promise&lt;SupplierResponseDto | InactiveSupplierResponseDto&gt; {
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { id },
+            include: { user: true }, // because we need user fields
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x60;Supplier with id ${id} not found&#x60;);
+        }
+        return this.toSupplierResponseDTO(supplier.user, supplier);
+    }
+
+    async getSupplierStoreDataById(
+        id: string,
+    ): Promise&lt;StorefrontResponseDto | InactiveSupplierResponseDto&gt; {
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { id },
+            include: { user: true }, // because we need user fields
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x60;Supplier with id ${id} not found&#x60;);
+        }
+        return this.toStorefrontResponseDTO(supplier.user, supplier);
+    }
+
+    async getSupplierPlan(userId: string): Promise&lt;{ plan: SupplierPlan }&gt; {
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+            select: { plan: true },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found.&#x27;);
+        }
+        return { plan: supplier.plan };
+    }
+
+    async subscripePremium(userId: string) {
+        // Future Work?: Integrate with payment gateway for actual payment
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found.&#x27;);
+        }
+        if (supplier.plan &#x3D;&#x3D;&#x3D; SupplierPlan.PREMIUM) {
+            throw new BadRequestException(
+                &#x27;You are already subscribed to the premium plan.&#x27;,
+            );
+        }
+        const updated &#x3D; await this.prisma.supplier.update({
+            where: { userId },
+            data: { plan: SupplierPlan.PREMIUM },
+        });
+        return {
+            message: &#x27;Successfully subscribed to the premium plan.&#x27;,
+            plan: updated.plan,
+        };
+    }
+
+    async startFreeTrial(userId: string) {
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found.&#x27;);
+        }
+        if (supplier.usedFreeTrail) {
+            throw new BadRequestException(&#x27;Free trial has already been used.&#x27;);
+        }
+        const updated &#x3D; await this.prisma.supplier.update({
+            where: { userId },
+            data: { usedFreeTrail: true, plan: SupplierPlan.PREMIUM },
+        });
+        return {
+            message:
+                &#x27;Free trial started successfully. You are now on the premium plan for 30 days.&#x27;,
+            plan: updated.plan,
+        };
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'SupplierService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

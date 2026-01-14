@@ -1,0 +1,1870 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >InvoiceService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/invoice/invoice.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#buildItemFilter" >buildItemFilter</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createInvoice" >createInvoice</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMyInvoiceById" >getMyInvoiceById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMyInvoices" >getMyInvoices</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#payInvoice" >payInvoice</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toInvoiceResponseDto" >toInvoiceResponseDto</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateInvoiceStatus" >updateInvoiceStatus</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prisma: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, buyerService: <a href="../injectables/BuyerService.html" target="_self">BuyerService</a>, supplierService: <a href="../injectables/SupplierService.html" target="_self">SupplierService</a>, productService: <a href="../injectables/ProductService.html" target="_self">ProductService</a>, serviceService: <a href="../injectables/ServiceService.html" target="_self">ServiceService</a>, tapPaymentService: <a href="../injectables/TapPaymentsService.html" target="_self">TapPaymentsService</a>, notificationService: <a href="../injectables/NotificationService.html" target="_self">NotificationService</a>, offerService: <a href="../injectables/OfferService.html" target="_self">OfferService</a>, groupPurchaseService: <a href="../injectables/GroupPurchaseService.html" target="_self">GroupPurchaseService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/invoice/invoice.service.ts:34</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prisma</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>buyerService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/BuyerService.html" target="_self" >BuyerService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>supplierService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SupplierService.html" target="_self" >SupplierService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>productService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ProductService.html" target="_self" >ProductService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>serviceService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ServiceService.html" target="_self" >ServiceService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>tapPaymentService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TapPaymentsService.html" target="_self" >TapPaymentsService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>notificationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/NotificationService.html" target="_self" >NotificationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>offerService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/OfferService.html" target="_self" >OfferService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>groupPurchaseService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/GroupPurchaseService.html" target="_self" >GroupPurchaseService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="buildItemFilter"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>buildItemFilter</b></span>
+                        <a href="#buildItemFilter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>buildItemFilter(showFor: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, isInvoice: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="297"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:297</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>showFor</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>isInvoice</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>{ items: { some: { relatedProductId: { not: any; }; relatedServiceId?: undefined; }; }; offerId?: undefined; groupPurchaseBuyerId?: undefined; } | { items: { some: { relatedServiceId: { not: any; }; relatedProductId?: undefined; }; }; offerId?: undefined; groupPurchaseBuyerId?: undefined; } | { ...; } | { ...; } | {...</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createInvoice"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createInvoice</b></span>
+                        <a href="#createInvoice"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createInvoice(dto: <a href="../classes/CreateInvoiceDto.html" target="_self">CreateInvoiceDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="418"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:418</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateInvoiceDto.html" target="_self" >CreateInvoiceDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMyInvoiceById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getMyInvoiceById</b></span>
+                        <a href="#getMyInvoiceById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMyInvoiceById(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="323"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:323</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;InvoiceResponseDto | PreInvoiceResponseDto&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMyInvoices"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getMyInvoices</b></span>
+                        <a href="#getMyInvoices"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMyInvoices(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, status?: InvoiceStatus | PreInvoiceStatus, showFor?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="146"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:146</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>status</td>
+                                            <td>
+                                                        <code>InvoiceStatus | PreInvoiceStatus</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>showFor</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;unknown[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="payInvoice"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>payInvoice</b></span>
+                        <a href="#payInvoice"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>payInvoice(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto?: <a href="../classes/PayInvoiceDto.html" target="_self">PayInvoiceDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="641"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:641</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/PayInvoiceDto.html" target="_self" >PayInvoiceDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toInvoiceResponseDto"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toInvoiceResponseDto</b></span>
+                        <a href="#toInvoiceResponseDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toInvoiceResponseDto(entity: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, type: "INVOICE" | "PRE_INVOICE")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="47"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:47</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>type</td>
+                                            <td>
+                                                        <code>&quot;INVOICE&quot; | &quot;PRE_INVOICE&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;InvoiceResponseDto | PreInvoiceResponseDto&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateInvoiceStatus"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateInvoiceStatus</b></span>
+                        <a href="#updateInvoiceStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateInvoiceStatus(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, invoiceId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, status: <a href="../miscellaneous/enumerations.html#InvoiceStatus" target="_self">InvoiceStatus</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="566"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:566</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>invoiceId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>status</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/enumerations.html#InvoiceStatus" target="_self" >InvoiceStatus</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/InvoiceResponseDto.html" target="_self" >Promise&lt;InvoiceResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { TapPaymentsService } from &#x27;src/tap-payments/tap-payments.service&#x27;;
+import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from &#x27;@nestjs/common&#x27;;
+import {
+    InvoiceStatus,
+    InvoiceTermsOfPayment,
+    NotificationEntityType,
+    NotificationType,
+    PreInvoiceStatus,
+    UserRole,
+} from &#x27;@prisma/client&#x27;;
+import { PrismaService } from &#x27;src/prisma/prisma.service&#x27;;
+import {
+    InvoiceItemResponseDto,
+    InvoiceResponseDto,
+    PreInvoiceResponseDto,
+} from &#x27;./dtos/invoiceResponse.dto&#x27;;
+import { BuyerService } from &#x27;src/buyer/buyer.service&#x27;;
+import { SupplierService } from &#x27;src/supplier/supplier.service&#x27;;
+import { ProductService } from &#x27;src/product/product.service&#x27;;
+import { ServiceService } from &#x27;src/service/service.service&#x27;;
+import { CreateInvoiceDto } from &#x27;./dtos/createInvoice.dto&#x27;;
+import { NotificationService } from &#x27;src/notification/notification.service&#x27;;
+import { OfferService } from &#x27;src/offer/offer.service&#x27;;
+import { GroupPurchaseService } from &#x27;src/group-purchase/group-purchase.service&#x27;;
+import { PayInvoiceDto } from &#x27;./dtos/payInvoice.dto&#x27;;
+
+@Injectable()
+export class InvoiceService {
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly buyerService: BuyerService,
+        private readonly supplierService: SupplierService,
+        private readonly productService: ProductService,
+        private readonly serviceService: ServiceService,
+        private readonly tapPaymentService: TapPaymentsService,
+        private readonly notificationService: NotificationService,
+        private readonly offerService: OfferService,
+        private readonly groupPurchaseService: GroupPurchaseService,
+    ) {}
+
+    async toInvoiceResponseDto(
+        entity: any,
+        type: &#x27;INVOICE&#x27; | &#x27;PRE_INVOICE&#x27;,
+    ): Promise&lt;InvoiceResponseDto | PreInvoiceResponseDto&gt; {
+        if (type &#x3D;&#x3D;&#x3D; &#x27;INVOICE&#x27;) {
+            return {
+                invoiceId: entity.id,
+                type,
+                status: entity.status,
+                buyer: await this.buyerService.toBuyerResponseDto(
+                    entity.buyer.user,
+                    entity.buyer,
+                ),
+                supplier: await this.supplierService.toSupplierResponseDTO(
+                    entity.supplier.user,
+                    entity.supplier,
+                ),
+                termsOfPayment: entity.termsOfPayment,
+                upfrontAmount: entity.upfrontAmount ?? null,
+                tapChargeIdForUpfront: entity.tapChargeIdForUpfront ?? null,
+                tapChargeId: entity.tapChargeId ?? null,
+                deliveryDate: entity.deliveryDate,
+                notesAndTerms: entity.notesAndTerms,
+                items: entity.items
+                    ? await Promise.all(
+                          entity.items.map(
+                              async (item: any) &#x3D;&gt;
+                                  ({
+                                      invoiceItemId: item.id,
+                                      name: item.name,
+                                      description: item.description,
+                                      agreedDetails: item.agreedDetails,
+                                      quantity: item.quantity,
+                                      unitPrice: item.unitPrice,
+                                      priceBasedQuantity:
+                                          item.priceBasedQuantity,
+                                      relatedProduct: item.relatedProduct
+                                          ? await this.productService.toProductResponseDto(
+                                                item.relatedProduct,
+                                            )
+                                          : null,
+                                      relatedService: item.relatedService
+                                          ? await this.serviceService.toServiceResponseDto(
+                                                item.relatedService,
+                                            )
+                                          : null,
+                                  }) as InvoiceItemResponseDto,
+                          ),
+                      )
+                    : [],
+                preInvoice: entity.preInvoice
+                    ? await this.toInvoiceResponseDto(
+                          entity.preInvoice,
+                          &#x27;PRE_INVOICE&#x27;,
+                      )
+                    : null,
+                amount: entity.amount,
+                createdAt: entity.createdAt,
+            } as InvoiceResponseDto;
+        } else if (type &#x3D;&#x3D;&#x3D; &#x27;PRE_INVOICE&#x27;) {
+            return {
+                preInvoiceId: entity.id,
+                type,
+                status: entity.status,
+                buyer: entity.buyer
+                    ? await this.buyerService.toBuyerResponseDto(
+                          entity.buyer.user,
+                          entity.buyer,
+                      )
+                    : undefined,
+                supplier: entity.supplier
+                    ? await this.supplierService.toSupplierResponseDTO(
+                          entity.supplier.user,
+                          entity.supplier,
+                      )
+                    : undefined,
+                product: entity.product
+                    ? await this.productService.toProductResponseDto(
+                          entity.product,
+                      )
+                    : undefined,
+                offer: entity.offer
+                    ? await this.offerService.toOfferResponseDto(entity.offer)
+                    : undefined,
+                groupPurchaseBuyer: entity.groupPurchaseBuyer
+                    ? await this.groupPurchaseService.toGroupPurchaseBuyerResponseDto(
+                          entity.groupPurchaseBuyer,
+                      )
+                    : undefined,
+                amount: entity.amount,
+                createdAt: entity.createdAt,
+            } as PreInvoiceResponseDto;
+        } else {
+            throw new InternalServerErrorException(
+                &#x27;Invalid invoice type encountered. Only &quot;INVOICE&quot; and &quot;PRE_INVOICE&quot; are supported.&#x27;,
+            );
+        }
+    }
+
+    async getMyInvoices(
+        userId: string,
+        status?: InvoiceStatus | PreInvoiceStatus,
+        showFor?: string,
+    ): Promise&lt;(InvoiceResponseDto | PreInvoiceResponseDto)[]&gt; {
+        // Find user and their role
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { buyer: true, supplier: true },
+        });
+        if (!user) throw new NotFoundException(&#x27;User not found&#x27;);
+
+        // Determine base filter
+        let invoiceWhere: any &#x3D; {};
+        let preInvoiceWhere: any &#x3D; {};
+
+        if (user.role &#x3D;&#x3D;&#x3D; UserRole.BUYER) {
+            if (!user.buyer)
+                throw new BadRequestException(&#x27;Buyer account not found&#x27;);
+            invoiceWhere.buyerId &#x3D; user.buyer.id;
+            preInvoiceWhere.buyerId &#x3D; user.buyer.id;
+        } else if (user.role &#x3D;&#x3D;&#x3D; UserRole.SUPPLIER) {
+            if (!user.supplier)
+                throw new BadRequestException(&#x27;Supplier account not found&#x27;);
+            invoiceWhere.supplierId &#x3D; user.supplier.id;
+            preInvoiceWhere.supplierId &#x3D; user.supplier.id;
+        } else {
+            throw new BadRequestException(&#x27;Invalid user role&#x27;);
+        }
+
+        // ——————————————————————— APPLY STATUS FILTER ———————————————————————
+        if (status) {
+            const preInvoiceStatuses: PreInvoiceStatus[] &#x3D; [
+                PreInvoiceStatus.PENDING,
+                PreInvoiceStatus.SUCCESSFUL,
+                PreInvoiceStatus.FAILED,
+            ];
+            const invoiceStatuses: InvoiceStatus[] &#x3D; [
+                InvoiceStatus.PENDING,
+                InvoiceStatus.REJECTED,
+                InvoiceStatus.ACCEPTED,
+                InvoiceStatus.PARTIALLY_PAID,
+                InvoiceStatus.FULLY_PAID,
+            ];
+
+            if (preInvoiceStatuses.includes(status as PreInvoiceStatus)) {
+                preInvoiceWhere.status &#x3D; status;
+                invoiceWhere &#x3D; null; // Skip invoices entirely
+            } else if (invoiceStatuses.includes(status as InvoiceStatus)) {
+                invoiceWhere.status &#x3D; status;
+                preInvoiceWhere &#x3D; null; // Skip pre-invoices entirely
+            } else {
+                throw new BadRequestException(&#x27;Invalid status value&#x27;);
+            }
+        }
+
+        // ——————————————————————— APPLY SHOWFOR FILTER ———————————————————————
+        if (showFor &amp;&amp; showFor !&#x3D;&#x3D; &#x27;all&#x27;) {
+            if ([&#x27;products&#x27;, &#x27;services&#x27;].includes(showFor)) {
+                // Only invoices
+                invoiceWhere &#x3D; {
+                    ...invoiceWhere,
+                    ...this.buildItemFilter(showFor, true),
+                };
+                preInvoiceWhere &#x3D; null; // Skip pre-invoices
+            } else if ([&#x27;bids&#x27;, &#x27;groups&#x27;].includes(showFor)) {
+                // Only pre-invoices
+                invoiceWhere &#x3D; null; // Skip invoices
+                preInvoiceWhere &#x3D; {
+                    ...preInvoiceWhere,
+                    ...this.buildItemFilter(showFor, false),
+                };
+            }
+        }
+
+        // ——————————————————————— FETCH DATA ———————————————————————
+        const [invoices, preInvoices] &#x3D; await Promise.all([
+            invoiceWhere
+                ? this.prisma.invoice.findMany({
+                      where: invoiceWhere,
+                      include: {
+                          buyer: { include: { user: true } },
+                          supplier: { include: { user: true } },
+                          items: {
+                              include: {
+                                  relatedProduct: {
+                                      include: {
+                                          category: true,
+                                          supplier: { include: { user: true } },
+                                      },
+                                  },
+                                  relatedService: {
+                                      include: {
+                                          category: true,
+                                          supplier: { include: { user: true } },
+                                      },
+                                  },
+                              },
+                          },
+                      },
+                      orderBy: { createdAt: &#x27;desc&#x27; },
+                  })
+                : Promise.resolve([]),
+
+            preInvoiceWhere
+                ? this.prisma.preInvoice.findMany({
+                      where: preInvoiceWhere,
+                      include: {
+                          buyer: { include: { user: true } },
+                          supplier: { include: { user: true } },
+                          product: {
+                              include: {
+                                  category: true,
+                                  supplier: { include: { user: true } },
+                              },
+                          },
+                          offer: {
+                              include: {
+                                  bid: {
+                                      include: {
+                                          buyer: { include: { user: true } },
+                                      },
+                                  },
+                                  supplier: { include: { user: true } },
+                              },
+                          },
+                          groupPurchaseBuyer: {
+                              include: { buyer: { include: { user: true } } },
+                          },
+                      },
+                      orderBy: { createdAt: &#x27;desc&#x27; },
+                  })
+                : Promise.resolve([]),
+        ]);
+
+        // ——————————————————————— MAP TO DTO ———————————————————————
+        const result &#x3D; await Promise.all([
+            ...invoices.map((inv) &#x3D;&gt; this.toInvoiceResponseDto(inv, &#x27;INVOICE&#x27;)),
+            ...preInvoices.map((pre) &#x3D;&gt;
+                this.toInvoiceResponseDto(pre, &#x27;PRE_INVOICE&#x27;),
+            ),
+        ]);
+
+        // ——————————————————————— FINAL SORT ———————————————————————
+        return result.sort(
+            (a, b) &#x3D;&gt;
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime(),
+        );
+    }
+
+    private buildItemFilter(showFor: string, isInvoice: boolean) {
+        if (isInvoice) {
+            switch (showFor) {
+                case &#x27;products&#x27;:
+                    return {
+                        items: { some: { relatedProductId: { not: null } } },
+                    };
+                case &#x27;services&#x27;:
+                    return {
+                        items: { some: { relatedServiceId: { not: null } } },
+                    };
+                default:
+                    return {};
+            }
+        } else {
+            switch (showFor) {
+                case &#x27;bids&#x27;:
+                    return { offerId: { not: null } };
+                case &#x27;groups&#x27;:
+                    return { groupPurchaseBuyerId: { not: null } };
+                default:
+                    return {};
+            }
+        }
+    }
+
+    async getMyInvoiceById(
+        userId: string,
+        id: string,
+    ): Promise&lt;InvoiceResponseDto | PreInvoiceResponseDto&gt; {
+        // Find user and determine role
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { buyer: true, supplier: true },
+        });
+        if (!user) throw new NotFoundException(&#x27;User not found&#x27;);
+
+        let invoiceWhere: any &#x3D; { id };
+        let preInvoiceWhere: any &#x3D; { id };
+
+        if (user.role &#x3D;&#x3D;&#x3D; UserRole.BUYER) {
+            if (!user.buyer)
+                throw new BadRequestException(&#x27;Buyer account not found&#x27;);
+            invoiceWhere.buyerId &#x3D; user.buyer.id;
+            preInvoiceWhere.buyerId &#x3D; user.buyer.id;
+        } else if (user.role &#x3D;&#x3D;&#x3D; UserRole.SUPPLIER) {
+            if (!user.supplier)
+                throw new BadRequestException(&#x27;Supplier account not found&#x27;);
+            invoiceWhere.supplierId &#x3D; user.supplier.id;
+            preInvoiceWhere.supplierId &#x3D; user.supplier.id;
+        } else {
+            throw new BadRequestException(&#x27;Invalid user role&#x27;);
+        }
+
+        // Try to fetch invoice first
+        const invoice &#x3D; await this.prisma.invoice.findUnique({
+            where: invoiceWhere,
+            include: {
+                buyer: { include: { user: true } },
+                supplier: { include: { user: true } },
+                items: {
+                    include: {
+                        relatedProduct: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
+                        relatedService: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (invoice) {
+            return await this.toInvoiceResponseDto(invoice, &#x27;INVOICE&#x27;);
+        }
+
+        // If no invoice, try pre-invoice
+        const preInvoice &#x3D; await this.prisma.preInvoice.findUnique({
+            where: preInvoiceWhere,
+            include: {
+                buyer: { include: { user: true } },
+                supplier: { include: { user: true } },
+                product: {
+                    include: {
+                        category: true,
+                        supplier: { include: { user: true } },
+                    },
+                },
+                offer: {
+                    include: {
+                        bid: {
+                            include: {
+                                buyer: { include: { user: true } },
+                            },
+                        },
+                        supplier: { include: { user: true } },
+                    },
+                },
+                groupPurchaseBuyer: {
+                    include: { buyer: { include: { user: true } } },
+                },
+            },
+        });
+
+        if (preInvoice) {
+            return await this.toInvoiceResponseDto(preInvoice, &#x27;PRE_INVOICE&#x27;);
+        }
+
+        // If neither exists
+        throw new NotFoundException(
+            &#x27;No invoice or pre-invoice found for this ID and user.&#x27;,
+        );
+    }
+
+    async createInvoice(dto: CreateInvoiceDto) {
+        // Validate buyer &amp; supplier existence
+        const [buyer, supplier] &#x3D; await Promise.all([
+            this.prisma.buyer.findUnique({ where: { id: dto.buyerId } }),
+            this.prisma.supplier.findUnique({ where: { id: dto.supplierId } }),
+        ]);
+
+        if (!buyer) throw new NotFoundException(&#x27;Buyer not found&#x27;);
+        if (!supplier) throw new NotFoundException(&#x27;Supplier not found&#x27;);
+
+        // Prepare invoice items
+        const itemsData &#x3D; await Promise.all(
+            dto.items.map(async (item) &#x3D;&gt; {
+                let relatedProduct: any &#x3D; null;
+                let relatedService: any &#x3D; null;
+
+                if (item.relatedProductId) {
+                    relatedProduct &#x3D; await this.prisma.product.findFirst({
+                        where: {
+                            id: item.relatedProductId,
+                            supplierId: supplier.id,
+                        },
+                    });
+                    if (!relatedProduct)
+                        throw new BadRequestException(
+                            &#x60;Product not found: ${item.relatedProductId}&#x60;,
+                        );
+                }
+
+                if (item.relatedServiceId) {
+                    relatedService &#x3D; await this.prisma.service.findFirst({
+                        where: {
+                            id: item.relatedServiceId,
+                            supplierId: supplier.id,
+                        },
+                    });
+                    if (!relatedService)
+                        throw new BadRequestException(
+                            &#x60;Service not found: ${item.relatedServiceId}&#x60;,
+                        );
+                }
+
+                return {
+                    name: item.name,
+                    description: item.description,
+                    agreedDetails: item.agreedDetails,
+                    quantity: item.quantity,
+                    unitPrice: item.unitPrice,
+                    priceBasedQuantity: item.unitPrice * item.quantity,
+                    relatedProductId: relatedProduct?.id ?? null,
+                    relatedServiceId: relatedService?.id ?? null,
+                };
+            }),
+        );
+
+        // Calculate total amount based on items
+        const itemsTotal &#x3D; itemsData.reduce(
+            (sum, item) &#x3D;&gt; sum + item.priceBasedQuantity,
+            0,
+        );
+
+        const totalAmount &#x3D; itemsTotal;
+        const upfrontAmount &#x3D; dto.upfrontAmount ?? 0;
+
+        // Validate upfront amount
+        if (upfrontAmount &gt; totalAmount) {
+            throw new BadRequestException(
+                &#x27;Upfront amount cannot exceed the total invoice amount.&#x27;,
+            );
+        }
+
+        // Business rule: limit upfront %
+        const MAX_UPFRONT_PERCENT &#x3D; 0.3;
+        const maxAllowedUpfront &#x3D; totalAmount * MAX_UPFRONT_PERCENT;
+
+        if (upfrontAmount &gt; maxAllowedUpfront) {
+            throw new BadRequestException(
+                &#x60;Upfront amount cannot exceed ${MAX_UPFRONT_PERCENT * 100}% of total (${maxAllowedUpfront.toFixed(
+                    2,
+                )}).&#x60;,
+            );
+        }
+
+        // Compute upon-delivery amount
+        let uponDeliveryAmount: number;
+        if (dto.termsOfPayment &#x3D;&#x3D;&#x3D; &#x27;FULL&#x27;) {
+            uponDeliveryAmount &#x3D; totalAmount;
+        } else {
+            uponDeliveryAmount &#x3D; totalAmount - upfrontAmount;
+        }
+
+        // Final consistency check
+        if (uponDeliveryAmount + upfrontAmount !&#x3D;&#x3D; totalAmount) {
+            throw new BadRequestException(&#x27;Amounts do not add up to total.&#x27;);
+        }
+
+        // Create the invoice
+        const invoice &#x3D; await this.prisma.invoice.create({
+            data: {
+                buyerId: dto.buyerId,
+                supplierId: dto.supplierId,
+                deliveryDate: new Date(dto.deliveryDate),
+                termsOfPayment: dto.termsOfPayment,
+                upfrontAmount: dto.upfrontAmount ?? null,
+                uponDeliveryAmount: uponDeliveryAmount,
+                notesAndTerms: dto.notesAndTerms ?? null,
+                amount: totalAmount,
+                items: {
+                    create: itemsData,
+                },
+            },
+            include: {
+                buyer: { include: { user: true } },
+                supplier: { include: { user: true } },
+                items: {
+                    include: {
+                        relatedProduct: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
+                        relatedService: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        // Send a notification for the buyer
+        await this.notificationService.createNotification({
+            senderUserId: supplier.userId,
+            receiverUserId: buyer.userId,
+            type: NotificationType.NEW_INVOICE,
+            title: &#x27;New Invoice!&#x27;,
+            content: &#x60;You have received a new invocie from ${invoice.supplier!.user.businessName}&#x60;,
+            entityId: invoice.id,
+            entityType: NotificationEntityType.INVOICE,
+        });
+
+        // Convert to InvoiceResponseDto
+        return await this.toInvoiceResponseDto(invoice, &#x27;INVOICE&#x27;);
+    }
+
+    async updateInvoiceStatus(
+        userId: string,
+        invoiceId: string,
+        status: InvoiceStatus,
+    ): Promise&lt;InvoiceResponseDto&gt; {
+        // Find user
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: { buyer: true },
+        });
+        if (!user || !user.buyer)
+            throw new NotFoundException(&#x27;User or buyer not found&#x27;);
+
+        // Fetch the invoice for this buyer
+        const invoice &#x3D; await this.prisma.invoice.findFirst({
+            where: {
+                id: invoiceId,
+                buyerId: user.buyer.id,
+            },
+        });
+
+        if (!invoice) {
+            throw new NotFoundException(&#x27;Invoice not found for this buyer&#x27;);
+        }
+
+        // Only allow updating PENDING invoices
+        if (invoice.status !&#x3D;&#x3D; InvoiceStatus.PENDING) {
+            throw new BadRequestException(
+                &#x60;Invoice status cannot be updated. Current status: ${invoice.status}&#x60;,
+            );
+        }
+
+        // Update the status
+        const updatedInvoice &#x3D; await this.prisma.invoice.update({
+            where: { id: invoiceId },
+            data: { status },
+            include: {
+                buyer: { include: { user: true } },
+                supplier: { include: { user: true } },
+                items: {
+                    include: {
+                        relatedProduct: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
+                        relatedService: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        // Send a notification for the supplier
+        await this.notificationService.createNotification({
+            senderUserId: updatedInvoice.buyer!.userId,
+            receiverUserId: updatedInvoice.supplier!.userId,
+            type: NotificationType.INVOICE_STATUS_CHANGED,
+            title: &#x27;Invoice Status Changed!&#x27;,
+            content: &#x60;Invoice from ${updatedInvoice.buyer!.user.name} got ${updatedInvoice.status}&#x60;,
+            entityId: updatedInvoice.id,
+            entityType: NotificationEntityType.INVOICE,
+        });
+
+        return (await this.toInvoiceResponseDto(
+            updatedInvoice,
+            &#x27;INVOICE&#x27;,
+        )) as InvoiceResponseDto;
+    }
+
+    async payInvoice(userId: string, id: string, dto?: PayInvoiceDto) {
+        // --- 1. Verify invoice exists and belongs to the buyer ---
+        const invoice &#x3D; await this.prisma.invoice.findUnique({
+            where: { id },
+            include: {
+                buyer: { include: { user: true, card: true } },
+                preInvoice: {
+                    include: {
+                        product: {
+                            include: { supplier: { include: { user: true } } },
+                        },
+                    },
+                },
+                items: {
+                    include: {
+                        relatedProduct: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
+                        relatedService: {
+                            include: {
+                                category: true,
+                                supplier: { include: { user: true } },
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!invoice || !invoice.buyer)
+            throw new NotFoundException(&#x27;Invoice not found&#x27;);
+        if (invoice.buyer.userId !&#x3D;&#x3D; userId)
+            throw new ForbiddenException(
+                &#x27;You are not allowed to pay this invoice&#x27;,
+            );
+        if (invoice.status &#x3D;&#x3D;&#x3D; InvoiceStatus.FULLY_PAID)
+            throw new BadRequestException(&#x27;Invoice already paid&#x27;);
+        if (
+            invoice.status !&#x3D;&#x3D; InvoiceStatus.ACCEPTED &amp;&amp;
+            invoice.status !&#x3D;&#x3D; InvoiceStatus.PARTIALLY_PAID
+        ) {
+            throw new BadRequestException(
+                &#x27;Invoice must be accepted or partially paid to proceed with payment&#x27;,
+            );
+        }
+
+        const buyer &#x3D; invoice.buyer;
+
+        // --- 2. Validate buyer payment info ---
+        if (!buyer.card)
+            throw new BadRequestException(&#x27;No saved card found for this buyer&#x27;);
+        if (!buyer.user.tapCustomerId)
+            throw new BadRequestException(&#x27;Missing Tap customer ID&#x27;);
+
+        // --- 3. Calculate totals ---
+        let totalAmount &#x3D; 0;
+
+        if (invoice.preInvoice) {
+            // Path 1: upgraded preinvoice
+            totalAmount &#x3D; invoice.preInvoice.amount; // everything is included in the preinvoice
+        } else {
+            // Path 2: normal invoice (multiple products or services)
+            const itemsTotal &#x3D; invoice.items.reduce((sum, item) &#x3D;&gt; {
+                const productPrice &#x3D; item.relatedProduct
+                    ? item.relatedProduct.price * item.quantity
+                    : 0;
+                const servicePrice &#x3D; item.relatedService
+                    ? item.relatedService.price * item.quantity
+                    : 0;
+                return sum + productPrice + servicePrice;
+            }, 0);
+
+            const deliveryFees &#x3D; invoice.items.reduce(
+                (sum, item) &#x3D;&gt;
+                    sum + (item.relatedProduct?.supplier?.deliveryFees ?? 0),
+                0,
+            );
+
+            totalAmount &#x3D; itemsTotal + deliveryFees;
+        }
+
+        let charge: any;
+
+        // --- 4. Path 1: Use existing charge if chargeId is provided ---
+        if (dto &amp;&amp; dto.chargeId) {
+            charge &#x3D; await this.tapPaymentService.getCharge(dto.chargeId);
+            await this.tapPaymentService.validateCharge(charge);
+            if (![&#x27;CAPTURED&#x27;, &#x27;AUTHORIZED&#x27;].includes(charge.status)) {
+                throw new BadRequestException(
+                    &#x60;Charge not successful yet. Status: ${charge.status}&#x60;,
+                );
+            }
+        } else {
+            // --- 5. Path 2: Create new Tap charge ---
+            const token &#x3D; await this.tapPaymentService.createTokenFromSavedCard(
+                buyer.user.tapCustomerId,
+                buyer.card.tapCardId,
+            );
+
+            let chargeAmount: number;
+            if (
+                invoice.termsOfPayment &#x3D;&#x3D;&#x3D; InvoiceTermsOfPayment.PARTIAL &amp;&amp;
+                !invoice.tapChargeId
+            ) {
+                // First payment (upfront)
+                if (!invoice.upfrontAmount) {
+                    throw new InternalServerErrorException(
+                        &#x27;Partial payment invoices must have an upfront amount specified.&#x27;,
+                    );
+                }
+                chargeAmount &#x3D; invoice.upfrontAmount;
+            } else {
+                // Final payment (upon delivery) or full invoice
+                chargeAmount &#x3D; invoice.uponDeliveryAmount ?? invoice.amount;
+            }
+
+            charge &#x3D; await this.tapPaymentService.payWithSavedCard(
+                buyer.user.tapCustomerId,
+                token.id,
+                buyer.card.tapCardId,
+                chargeAmount,
+                dto?.redirectUrl ||
+                    &#x60;${process.env.FRONTEND_URL}/buyer/payment/callback?type&#x3D;invoice&#x60;,
+            );
+
+            // --- 6. Redirect for 3DS if needed ---
+            if (charge.status &#x3D;&#x3D;&#x3D; &#x27;INITIATED&#x27; &amp;&amp; charge.transaction?.url) {
+                return {
+                    message: &#x27;Redirect for authentication&#x27;,
+                    redirectUrl: charge.transaction.url,
+                    chargeId: charge.id,
+                };
+            }
+
+            if (![&#x27;CAPTURED&#x27;, &#x27;AUTHORIZED&#x27;].includes(charge.status)) {
+                throw new BadRequestException(
+                    &#x60;Payment failed. Charge status: ${charge.status}&#x60;,
+                );
+            }
+        }
+
+        // --- 7. Update invoice payment details ---
+        await this.prisma.$transaction(async (tx) &#x3D;&gt; {
+            let newPaidAmount &#x3D; 0;
+            let remainingAmount &#x3D; 0;
+            let newStatus: InvoiceStatus;
+
+            if (
+                invoice.termsOfPayment &#x3D;&#x3D;&#x3D; InvoiceTermsOfPayment.PARTIAL &amp;&amp;
+                !invoice.tapChargeId
+            ) {
+                // First payment (upfront)
+                // Only upfrontAmount is paid; the rest remains
+                newPaidAmount &#x3D; invoice.upfrontAmount!;
+                remainingAmount &#x3D; invoice.amount - newPaidAmount;
+                newStatus &#x3D; InvoiceStatus.PARTIALLY_PAID;
+            } else if (
+                invoice.termsOfPayment &#x3D;&#x3D;&#x3D; InvoiceTermsOfPayment.PARTIAL &amp;&amp;
+                invoice.tapChargeId
+            ) {
+                // Second payment (upon delivery)
+                // The upfront was already paid, now pay the rest
+                newPaidAmount &#x3D; invoice.amount;
+                remainingAmount &#x3D; 0;
+                newStatus &#x3D; InvoiceStatus.FULLY_PAID;
+            } else {
+                // Full payment
+                // Not partial; single full payment from the beginning
+                newPaidAmount &#x3D; invoice.amount;
+                remainingAmount &#x3D; 0;
+                newStatus &#x3D; InvoiceStatus.FULLY_PAID;
+            }
+
+            await tx.invoice.update({
+                where: { id: invoice.id },
+                data: {
+                    status: newStatus,
+                    tapChargeId: charge.id,
+                },
+            });
+        });
+
+        // --- 8. Return summary ---
+        return {
+            message:
+                invoice.termsOfPayment &#x3D;&#x3D;&#x3D; InvoiceTermsOfPayment.PARTIAL &amp;&amp;
+                !invoice.tapChargeId
+                    ? &#x27;Partial payment was made successfully&#x27;
+                    : &#x27;Invoice paid successfully&#x27;,
+            tapChargeId: charge.id,
+            buyerId: buyer.id,
+            invoiceId: invoice.id,
+            totalPaid: totalAmount,
+            totalAmount: invoice.amount,
+        };
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'InvoiceService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

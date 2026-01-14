@@ -1,0 +1,1917 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >ServiceService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/service/service.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createService" >createService</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteService" >deleteService</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteServiceImage" >deleteServiceImage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#duplicateService" >duplicateService</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllServices" >getAllServices</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllSupplierServices" >getAllSupplierServices</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getServiceById" >getServiceById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toServiceResponseDto" >toServiceResponseDto</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateService" >updateService</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateServiceImages" >updateServiceImages</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prisma: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, fileService: <a href="../injectables/FileService.html" target="_self">FileService</a>, supplierService: <a href="../injectables/SupplierService.html" target="_self">SupplierService</a>, translationService: <a href="../injectables/TranslationService.html" target="_self">TranslationService</a>, smartSearchService: <a href="../injectables/SmartSearchService.html" target="_self">SmartSearchService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/service/service.service.ts:29</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prisma</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>fileService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/FileService.html" target="_self" >FileService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>supplierService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SupplierService.html" target="_self" >SupplierService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>translationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TranslationService.html" target="_self" >TranslationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>smartSearchService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SmartSearchService.html" target="_self" >SmartSearchService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createService"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createService</b></span>
+                        <a href="#createService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createService(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/CreateServiceDto.html" target="_self">CreateServiceDto</a>, files: Express.Multer.File[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="259"
+                                    class="link-to-prism">src/service/service.service.ts:259</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateServiceDto.html" target="_self" >CreateServiceDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>files</td>
+                                            <td>
+                                                        <code>Express.Multer.File[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ServiceResponseDto.html" target="_self" >Promise&lt;ServiceResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteService"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteService</b></span>
+                        <a href="#deleteService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteService(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, serviceId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="601"
+                                    class="link-to-prism">src/service/service.service.ts:601</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>serviceId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteServiceImage"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteServiceImage</b></span>
+                        <a href="#deleteServiceImage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteServiceImage(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, serviceId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, fileName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="545"
+                                    class="link-to-prism">src/service/service.service.ts:545</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>serviceId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fileName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="duplicateService"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>duplicateService</b></span>
+                        <a href="#duplicateService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>duplicateService(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, serviceId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="358"
+                                    class="link-to-prism">src/service/service.service.ts:358</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>serviceId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllServices"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllServices</b></span>
+                        <a href="#getAllServices"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllServices(targetLang: "ar" | "en", userId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="108"
+                                    class="link-to-prism">src/service/service.service.ts:108</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ServiceResponseDto.html" target="_self" >Promise&lt;ServiceResponseDto[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllSupplierServices"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllSupplierServices</b></span>
+                        <a href="#getAllSupplierServices"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllSupplierServices(supplierId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, targetLang: "ar" | "en", userId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="193"
+                                    class="link-to-prism">src/service/service.service.ts:193</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>supplierId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ServiceResponseDto.html" target="_self" >Promise&lt;ServiceResponseDto[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getServiceById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getServiceById</b></span>
+                        <a href="#getServiceById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getServiceById(serviceId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, targetLang: "ar" | "en", userId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="160"
+                                    class="link-to-prism">src/service/service.service.ts:160</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>serviceId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ServiceResponseDto.html" target="_self" >Promise&lt;ServiceResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toServiceResponseDto"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toServiceResponseDto</b></span>
+                        <a href="#toServiceResponseDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toServiceResponseDto(service: unknown, targetLang?: "ar" | "en")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="39"
+                                    class="link-to-prism">src/service/service.service.ts:39</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>service</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;unknown&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateService"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateService</b></span>
+                        <a href="#updateService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateService(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, serviceId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/UpdateServiceDto.html" target="_self">UpdateServiceDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="423"
+                                    class="link-to-prism">src/service/service.service.ts:423</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>serviceId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateServiceDto.html" target="_self" >UpdateServiceDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateServiceImages"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateServiceImages</b></span>
+                        <a href="#updateServiceImages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateServiceImages(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, serviceId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, file: Express.Multer.File)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="491"
+                                    class="link-to-prism">src/service/service.service.ts:491</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>serviceId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>file</td>
+                                            <td>
+                                                        <code>Express.Multer.File</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+    BadRequestException,
+    forwardRef,
+    Inject,
+    Injectable,
+    NotFoundException,
+} from &#x27;@nestjs/common&#x27;;
+import {
+    Category,
+    ItemType,
+    Prisma,
+    Service,
+    Supplier,
+    SupplierPlan,
+    SupplierStatus,
+    User,
+    UserRole,
+} from &#x27;@prisma/client&#x27;;
+import { FileService } from &#x27;src/file/file.service&#x27;;
+import { PrismaService } from &#x27;src/prisma/prisma.service&#x27;;
+import { SupplierService } from &#x27;src/supplier/supplier.service&#x27;;
+import { TranslationService } from &#x27;src/translation/translation.service&#x27;;
+import { ServiceResponseDto } from &#x27;./dtos/serviceResponse.dto&#x27;;
+import { CreateServiceDto } from &#x27;./dtos/createService.dto&#x27;;
+import { UpdateServiceDto } from &#x27;./dtos/updateService.dto&#x27;;
+import { SmartSearchService } from &#x27;src/smart-search/smart-search.service&#x27;;
+
+@Injectable()
+export class ServiceService {
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly fileService: FileService,
+        private readonly supplierService: SupplierService,
+        private readonly translationService: TranslationService,
+        @Inject(forwardRef(() &#x3D;&gt; SmartSearchService))
+        private readonly smartSearchService: SmartSearchService,
+    ) {}
+
+    async toServiceResponseDto(
+        service: Service &amp; {
+            supplier?: (Supplier &amp; { user: User }) | null;
+            category: Category;
+        },
+        targetLang?: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ): Promise&lt;ServiceResponseDto &amp; { targetLang?: string }&gt; {
+        // Supplier DTO
+        const supplierDto &#x3D; service.supplier
+            ? await this.supplierService.toSupplierResponseDTO(
+                  service.supplier.user,
+                  service.supplier,
+              )
+            : null;
+
+        // Signed URLs
+        const imagesFilesUrls &#x3D; await Promise.all(
+            service.imagesFilesNames.map((name) &#x3D;&gt;
+                this.fileService.getFileUrl(name),
+            ),
+        );
+
+        let name &#x3D; service.name;
+        let description &#x3D; service.description;
+
+        // Only translate if targetLang is provided
+        if (targetLang) {
+            name &#x3D; await this.translationService.translateText(
+                service.name,
+                targetLang,
+            );
+            description &#x3D; await this.translationService.translateText(
+                service.description,
+                targetLang,
+            );
+        }
+
+        let wishlistCount: number | undefined &#x3D; undefined;
+        if (service.supplier?.plan &#x3D;&#x3D;&#x3D; &#x27;PREMIUM&#x27;) {
+            wishlistCount &#x3D; service.wishlistCount;
+        }
+
+        return {
+            serviceId: service.id,
+            supplierId: service.supplierId ?? null,
+            supplier: supplierDto,
+            name,
+            description,
+            price: service.price,
+            isPriceNegotiable: service.isPriceNegotiable,
+            category: {
+                id: service.categoryId,
+                name: service.category.name,
+            },
+            imagesFilesNames: service.imagesFilesNames,
+            imagesFilesUrls,
+            serviceAvailability: service.serviceAvailability,
+            isPublished: service.isPublished,
+            ...(wishlistCount !&#x3D;&#x3D; undefined ? { wishlistCount } : {}),
+            avgRating: service.avgRating,
+            ratingsCount: service.ratingsCount,
+            createdAt: service.createdAt,
+            updatedAt: service.updatedAt,
+            isDeleted: service.isDeleted,
+            deletedAt: service.deletedAt ?? undefined,
+            ...(targetLang ? { targetLang } : {}), // include targetLang only if translated
+        };
+    }
+
+    async getAllServices(
+        targetLang: &#x27;ar&#x27; | &#x27;en&#x27;,
+        userId?: string,
+    ): Promise&lt;ServiceResponseDto[]&gt; {
+        let isPublishedFilter: boolean | undefined &#x3D; true; // default for buyers
+
+        if (userId) {
+            const user &#x3D; await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { supplier: true, buyer: true },
+            });
+            if (user?.supplier) {
+                isPublishedFilter &#x3D; undefined; // supplier sees all services
+            }
+        }
+
+        const services &#x3D; await this.prisma.service.findMany({
+            where: {
+                isDeleted: false,
+                supplier: {
+                    isStoreClosed: false,
+                    status: SupplierStatus.ACTIVE,
+                },
+                ...(isPublishedFilter !&#x3D;&#x3D; undefined
+                    ? { isPublished: isPublishedFilter }
+                    : {}),
+            },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        if (userId) {
+            const user &#x3D; await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang &#x3D; user.preferredLanguage.toLocaleLowerCase();
+                if (lang &#x3D;&#x3D;&#x3D; &#x27;ar&#x27; || lang &#x3D;&#x3D;&#x3D; &#x27;en&#x27;) {
+                    targetLang &#x3D; lang;
+                }
+            }
+        }
+
+        return await Promise.all(
+            services.map((service) &#x3D;&gt;
+                this.toServiceResponseDto(service, targetLang),
+            ),
+        );
+    }
+
+    async getServiceById(
+        serviceId: string,
+        targetLang: &#x27;ar&#x27; | &#x27;en&#x27;,
+        userId?: string,
+    ): Promise&lt;ServiceResponseDto&gt; {
+        const service &#x3D; await this.prisma.service.findUnique({
+            where: { id: serviceId },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+        if (!service) {
+            throw new NotFoundException(
+                &#x60;Service with id ${serviceId} not found&#x60;,
+            );
+        }
+
+        if (userId) {
+            const user &#x3D; await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang &#x3D; user.preferredLanguage.toLocaleLowerCase();
+                if (lang &#x3D;&#x3D;&#x3D; &#x27;ar&#x27; || lang &#x3D;&#x3D;&#x3D; &#x27;en&#x27;) {
+                    targetLang &#x3D; lang;
+                }
+            }
+        }
+
+        return this.toServiceResponseDto(service, targetLang);
+    }
+
+    async getAllSupplierServices(
+        supplierId: string,
+        targetLang: &#x27;ar&#x27; | &#x27;en&#x27;,
+        userId?: string,
+    ): Promise&lt;ServiceResponseDto[]&gt; {
+        const whereClause: Prisma.ServiceWhereInput &#x3D; {
+            supplierId,
+            isDeleted: false,
+        };
+
+        let finalTargetLang &#x3D; targetLang;
+
+        if (userId) {
+            const caller &#x3D; await this.prisma.user.findUnique({
+                where: { id: userId },
+                select: {
+                    id: true,
+                    role: true,
+                    supplier: { select: { id: true } },
+                    buyer: { select: { id: true } },
+                    preferredLanguage: true,
+                },
+            });
+
+            if (!caller) {
+                whereClause.isPublished &#x3D; true;
+            } else {
+                const isSupplierOwner &#x3D; caller.supplier?.id &#x3D;&#x3D;&#x3D; supplierId;
+
+                if (isSupplierOwner) {
+                    // Do NOT set isPublished
+                    if (caller.role !&#x3D;&#x3D; UserRole.SUPPLIER) {
+                        whereClause.isPublished &#x3D; true; // edge case safety
+                    }
+                } else {
+                    whereClause.isPublished &#x3D; true;
+                }
+
+                // Language override
+                if (caller.preferredLanguage) {
+                    const lang &#x3D; caller.preferredLanguage.toLowerCase();
+                    if (lang &#x3D;&#x3D;&#x3D; &#x27;ar&#x27; || lang &#x3D;&#x3D;&#x3D; &#x27;en&#x27;) {
+                        finalTargetLang &#x3D; lang;
+                    } else {
+                    }
+                }
+            }
+        } else {
+            whereClause.isPublished &#x3D; true;
+        }
+
+        const services &#x3D; await this.prisma.service.findMany({
+            where: whereClause,
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        const dtos &#x3D; await Promise.all(
+            services.map((s) &#x3D;&gt; this.toServiceResponseDto(s, finalTargetLang)),
+        );
+
+        return dtos;
+    }
+
+    async createService(
+        userId: string,
+        dto: CreateServiceDto,
+        files: Express.Multer.File[],
+    ): Promise&lt;ServiceResponseDto&gt; {
+        // 1. Check supplier
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found&#x27;);
+        }
+
+        // Enforce service limit for BASIC plan
+        if (supplier.plan &#x3D;&#x3D;&#x3D; SupplierPlan.BASIC) {
+            // Count existing active services
+            const activeServicesCount &#x3D; await this.prisma.service.count({
+                where: {
+                    supplierId: supplier.id,
+                    isDeleted: false,
+                },
+            });
+
+            const MAX_BASIC_SERVICES &#x3D; 3;
+            if (activeServicesCount &gt;&#x3D; MAX_BASIC_SERVICES) {
+                throw new BadRequestException(
+                    &#x60;Basic plan suppliers can only list up to ${MAX_BASIC_SERVICES} services. You already have ${activeServicesCount}.&#x60;,
+                );
+            }
+        }
+
+        // 2. Validate image count (1–10 for services)
+        if (!files || files.length &#x3D;&#x3D;&#x3D; 0) {
+            throw new BadRequestException(
+                &#x27;At least one service image is required&#x27;,
+            );
+        }
+        if (files.length &gt; 3) {
+            throw new BadRequestException(
+                &#x27;A maximum of 3 service images is allowed&#x27;,
+            );
+        }
+
+        // 3. Validate category
+        const category &#x3D; await this.prisma.category.findUnique({
+            where: { id: dto.categoryId },
+        });
+        if (!category) {
+            throw new NotFoundException(&#x27;Category not found&#x27;);
+        }
+
+        // Must be for services
+        if (category.usedFor !&#x3D;&#x3D; &#x27;SERVICE&#x27;) {
+            throw new BadRequestException(
+                &#x27;This category is not valid for services&#x27;,
+            );
+        }
+
+        // 4. Upload images to R2
+        const uploadedFileNames &#x3D; await Promise.all(
+            files.map((file) &#x3D;&gt; this.fileService.uploadFile(file)),
+        );
+
+        // 5. Create service
+        const service &#x3D; await this.prisma.service.create({
+            data: {
+                supplierId: supplier.id,
+                name: dto.name,
+                description: dto.description,
+                price: dto.price,
+                isPriceNegotiable: dto.isPriceNegotiable ?? false,
+                categoryId: dto.categoryId,
+                imagesFilesNames: uploadedFileNames,
+                serviceAvailability: dto.serviceAvailability,
+                isPublished: dto.isPublished ?? false,
+            },
+        });
+
+        // 6. Return full DTO
+        const fullService &#x3D; await this.prisma.service.findUnique({
+            where: { id: service.id },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        // 7. Generate embedding
+        await this.smartSearchService.generateAndStoreEmbedding({
+            itemId: fullService!.id,
+            itemType: ItemType.SERVICE,
+            name: fullService!.name,
+            description: fullService!.description,
+            categoryName: fullService!.category?.name ?? &#x27;&#x27;,
+        });
+
+        return this.toServiceResponseDto(fullService!);
+    }
+
+    async duplicateService(userId: string, serviceId: string) {
+        // 1. Check supplier
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found&#x27;);
+        }
+
+        // 2. Find the original service
+        const originalService &#x3D; await this.prisma.service.findUnique({
+            where: { id: serviceId, supplierId: supplier.id },
+        });
+        if (!originalService) {
+            throw new NotFoundException(&#x27;Service not found&#x27;);
+        }
+
+        // 3. Duplicate the service
+        const duplicatedService &#x3D; await this.prisma.service.create({
+            data: {
+                supplierId: supplier.id,
+                name: &#x60;${originalService.name} (Copy)&#x60;,
+                description: originalService.description,
+                price: originalService.price,
+                isPriceNegotiable: originalService.isPriceNegotiable,
+                categoryId: originalService.categoryId,
+                imagesFilesNames: originalService.imagesFilesNames,
+                serviceAvailability: originalService.serviceAvailability,
+                isPublished: false, // don’t publish a copy by default
+            },
+        });
+
+        // 4. Query back with relations (required for toServiceResponseDto)
+        const fullDuplicatedService &#x3D; await this.prisma.service.findUnique({
+            where: { id: duplicatedService.id },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        // 4. Duplicate embedding
+        const originalEmbedding &#x3D; await this.prisma.itemEmbedding.findUnique({
+            where: {
+                itemId_itemType: {
+                    itemId: originalService.id,
+                    itemType: ItemType.SERVICE,
+                },
+            },
+        });
+
+        if (originalEmbedding) {
+            await this.prisma.itemEmbedding.create({
+                data: {
+                    itemId: fullDuplicatedService!.id,
+                    itemType: ItemType.SERVICE,
+                    embedding: originalEmbedding.embedding,
+                },
+            });
+        }
+
+        return this.toServiceResponseDto(fullDuplicatedService!);
+    }
+
+    // Update service fields only (no images)
+    async updateService(
+        userId: string,
+        serviceId: string,
+        dto: UpdateServiceDto,
+    ) {
+        // 1. Check supplier
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found&#x27;);
+        }
+
+        // 2. Find service
+        const service &#x3D; await this.prisma.service.findUnique({
+            where: { id: serviceId, supplierId: supplier.id },
+        });
+        if (!service) {
+            throw new NotFoundException(&#x27;Service not found&#x27;);
+        }
+
+        // 3. If categoryId is updated, validate category
+        if (dto.categoryId) {
+            const category &#x3D; await this.prisma.category.findUnique({
+                where: { id: dto.categoryId },
+            });
+            if (!category) {
+                throw new NotFoundException(&#x27;Category not found&#x27;);
+            }
+            if (!category.parentCategoryId) {
+                throw new BadRequestException(
+                    &#x27;Services must be assigned to a subcategory, not a main category&#x27;,
+                );
+            }
+            if (category.usedFor !&#x3D;&#x3D; &#x27;SERVICE&#x27;) {
+                throw new BadRequestException(
+                    &#x27;This category is not valid for services&#x27;,
+                );
+            }
+        }
+
+        // 4. Update service
+        const updatedService &#x3D; await this.prisma.service.update({
+            where: { id: service.id },
+            data: dto,
+        });
+
+        // 5. Query back with relations
+        const fullService &#x3D; await this.prisma.service.findUnique({
+            where: { id: updatedService.id },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        // 6. Update embedding
+        await this.smartSearchService.generateAndStoreEmbedding({
+            itemId: fullService!.id,
+            itemType: ItemType.SERVICE,
+            name: fullService!.name,
+            description: fullService!.description,
+            categoryName: fullService!.category?.name ?? &#x27;&#x27;,
+        });
+
+        return this.toServiceResponseDto(fullService!);
+    }
+
+    async updateServiceImages(
+        userId: string,
+        serviceId: string,
+        file: Express.Multer.File,
+    ) {
+        // 1. Check supplier
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found&#x27;);
+        }
+
+        // 2. Find service
+        const service &#x3D; await this.prisma.service.findUnique({
+            where: { id: serviceId, supplierId: supplier.id, isDeleted: false },
+        });
+        if (!service) {
+            throw new NotFoundException(&#x27;Service not found&#x27;);
+        }
+
+        // 3. Validate image count (max 3)
+        if (service.imagesFilesNames.length &gt;&#x3D; 3) {
+            throw new BadRequestException(
+                &#x27;A maximum of 3 service images is allowed&#x27;,
+            );
+        }
+
+        // 4. Upload new image
+        const uploadedFileName &#x3D; await this.fileService.uploadFile(file);
+
+        // 5. Update service images
+        const updatedService &#x3D; await this.prisma.service.update({
+            where: { id: service.id },
+            data: {
+                imagesFilesNames: [
+                    ...service.imagesFilesNames,
+                    uploadedFileName,
+                ],
+            },
+        });
+
+        // 6. Return DTO
+        const fullService &#x3D; await this.prisma.service.findUnique({
+            where: { id: updatedService.id },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        return this.toServiceResponseDto(fullService!);
+    }
+
+    async deleteServiceImage(
+        userId: string,
+        serviceId: string,
+        fileName: string,
+    ) {
+        // 1. Check supplier
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found.&#x27;);
+        }
+
+        // 2. Find the service
+        const service &#x3D; await this.prisma.service.findUnique({
+            where: { id: serviceId, supplierId: supplier.id },
+        });
+        if (!service) {
+            throw new NotFoundException(&#x27;Service not found.&#x27;);
+        }
+
+        // 3. Check if the image exists in service.imagesFilesNames
+        if (!service.imagesFilesNames.includes(fileName)) {
+            throw new BadRequestException(&#x27;Image not found in this service.&#x27;);
+        }
+
+        // 4. Filter out the image
+        const updatedImages &#x3D; service.imagesFilesNames.filter(
+            (img) &#x3D;&gt; img !&#x3D;&#x3D; fileName,
+        );
+
+        if (updatedImages.length &#x3D;&#x3D;&#x3D; 0) {
+            throw new BadRequestException(
+                &#x27;A service must have at least one image.&#x27;,
+            );
+        }
+
+        // 5. Update service
+        const updatedService &#x3D; await this.prisma.service.update({
+            where: { id: service.id },
+            data: { imagesFilesNames: updatedImages },
+        });
+
+        // Future Work ?: Delete the file from R2 storage
+        // 6. Query back full service with relations for DTO
+        const fullService &#x3D; await this.prisma.service.findUnique({
+            where: { id: updatedService.id },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        return this.toServiceResponseDto(fullService!);
+    }
+
+    async deleteService(userId: string, serviceId: string) {
+        // 1. Check supplier
+        const supplier &#x3D; await this.prisma.supplier.findFirst({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found&#x27;);
+        }
+
+        // 2. Find the service
+        const service &#x3D; await this.prisma.service.findFirst({
+            where: { id: serviceId, supplierId: supplier.id, isDeleted: false },
+        });
+        if (!service) {
+            throw new NotFoundException(&#x27;Service not found&#x27;);
+        }
+
+        // 3. Soft-delete
+        await this.prisma.service.update({
+            where: { id: service.id },
+            data: {
+                isDeleted: true,
+                deletedAt: new Date(),
+            },
+        });
+
+        // 4. Return message
+        return {
+            message: &#x27;Service deleted successfully&#x27;,
+        };
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'ServiceService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

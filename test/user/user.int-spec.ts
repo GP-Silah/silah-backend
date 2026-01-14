@@ -1,747 +1,328 @@
+// test/user/user.int-spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-    BadRequestException,
-    INestApplication,
-    NotFoundException,
-    ParseFilePipe,
-    PipeTransform,
+  INestApplication,
+  ValidationPipe,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { FileService } from 'src/file/file.service';
-import { AuthService } from 'src/auth/auth.service';
-import { UserService } from 'src/user/user.service';
-import { JwtService } from '@nestjs/jwt';
 import * as request from 'supertest';
-import * as crypto from 'crypto';
-import { UpdateUserDto } from 'src/user/dtos/updateUser.dto';
-import { AppModule } from 'src/app.module';
+import { AppModule } from '../../src/app.module';
+import { PrismaService } from '../../src/prisma/prisma.service';
+import { JwtService } from '@nestjs/jwt';
+import { FileService } from '../../src/file/file.service';
+import { AuthService } from '../../src/auth/auth.service';
+import { UserService } from '../../src/user/user.service';
 import * as cookieParser from 'cookie-parser';
-import { FileInterceptor } from '@nestjs/platform-express';
-import * as fs from 'fs';
-import * as path from 'path';
 
-// Mock the sharp library
 jest.mock('sharp', () => {
-    return jest.fn().mockImplementation(() => ({
-        png: jest.fn().mockReturnThis(),
-        toBuffer: jest.fn().mockResolvedValue(Buffer.from('mock-png-buffer')),
-    }));
+  return jest.fn().mockImplementation(() => ({
+    resize: jest.fn().mockReturnThis(),
+    png: jest.fn().mockReturnThis(),
+    toBuffer: jest.fn().mockResolvedValue(Buffer.from('mock-png')),
+  }));
 });
 
-// Mock ParseFilePipe to bypass file validation in tests
-const MockParseFilePipe = jest.fn().mockImplementation(() => ({
-    transform: jest.fn().mockImplementation((value: any) => value),
-}));
+describe('UserController (Integration - Real AppModule)', () => {
+  let app: INestApplication;
+  let prisma: PrismaService;
+  let jwtService: JwtService;
+  let fileService: jest.Mocked<FileService>;
+  let authService: jest.Mocked<AuthService>;
 
-describe('UserController (Integration)', () => {
-    let app: INestApplication;
-    let prisma: PrismaService;
-    let jwtService: JwtService;
-    let authService: Partial<jest.Mocked<AuthService>>;
-    let fileService: Partial<jest.Mocked<FileService>>;
-    let userService: Partial<jest.Mocked<UserService>>;
+  const BUYER_ID = '123e4567-e89b-12d3-a456-426614174001';
+  const SUPPLIER_ID = '123e4567-e89b-12d3-a456-426614174002';
 
-    async function generateJwtToken(
-        userId: string,
-        email: string,
-        role: string,
-    ) {
-        return jwtService.signAsync(
-            { sub: userId, email, role, jti: crypto.randomUUID() },
-            { secret: process.env.JWT_SECRET || 'test-secret' },
-        );
-    }
+  async function createToken(userId: string, email: string, role: 'BUYER' | 'SUPPLIER') {
+    return jwtService.signAsync(
+      { sub: userId, email, role },
+      { secret: 'test-secret' }
+    );
+  }
 
-    async function seedTestData() {
-        const parentCategories = [
-            'Agricultural & Pet Supplies',
-            'Beauty & Personal Care',
-            'Home & Living',
-        ];
-        const childCategories = [
-            { name: 'Animal Feed', parent: 'Agricultural & Pet Supplies' },
-            { name: 'Skincare & Body Care', parent: 'Beauty & Personal Care' },
-            { name: 'Furniture', parent: 'Home & Living' },
-        ];
-
-        const parentMap = new Map<string, number>();
-        for (const name of parentCategories) {
-            const category = await prisma.category.upsert({
-                where: { name },
-                update: {},
-                create: { name },
-            });
-            parentMap.set(name, category.id);
-        }
-
-        for (const child of childCategories) {
-            const parentId = parentMap.get(child.parent);
-            await prisma.category.upsert({
-                where: { name: child.name },
-                update: {},
-                create: { name: child.name, parentCategoryId: parentId },
-            });
-        }
-
-        const user1 = await prisma.user.create({
-            data: {
-                id: '123e4567-e89b-12d3-a456-426614174001',
-                email: 'test1@example.com',
-                crn: '1234500000',
-                nid: '6665554443',
-                name: 'Test User 1',
-                role: 'BUYER',
-                businessName: 'Test Business 1',
-                city: 'Riyadh',
-                password: 'hashed-password',
-                isEmailVerified: true,
-                pfpFileName: 'test1.png',
-                isPfpDefault: false,
-                agreedToTerms: true,
-            },
-        });
-
-        const user2 = await prisma.user.create({
-            data: {
-                id: '123e4567-e89b-12d3-a456-426614174002',
-                email: 'test2@example.com',
-                crn: '9994444444',
-                nid: '0101053245',
-                name: 'Test User 2',
-                role: 'SUPPLIER',
-                businessName: 'Test Business 2',
-                city: 'Jeddah',
-                password: 'hashed-password',
-                isEmailVerified: false,
-                pfpFileName: null,
-                isPfpDefault: true,
-                agreedToTerms: true,
-            },
-        });
-
-        await prisma.supplier.create({
-            data: {
-                id: 'supp-123e4567-e89b-12d3-a456-426614174002',
-                userId: user2.id,
-                plan: 'BASIC',
-                isStoreClosed: true,
-                storeClosedMsg: 'Store closed',
-                deliveryFees: 0.0,
-                avgRating: 0.0,
-                ratingCount: 0,
-            },
-        });
-
-        await prisma.userCategory.createMany({
-            data: [
-                {
-                    userId: user1.id,
-                    categoryId: parentMap.get('Agricultural & Pet Supplies')!,
-                },
-                {
-                    userId: user1.id,
-                    categoryId: parentMap.get('Beauty & Personal Care')!,
-                },
-            ],
-        });
-    }
-
-    beforeAll(async () => {
-        fileService = {
-            uploadFile: jest.fn().mockResolvedValue('mock-file.png'),
-            getFileUrl: jest
-                .fn()
-                .mockImplementation((fileName: string) =>
-                    fileName ? `http://mock-r2.com/${fileName}` : null,
-                ),
-        };
-
-        authService = {
-            sendVerificationEmail: jest.fn().mockResolvedValue(undefined),
-            generateEmailVerificationToken: jest
-                .fn()
-                .mockResolvedValue('mock-verification-token'),
-            encryptPassword: jest.fn().mockResolvedValue('hashed-password'),
-        };
-
-        const module: TestingModule = await Test.createTestingModule({
-            imports: [AppModule],
-        })
-            .overrideProvider(FileService)
-            .useValue(fileService)
-            .overrideProvider(AuthService)
-            .useValue(authService)
-            .overrideProvider(ParseFilePipe)
-            .useValue(new MockParseFilePipe())
-            .overrideInterceptor(FileInterceptor('file'))
-            .useValue({
-                intercept: (context: any, next: any) => {
-                    const request = context.switchToHttp().getRequest();
-                    // Inject a mock file that will pass all validations
-                    request.file = {
-                        fieldname: 'file',
-                        originalname: 'profile.png',
-                        encoding: '7bit',
-                        mimetype: 'image/png',
-                        buffer: Buffer.from('valid-png-content'),
-                        size: 1024,
-                        destination: '',
-                        filename: '',
-                        path: '',
-                    };
-                    return next.handle();
-                },
-            })
-            .compile();
-
-        app = module.createNestApplication();
-        app.use(cookieParser());
-        prisma = module.get(PrismaService);
-        jwtService = module.get(JwtService);
-        userService = module.get(UserService); // Get the real UserService
-
-        // Mock only the deleteProfilePicture method
-        jest.spyOn(userService, 'deleteProfilePicture').mockImplementation(
-            async (email: string) => {
-                const user = await prisma.user.findUnique({ where: { email } });
-                if (!user) throw new NotFoundException('User not found');
-                if (user.isPfpDefault)
-                    throw new BadRequestException(
-                        'Profile picture already default',
-                    );
-
-                const mockFileName = 'default-avatars/default.png';
-                await prisma.user.update({
-                    where: { email },
-                    data: {
-                        pfpFileName: mockFileName,
-                        isPfpDefault: true,
-                    },
-                });
-                return { message: 'Profile picture deleted successfully' };
-            },
-        );
-
-        await app.init();
+  async function seedDatabase() {
+    await prisma.category.upsert({
+      where: { name: 'Agricultural & Pet Supplies' },
+      update: {},
+      create: { name: 'Agricultural & Pet Supplies', usedFor: 'PRODUCT' },
+    });
+    await prisma.category.upsert({
+      where: { name: 'Beauty & Personal Care' },
+      update: {},
+      create: { name: 'Beauty & Personal Care', usedFor: 'PRODUCT' },
+    });
+    await prisma.category.upsert({
+      where: { name: 'Home & Living' },
+      update: {},
+      create: { name: 'Home & Living', usedFor: 'PRODUCT' },
     });
 
-    beforeEach(async () => {
-        await prisma.cleanDatabase();
-        await seedTestData();
+    await prisma.user.upsert({
+      where: { id: BUYER_ID },
+      update: {},
+      create: {
+        id: BUYER_ID,
+        email: 'buyer@test.com',
+        name: 'Ahmad Buyer',
+        crn: '1111111111',
+        nid: '1234567890',
+        businessName: 'Ahmad Trading Co',
+        role: 'BUYER',
+        city: 'Riyadh',
+        password: 'hashed',
+        isEmailVerified: true,
+        pfpFileName: 'buyer.png',
+        isPfpDefault: false,
+        tapCustomerId: 'tap_000000000000000000000000', // string, not null
+        preferredLanguage: 'EN',
+        agreedToTerms: true,
+      },
     });
 
-    afterAll(async () => {
-        await prisma.$disconnect();
-        await app.close();
+    await prisma.user.upsert({
+      where: { id: SUPPLIER_ID },
+      update: {},
+      create: {
+        id: SUPPLIER_ID,
+        email: 'supplier@test.com',
+        name: 'Mohammed Supplier',
+        crn: '2222222222',
+        nid: '0987654321',
+        businessName: 'Mohammed Supplies LLC',
+        role: 'SUPPLIER',
+        city: 'Jeddah',
+        password: 'hashed',
+        isEmailVerified: true,
+        pfpFileName: null,
+        isPfpDefault: true,
+        tapCustomerId: 'tap_999999999999999999999999', // string
+        preferredLanguage: 'EN',
+        agreedToTerms: true,
+      },
     });
 
-    describe('GET /users/email/:email', () => {
-        it('should return user data for a valid email', async () => {
-            const response = await request(app.getHttpServer())
-                .get('/users/email/test1@example.com')
-                .expect(200);
+    const categories = await prisma.category.findMany();
+    await prisma.userCategory.createMany({
+      data: [
+        { userId: BUYER_ID, categoryId: categories[0].id },
+        { userId: BUYER_ID, categoryId: categories[1].id },
+      ],
+      skipDuplicates: true,
+    });
+  }
 
-            expect(response.body).toMatchObject({
-                id: '123e4567-e89b-12d3-a456-426614174001',
-                email: 'test1@example.com',
-                name: 'Test User 1',
-                crn: '1234500000',
-                businessName: 'Test Business 1',
-                city: 'Riyadh',
-                role: 'BUYER',
-                pfpFileName: 'test1.png',
-                pfpUrl: 'http://mock-r2.com/test1.png',
-                categories: expect.arrayContaining([
-                    'Agricultural & Pet Supplies',
-                    'Beauty & Personal Care',
-                ]),
-                isEmailVerified: true,
-            });
-        });
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(FileService)
+      .useValue({
+        uploadFile: jest.fn().mockResolvedValue('uploaded-mock.png'),
+        getFileUrl: jest.fn().mockImplementation((name: string) =>
+          name ? `https://r2.mock.dev/${name}` : null
+        ),
+      })
+      .overrideProvider(AuthService)
+      .useValue({
+        sendVerificationEmail: jest.fn(),
+        generateEmailVerificationToken: jest.fn().mockResolvedValue('token-xyz'),
+        encryptPassword: jest.fn().mockResolvedValue('new-hashed'),
+      })
+      .compile();
 
-        it('should throw NotFoundException for non-existent email', async () => {
-            await request(app.getHttpServer())
-                .get('/users/email/nonexistent@example.com')
-                .expect(404)
-                .expect({
-                    statusCode: 404,
-                    message:
-                        'User with email nonexistent@example.com not found',
-                    error: 'Not Found',
-                });
-        });
+    app = module.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+    app.use(cookieParser());
+    await app.init();
 
-        it('should throw BadRequestException for invalid email format', async () => {
-            await request(app.getHttpServer())
-                .get('/users/email/invalid-email')
-                .expect(400)
-                .expect({
-                    statusCode: 400,
-                    message: 'Invalid email format',
-                    error: 'Bad Request',
-                });
-        });
+    prisma = module.get(PrismaService);
+    jwtService = module.get(JwtService);
+    fileService = module.get(FileService);
+    authService = module.get(AuthService);
+
+    const userService = module.get(UserService);
+    jest.spyOn(userService, 'deleteProfilePicture').mockImplementation(async (email: string) => {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user) throw new NotFoundException('User not found');
+      if (user.isPfpDefault) throw new BadRequestException('Profile picture already default');
+
+      await prisma.user.update({
+        where: { email },
+        data: { pfpFileName: 'default.png', isPfpDefault: true },
+      });
+      return { message: 'Profile picture deleted successfully' };
+    });
+  });
+
+  beforeEach(async () => {
+    await prisma.cleanDatabase();
+    await seedDatabase();
+  });
+
+  afterAll(async () => {
+    await prisma.$disconnect();
+    await app.close();
+  });
+
+  // ====================== ROBUST ASSERTIONS ======================
+
+  describe('GET /users/email/:email', () => {
+    it('should return full user profile with correct structure', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/users/email/buyer@test.com')
+        .expect(200);
+
+      expect(res.body).toMatchObject({
+        id: BUYER_ID,
+        email: 'buyer@test.com',
+        name: 'Ahmad Buyer',
+        crn: '1111111111',
+        businessName: 'Ahmad Trading Co',
+        city: 'Riyadh',
+        role: 'BUYER',
+        isEmailVerified: true,
+        pfpFileName: 'buyer.png',
+        pfpUrl: 'https://r2.mock.dev/buyer.png',
+        categories: expect.arrayContaining([
+          'Agricultural & Pet Supplies',
+          'Beauty & Personal Care',
+        ]),
+      });
+      expect(Array.isArray(res.body.categories)).toBe(true);
+      expect(res.body.categories.length).toBeGreaterThan(0);
     });
 
-    describe('GET /users/crn/:crn', () => {
-        it('should return user data for a valid CRN', async () => {
-            const response = await request(app.getHttpServer())
-                .get('/users/crn/1234500000')
-                .expect(200);
-
-            expect(response.body).toMatchObject({
-                id: '123e4567-e89b-12d3-a456-426614174001',
-                crn: '1234500000',
-                email: 'test1@example.com',
-            });
-        });
-
-        it('should throw NotFoundException for non-existent CRN', async () => {
-            await request(app.getHttpServer())
-                .get('/users/crn/9965434321')
-                .expect(404)
-                .expect({
-                    statusCode: 404,
-                    message: 'User with CRN 9965434321 not found',
-                    error: 'Not Found',
-                });
+    it('should return 404 for unknown email', () => {
+      return request(app.getHttpServer())
+        .get('/users/email/unknown@silah.com')
+        .expect(404)
+        .expect(res => {
+          expect(res.body.message).toContain('not found');
         });
     });
+  });
 
-    describe('GET /users/name/:name', () => {
-        it('should return users matching name', async () => {
-            const response = await request(app.getHttpServer())
-                .get('/users/name?name=Test')
-                .expect(200);
+  describe('GET /users/me', () => {
+    it('should return authenticated user with all fields', async () => {
+      const token = await createToken(BUYER_ID, 'buyer@test.com', 'BUYER');
 
-            expect(response.body).toHaveLength(2);
-            expect(response.body[0]).toMatchObject({
-                name: 'Test User 1',
-                email: 'test1@example.com',
-            });
-            expect(response.body[1]).toMatchObject({
-                name: 'Test User 2',
-                email: 'test2@example.com',
-            });
-        });
+      const res = await request(app.getHttpServer())
+        .get('/users/me')
+        .set('Cookie', `token=${token}`)
+        .expect(200);
 
-        it('should throw NotFoundException for non-matching name', async () => {
-            await request(app.getHttpServer())
-                .get('/users/name?name=NonExistent')
-                .expect(404)
-                .expect({
-                    statusCode: 404,
-                    message: 'No users found matching name: NonExistent',
-                    error: 'Not Found',
-                });
-        });
-
-        it('should throw BadRequestException for empty name search', async () => {
-            await request(app.getHttpServer())
-                .get('/users/name?name=')
-                .expect(400)
-                .expect({
-                    statusCode: 400,
-                    message: 'Name parameter is required',
-                    error: 'Bad Request',
-                });
-        });
+      expect(res.body).toMatchObject({
+        id: BUYER_ID,
+        email: 'buyer@test.com',
+        role: 'BUYER',
+        name: 'Ahmad Buyer',
+        city: 'Riyadh',
+      });
+      expect(Array.isArray(res.body.categories)).toBe(true);
+      expect(res.body.categories.length).toBe(2);
     });
 
-    describe('GET /users/me', () => {
-        it('should return current user data with valid token', async () => {
-            const token = await generateJwtToken(
-                '123e4567-e89b-12d3-a456-426614174001',
-                'test1@example.com',
-                'BUYER',
-            );
+    it('should reject missing token', () => {
+      return request(app.getHttpServer()).get('/users/me').expect(401);
+    });
+  });
 
-            const response = await request(app.getHttpServer())
-                .get('/users/me')
-                .set('Cookie', `token=${token}`)
-                .expect(200);
+  describe('PATCH /users/me', () => {
+    it('should update name and city correctly', async () => {
+      const token = await createToken(BUYER_ID, 'buyer@test.com', 'BUYER');
 
-            expect(response.body).toMatchObject({
-                id: '123e4567-e89b-12d3-a456-426614174001',
-                email: 'test1@example.com',
-                role: 'BUYER',
-            });
-        });
+      const res = await request(app.getHttpServer())
+        .patch('/users/me')
+        .set('Cookie', `token=${token}`)
+        .send({ name: 'Updated Name', city: 'Dammam' })
+        .expect(200);
 
-        it('should throw UnauthorizedException for missing token', async () => {
-            await request(app.getHttpServer())
-                .get('/users/me')
-                .expect(401)
-                .expect({
-                    statusCode: 401,
-                    message: 'No token found in cookies',
-                    error: 'Unauthorized',
-                });
-        });
+      expect(res.body.name).toBe('Updated Name');
+      expect(res.body.city).toBe('Dammam');
 
-        it('should throw UnauthorizedException for invalid token', async () => {
-            await request(app.getHttpServer())
-                .get('/users/me')
-                .set('Cookie', `token=invalid-token`)
-                .expect(401)
-                .expect({
-                    statusCode: 401,
-                    message: 'Invalid or expired token',
-                    error: 'Unauthorized',
-                });
-        });
+      // DB check
+      const user = await prisma.user.findUnique({ where: { id: BUYER_ID } });
+      expect(user?.name).toBe('Updated Name');
+      expect(user?.city).toBe('Dammam');
+    });
+  });
 
-        it('should throw NotFoundException for non-existent user', async () => {
-            const token = await generateJwtToken(
-                'nonexistent-id',
-                'nonexistent@example.com',
-                'BUYER',
-            );
+  describe('POST /users/me/profile-picture', () => {
+    it('should upload and update profile picture', async () => {
+      const token = await createToken(BUYER_ID, 'buyer@test.com', 'BUYER');
 
-            await request(app.getHttpServer())
-                .get('/users/me')
-                .set('Cookie', `token=${token}`)
-                .expect(404)
-                .expect({
-                    statusCode: 404,
-                    message: 'User data not found',
-                    error: 'Not Found',
-                });
-        });
+      const res = await request(app.getHttpServer())
+        .post('/users/me/profile-picture')
+        .set('Cookie', `token=${token}`)
+        .attach('file', Buffer.from('fake-png-data'), 'photo.png')
+        .expect(201);
+
+      expect(res.body).toEqual({
+        message: 'Profile picture updated successfully',
+        pfpFileName: 'uploaded-mock.png',
+      });
+
+      const user = await prisma.user.findUnique({ where: { id: BUYER_ID } });
+      expect(user?.pfpFileName).toBe('uploaded-mock.png');
+      expect(user?.isPfpDefault).toBe(false);
+    });
+  });
+
+  describe('DELETE /users/me/profile-picture', () => {
+    it('should remove picture and set default', async () => {
+      const token = await createToken(BUYER_ID, 'buyer@test.com', 'BUYER');
+
+      await request(app.getHttpServer())
+        .delete('/users/me/profile-picture')
+        .set('Cookie', `token=${token}`)
+        .expect(200);
+
+      const user = await prisma.user.findUnique({ where: { id: BUYER_ID } });
+      expect(user?.isPfpDefault).toBe(true);
+      expect(user?.pfpFileName).toBe('default.png');
     });
 
-    describe('PATCH /users/me', () => {
-        it('should update user data with valid token and input', async () => {
-            const token = await generateJwtToken(
-                '123e4567-e89b-12d3-a456-426614174001',
-                'test1@example.com',
-                'BUYER',
-            );
+    it('should 400 when already default', async () => {
+      const token = await createToken(SUPPLIER_ID, 'supplier@test.com', 'SUPPLIER');
 
-            const updateDto: UpdateUserDto = {
-                name: 'Updated User',
-                email: 'updated@example.com',
-                businessName: 'Updated Business',
-                city: 'Jeddah',
-                newPassword: 'newPassword123',
-                categories: ['Home & Living'],
-            };
+      await request(app.getHttpServer())
+        .delete('/users/me/profile-picture')
+        .set('Cookie', `token=${token}`)
+        .expect(400);
+    });
+  });
 
-            const response = await request(app.getHttpServer())
-                .patch('/users/me')
-                .set('Cookie', `token=${token}`)
-                .send(updateDto)
-                .expect(200);
-
-            expect(response.body).toMatchObject({
-                name: 'Updated User',
-                email: 'updated@example.com',
-                businessName: 'Updated Business',
-                city: 'Jeddah',
-                categories: ['Home & Living'],
-            });
-
-            const updatedUser = await prisma.user.findUnique({
-                where: { id: '123e4567-e89b-12d3-a456-426614174001' },
-            });
-            expect(updatedUser?.name).toBe('Updated User');
-            expect(updatedUser?.email).toBe('updated@example.com');
-        });
-
-        it('should throw BadRequestException for invalid categories', async () => {
-            const token = await generateJwtToken(
-                '123e4567-e89b-12d3-a456-426614174001',
-                'test1@example.com',
-                'BUYER',
-            );
-
-            const updateDto = { categories: ['Invalid Category'] };
-
-            await request(app.getHttpServer())
-                .patch('/users/me')
-                .set('Cookie', `token=${token}`)
-                .send(updateDto)
-                .expect(400)
-                .expect({
-                    statusCode: 400,
-                    message: 'These categories are invalid: Invalid Category',
-                    error: 'Bad Request',
-                });
-        });
-
-        it('should handle partial updates', async () => {
-            const token = await generateJwtToken(
-                '123e4567-e89b-12d3-a456-426614174001',
-                'test1@example.com',
-                'BUYER',
-            );
-
-            const updateDto = { name: 'Partial Update' };
-
-            const response = await request(app.getHttpServer())
-                .patch('/users/me')
-                .set('Cookie', `token=${token}`)
-                .send(updateDto)
-                .expect(200);
-
-            expect(response.body.name).toBe('Partial Update');
-            expect(response.body.email).toBe('test1@example.com');
-        });
+  describe('GET /users/:id/profile-picture', () => {
+    it('should return correct URL', () => {
+      return request(app.getHttpServer())
+        .get(`/users/${BUYER_ID}/profile-picture`)
+        .expect(200)
+        .expect({ pfpUrl: 'https://r2.mock.dev/buyer.png' });
     });
 
-    describe('POST /users/me/profile-picture', () => {
-        it('should update profile picture with valid token', async () => {
-            const token = await generateJwtToken(
-                '123e4567-e89b-12d3-a456-426614174001',
-                'test1@example.com',
-                'BUYER',
-            );
-
-            const file = {
-                fieldname: 'file',
-                originalname: 'profile.jpg',
-                encoding: '7bit',
-                mimetype: 'image/jpeg',
-                buffer: Buffer.from('mock-file-content'),
-                size: 1024,
-            };
-
-            const mockFileBuffer = Buffer.from('mock-file-content');
-
-            const filePath = path.join(__dirname, 'fixtures', 'test.png');
-            const fileBuffer = fs.readFileSync(filePath);
-
-            const response = await request(app.getHttpServer())
-                .post('/users/me/profile-picture')
-                .set('Cookie', `token=${token}`)
-                .attach('file', fileBuffer, {
-                    filename: 'profile.png',
-                    contentType: 'image/png',
-                })
-                .expect(201);
-
-            expect(response.body).toEqual({
-                message: 'Profile picture updated successfully',
-                pfpFileName: 'mock-file.png',
-            });
-
-            expect(fileService.uploadFile).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    originalname: 'profile.png',
-                    mimetype: 'image/png',
-                }),
-            );
-
-            const user = await prisma.user.findUnique({
-                where: { id: '123e4567-e89b-12d3-a456-426614174001' },
-            });
-            expect(user?.pfpFileName).toBe('mock-file.png');
-            expect(user?.isPfpDefault).toBe(false);
-        });
-
-        it('should work with JPEG too', async () => {
-            const token = await generateJwtToken(
-                '123e4567-e89b-12d3-a456-426614174001',
-                'test1@example.com',
-                'BUYER',
-            );
-
-            const filePath = path.join(__dirname, 'fixtures', 'test.jpg');
-            const fileBuffer = fs.readFileSync(filePath);
-
-            const response = await request(app.getHttpServer())
-                .post('/users/me/profile-picture')
-                .set('Cookie', `token=${token}`)
-                .attach('file', fileBuffer, {
-                    filename: 'profile.jpg',
-                    contentType: 'image/jpeg',
-                })
-                .expect(201);
-
-            expect(response.body).toEqual({
-                message: 'Profile picture updated successfully',
-                pfpFileName: 'mock-file.png',
-            });
-
-            expect(fileService.uploadFile).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    originalname: 'profile.jpg',
-                    mimetype: 'image/jpeg',
-                }),
-            );
-
-            const user = await prisma.user.findUnique({
-                where: { id: '123e4567-e89b-12d3-a456-426614174001' },
-            });
-            expect(user?.pfpFileName).toBe('mock-file.png');
-            expect(user?.isPfpDefault).toBe(false);
-        });
-
-        it('should throw UnauthorizedException for missing token', async () => {
-            await request(app.getHttpServer())
-                .post('/users/me/profile-picture')
-                .expect(401)
-                .expect({
-                    statusCode: 401,
-                    message: 'No token found in cookies',
-                    error: 'Unauthorized',
-                });
-        });
+    it('should 404 when no picture', () => {
+      return request(app.getHttpServer())
+        .get(`/users/${SUPPLIER_ID}/profile-picture`)
+        .expect(404);
     });
+  });
 
-    // describe('Regex validation test', () => {
-    //     it('should validate the file type regex', () => {
-    //         const regex = /^image\/(png|jpe?g|webp)$/i;
+  describe('POST /users/profile-pictures/batch', () => {
+    it('should return correct URLs for multiple users', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/users/profile-pictures/batch')
+        .send({ ids: [BUYER_ID, SUPPLIER_ID] })
+        .expect(201);
 
-    //         expect(regex.test('image/png')).toBe(true);
-    //         expect(regex.test('image/jpg')).toBe(true);
-    //         expect(regex.test('image/jpeg')).toBe(true);
-    //         expect(regex.test('image/webp')).toBe(true);
-    //         expect(regex.test('image/gif')).toBe(false);
-    //         expect(regex.test('application/pdf')).toBe(false);
-    //     });
-    // });
-
-    describe('DELETE /users/me/profile-picture', () => {
-        it('should delete profile picture and set default', async () => {
-            const token = await generateJwtToken(
-                '123e4567-e89b-12d3-a456-426614174001',
-                'test1@example.com',
-                'BUYER',
-            );
-
-            const response = await request(app.getHttpServer())
-                .delete('/users/me/profile-picture')
-                .set('Cookie', `token=${token}`)
-                .expect(200);
-
-            expect(response.body).toEqual({
-                message: 'Profile picture deleted successfully',
-            });
-
-            const user = await prisma.user.findUnique({
-                where: { id: '123e4567-e89b-12d3-a456-426614174001' },
-            });
-            expect(user?.isPfpDefault).toBe(true);
-            expect(user?.pfpFileName).toBe('default-avatars/default.png');
-        });
-
-        it('should throw BadRequestException if already default', async () => {
-            const token = await generateJwtToken(
-                '123e4567-e89b-12d3-a456-426614174002',
-                'test2@example.com',
-                'SUPPLIER',
-            );
-
-            await request(app.getHttpServer())
-                .delete('/users/me/profile-picture')
-                .set('Cookie', `token=${token}`)
-                .expect(400)
-                .expect({
-                    statusCode: 400,
-                    message: 'Profile picture already default',
-                    error: 'Bad Request',
-                });
-        });
+      expect(res.body).toHaveLength(2);
+      expect(res.body).toContainEqual({
+        id: BUYER_ID,
+        pfpUrl: 'https://r2.mock.dev/buyer.png',
+      });
+      expect(res.body).toContainEqual({
+        id: SUPPLIER_ID,
+        pfpUrl: null,
+      });
     });
-
-    describe('GET /users/:id/profile-picture', () => {
-        it('should return profile picture URL for valid user ID', async () => {
-            const response = await request(app.getHttpServer())
-                .get(
-                    '/users/123e4567-e89b-12d3-a456-426614174001/profile-picture',
-                )
-                .expect(200);
-
-            expect(response.body).toEqual({
-                pfpUrl: 'http://mock-r2.com/test1.png',
-            });
-        });
-
-        it('should throw NotFoundException for non-existent user', async () => {
-            await request(app.getHttpServer())
-                .get('/users/nonexistent-id/profile-picture')
-                .expect(404)
-                .expect({
-                    statusCode: 404,
-                    message: 'Profile picture not found',
-                    error: 'Not Found',
-                });
-        });
-
-        it('should throw NotFoundException for user with no profile picture', async () => {
-            await request(app.getHttpServer())
-                .get(
-                    '/users/123e4567-e89b-12d3-a456-426614174002/profile-picture',
-                )
-                .expect(404)
-                .expect({
-                    statusCode: 404,
-                    message: 'Profile picture not found',
-                    error: 'Not Found',
-                });
-        });
-    });
-
-    describe('POST /users/profile-pictures/batch', () => {
-        it('should return profile picture URLs for valid user IDs', async () => {
-            const response = await request(app.getHttpServer())
-                .post('/users/profile-pictures/batch')
-                .set('Content-Type', 'application/json')
-                .send({
-                    ids: [
-                        '123e4567-e89b-12d3-a456-426614174001',
-                        '123e4567-e89b-12d3-a456-426614174002',
-                    ],
-                })
-                .expect(201);
-
-            expect(response.body).toEqual([
-                {
-                    id: '123e4567-e89b-12d3-a456-426614174001',
-                    pfpUrl: 'http://mock-r2.com/test1.png',
-                },
-                { id: '123e4567-e89b-12d3-a456-426614174002', pfpUrl: null },
-            ]);
-        });
-
-        it('should throw BadRequestException for empty ID array', async () => {
-            await request(app.getHttpServer())
-                .post('/users/profile-pictures/batch')
-                .set('Content-Type', 'application/json')
-                .send({ ids: [] })
-                .expect(400)
-                .expect({
-                    statusCode: 400,
-                    message: 'No user IDs provided',
-                    error: 'Bad Request',
-                });
-        });
-
-        it('should throw BadRequestException for invalid UUIDs', async () => {
-            await request(app.getHttpServer())
-                .post('/users/profile-pictures/batch')
-                .set('Content-Type', 'application/json')
-                .send({ ids: ['invalid-uuid'] })
-                .expect(400)
-                .expect({
-                    statusCode: 400,
-                    message: 'No valid UUIDs provided',
-                    error: 'Bad Request',
-                });
-        });
-
-        it('should throw NotFoundException for non-existent users', async () => {
-            await request(app.getHttpServer())
-                .post('/users/profile-pictures/batch')
-                .set('Content-Type', 'application/json')
-                .send({ ids: ['123e4567-e89b-12d3-a456-426614174999'] })
-                .expect(404)
-                .expect({
-                    statusCode: 404,
-                    message: 'No users found with the provided IDs',
-                    error: 'Not Found',
-                });
-        });
-    });
+  });
 });

@@ -1,0 +1,3778 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content miscellaneous-functions">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Miscellaneous</li>
+  <li class="breadcrumb-item">Functions</li>
+</ol>
+
+<section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <ul class="index-list">
+                        <li>
+                            <a href="#ApiDocsAddCartItem" title="src/cart/cart.docs.ts" ><b>ApiDocsAddCartItem</b>&nbsp;&nbsp;&nbsp;(src/.../cart.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsChangePassword" title="src/auth/auth.docs.ts" ><b>ApiDocsChangePassword</b>&nbsp;&nbsp;&nbsp;(src/.../auth.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsCheckoutCart" title="src/cart/cart.docs.ts" ><b>ApiDocsCheckoutCart</b>&nbsp;&nbsp;&nbsp;(src/.../cart.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsConfirmDelivery" title="src/order/order.docs.ts" ><b>ApiDocsConfirmDelivery</b>&nbsp;&nbsp;&nbsp;(src/.../order.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsCreateBid" title="src/bid/bid.docs.ts" ><b>ApiDocsCreateBid</b>&nbsp;&nbsp;&nbsp;(src/.../bid.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsCreateInvoice" title="src/invoice/invoice.docs.ts" ><b>ApiDocsCreateInvoice</b>&nbsp;&nbsp;&nbsp;(src/.../invoice.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsCreateOffer" title="src/offer/offer.docs.ts" ><b>ApiDocsCreateOffer</b>&nbsp;&nbsp;&nbsp;(src/.../offer.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsCreateProduct" title="src/product/product.docs.ts" ><b>ApiDocsCreateProduct</b>&nbsp;&nbsp;&nbsp;(src/.../product.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsCreateReview" title="src/review/review.docs.ts" ><b>ApiDocsCreateReview</b>&nbsp;&nbsp;&nbsp;(src/.../review.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsCreateService" title="src/service/service.docs.ts" ><b>ApiDocsCreateService</b>&nbsp;&nbsp;&nbsp;(src/.../service.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsDeleteCart" title="src/cart/cart.docs.ts" ><b>ApiDocsDeleteCart</b>&nbsp;&nbsp;&nbsp;(src/.../cart.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsDeleteCurrentBuyerCard" title="src/buyer/buyer.docs.ts" ><b>ApiDocsDeleteCurrentBuyerCard</b>&nbsp;&nbsp;&nbsp;(src/.../buyer.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsDeleteProduct" title="src/product/product.docs.ts" ><b>ApiDocsDeleteProduct</b>&nbsp;&nbsp;&nbsp;(src/.../product.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsDeleteProductImage" title="src/product/product.docs.ts" ><b>ApiDocsDeleteProductImage</b>&nbsp;&nbsp;&nbsp;(src/.../product.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsDeleteProfilePicture" title="src/user/user.docs.ts" ><b>ApiDocsDeleteProfilePicture</b>&nbsp;&nbsp;&nbsp;(src/.../user.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsDeleteService" title="src/service/service.docs.ts" ><b>ApiDocsDeleteService</b>&nbsp;&nbsp;&nbsp;(src/.../service.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsDeleteServiceImage" title="src/service/service.docs.ts" ><b>ApiDocsDeleteServiceImage</b>&nbsp;&nbsp;&nbsp;(src/.../service.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsDeleteStoreBanner" title="src/supplier/supplier.docs.ts" ><b>ApiDocsDeleteStoreBanner</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsDuplicateProduct" title="src/product/product.docs.ts" ><b>ApiDocsDuplicateProduct</b>&nbsp;&nbsp;&nbsp;(src/.../product.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsDuplicateService" title="src/service/service.docs.ts" ><b>ApiDocsDuplicateService</b>&nbsp;&nbsp;&nbsp;(src/.../service.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsFakeGetCreateProductDto" title="src/product/product.docs.ts" ><b>ApiDocsFakeGetCreateProductDto</b>&nbsp;&nbsp;&nbsp;(src/.../product.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsFakeGetCreateServiceDto" title="src/service/service.docs.ts" ><b>ApiDocsFakeGetCreateServiceDto</b>&nbsp;&nbsp;&nbsp;(src/.../service.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsFakeWebSocketGuide" title="src/chat/chat.docs.ts" ><b>ApiDocsFakeWebSocketGuide</b>&nbsp;&nbsp;&nbsp;(src/.../chat.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetAllBids" title="src/bid/bid.docs.ts" ><b>ApiDocsGetAllBids</b>&nbsp;&nbsp;&nbsp;(src/.../bid.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetAllCategories" title="src/category/category.docts.ts" ><b>ApiDocsGetAllCategories</b>&nbsp;&nbsp;&nbsp;(src/.../category.docts.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetAllChats" title="src/chat/chat.docs.ts" ><b>ApiDocsGetAllChats</b>&nbsp;&nbsp;&nbsp;(src/.../chat.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetAllGroupPurchaseForProduct" title="src/group-purchase/group-purchase.docs.ts" ><b>ApiDocsGetAllGroupPurchaseForProduct</b>&nbsp;&nbsp;&nbsp;(src/.../group-purchase.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetAllProducts" title="src/product/product.docs.ts" ><b>ApiDocsGetAllProducts</b>&nbsp;&nbsp;&nbsp;(src/.../product.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetAllServices" title="src/service/service.docs.ts" ><b>ApiDocsGetAllServices</b>&nbsp;&nbsp;&nbsp;(src/.../service.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetAllSupplierProducts" title="src/product/product.docs.ts" ><b>ApiDocsGetAllSupplierProducts</b>&nbsp;&nbsp;&nbsp;(src/.../product.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetAllSuppliers" title="src/supplier/supplier.docs.ts" ><b>ApiDocsGetAllSuppliers</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetAllSupplierServices" title="src/service/service.docs.ts" ><b>ApiDocsGetAllSupplierServices</b>&nbsp;&nbsp;&nbsp;(src/.../service.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetBidById" title="src/bid/bid.docs.ts" ><b>ApiDocsGetBidById</b>&nbsp;&nbsp;&nbsp;(src/.../bid.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetBidsIJoined" title="src/bid/bid.docs.ts" ><b>ApiDocsGetBidsIJoined</b>&nbsp;&nbsp;&nbsp;(src/.../bid.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetBuyerActiveCart" title="src/cart/cart.docs.ts" ><b>ApiDocsGetBuyerActiveCart</b>&nbsp;&nbsp;&nbsp;(src/.../cart.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetBuyerById" title="src/buyer/buyer.docs.ts" ><b>ApiDocsGetBuyerById</b>&nbsp;&nbsp;&nbsp;(src/.../buyer.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetCategoryById" title="src/category/category.docts.ts" ><b>ApiDocsGetCategoryById</b>&nbsp;&nbsp;&nbsp;(src/.../category.docts.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetChatById" title="src/chat/chat.docs.ts" ><b>ApiDocsGetChatById</b>&nbsp;&nbsp;&nbsp;(src/.../chat.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetCurrentBuyerCard" title="src/buyer/buyer.docs.ts" ><b>ApiDocsGetCurrentBuyerCard</b>&nbsp;&nbsp;&nbsp;(src/.../buyer.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetCurrentBuyerData" title="src/buyer/buyer.docs.ts" ><b>ApiDocsGetCurrentBuyerData</b>&nbsp;&nbsp;&nbsp;(src/.../buyer.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetCurrentBuyerWishlist" title="src/buyer/buyer.docs.ts" ><b>ApiDocsGetCurrentBuyerWishlist</b>&nbsp;&nbsp;&nbsp;(src/.../buyer.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetCurrentUserData" title="src/user/user.docs.ts" ><b>ApiDocsGetCurrentUserData</b>&nbsp;&nbsp;&nbsp;(src/.../user.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetDemandPrediction" title="src/demand-prediction/demand-prediction.docs.ts" ><b>ApiDocsGetDemandPrediction</b>&nbsp;&nbsp;&nbsp;(src/.../demand-prediction.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetFavoriteCategories" title="src/supplier/supplier.docs.ts" ><b>ApiDocsGetFavoriteCategories</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetGroupById" title="src/group-purchase/group-purchase.docs.ts" ><b>ApiDocsGetGroupById</b>&nbsp;&nbsp;&nbsp;(src/.../group-purchase.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetItemReviews" title="src/review/review.docs.ts" ><b>ApiDocsGetItemReviews</b>&nbsp;&nbsp;&nbsp;(src/.../review.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetMainCategories" title="src/category/category.docts.ts" ><b>ApiDocsGetMainCategories</b>&nbsp;&nbsp;&nbsp;(src/.../category.docts.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetMessagesForChat" title="src/chat/chat.docs.ts" ><b>ApiDocsGetMessagesForChat</b>&nbsp;&nbsp;&nbsp;(src/.../chat.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetMyAnalytics" title="src/analytics/analytics.docs.ts" ><b>ApiDocsGetMyAnalytics</b>&nbsp;&nbsp;&nbsp;(src/.../analytics.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetMyBids" title="src/bid/bid.docs.ts" ><b>ApiDocsGetMyBids</b>&nbsp;&nbsp;&nbsp;(src/.../bid.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetMyInvoiceById" title="src/invoice/invoice.docs.ts" ><b>ApiDocsGetMyInvoiceById</b>&nbsp;&nbsp;&nbsp;(src/.../invoice.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetMyInvoices" title="src/invoice/invoice.docs.ts" ><b>ApiDocsGetMyInvoices</b>&nbsp;&nbsp;&nbsp;(src/.../invoice.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetMyNotifications" title="src/notification/notification.docs.ts" ><b>ApiDocsGetMyNotifications</b>&nbsp;&nbsp;&nbsp;(src/.../notification.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetMyOrders" title="src/order/order.docs.ts" ><b>ApiDocsGetMyOrders</b>&nbsp;&nbsp;&nbsp;(src/.../order.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetMyStoreData" title="src/supplier/supplier.docs.ts" ><b>ApiDocsGetMyStoreData</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetMySupplierData" title="src/supplier/supplier.docs.ts" ><b>ApiDocsGetMySupplierData</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetNotificationPreferences" title="src/notification/notification.docs.ts" ><b>ApiDocsGetNotificationPreferences</b>&nbsp;&nbsp;&nbsp;(src/.../notification.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetOfferById" title="src/offer/offer.docs.ts" ><b>ApiDocsGetOfferById</b>&nbsp;&nbsp;&nbsp;(src/.../offer.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetOffersForBid" title="src/offer/offer.docs.ts" ><b>ApiDocsGetOffersForBid</b>&nbsp;&nbsp;&nbsp;(src/.../offer.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetOrderById" title="src/order/order.docs.ts" ><b>ApiDocsGetOrderById</b>&nbsp;&nbsp;&nbsp;(src/.../order.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetPendingOrdersCount" title="src/supplier/supplier.docs.ts" ><b>ApiDocsGetPendingOrdersCount</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetProductById" title="src/product/product.docs.ts" ><b>ApiDocsGetProductById</b>&nbsp;&nbsp;&nbsp;(src/.../product.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetReviewById" title="src/review/review.docs.ts" ><b>ApiDocsGetReviewById</b>&nbsp;&nbsp;&nbsp;(src/.../review.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetSearchChats" title="src/search/search.docs.ts" ><b>ApiDocsGetSearchChats</b>&nbsp;&nbsp;&nbsp;(src/.../search.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetSearchProducts" title="src/search/search.docs.ts" ><b>ApiDocsGetSearchProducts</b>&nbsp;&nbsp;&nbsp;(src/.../search.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetSearchServices" title="src/search/search.docs.ts" ><b>ApiDocsGetSearchServices</b>&nbsp;&nbsp;&nbsp;(src/.../search.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetSearchSupplierCatalog" title="src/search/search.docs.ts" ><b>ApiDocsGetSearchSupplierCatalog</b>&nbsp;&nbsp;&nbsp;(src/.../search.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetSearchSuppliers" title="src/search/search.docs.ts" ><b>ApiDocsGetSearchSuppliers</b>&nbsp;&nbsp;&nbsp;(src/.../search.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetSearchUsers" title="src/search/search.docs.ts" ><b>ApiDocsGetSearchUsers</b>&nbsp;&nbsp;&nbsp;(src/.../search.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetServiceById" title="src/service/service.docs.ts" ><b>ApiDocsGetServiceById</b>&nbsp;&nbsp;&nbsp;(src/.../service.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetStockLevels" title="src/supplier/supplier.docs.ts" ><b>ApiDocsGetStockLevels</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetStoreBanner" title="src/supplier/supplier.docs.ts" ><b>ApiDocsGetStoreBanner</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetSubCategories" title="src/category/category.docts.ts" ><b>ApiDocsGetSubCategories</b>&nbsp;&nbsp;&nbsp;(src/.../category.docts.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetSuitableGroupPurchasesForProduct" title="src/group-purchase/group-purchase.docs.ts" ><b>ApiDocsGetSuitableGroupPurchasesForProduct</b>&nbsp;&nbsp;&nbsp;(src/.../group-purchase.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetSupplierDataById" title="src/supplier/supplier.docs.ts" ><b>ApiDocsGetSupplierDataById</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetSupplierPlan" title="src/supplier/supplier.docs.ts" ><b>ApiDocsGetSupplierPlan</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetSupplierReviews" title="src/review/review.docs.ts" ><b>ApiDocsGetSupplierReviews</b>&nbsp;&nbsp;&nbsp;(src/.../review.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetSupplierStoreDataById" title="src/supplier/supplier.docs.ts" ><b>ApiDocsGetSupplierStoreDataById</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetUserByCrn" title="src/user/user.docs.ts" ><b>ApiDocsGetUserByCrn</b>&nbsp;&nbsp;&nbsp;(src/.../user.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetUserByEmail" title="src/user/user.docs.ts" ><b>ApiDocsGetUserByEmail</b>&nbsp;&nbsp;&nbsp;(src/.../user.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetUserById" title="src/user/user.docs.ts" ><b>ApiDocsGetUserById</b>&nbsp;&nbsp;&nbsp;(src/.../user.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetUserProfilePicture" title="src/user/user.docs.ts" ><b>ApiDocsGetUserProfilePicture</b>&nbsp;&nbsp;&nbsp;(src/.../user.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsGetUsersProfilePicturesUrls" title="src/user/user.docs.ts" ><b>ApiDocsGetUsersProfilePicturesUrls</b>&nbsp;&nbsp;&nbsp;(src/.../user.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsHasReviewed" title="src/review/review.docs.ts" ><b>ApiDocsHasReviewed</b>&nbsp;&nbsp;&nbsp;(src/.../review.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsHealthCheck" title="src/health/health.docs.ts" ><b>ApiDocsHealthCheck</b>&nbsp;&nbsp;&nbsp;(src/.../health.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsJoinGroupPurchase" title="src/group-purchase/group-purchase.docs.ts" ><b>ApiDocsJoinGroupPurchase</b>&nbsp;&nbsp;&nbsp;(src/.../group-purchase.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsJwtAuthGuard" title="src/auth/decorators/jwt-auth-guard.docs.ts" ><b>ApiDocsJwtAuthGuard</b>&nbsp;&nbsp;&nbsp;(src/.../jwt-auth-guard.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsLanguageSupport" title="src/category/category.docts.ts" ><b>ApiDocsLanguageSupport</b>&nbsp;&nbsp;&nbsp;(src/.../category.docts.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsLanguageSupport" title="src/search/search.docs.ts" ><b>ApiDocsLanguageSupport</b>&nbsp;&nbsp;&nbsp;(src/.../search.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsLogin" title="src/auth/auth.docs.ts" ><b>ApiDocsLogin</b>&nbsp;&nbsp;&nbsp;(src/.../auth.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsLogout" title="src/auth/auth.docs.ts" ><b>ApiDocsLogout</b>&nbsp;&nbsp;&nbsp;(src/.../auth.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsMarkMessagesAsRead" title="src/chat/chat.docs.ts" ><b>ApiDocsMarkMessagesAsRead</b>&nbsp;&nbsp;&nbsp;(src/.../chat.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsMarkNotificationAsRead" title="src/notification/notification.docs.ts" ><b>ApiDocsMarkNotificationAsRead</b>&nbsp;&nbsp;&nbsp;(src/.../notification.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsMarkNotificationsAsReadInBulk" title="src/notification/notification.docs.ts" ><b>ApiDocsMarkNotificationsAsReadInBulk</b>&nbsp;&nbsp;&nbsp;(src/.../notification.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsNotificationStream" title="src/notification/notification.docs.ts" ><b>ApiDocsNotificationStream</b>&nbsp;&nbsp;&nbsp;(src/.../notification.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsPayInvoice" title="src/invoice/invoice.docs.ts" ><b>ApiDocsPayInvoice</b>&nbsp;&nbsp;&nbsp;(src/.../invoice.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsRemoveItem" title="src/cart/cart.docs.ts" ><b>ApiDocsRemoveItem</b>&nbsp;&nbsp;&nbsp;(src/.../cart.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsRemoveSupplierFromCart" title="src/cart/cart.docs.ts" ><b>ApiDocsRemoveSupplierFromCart</b>&nbsp;&nbsp;&nbsp;(src/.../cart.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsRequestPasswordReset" title="src/auth/auth.docs.ts" ><b>ApiDocsRequestPasswordReset</b>&nbsp;&nbsp;&nbsp;(src/.../auth.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsResendVerificationEmail" title="src/auth/auth.docs.ts" ><b>ApiDocsResendVerificationEmail</b>&nbsp;&nbsp;&nbsp;(src/.../auth.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsResetPassword" title="src/auth/auth.docs.ts" ><b>ApiDocsResetPassword</b>&nbsp;&nbsp;&nbsp;(src/.../auth.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsRolesGuard" title="src/auth/decorators/roles-guard.docs.ts" ><b>ApiDocsRolesGuard</b>&nbsp;&nbsp;&nbsp;(src/.../roles-guard.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsSaveOrReplaceCurrentBuyerCardStep1" title="src/buyer/buyer.docs.ts" ><b>ApiDocsSaveOrReplaceCurrentBuyerCardStep1</b>&nbsp;&nbsp;&nbsp;(src/.../buyer.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsSaveOrReplaceCurrentBuyerCardStep2" title="src/buyer/buyer.docs.ts" ><b>ApiDocsSaveOrReplaceCurrentBuyerCardStep2</b>&nbsp;&nbsp;&nbsp;(src/.../buyer.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsSendImageMessage" title="src/chat/chat.docs.ts" ><b>ApiDocsSendImageMessage</b>&nbsp;&nbsp;&nbsp;(src/.../chat.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsSignUp" title="src/auth/auth.docs.ts" ><b>ApiDocsSignUp</b>&nbsp;&nbsp;&nbsp;(src/.../auth.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsSmartSearch" title="src/smart-search/smart-search.docs.ts" ><b>ApiDocsSmartSearch</b>&nbsp;&nbsp;&nbsp;(src/.../smart-search.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsStartFreeTrial" title="src/supplier/supplier.docs.ts" ><b>ApiDocsStartFreeTrial</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsStartGroupPurchase" title="src/group-purchase/group-purchase.docs.ts" ><b>ApiDocsStartGroupPurchase</b>&nbsp;&nbsp;&nbsp;(src/.../group-purchase.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsSubscribePremium" title="src/supplier/supplier.docs.ts" ><b>ApiDocsSubscribePremium</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsSwitchPreferredLanguage" title="src/user/user.docs.ts" ><b>ApiDocsSwitchPreferredLanguage</b>&nbsp;&nbsp;&nbsp;(src/.../user.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsSwitchRole" title="src/auth/auth.docs.ts" ><b>ApiDocsSwitchRole</b>&nbsp;&nbsp;&nbsp;(src/.../auth.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsToggleFavoriteCategory" title="src/supplier/supplier.docs.ts" ><b>ApiDocsToggleFavoriteCategory</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsToggleWishlistItem" title="src/buyer/buyer.docs.ts" ><b>ApiDocsToggleWishlistItem</b>&nbsp;&nbsp;&nbsp;(src/.../buyer.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUpdateCurrentUserData" title="src/user/user.docs.ts" ><b>ApiDocsUpdateCurrentUserData</b>&nbsp;&nbsp;&nbsp;(src/.../user.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUpdateInvoiceStatus" title="src/invoice/invoice.docs.ts" ><b>ApiDocsUpdateInvoiceStatus</b>&nbsp;&nbsp;&nbsp;(src/.../invoice.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUpdateItemQuantity" title="src/cart/cart.docs.ts" ><b>ApiDocsUpdateItemQuantity</b>&nbsp;&nbsp;&nbsp;(src/.../cart.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUpdateMySupplierData" title="src/supplier/supplier.docs.ts" ><b>ApiDocsUpdateMySupplierData</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUpdateNotificationPreferences" title="src/notification/notification.docs.ts" ><b>ApiDocsUpdateNotificationPreferences</b>&nbsp;&nbsp;&nbsp;(src/.../notification.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUpdateOfferStatus" title="src/offer/offer.docs.ts" ><b>ApiDocsUpdateOfferStatus</b>&nbsp;&nbsp;&nbsp;(src/.../offer.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUpdateOrderStatus" title="src/order/order.docs.ts" ><b>ApiDocsUpdateOrderStatus</b>&nbsp;&nbsp;&nbsp;(src/.../order.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUpdateProduct" title="src/product/product.docs.ts" ><b>ApiDocsUpdateProduct</b>&nbsp;&nbsp;&nbsp;(src/.../product.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUpdateProductImage" title="src/product/product.docs.ts" ><b>ApiDocsUpdateProductImage</b>&nbsp;&nbsp;&nbsp;(src/.../product.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUpdateService" title="src/service/service.docs.ts" ><b>ApiDocsUpdateService</b>&nbsp;&nbsp;&nbsp;(src/.../service.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUpdateServiceImage" title="src/service/service.docs.ts" ><b>ApiDocsUpdateServiceImage</b>&nbsp;&nbsp;&nbsp;(src/.../service.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUpdateStoreBanner" title="src/supplier/supplier.docs.ts" ><b>ApiDocsUpdateStoreBanner</b>&nbsp;&nbsp;&nbsp;(src/.../supplier.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsUploadProfilePicture" title="src/user/user.docs.ts" ><b>ApiDocsUploadProfilePicture</b>&nbsp;&nbsp;&nbsp;(src/.../user.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsVerifiedGuard" title="src/auth/decorators/verified-guard.docs.ts" ><b>ApiDocsVerifiedGuard</b>&nbsp;&nbsp;&nbsp;(src/.../verified-guard.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ApiDocsVerifyEmail" title="src/auth/auth.docs.ts" ><b>ApiDocsVerifyEmail</b>&nbsp;&nbsp;&nbsp;(src/.../auth.docs.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#bootstrap" title="src/main.ts" ><b>bootstrap</b>&nbsp;&nbsp;&nbsp;(src/.../main.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#generateSwagger" title="scripts/generate-swagger.ts" ><b>generateSwagger</b>&nbsp;&nbsp;&nbsp;(scripts/.../generate-swagger.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#IsFutureDate" title="src/invoice/dtos/createInvoice.dto.ts" ><b>IsFutureDate</b>&nbsp;&nbsp;&nbsp;(src/.../createInvoice.dto.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#IsMultipleOfCaseQuantity" title="src/product/dtos/is-multiple-of-case-quantity.validator.ts" ><b>IsMultipleOfCaseQuantity</b>&nbsp;&nbsp;&nbsp;(src/.../is-multiple-of-case-quantity.validator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#isUuid" title="src/user/user.service.ts" ><b>isUuid</b>&nbsp;&nbsp;&nbsp;(src/.../user.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#main" title="prisma/categorySeed.ts" ><b>main</b>&nbsp;&nbsp;&nbsp;(prisma/.../categorySeed.ts)</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    <h3>src/cart/cart.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsAddCartItem"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsAddCartItem</b></span>
+                        <a href="#ApiDocsAddCartItem"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsAddCartItem()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsCheckoutCart"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsCheckoutCart</b></span>
+                        <a href="#ApiDocsCheckoutCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsCheckoutCart()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsDeleteCart"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsDeleteCart</b></span>
+                        <a href="#ApiDocsDeleteCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsDeleteCart()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetBuyerActiveCart"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetBuyerActiveCart</b></span>
+                        <a href="#ApiDocsGetBuyerActiveCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetBuyerActiveCart()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsRemoveItem"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsRemoveItem</b></span>
+                        <a href="#ApiDocsRemoveItem"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsRemoveItem()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsRemoveSupplierFromCart"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsRemoveSupplierFromCart</b></span>
+                        <a href="#ApiDocsRemoveSupplierFromCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsRemoveSupplierFromCart()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUpdateItemQuantity"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUpdateItemQuantity</b></span>
+                        <a href="#ApiDocsUpdateItemQuantity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUpdateItemQuantity()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/auth/auth.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsChangePassword"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsChangePassword</b></span>
+                        <a href="#ApiDocsChangePassword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsChangePassword()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsLogin"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsLogin</b></span>
+                        <a href="#ApiDocsLogin"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsLogin()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsLogout"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsLogout</b></span>
+                        <a href="#ApiDocsLogout"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsLogout()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsRequestPasswordReset"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsRequestPasswordReset</b></span>
+                        <a href="#ApiDocsRequestPasswordReset"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsRequestPasswordReset()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsResendVerificationEmail"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsResendVerificationEmail</b></span>
+                        <a href="#ApiDocsResendVerificationEmail"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsResendVerificationEmail()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsResetPassword"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsResetPassword</b></span>
+                        <a href="#ApiDocsResetPassword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsResetPassword()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsSignUp"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsSignUp</b></span>
+                        <a href="#ApiDocsSignUp"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsSignUp()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsSwitchRole"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsSwitchRole</b></span>
+                        <a href="#ApiDocsSwitchRole"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsSwitchRole()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsVerifyEmail"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsVerifyEmail</b></span>
+                        <a href="#ApiDocsVerifyEmail"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsVerifyEmail()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/order/order.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsConfirmDelivery"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsConfirmDelivery</b></span>
+                        <a href="#ApiDocsConfirmDelivery"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsConfirmDelivery()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetMyOrders"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetMyOrders</b></span>
+                        <a href="#ApiDocsGetMyOrders"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetMyOrders()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetOrderById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetOrderById</b></span>
+                        <a href="#ApiDocsGetOrderById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetOrderById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUpdateOrderStatus"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUpdateOrderStatus</b></span>
+                        <a href="#ApiDocsUpdateOrderStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUpdateOrderStatus()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/bid/bid.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsCreateBid"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsCreateBid</b></span>
+                        <a href="#ApiDocsCreateBid"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsCreateBid()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetAllBids"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetAllBids</b></span>
+                        <a href="#ApiDocsGetAllBids"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetAllBids()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetBidById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetBidById</b></span>
+                        <a href="#ApiDocsGetBidById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetBidById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetBidsIJoined"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetBidsIJoined</b></span>
+                        <a href="#ApiDocsGetBidsIJoined"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetBidsIJoined()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetMyBids"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetMyBids</b></span>
+                        <a href="#ApiDocsGetMyBids"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetMyBids()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/invoice/invoice.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsCreateInvoice"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsCreateInvoice</b></span>
+                        <a href="#ApiDocsCreateInvoice"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsCreateInvoice()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetMyInvoiceById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetMyInvoiceById</b></span>
+                        <a href="#ApiDocsGetMyInvoiceById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetMyInvoiceById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetMyInvoices"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetMyInvoices</b></span>
+                        <a href="#ApiDocsGetMyInvoices"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetMyInvoices()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsPayInvoice"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsPayInvoice</b></span>
+                        <a href="#ApiDocsPayInvoice"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsPayInvoice()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUpdateInvoiceStatus"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUpdateInvoiceStatus</b></span>
+                        <a href="#ApiDocsUpdateInvoiceStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUpdateInvoiceStatus()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/offer/offer.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsCreateOffer"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsCreateOffer</b></span>
+                        <a href="#ApiDocsCreateOffer"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsCreateOffer()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetOfferById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetOfferById</b></span>
+                        <a href="#ApiDocsGetOfferById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetOfferById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetOffersForBid"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetOffersForBid</b></span>
+                        <a href="#ApiDocsGetOffersForBid"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetOffersForBid()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUpdateOfferStatus"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUpdateOfferStatus</b></span>
+                        <a href="#ApiDocsUpdateOfferStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUpdateOfferStatus()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/product/product.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsCreateProduct"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsCreateProduct</b></span>
+                        <a href="#ApiDocsCreateProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsCreateProduct()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsDeleteProduct"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsDeleteProduct</b></span>
+                        <a href="#ApiDocsDeleteProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsDeleteProduct()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsDeleteProductImage"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsDeleteProductImage</b></span>
+                        <a href="#ApiDocsDeleteProductImage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsDeleteProductImage()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsDuplicateProduct"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsDuplicateProduct</b></span>
+                        <a href="#ApiDocsDuplicateProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsDuplicateProduct()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsFakeGetCreateProductDto"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsFakeGetCreateProductDto</b></span>
+                        <a href="#ApiDocsFakeGetCreateProductDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsFakeGetCreateProductDto()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetAllProducts"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetAllProducts</b></span>
+                        <a href="#ApiDocsGetAllProducts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetAllProducts()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetAllSupplierProducts"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetAllSupplierProducts</b></span>
+                        <a href="#ApiDocsGetAllSupplierProducts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetAllSupplierProducts()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetProductById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetProductById</b></span>
+                        <a href="#ApiDocsGetProductById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetProductById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUpdateProduct"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUpdateProduct</b></span>
+                        <a href="#ApiDocsUpdateProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUpdateProduct()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUpdateProductImage"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUpdateProductImage</b></span>
+                        <a href="#ApiDocsUpdateProductImage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUpdateProductImage()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/review/review.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsCreateReview"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsCreateReview</b></span>
+                        <a href="#ApiDocsCreateReview"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsCreateReview()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetItemReviews"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetItemReviews</b></span>
+                        <a href="#ApiDocsGetItemReviews"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetItemReviews()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetReviewById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetReviewById</b></span>
+                        <a href="#ApiDocsGetReviewById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetReviewById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetSupplierReviews"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetSupplierReviews</b></span>
+                        <a href="#ApiDocsGetSupplierReviews"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetSupplierReviews()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsHasReviewed"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsHasReviewed</b></span>
+                        <a href="#ApiDocsHasReviewed"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsHasReviewed()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/service/service.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsCreateService"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsCreateService</b></span>
+                        <a href="#ApiDocsCreateService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsCreateService()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsDeleteService"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsDeleteService</b></span>
+                        <a href="#ApiDocsDeleteService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsDeleteService()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsDeleteServiceImage"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsDeleteServiceImage</b></span>
+                        <a href="#ApiDocsDeleteServiceImage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsDeleteServiceImage()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsDuplicateService"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsDuplicateService</b></span>
+                        <a href="#ApiDocsDuplicateService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsDuplicateService()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsFakeGetCreateServiceDto"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsFakeGetCreateServiceDto</b></span>
+                        <a href="#ApiDocsFakeGetCreateServiceDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsFakeGetCreateServiceDto()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetAllServices"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetAllServices</b></span>
+                        <a href="#ApiDocsGetAllServices"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetAllServices()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetAllSupplierServices"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetAllSupplierServices</b></span>
+                        <a href="#ApiDocsGetAllSupplierServices"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetAllSupplierServices()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetServiceById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetServiceById</b></span>
+                        <a href="#ApiDocsGetServiceById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetServiceById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUpdateService"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUpdateService</b></span>
+                        <a href="#ApiDocsUpdateService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUpdateService()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUpdateServiceImage"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUpdateServiceImage</b></span>
+                        <a href="#ApiDocsUpdateServiceImage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUpdateServiceImage()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/buyer/buyer.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsDeleteCurrentBuyerCard"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsDeleteCurrentBuyerCard</b></span>
+                        <a href="#ApiDocsDeleteCurrentBuyerCard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsDeleteCurrentBuyerCard()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetBuyerById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetBuyerById</b></span>
+                        <a href="#ApiDocsGetBuyerById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetBuyerById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetCurrentBuyerCard"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetCurrentBuyerCard</b></span>
+                        <a href="#ApiDocsGetCurrentBuyerCard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetCurrentBuyerCard()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetCurrentBuyerData"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetCurrentBuyerData</b></span>
+                        <a href="#ApiDocsGetCurrentBuyerData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetCurrentBuyerData()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetCurrentBuyerWishlist"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetCurrentBuyerWishlist</b></span>
+                        <a href="#ApiDocsGetCurrentBuyerWishlist"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetCurrentBuyerWishlist()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsSaveOrReplaceCurrentBuyerCardStep1"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsSaveOrReplaceCurrentBuyerCardStep1</b></span>
+                        <a href="#ApiDocsSaveOrReplaceCurrentBuyerCardStep1"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsSaveOrReplaceCurrentBuyerCardStep1()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsSaveOrReplaceCurrentBuyerCardStep2"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsSaveOrReplaceCurrentBuyerCardStep2</b></span>
+                        <a href="#ApiDocsSaveOrReplaceCurrentBuyerCardStep2"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsSaveOrReplaceCurrentBuyerCardStep2()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsToggleWishlistItem"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsToggleWishlistItem</b></span>
+                        <a href="#ApiDocsToggleWishlistItem"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsToggleWishlistItem()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/user/user.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsDeleteProfilePicture"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsDeleteProfilePicture</b></span>
+                        <a href="#ApiDocsDeleteProfilePicture"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsDeleteProfilePicture()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetCurrentUserData"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetCurrentUserData</b></span>
+                        <a href="#ApiDocsGetCurrentUserData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetCurrentUserData()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetUserByCrn"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetUserByCrn</b></span>
+                        <a href="#ApiDocsGetUserByCrn"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetUserByCrn()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetUserByEmail"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetUserByEmail</b></span>
+                        <a href="#ApiDocsGetUserByEmail"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetUserByEmail()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetUserById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetUserById</b></span>
+                        <a href="#ApiDocsGetUserById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetUserById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetUserProfilePicture"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetUserProfilePicture</b></span>
+                        <a href="#ApiDocsGetUserProfilePicture"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetUserProfilePicture()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetUsersProfilePicturesUrls"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetUsersProfilePicturesUrls</b></span>
+                        <a href="#ApiDocsGetUsersProfilePicturesUrls"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetUsersProfilePicturesUrls()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsSwitchPreferredLanguage"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsSwitchPreferredLanguage</b></span>
+                        <a href="#ApiDocsSwitchPreferredLanguage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsSwitchPreferredLanguage()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUpdateCurrentUserData"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUpdateCurrentUserData</b></span>
+                        <a href="#ApiDocsUpdateCurrentUserData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUpdateCurrentUserData()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUploadProfilePicture"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUploadProfilePicture</b></span>
+                        <a href="#ApiDocsUploadProfilePicture"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUploadProfilePicture()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/supplier/supplier.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsDeleteStoreBanner"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsDeleteStoreBanner</b></span>
+                        <a href="#ApiDocsDeleteStoreBanner"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsDeleteStoreBanner()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetAllSuppliers"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetAllSuppliers</b></span>
+                        <a href="#ApiDocsGetAllSuppliers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetAllSuppliers()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetFavoriteCategories"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetFavoriteCategories</b></span>
+                        <a href="#ApiDocsGetFavoriteCategories"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetFavoriteCategories()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetMyStoreData"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetMyStoreData</b></span>
+                        <a href="#ApiDocsGetMyStoreData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetMyStoreData()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetMySupplierData"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetMySupplierData</b></span>
+                        <a href="#ApiDocsGetMySupplierData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetMySupplierData()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetPendingOrdersCount"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetPendingOrdersCount</b></span>
+                        <a href="#ApiDocsGetPendingOrdersCount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetPendingOrdersCount()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetStockLevels"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetStockLevels</b></span>
+                        <a href="#ApiDocsGetStockLevels"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetStockLevels()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetStoreBanner"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetStoreBanner</b></span>
+                        <a href="#ApiDocsGetStoreBanner"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetStoreBanner()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetSupplierDataById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetSupplierDataById</b></span>
+                        <a href="#ApiDocsGetSupplierDataById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetSupplierDataById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetSupplierPlan"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetSupplierPlan</b></span>
+                        <a href="#ApiDocsGetSupplierPlan"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetSupplierPlan()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetSupplierStoreDataById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetSupplierStoreDataById</b></span>
+                        <a href="#ApiDocsGetSupplierStoreDataById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetSupplierStoreDataById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsStartFreeTrial"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsStartFreeTrial</b></span>
+                        <a href="#ApiDocsStartFreeTrial"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsStartFreeTrial()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsSubscribePremium"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsSubscribePremium</b></span>
+                        <a href="#ApiDocsSubscribePremium"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsSubscribePremium()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsToggleFavoriteCategory"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsToggleFavoriteCategory</b></span>
+                        <a href="#ApiDocsToggleFavoriteCategory"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsToggleFavoriteCategory()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUpdateMySupplierData"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUpdateMySupplierData</b></span>
+                        <a href="#ApiDocsUpdateMySupplierData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUpdateMySupplierData()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUpdateStoreBanner"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUpdateStoreBanner</b></span>
+                        <a href="#ApiDocsUpdateStoreBanner"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUpdateStoreBanner()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/chat/chat.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsFakeWebSocketGuide"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsFakeWebSocketGuide</b></span>
+                        <a href="#ApiDocsFakeWebSocketGuide"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsFakeWebSocketGuide()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetAllChats"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetAllChats</b></span>
+                        <a href="#ApiDocsGetAllChats"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetAllChats()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetChatById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetChatById</b></span>
+                        <a href="#ApiDocsGetChatById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetChatById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetMessagesForChat"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetMessagesForChat</b></span>
+                        <a href="#ApiDocsGetMessagesForChat"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetMessagesForChat()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsMarkMessagesAsRead"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsMarkMessagesAsRead</b></span>
+                        <a href="#ApiDocsMarkMessagesAsRead"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsMarkMessagesAsRead()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsSendImageMessage"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsSendImageMessage</b></span>
+                        <a href="#ApiDocsSendImageMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsSendImageMessage()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/category/category.docts.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetAllCategories"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetAllCategories</b></span>
+                        <a href="#ApiDocsGetAllCategories"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetAllCategories()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetCategoryById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetCategoryById</b></span>
+                        <a href="#ApiDocsGetCategoryById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetCategoryById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetMainCategories"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetMainCategories</b></span>
+                        <a href="#ApiDocsGetMainCategories"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetMainCategories()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetSubCategories"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetSubCategories</b></span>
+                        <a href="#ApiDocsGetSubCategories"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetSubCategories()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsLanguageSupport"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsLanguageSupport</b></span>
+                        <a href="#ApiDocsLanguageSupport"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsLanguageSupport()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Common language query/header docs for category endpoints.
+Use this in every endpoint decorator to stay consistent.</p>
+</div>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/group-purchase/group-purchase.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetAllGroupPurchaseForProduct"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetAllGroupPurchaseForProduct</b></span>
+                        <a href="#ApiDocsGetAllGroupPurchaseForProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetAllGroupPurchaseForProduct()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetGroupById"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetGroupById</b></span>
+                        <a href="#ApiDocsGetGroupById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetGroupById()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetSuitableGroupPurchasesForProduct"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetSuitableGroupPurchasesForProduct</b></span>
+                        <a href="#ApiDocsGetSuitableGroupPurchasesForProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetSuitableGroupPurchasesForProduct()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsJoinGroupPurchase"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsJoinGroupPurchase</b></span>
+                        <a href="#ApiDocsJoinGroupPurchase"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsJoinGroupPurchase()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsStartGroupPurchase"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsStartGroupPurchase</b></span>
+                        <a href="#ApiDocsStartGroupPurchase"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsStartGroupPurchase()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/demand-prediction/demand-prediction.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetDemandPrediction"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetDemandPrediction</b></span>
+                        <a href="#ApiDocsGetDemandPrediction"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetDemandPrediction()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/analytics/analytics.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetMyAnalytics"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetMyAnalytics</b></span>
+                        <a href="#ApiDocsGetMyAnalytics"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetMyAnalytics()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/notification/notification.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetMyNotifications"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetMyNotifications</b></span>
+                        <a href="#ApiDocsGetMyNotifications"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetMyNotifications()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetNotificationPreferences"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetNotificationPreferences</b></span>
+                        <a href="#ApiDocsGetNotificationPreferences"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetNotificationPreferences()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsMarkNotificationAsRead"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsMarkNotificationAsRead</b></span>
+                        <a href="#ApiDocsMarkNotificationAsRead"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsMarkNotificationAsRead()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsMarkNotificationsAsReadInBulk"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsMarkNotificationsAsReadInBulk</b></span>
+                        <a href="#ApiDocsMarkNotificationsAsReadInBulk"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsMarkNotificationsAsReadInBulk()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsNotificationStream"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsNotificationStream</b></span>
+                        <a href="#ApiDocsNotificationStream"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsNotificationStream()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsUpdateNotificationPreferences"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsUpdateNotificationPreferences</b></span>
+                        <a href="#ApiDocsUpdateNotificationPreferences"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsUpdateNotificationPreferences()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/search/search.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetSearchChats"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetSearchChats</b></span>
+                        <a href="#ApiDocsGetSearchChats"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetSearchChats()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetSearchProducts"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetSearchProducts</b></span>
+                        <a href="#ApiDocsGetSearchProducts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetSearchProducts()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetSearchServices"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetSearchServices</b></span>
+                        <a href="#ApiDocsGetSearchServices"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetSearchServices()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetSearchSupplierCatalog"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetSearchSupplierCatalog</b></span>
+                        <a href="#ApiDocsGetSearchSupplierCatalog"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetSearchSupplierCatalog()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetSearchSuppliers"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetSearchSuppliers</b></span>
+                        <a href="#ApiDocsGetSearchSuppliers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetSearchSuppliers()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsGetSearchUsers"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsGetSearchUsers</b></span>
+                        <a href="#ApiDocsGetSearchUsers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsGetSearchUsers()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsLanguageSupport"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsLanguageSupport</b></span>
+                        <a href="#ApiDocsLanguageSupport"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsLanguageSupport()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Common language query/header docs for category endpoints.
+Use this in every endpoint decorator to stay consistent.</p>
+</div>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/health/health.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsHealthCheck"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsHealthCheck</b></span>
+                        <a href="#ApiDocsHealthCheck"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsHealthCheck()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/auth/decorators/jwt-auth-guard.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsJwtAuthGuard"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsJwtAuthGuard</b></span>
+                        <a href="#ApiDocsJwtAuthGuard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsJwtAuthGuard()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/auth/decorators/roles-guard.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsRolesGuard"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsRolesGuard</b></span>
+                        <a href="#ApiDocsRolesGuard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsRolesGuard()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/smart-search/smart-search.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsSmartSearch"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsSmartSearch</b></span>
+                        <a href="#ApiDocsSmartSearch"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsSmartSearch()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/auth/decorators/verified-guard.docs.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ApiDocsVerifiedGuard"></a>
+                    <span class="name">
+                        <span ><b>ApiDocsVerifiedGuard</b></span>
+                        <a href="#ApiDocsVerifiedGuard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ApiDocsVerifiedGuard()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/main.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="bootstrap"></a>
+                    <span class="name">
+                        <span ><b>bootstrap</b></span>
+                        <a href="#bootstrap"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>bootstrap()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>scripts/generate-swagger.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateSwagger"></a>
+                    <span class="name">
+                        <span ><b>generateSwagger</b></span>
+                        <a href="#generateSwagger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>generateSwagger()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>    <h3>src/invoice/dtos/createInvoice.dto.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="IsFutureDate"></a>
+                    <span class="name">
+                        <span ><b>IsFutureDate</b></span>
+                        <a href="#IsFutureDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>IsFutureDate(validationOptions?: ValidationOptions)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>validationOptions</td>
+                                            <td>
+                                                        <code>ValidationOptions</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/product/dtos/is-multiple-of-case-quantity.validator.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="IsMultipleOfCaseQuantity"></a>
+                    <span class="name">
+                        <span ><b>IsMultipleOfCaseQuantity</b></span>
+                        <a href="#IsMultipleOfCaseQuantity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>IsMultipleOfCaseQuantity(validationOptions?: ValidationOptions)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>validationOptions</td>
+                                            <td>
+                                                        <code>ValidationOptions</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/user/user.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isUuid"></a>
+                    <span class="name">
+                        <span ><b>isUuid</b></span>
+                        <a href="#isUuid"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isUuid(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Checks whether a string is a valid UUID (v1-v5).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The string to validate as a UUID.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <ul>
+<li>True if the string is a valid UUID, false otherwise.</li>
+</ul>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>prisma/categorySeed.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="main"></a>
+                    <span class="name">
+                        <span ><b>main</b></span>
+                        <a href="#main"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>main()</code>
+                </td>
+            </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'miscellaneous-functions';
+            var COMPODOC_CURRENT_PAGE_URL = 'functions.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

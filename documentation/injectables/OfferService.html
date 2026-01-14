@@ -1,0 +1,1173 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >OfferService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/offer/offer.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createOffer" >createOffer</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getOfferById" >getOfferById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getOffersForBid" >getOffersForBid</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toOfferResponseDto" >toOfferResponseDto</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateOfferStatus" >updateOfferStatus</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prisma: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, supplierService: <a href="../injectables/SupplierService.html" target="_self">SupplierService</a>, bidService: <a href="../injectables/BidService.html" target="_self">BidService</a>, notificationService: <a href="../injectables/NotificationService.html" target="_self">NotificationService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/offer/offer.service.ts:23</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prisma</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>supplierService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SupplierService.html" target="_self" >SupplierService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>bidService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/BidService.html" target="_self" >BidService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>notificationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/NotificationService.html" target="_self" >NotificationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createOffer"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createOffer</b></span>
+                        <a href="#createOffer"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createOffer(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, bidId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/CreateOfferDto.html" target="_self">CreateOfferDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="131"
+                                    class="link-to-prism">src/offer/offer.service.ts:131</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>bidId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateOfferDto.html" target="_self" >CreateOfferDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/OfferResponseDto.html" target="_self" >Promise&lt;OfferResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getOfferById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getOfferById</b></span>
+                        <a href="#getOfferById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getOfferById(offerId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="53"
+                                    class="link-to-prism">src/offer/offer.service.ts:53</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>offerId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/OfferResponseDto.html" target="_self" >Promise&lt;OfferResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getOffersForBid"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getOffersForBid</b></span>
+                        <a href="#getOffersForBid"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getOffersForBid(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, bidId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="73"
+                                    class="link-to-prism">src/offer/offer.service.ts:73</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>bidId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/OfferResponseDto.html" target="_self" >Promise&lt;OfferResponseDto[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toOfferResponseDto"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toOfferResponseDto</b></span>
+                        <a href="#toOfferResponseDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toOfferResponseDto(offer: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="31"
+                                    class="link-to-prism">src/offer/offer.service.ts:31</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>offer</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/OfferResponseDto.html" target="_self" >Promise&lt;OfferResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateOfferStatus"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateOfferStatus</b></span>
+                        <a href="#updateOfferStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateOfferStatus(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, offerId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, status: <a href="../miscellaneous/enumerations.html#OfferStatus" target="_self">OfferStatus</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="222"
+                                    class="link-to-prism">src/offer/offer.service.ts:222</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>offerId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>status</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/enumerations.html#OfferStatus" target="_self" >OfferStatus</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/OfferResponseDto.html" target="_self" >Promise&lt;OfferResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
+} from &#x27;@nestjs/common&#x27;;
+import { BidService } from &#x27;src/bid/bid.service&#x27;;
+import { PrismaService } from &#x27;src/prisma/prisma.service&#x27;;
+import { SupplierService } from &#x27;src/supplier/supplier.service&#x27;;
+import { CreateOfferDto } from &#x27;./dtos/createOffer.dto&#x27;;
+import { OfferResponseDto } from &#x27;./dtos/offerResponse.dto&#x27;;
+import {
+    BidStatus,
+    InvoiceTermsOfPayment,
+    NotificationEntityType,
+    NotificationType,
+    OfferStatus,
+    PreInvoiceStatus,
+} from &#x27;@prisma/client&#x27;;
+import { NotificationService } from &#x27;src/notification/notification.service&#x27;;
+
+@Injectable()
+export class OfferService {
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly supplierService: SupplierService,
+        private readonly bidService: BidService,
+        private readonly notificationService: NotificationService,
+    ) {}
+
+    async toOfferResponseDto(offer: any): Promise&lt;OfferResponseDto&gt; {
+        const dto &#x3D; new OfferResponseDto();
+
+        dto.offerId &#x3D; offer.id;
+        dto.proposedAmount &#x3D; offer.proposedAmount;
+        dto.expectedCompletionTime &#x3D; offer.expectedCompletionTime;
+        dto.offerDetails &#x3D; offer.offerDetails;
+        dto.executionDetails &#x3D; offer.executionDetails;
+        dto.notes &#x3D; offer.notes;
+        dto.status &#x3D; offer.status;
+        dto.createdAt &#x3D; offer.createdAt;
+
+        // Nested mappings
+        dto.supplier &#x3D; await this.supplierService.toSupplierResponseDTO(
+            offer.supplier.user,
+            offer.supplier,
+        );
+        dto.bid &#x3D; await this.bidService.toBidResponseDto(offer.bid);
+
+        return dto;
+    }
+
+    async getOfferById(offerId: string): Promise&lt;OfferResponseDto&gt; {
+        const offer &#x3D; await this.prisma.offer.findUnique({
+            where: { id: offerId },
+            include: {
+                supplier: {
+                    include: { user: true },
+                },
+                bid: {
+                    include: {
+                        buyer: { include: { user: true, card: true } },
+                    },
+                },
+            },
+        });
+        if (!offer) {
+            throw new NotFoundException(&#x27;Offer not found&#x27;);
+        }
+        return this.toOfferResponseDto(offer);
+    }
+
+    async getOffersForBid(
+        userId: string,
+        bidId: string,
+    ): Promise&lt;OfferResponseDto[]&gt; {
+        // Get buyer object
+        const buyer &#x3D; await this.prisma.buyer.findUnique({
+            where: { userId },
+            include: { user: true },
+        });
+        if (!buyer) {
+            throw new NotFoundException(&#x27;Buyer not found&#x27;);
+        }
+
+        // Get bid and verify ownership
+        const bid &#x3D; await this.prisma.bid.findUnique({
+            where: { id: bidId },
+            include: {
+                buyer: { include: { user: true, card: true } },
+                offers: {
+                    include: {
+                        supplier: {
+                            include: { user: true },
+                        },
+                    },
+                },
+            },
+        });
+        if (!bid) {
+            throw new NotFoundException(&#x27;Bid not found&#x27;);
+        }
+
+        // Ensure this buyer owns the bid
+        if (bid.buyerId !&#x3D;&#x3D; buyer.id) {
+            throw new ForbiddenException(
+                &#x27;You are not authorized to view offers for this bid&#x27;,
+            );
+        }
+
+        // Check deadline
+        const now &#x3D; new Date();
+        if (now &lt; bid.submissionDeadline) {
+            throw new BadRequestException(
+                &quot;You can&#x27;t view the offers before the submission deadline arrives&quot;,
+            );
+        }
+
+        // Convert offers to DTOs
+        const offersDtos: OfferResponseDto[] &#x3D; [];
+        for (const offer of bid.offers) {
+            const dto &#x3D; await this.toOfferResponseDto({
+                ...offer,
+                bid,
+            });
+            offersDtos.push(dto);
+        }
+        return offersDtos;
+    }
+
+    async createOffer(
+        userId: string,
+        bidId: string,
+        dto: CreateOfferDto,
+    ): Promise&lt;OfferResponseDto&gt; {
+        // 1. Validate supplier existence
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+            include: { user: true },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found&#x27;);
+        }
+
+        // 2. Validate bid existence
+        const bid &#x3D; await this.prisma.bid.findUnique({
+            where: { id: bidId },
+            include: { buyer: { include: { user: true } } },
+        });
+        if (!bid) {
+            throw new NotFoundException(&#x27;Bid not found&#x27;);
+        }
+
+        // 3. Ensure bid is still open (before submission deadline)
+        const now &#x3D; new Date();
+        if (now &gt; bid.submissionDeadline || bid.status &#x3D;&#x3D;&#x3D; BidStatus.CLOSED) {
+            throw new BadRequestException(
+                &#x27;Cannot submit offer: submission deadline has passed&#x27;,
+            );
+        }
+
+        // 4. Ensure supplier didn’t already submit an offer for this bid
+        const existingOffer &#x3D; await this.prisma.offer.findFirst({
+            where: {
+                bidId: bidId,
+                supplierId: supplier.id,
+            },
+        });
+        if (existingOffer) {
+            throw new BadRequestException(
+                &#x27;You have already submitted an offer for this bid&#x27;,
+            );
+        }
+
+        // 5. Create offer
+        const newOffer &#x3D; await this.prisma.offer.create({
+            data: {
+                bidId,
+                supplierId: supplier.id,
+                proposedAmount: dto.proposedAmount,
+                expectedCompletionTime: new Date(dto.expectedCompletionTime),
+                offerDetails: dto.offerDetails,
+                executionDetails: dto.executionDetails,
+                notes: dto.notes ?? null,
+                status: OfferStatus.PENDING,
+            },
+            include: {
+                supplier: { include: { user: true } },
+                bid: {
+                    include: { buyer: { include: { user: true, card: true } } },
+                },
+            },
+        });
+
+        // 6. Create pre-invoice for the offer
+        const preInvoice &#x3D; await this.prisma.preInvoice.create({
+            data: {
+                offerId: newOffer.id, // link pre-invoice to this offer
+                buyerId: newOffer.bid.buyerId, // the buyer of the bid
+                supplierId: newOffer.supplierId, // the supplier creating the offer
+                productId: null,
+                amount: dto.proposedAmount, // amount based on the offer
+                status: PreInvoiceStatus.PENDING, // initial status
+            },
+        });
+
+        // 7. Send a notification for the buyer
+        await this.notificationService.createNotification({
+            senderUserId: newOffer.supplier.userId,
+            receiverUserId: newOffer.bid.buyer.userId,
+            type: NotificationType.NEW_OFFER,
+            title: &#x27;New Offer!&#x27;,
+            content: &#x60;Your bid ${newOffer.bid.bidName} got a new offer from ${newOffer.supplier.user.businessName}&#x60;,
+            entityId: newOffer.id,
+            entityType: NotificationEntityType.OFFER,
+        });
+
+        // 8. Return mapped response DTO
+        return this.toOfferResponseDto(newOffer);
+    }
+
+    async updateOfferStatus(
+        userId: string,
+        offerId: string,
+        status: OfferStatus,
+    ): Promise&lt;OfferResponseDto&gt; {
+        // 1. Validate buyer
+        const buyer &#x3D; await this.prisma.buyer.findUnique({
+            where: { userId },
+        });
+        if (!buyer) {
+            throw new NotFoundException(&#x27;Buyer not found&#x27;);
+        }
+
+        // 2. Find offer (include bid for ownership validation)
+        const offer &#x3D; await this.prisma.offer.findUnique({
+            where: { id: offerId },
+            include: {
+                bid: true,
+                supplier: { include: { user: true } },
+            },
+        });
+        if (!offer) {
+            throw new NotFoundException(&#x60;Offer with ID ${offerId} not found&#x60;);
+        }
+
+        // 3. Ensure offer’s bid belongs to this buyer
+        if (offer.bid.buyerId !&#x3D;&#x3D; buyer.id) {
+            throw new ForbiddenException(
+                &#x27;You are not authorized to modify offers for this bid&#x27;,
+            );
+        }
+
+        // 4. Ensure offer is still pending
+        if (offer.status !&#x3D;&#x3D; OfferStatus.PENDING) {
+            throw new BadRequestException(
+                &#x27;Only offers with pending status can be updated&#x27;,
+            );
+        }
+
+        // 5. Update offer
+        const updatedOffer &#x3D; await this.prisma.offer.update({
+            where: { id: offerId },
+            data: { status },
+            include: {
+                bid: {
+                    include: { buyer: { include: { user: true, card: true } } },
+                },
+                supplier: { include: { user: true } },
+            },
+        });
+
+        // 6. Upgrade preinvoice in case of accepted, otherwise mark preinvocie status as failed
+        // Get the pre-invoice of the updated offer
+        const offerPreInvoice &#x3D; await this.prisma.preInvoice.findUnique({
+            where: { offerId: updatedOffer.id },
+        });
+
+        if (offerPreInvoice) {
+            if (status &#x3D;&#x3D;&#x3D; OfferStatus.ACCEPTED) {
+                // 1. Create an actual invoice based on the pre-invoice
+                const newInvoice &#x3D; await this.prisma.invoice.create({
+                    data: {
+                        buyerId: offerPreInvoice.buyerId,
+                        supplierId: offerPreInvoice.supplierId,
+                        deliveryDate: updatedOffer.expectedCompletionTime,
+                        termsOfPayment: InvoiceTermsOfPayment.FULL,
+                        uponDeliveryAmount: offerPreInvoice.amount,
+                        amount: offerPreInvoice.amount,
+                        notesAndTerms: &#x60;System Note: This invoice was automatically created because the offer (${updatedOffer.id}) from supplier &quot;${updatedOffer.supplier.user.businessName}&quot; for your bid &quot;${updatedOffer.bid.bidName}&quot; was accepted.&#x60;,
+                        preInvoice: { connect: { id: offerPreInvoice.id } },
+                    },
+                });
+
+                // 2. Update the pre-invoice to link it to the newly created invoice and mark it successful
+                await this.prisma.preInvoice.update({
+                    where: { id: offerPreInvoice.id },
+                    data: {
+                        status: PreInvoiceStatus.SUCCESSFUL,
+                        invoiceId: newInvoice.id,
+                    },
+                });
+            } else {
+                // Offer declined → mark pre-invoice as failed
+                await this.prisma.preInvoice.update({
+                    where: { id: offerPreInvoice.id },
+                    data: { status: PreInvoiceStatus.FAILED },
+                });
+            }
+        }
+
+        // 7. Notify the supplier about their offer’s status
+        await this.notificationService.createNotification({
+            senderUserId: updatedOffer.bid.buyer.userId,
+            receiverUserId: updatedOffer.supplier.userId,
+            type: NotificationType.BID_STATUS_CHANGED,
+            title: &#x27;Offer Status Changed!&#x27;,
+            content: &#x60;Your offer ${updatedOffer.id} got ${updatedOffer.status.toLowerCase()}&#x60;,
+            entityId: updatedOffer.id,
+            entityType: NotificationEntityType.OFFER,
+        });
+
+        // 8. If accepted -&gt; decline all other offers automatically
+        let declinedOffersInfo: {
+            offerId: string;
+            supplierUserId: string;
+            supplierName: string;
+        }[] &#x3D; [];
+
+        if (status &#x3D;&#x3D;&#x3D; OfferStatus.ACCEPTED) {
+            // Get other offers for the same bid
+            const otherOffers &#x3D; await this.prisma.offer.findMany({
+                where: {
+                    bidId: updatedOffer.bidId,
+                    NOT: { id: offerId },
+                    status: OfferStatus.PENDING,
+                },
+                include: {
+                    supplier: { include: { user: true } },
+                },
+            });
+
+            if (otherOffers.length &gt; 0) {
+                // Decline them in one go
+                await this.prisma.offer.updateMany({
+                    where: {
+                        id: { in: otherOffers.map((o) &#x3D;&gt; o.id) },
+                    },
+                    data: { status: OfferStatus.DECLINED },
+                });
+
+                // Collect info for later notification use
+                declinedOffersInfo &#x3D; otherOffers.map((offer) &#x3D;&gt; ({
+                    offerId: offer.id,
+                    supplierUserId: offer.supplier.userId,
+                    supplierName: offer.supplier.user.name,
+                }));
+            }
+
+            // 9. Fail all other pre-invoices of declined offers automatically
+            if (declinedOffersInfo.length &gt; 0) {
+                const otherPreInvoices &#x3D; await this.prisma.preInvoice.findMany({
+                    where: {
+                        offerId: {
+                            in: declinedOffersInfo.map((o) &#x3D;&gt; o.offerId),
+                        },
+                    },
+                });
+
+                await this.prisma.preInvoice.updateMany({
+                    where: {
+                        id: { in: otherPreInvoices.map((pi) &#x3D;&gt; pi.id) },
+                    },
+                    data: { status: PreInvoiceStatus.FAILED },
+                });
+            }
+        }
+
+        // 10. Send notifications for declined suppliers (batched)
+        await Promise.all(
+            declinedOffersInfo.map((declined) &#x3D;&gt;
+                this.notificationService.createNotification({
+                    senderUserId: updatedOffer.bid.buyer.userId,
+                    receiverUserId: declined.supplierUserId,
+                    type: NotificationType.BID_STATUS_CHANGED,
+                    title: &#x27;Offer Declined&#x27;,
+                    content: &#x60;Your offer ${declined.offerId} has been declined because another offer was accepted.&#x60;,
+                    entityId: declined.offerId,
+                    entityType: NotificationEntityType.OFFER,
+                }),
+            ),
+        );
+
+        // 11. Return dto
+        return this.toOfferResponseDto(updatedOffer);
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'OfferService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

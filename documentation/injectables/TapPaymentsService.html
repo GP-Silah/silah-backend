@@ -1,0 +1,1509 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >TapPaymentsService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/tap-payments/tap-payments.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createCharge" >createCharge</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createCustomer" >createCustomer</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createTokenFromSavedCard" >createTokenFromSavedCard</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteCard" >deleteCard</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getCard" >getCard</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getCharge" >getCharge</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#payWithSavedCard" >payWithSavedCard</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateCharge" >validateCharge</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createCharge"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createCharge</b></span>
+                        <a href="#createCharge"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createCharge(tokenId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tapCustomerId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, redirectUrl: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, amount: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, currency: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="87"
+                                    class="link-to-prism">src/tap-payments/tap-payments.service.ts:87</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Creates a charge in Tap Payments using a card token.</p>
+<p>This method is required to save a card in Tap. It performs a minimal charge (default 1 SAR)
+and marks <code>save_card: true</code> so the card is stored for future use.
+The <code>redirect.url</code> is required by Tap but can be a placeholder if you don&#39;t want the user to be redirected.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-html">const charge = await tapService.createCharge(&#39;card_TS65A38251713Ny0d192G8O876&#39;, {
+  first_name: &#39;Shahad&#39;,
+```html
+});</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tokenId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>The card token generated by Tap SDK (token.card.id).</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>tapCustomerId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>redirectUrl</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>amount</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>1</code>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>Amount to charge (default is 1).</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>currency</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&#x27;SAR&#x27;</code>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>Currency code (default is &#39;SAR&#39;).</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The charge object returned by Tap.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createCustomer"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createCustomer</b></span>
+                        <a href="#createCustomer"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createCustomer(data: literal type)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="38"
+                                    class="link-to-prism">src/tap-payments/tap-payments.service.ts:38</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Creates a new customer in Tap Payments.</p>
+<p>Sends a POST request to the Tap Payments API with the provided customer information.</p>
+<p>the response from Tap Payments if available, or the generic error message.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-html">const customerId = await tapService.createCustomer({
+  first_name: &#39;John&#39;,
+  last_name: &#39;Doe&#39;,
+```html
+  phone: { country_code: &#39;966&#39;, number: &#39;500000000&#39; },
+});
+console.log(customerId); // e.g., &#39;cus_123456789&#39;</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>data</td>
+                                            <td>
+                                                        <code>literal type</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>Customer information.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The ID of the newly created Tap customer.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createTokenFromSavedCard"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createTokenFromSavedCard</b></span>
+                        <a href="#createTokenFromSavedCard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createTokenFromSavedCard(tapCustomerId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tapCardId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, clientIp: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="218"
+                                    class="link-to-prism">src/tap-payments/tap-payments.service.ts:218</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Creates a payment token from a saved card in Tap Payments.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tapCustomerId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>Tap customer ID (cus_xxx)</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>tapCardId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>Tap saved card ID (card_xxx)</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>clientIp</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&#x27;127.0.0.1&#x27;</code>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>Client IP address (for fraud checks)</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>Tap token object</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteCard"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteCard</b></span>
+                        <a href="#deleteCard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteCard(customerId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, cardId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="192"
+                                    class="link-to-prism">src/tap-payments/tap-payments.service.ts:192</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Deletes a saved card in Tap Payments for a given customer.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>customerId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The Tap customer ID (cus_xxx).</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>cardId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The Tap card ID (card_xxx).</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>Resolves if deletion succeeds, throws otherwise.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getCard"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getCard</b></span>
+                        <a href="#getCard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getCard(customerId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, cardId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="167"
+                                    class="link-to-prism">src/tap-payments/tap-payments.service.ts:167</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Retrieves a card from Tap using customerId and cardId.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>customerId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>Tap customer ID (cus_xxx)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>cardId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>Tap card ID (card_xxx)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The card object from Tap</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getCharge"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getCharge</b></span>
+                        <a href="#getCharge"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getCharge(chargeId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="143"
+                                    class="link-to-prism">src/tap-payments/tap-payments.service.ts:143</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Retrieves a charge from Tap Payments by chargeId.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-html">const charge = await tapService.getCharge(&#39;chg_TS50A42252049msSJ23MV8k170&#39;);
+console.log(charge.status); // &quot;CAPTURED&quot; | &quot;AUTHORIZED&quot; | &quot;FAILED&quot;</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>chargeId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The Tap charge ID (chg_xxx).</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The charge object from Tap.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="payWithSavedCard"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>payWithSavedCard</b></span>
+                        <a href="#payWithSavedCard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>payWithSavedCard(tapCustomerId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tokenId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tapCardId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, amount: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, redirectUrl: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currency: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="260"
+                                    class="link-to-prism">src/tap-payments/tap-payments.service.ts:260</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Charges a saved card in Tap Payments.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tapCustomerId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>Tap customer ID (cus_xxx)</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>tokenId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>tapCardId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>Tap saved card ID (card_xxx)</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>amount</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>Amount in minor units (e.g., 100 = 1.00 SAR)</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>redirectUrl</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>Redirect URL after 3DS authentication</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>currency</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&#x27;SAR&#x27;</code>
+                                            </td>
+
+                                            <td>
+                                                    <ul>
+<li>Currency code</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>Tap charge object</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateCharge"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>validateCharge</b></span>
+                        <a href="#validateCharge"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateCharge(charge: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="299"
+                                    class="link-to-prism">src/tap-payments/tap-payments.service.ts:299</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>charge</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+    BadRequestException,
+    Injectable,
+    InternalServerErrorException,
+} from &#x27;@nestjs/common&#x27;;
+import axios from &#x27;axios&#x27;;
+
+@Injectable()
+export class TapPaymentsService {
+    /**
+     * Creates a new customer in Tap Payments.
+     *
+     * Sends a POST request to the Tap Payments API with the provided customer information.
+     *
+     * @param {Object} data - Customer information.
+     * @param {string} data.first_name - Customer&#x27;s first name.
+     * @param {string} [data.middle_name] - Customer&#x27;s middle name (optional).
+     * @param {string} [data.last_name] - Customer&#x27;s last name (optional).
+     * @param {string} data.email - Customer&#x27;s email address.
+     * @param {Object} [data.phone] - Customer&#x27;s phone information (optional).
+     * @param {string} data.phone.country_code - Country code of the phone number (e.g., &#x27;966&#x27;).
+     * @param {string} data.phone.number - Phone number without country code.
+     *
+     * @returns {Promise&lt;string&gt;} The ID of the newly created Tap customer.
+     *
+     * @throws {Error} Throws an error if the API request fails. The error message will contain
+     * the response from Tap Payments if available, or the generic error message.
+     *
+     * @example
+     * const customerId &#x3D; await tapService.createCustomer({
+     *   first_name: &#x27;John&#x27;,
+     *   last_name: &#x27;Doe&#x27;,
+     *   email: &#x27;john.doe@example.com&#x27;,
+     *   phone: { country_code: &#x27;966&#x27;, number: &#x27;500000000&#x27; },
+     * });
+     * console.log(customerId); // e.g., &#x27;cus_123456789&#x27;
+     */
+    async createCustomer(data: {
+        first_name: string;
+        middle_name?: string;
+        last_name?: string;
+        email: string;
+        phone?: { country_code: string; number: string };
+    }) {
+        try {
+            const response &#x3D; await axios.post(
+                &#x27;https://api.tap.company/v2/customers/&#x27;,
+                data,
+                {
+                    headers: {
+                        Authorization: &#x60;Bearer ${process.env.TAP_SECRET_KEY}&#x60;,
+                        &#x27;Content-Type&#x27;: &#x27;application/json&#x27;,
+                    },
+                },
+            );
+            return response.data.id;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw err;
+        }
+    }
+
+    /**
+     * Creates a charge in Tap Payments using a card token.
+     *
+     * This method is required to save a card in Tap. It performs a minimal charge (default 1 SAR)
+     * and marks &#x60;save_card: true&#x60; so the card is stored for future use.
+     * The &#x60;redirect.url&#x60; is required by Tap but can be a placeholder if you don&#x27;t want the user to be redirected.
+     *
+     * @param {string} tokenId - The card token generated by Tap SDK (token.card.id).
+     * @param {Object} customerData - Customer information.
+     * @param {string} customerData.first_name - Customer&#x27;s first name.
+     * @param {string} customerData.email - Customer&#x27;s email address.
+     * @param {number} [amount&#x3D;1] - Amount to charge (default is 1).
+     * @param {string} [currency&#x3D;&#x27;SAR&#x27;] - Currency code (default is &#x27;SAR&#x27;).
+     *
+     * @returns {Promise&lt;Object&gt;} The charge object returned by Tap.
+     *
+     * @throws {Error} Throws an error if the charge creation fails.
+     *
+     * @example
+     * const charge &#x3D; await tapService.createCharge(&#x27;card_TS65A38251713Ny0d192G8O876&#x27;, {
+     *   first_name: &#x27;Shahad&#x27;,
+     *   email: &#x27;shahad@example.com&#x27;
+     * });
+     */
+    async createCharge(
+        tokenId: string,
+        tapCustomerId: string,
+        redirectUrl: string,
+        amount: number &#x3D; 1,
+        currency: string &#x3D; &#x27;SAR&#x27;,
+    ) {
+        try {
+            const response &#x3D; await axios.post(
+                &#x27;https://api.tap.company/v2/charges/&#x27;,
+                {
+                    amount,
+                    currency,
+                    customer_initiated: true,
+                    threeDSecure: true,
+                    save_card: true, // mark true to save the card
+                    description: &#x27;Card save charge&#x27;,
+                    metadata: { udf1: &#x27;Save card test&#x27; },
+                    receipt: { email: false, sms: false },
+                    // reference: {
+                    //     transaction: &#x60;txn_${Date.now()}&#x60;,
+                    //     order: &#x60;ord_${Date.now()}&#x60;,
+                    // },
+                    customer: { id: tapCustomerId },
+                    merchant: { id: process.env.TAP_MERCHANT_ID },
+                    source: { id: tokenId },
+                    // post: { url: &#x27;http://your_website.com/post_url&#x27; },
+                    redirect: { url: redirectUrl }, // redirect URL required by Tap to redirect after 3DS (OTP step)
+                },
+                {
+                    headers: {
+                        Authorization: &#x60;Bearer ${process.env.TAP_SECRET_KEY}&#x60;,
+                        &#x27;Content-Type&#x27;: &#x27;application/json&#x27;,
+                        Accept: &#x27;application/json&#x27;,
+                    },
+                },
+            );
+            return response.data;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error(&#x27;Failed to create charge in Tap&#x27;);
+        }
+    }
+
+    /**
+     * Retrieves a charge from Tap Payments by chargeId.
+     *
+     * @param {string} chargeId - The Tap charge ID (chg_xxx).
+     * @returns {Promise&lt;any&gt;} The charge object from Tap.
+     *
+     * @throws {Error} Throws an error if the request fails.
+     *
+     * @example
+     * const charge &#x3D; await tapService.getCharge(&#x27;chg_TS50A42252049msSJ23MV8k170&#x27;);
+     * console.log(charge.status); // &quot;CAPTURED&quot; | &quot;AUTHORIZED&quot; | &quot;FAILED&quot;
+     */
+    async getCharge(chargeId: string) {
+        try {
+            const response &#x3D; await axios.get(
+                &#x60;https://api.tap.company/v2/charges/${chargeId}&#x60;,
+                {
+                    headers: {
+                        accept: &#x27;application/json&#x27;,
+                        Authorization: &#x60;Bearer ${process.env.TAP_SECRET_KEY}&#x60;,
+                    },
+                },
+            );
+            return response.data;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error(&#x60;Failed to fetch charge ${chargeId} from Tap&#x60;);
+        }
+    }
+
+    /**
+     * Retrieves a card from Tap using customerId and cardId.
+     * @param customerId Tap customer ID (cus_xxx)
+     * @param cardId Tap card ID (card_xxx)
+     * @returns The card object from Tap
+     */
+    async getCard(customerId: string, cardId: string) {
+        try {
+            const response &#x3D; await axios.get(
+                &#x60;https://api.tap.company/v2/card/${customerId}/${cardId}&#x60;,
+                {
+                    headers: {
+                        accept: &#x27;application/json&#x27;,
+                        Authorization: &#x60;Bearer ${process.env.TAP_SECRET_KEY}&#x60;,
+                    },
+                },
+            );
+            return response.data;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error(&#x27;Failed to fetch card from Tap&#x27;);
+        }
+    }
+
+    /**
+     * Deletes a saved card in Tap Payments for a given customer.
+     *
+     * @param {string} customerId - The Tap customer ID (cus_xxx).
+     * @param {string} cardId - The Tap card ID (card_xxx).
+     * @returns {Promise&lt;void&gt;} Resolves if deletion succeeds, throws otherwise.
+     */
+    async deleteCard(customerId: string, cardId: string): Promise&lt;void&gt; {
+        try {
+            await axios.delete(
+                &#x60;https://api.tap.company/v2/card/${customerId}/${cardId}&#x60;,
+                {
+                    headers: {
+                        Authorization: &#x60;Bearer ${process.env.TAP_SECRET_KEY}&#x60;,
+                        Accept: &#x27;application/json&#x27;,
+                    },
+                },
+            );
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error(&#x27;Failed to delete card from Tap&#x27;);
+        }
+    }
+
+    /**
+     * Creates a payment token from a saved card in Tap Payments.
+     *
+     * @param {string} tapCustomerId - Tap customer ID (cus_xxx)
+     * @param {string} tapCardId - Tap saved card ID (card_xxx)
+     * @param {string} [clientIp&#x3D;&#x27;127.0.0.1&#x27;] - Client IP address (for fraud checks)
+     *
+     * @returns {Promise&lt;Object&gt;} Tap token object
+     */
+    async createTokenFromSavedCard(
+        tapCustomerId: string,
+        tapCardId: string,
+        clientIp: string &#x3D; &#x27;127.0.0.1&#x27;,
+    ) {
+        try {
+            const response &#x3D; await axios.post(
+                &#x27;https://api.tap.company/v2/tokens/&#x27;,
+                {
+                    saved_card: {
+                        card_id: tapCardId,
+                        customer_id: tapCustomerId,
+                    },
+                    client_ip: clientIp,
+                },
+                {
+                    headers: {
+                        Authorization: &#x60;Bearer ${process.env.TAP_SECRET_KEY}&#x60;,
+                        &#x27;Content-Type&#x27;: &#x27;application/json&#x27;,
+                        Accept: &#x27;application/json&#x27;,
+                    },
+                },
+            );
+
+            return response.data;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error(&#x27;Failed to create token from saved card&#x27;);
+        }
+    }
+
+    /**
+     * Charges a saved card in Tap Payments.
+     *
+     * @param {string} tapCustomerId - Tap customer ID (cus_xxx)
+     * @param {string} tapCardId - Tap saved card ID (card_xxx)
+     * @param {number} amount - Amount in minor units (e.g., 100 &#x3D; 1.00 SAR)
+     * @param {string} [currency&#x3D;&#x27;SAR&#x27;] - Currency code
+     * @param {string} redirectUrl - Redirect URL after 3DS authentication
+     *
+     * @returns {Promise&lt;Object&gt;} Tap charge object
+     */
+    async payWithSavedCard(
+        tapCustomerId: string,
+        tokenId: string, // int here? tbh better
+        tapCardId: string,
+        amount: number,
+        redirectUrl: string,
+        currency: string &#x3D; &#x27;SAR&#x27;,
+    ) {
+        try {
+            const response &#x3D; await axios.post(
+                &#x27;https://api.tap.company/v2/charges/&#x27;,
+                {
+                    amount, // must already be in minor units
+                    currency,
+                    customer_initiated: true,
+                    threeDSecure: true,
+                    description: &#x27;Cart payment&#x27;,
+                    customer: { id: tapCustomerId },
+                    source: {
+                        id: tokenId,
+                    },
+                    redirect: { url: redirectUrl }, // REQUIRED for 3DS
+                },
+                {
+                    headers: {
+                        Authorization: &#x60;Bearer ${process.env.TAP_SECRET_KEY}&#x60;,
+                        &#x27;Content-Type&#x27;: &#x27;application/json&#x27;,
+                        Accept: &#x27;application/json&#x27;,
+                    },
+                },
+            );
+
+            return response.data;
+        } catch (err: any) {
+            console.error(err.response?.data || err.message);
+            throw new Error(&#x27;Failed to charge saved card&#x27;);
+        }
+    }
+
+    async validateCharge(charge: any) {
+        const createdMs &#x3D;
+            charge.transaction?.created || charge.transaction?.date?.created;
+        if (!createdMs) {
+            throw new InternalServerErrorException(
+                &#x27;Cannot determine charge creation time.&#x27;,
+            );
+        }
+
+        const chargeCreationTime &#x3D; new Date(Number(createdMs));
+        const now &#x3D; new Date();
+
+        const timeDifference &#x3D; now.getTime() - chargeCreationTime.getTime();
+
+        // 1 hour &#x3D; 3600000 ms
+        if (timeDifference &gt; 3600000) {
+            throw new BadRequestException(
+                &#x27;Charge ID is too old. Please initiate a new payment.&#x27;,
+            );
+        }
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'TapPaymentsService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

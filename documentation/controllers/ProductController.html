@@ -1,0 +1,1615 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content controller">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Controllers</li>
+  <li class="breadcrumb-item" >ProductController</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/product/product.controller.ts</code>
+        </p>
+            <p class="comment">
+                <h3>Prefix</h3>
+            </p>
+            <p class="comment">
+                <code>products</code>
+            </p>
+
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#createProduct" >createProduct</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteProduct" >deleteProduct</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteProductImage" >deleteProductImage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#dummy" >dummy</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#duplicateProduct" >duplicateProduct</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllProducts" >getAllProducts</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllSupplierProducts" >getAllSupplierProducts</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getProductById" >getProductById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateProduct" >updateProduct</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateProductImages" >updateProductImages</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createProduct"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>createProduct</b></span>
+                        <a href="#createProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createProduct(files: Express.Multer.File[], req: Request)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@ApiDocsJwtAuthGuard()<br />@ApiDocsRolesGuard()<br />@ApiDocsVerifiedGuard()<br />@Roles(UserRole.SUPPLIER)<br />@UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)<br />@Post()<br />@UseInterceptors(undefined)<br />@ApiDocsCreateProduct()<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="127"
+                                    class="link-to-prism">src/product/product.controller.ts:127</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>files</td>
+                                            <td>
+                                                        <code>Express.Multer.File[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>req</td>
+                                            <td>
+                                                        <code>Request</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteProduct"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteProduct</b></span>
+                        <a href="#deleteProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteProduct(productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, req: Request)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@ApiDocsJwtAuthGuard()<br />@ApiDocsRolesGuard()<br />@ApiDocsVerifiedGuard()<br />@Roles(UserRole.SUPPLIER)<br />@UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)<br />@Delete(&#x27;:productId&#x27;)<br />@ApiDocsDeleteProduct()<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="262"
+                                    class="link-to-prism">src/product/product.controller.ts:262</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>req</td>
+                                            <td>
+                                                        <code>Request</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteProductImage"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteProductImage</b></span>
+                        <a href="#deleteProductImage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteProductImage(productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, fileName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, req: Request)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@ApiDocsJwtAuthGuard()<br />@ApiDocsRolesGuard()<br />@ApiDocsVerifiedGuard()<br />@Roles(UserRole.SUPPLIER)<br />@UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)<br />@Delete(&#x27;:productId/image/:fileName&#x27;)<br />@ApiDocsDeleteProductImage()<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="242"
+                                    class="link-to-prism">src/product/product.controller.ts:242</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fileName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>req</td>
+                                            <td>
+                                                        <code>Request</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dummy"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>dummy</b></span>
+                        <a href="#dummy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>dummy()</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Get(&#x27;create-product-dto&#x27;)<br />@ApiDocsFakeGetCreateProductDto()<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="172"
+                                    class="link-to-prism">src/product/product.controller.ts:172</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="duplicateProduct"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>duplicateProduct</b></span>
+                        <a href="#duplicateProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>duplicateProduct(productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, req: Request)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@ApiDocsJwtAuthGuard()<br />@ApiDocsRolesGuard()<br />@ApiDocsVerifiedGuard()<br />@Roles(UserRole.SUPPLIER)<br />@UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)<br />@Post(&#x27;:productId/clone&#x27;)<br />@ApiDocsDuplicateProduct()<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="183"
+                                    class="link-to-prism">src/product/product.controller.ts:183</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>req</td>
+                                            <td>
+                                                        <code>Request</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllProducts"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllProducts</b></span>
+                        <a href="#getAllProducts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllProducts(req: Request, langHeader?: "ar" | "en", lang?: "ar" | "en")</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Get()<br />@ApiDocsGetAllProducts()<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="61"
+                                    class="link-to-prism">src/product/product.controller.ts:61</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>req</td>
+                                            <td>
+                                                        <code>Request</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>langHeader</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>lang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllSupplierProducts"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllSupplierProducts</b></span>
+                        <a href="#getAllSupplierProducts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllSupplierProducts(supplierId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, req: Request, langHeader?: "ar" | "en", lang?: "ar" | "en")</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Get(&#x27;supplier/:supplierId&#x27;)<br />@ApiDocsGetAllSupplierProducts()<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="86"
+                                    class="link-to-prism">src/product/product.controller.ts:86</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>supplierId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>req</td>
+                                            <td>
+                                                        <code>Request</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>langHeader</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>lang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getProductById"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getProductById</b></span>
+                        <a href="#getProductById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getProductById(productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, req: Request, langHeader?: "ar" | "en", lang?: "ar" | "en")</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Get(&#x27;:productId&#x27;)<br />@ApiDocsGetProductById()<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="73"
+                                    class="link-to-prism">src/product/product.controller.ts:73</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>req</td>
+                                            <td>
+                                                        <code>Request</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>langHeader</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>lang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateProduct"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>updateProduct</b></span>
+                        <a href="#updateProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateProduct(productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, req: Request, dto: <a href="../classes/UpdateProductDto.html" target="_self">UpdateProductDto</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@ApiDocsJwtAuthGuard()<br />@ApiDocsRolesGuard()<br />@ApiDocsVerifiedGuard()<br />@Roles(UserRole.SUPPLIER)<br />@UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)<br />@Patch(&#x27;:productId&#x27;)<br />@ApiDocsUpdateProduct()<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="198"
+                                    class="link-to-prism">src/product/product.controller.ts:198</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>req</td>
+                                            <td>
+                                                        <code>Request</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateProductDto.html" target="_self" >UpdateProductDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateProductImages"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>updateProductImages</b></span>
+                        <a href="#updateProductImages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateProductImages(file: Express.Multer.File, productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, req: Request)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@ApiDocsJwtAuthGuard()<br />@ApiDocsRolesGuard()<br />@ApiDocsVerifiedGuard()<br />@Roles(UserRole.SUPPLIER)<br />@UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)<br />@UseInterceptors(undefined)<br />@Patch(&#x27;:productId/images&#x27;)<br />@ApiDocsUpdateProductImage()<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="215"
+                                    class="link-to-prism">src/product/product.controller.ts:215</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>file</td>
+                                            <td>
+                                                        <code>Express.Multer.File</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>req</td>
+                                            <td>
+                                                        <code>Request</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+    Body,
+    Controller,
+    Delete,
+    FileTypeValidator,
+    Get,
+    MaxFileSizeValidator,
+    Param,
+    ParseFilePipe,
+    Patch,
+    Post,
+    Query,
+    Req,
+    UseGuards,
+    UseInterceptors,
+    Headers,
+    UploadedFiles,
+    BadRequestException,
+    UploadedFile,
+    Inject,
+} from &#x27;@nestjs/common&#x27;;
+import { ProductService } from &#x27;./product.service&#x27;;
+import { ApiTags } from &#x27;@nestjs/swagger&#x27;;
+import { ApiDocsJwtAuthGuard } from &#x27;src/auth/decorators/jwt-auth-guard.docs&#x27;;
+import { ApiDocsRolesGuard } from &#x27;src/auth/decorators/roles-guard.docs&#x27;;
+import { Roles } from &#x27;src/auth/decorators/roles.decorator&#x27;;
+import { UserRole } from &#x27;src/enums/userRole.enum&#x27;;
+import { JwtAuthGuard } from &#x27;src/auth/guards/jwt-auth.guard&#x27;;
+import { RolesGuard } from &#x27;src/auth/guards/roles.guard&#x27;;
+import { FileInterceptor, FilesInterceptor } from &#x27;@nestjs/platform-express&#x27;;
+import { Request } from &#x27;express&#x27;;
+import { CreateProductDto } from &#x27;./dtos/createProduct.dto&#x27;;
+import {
+    ApiDocsCreateProduct,
+    ApiDocsDeleteProduct,
+    ApiDocsDeleteProductImage,
+    ApiDocsDuplicateProduct,
+    ApiDocsFakeGetCreateProductDto,
+    ApiDocsGetAllProducts,
+    ApiDocsGetAllSupplierProducts,
+    ApiDocsGetProductById,
+    ApiDocsUpdateProduct,
+    ApiDocsUpdateProductImage,
+} from &#x27;./product.docs&#x27;;
+import { UpdateProductDto } from &#x27;./dtos/updateProduct.dto&#x27;;
+import { validateOrReject, ValidationError } from &#x27;class-validator&#x27;;
+import { ApiDocsVerifiedGuard } from &#x27;src/auth/decorators/verified-guard.docs&#x27;;
+import { VerifiedGuard } from &#x27;src/auth/guards/verified.guard&#x27;;
+import { JwtService } from &#x27;@nestjs/jwt&#x27;;
+
+@ApiTags(&#x27;Products&#x27;)
+@Controller(&#x27;products&#x27;)
+export class ProductController {
+    constructor(
+        private readonly productService: ProductService,
+        @Inject(JwtService) private jwtService: JwtService,
+    ) {}
+
+    @Get()
+    @ApiDocsGetAllProducts()
+    async getAllProducts(
+        @Req() req: Request,
+        @Headers(&#x27;accept-language&#x27;) langHeader?: &#x27;ar&#x27; | &#x27;en&#x27;,
+        @Query(&#x27;lang&#x27;) lang?: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ) {
+        const userId &#x3D; req.tokenData?.sub;
+        const finalLang &#x3D; lang || langHeader || &#x27;en&#x27;;
+        return this.productService.getAllProducts(finalLang, userId);
+    }
+
+    @Get(&#x27;:productId&#x27;)
+    @ApiDocsGetProductById()
+    async getProductById(
+        @Param(&#x27;productId&#x27;) productId: string,
+        @Req() req: Request,
+        @Headers(&#x27;accept-language&#x27;) langHeader?: &#x27;ar&#x27; | &#x27;en&#x27;,
+        @Query(&#x27;lang&#x27;) lang?: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ) {
+        const userId &#x3D; req.tokenData?.sub;
+        const finalLang &#x3D; lang || langHeader || &#x27;en&#x27;;
+        return this.productService.getProductById(productId, finalLang, userId);
+    }
+
+    @Get(&#x27;supplier/:supplierId&#x27;)
+    @ApiDocsGetAllSupplierProducts()
+    async getAllSupplierProducts(
+        @Param(&#x27;supplierId&#x27;) supplierId: string,
+        @Req() req: Request,
+        @Headers(&#x27;accept-language&#x27;) langHeader?: &#x27;ar&#x27; | &#x27;en&#x27;,
+        @Query(&#x27;lang&#x27;) lang?: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ) {
+        let userId: string | undefined &#x3D; undefined;
+
+        // &#x3D;&#x3D;&#x3D; DUPLICATE JwtAuthGuard LOGIC &#x3D;&#x3D;&#x3D;
+        const tokenObj &#x3D; req.cookies?.token;
+        const token &#x3D; typeof tokenObj &#x3D;&#x3D;&#x3D; &#x27;string&#x27; ? tokenObj : tokenObj?.token;
+
+        if (token &amp;&amp; typeof token &#x3D;&#x3D;&#x3D; &#x27;string&#x27;) {
+            try {
+                const payload &#x3D; await this.jwtService.verifyAsync(token);
+                userId &#x3D; payload.sub;
+                req.tokenData &#x3D; payload; // optional: keep for consistency
+            } catch (err) {
+                console.log(&#x27;Invalid/expired token, treating as public&#x27;);
+                // Silently ignore — it&#x27;s public endpoint
+            }
+        } else {
+            console.log(&#x27;No token in cookies, public access&#x27;);
+        }
+
+        const finalLang &#x3D; lang || langHeader || &#x27;en&#x27;;
+        return this.productService.getAllSupplierProducts(
+            supplierId,
+            finalLang,
+            userId,
+        );
+    }
+
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
+    @Roles(UserRole.SUPPLIER)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
+    @Post()
+    @UseInterceptors(FilesInterceptor(&#x27;files&#x27;, 3)) // note: &quot;files&quot; for multiple files
+    @ApiDocsCreateProduct()
+    async createProduct(
+        @UploadedFiles(
+            new ParseFilePipe({
+                validators: [
+                    new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
+                    new FileTypeValidator({
+                        fileType: /^image\/(png|jpe?g|webp)$/i,
+                        skipMagicNumbersValidation: true,
+                    }),
+                ],
+            }),
+        )
+        files: Express.Multer.File[],
+        @Req() req: Request,
+        // @Body(&#x27;dto&#x27;, ParseJsonPipe) dto: CreateProductDto,
+    ) {
+        // Parse the dto from req.body manually (because NestJS way throws errors and workarounds failed)
+        let dto: CreateProductDto;
+        try {
+            dto &#x3D; JSON.parse(req.body.dto);
+        } catch (err) {
+            throw new BadRequestException(&#x27;Invalid JSON in form field&#x27;);
+        }
+        // Run validation
+        try {
+            await validateOrReject(Object.assign(new CreateProductDto(), dto));
+        } catch (errors) {
+            // errors is ValidationError[]
+            const messages &#x3D; (errors as ValidationError[])
+                .map((err) &#x3D;&gt; {
+                    if (err.constraints) {
+                        return Object.values(err.constraints).join(&#x27;; &#x27;);
+                    }
+                    return &#x27;&#x27;;
+                })
+                .filter((msg) &#x3D;&gt; !!msg)
+                .join(&#x27;; &#x27;);
+
+            throw new BadRequestException(messages || &#x27;Validation failed&#x27;);
+        }
+        const userId &#x3D; req.tokenData!.sub;
+        return this.productService.createProduct(userId, dto, files);
+    }
+    @Get(&#x27;create-product-dto&#x27;)
+    @ApiDocsFakeGetCreateProductDto()
+    dummy() {
+        return; // Never called
+    }
+
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
+    @Roles(UserRole.SUPPLIER)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
+    @Post(&#x27;:productId/clone&#x27;)
+    @ApiDocsDuplicateProduct()
+    async duplicateProduct(
+        @Param(&#x27;productId&#x27;) productId: string,
+        @Req() req: Request,
+    ) {
+        const userId &#x3D; req.tokenData!.sub;
+        return this.productService.duplicateProduct(userId, productId);
+    }
+
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
+    @Roles(UserRole.SUPPLIER)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
+    @Patch(&#x27;:productId&#x27;)
+    @ApiDocsUpdateProduct()
+    async updateProduct(
+        @Param(&#x27;productId&#x27;) productId: string,
+        @Req() req: Request,
+        @Body() dto: UpdateProductDto,
+    ) {
+        const userId &#x3D; req.tokenData!.sub;
+        return this.productService.updateProduct(userId, productId, dto);
+    }
+
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
+    @Roles(UserRole.SUPPLIER)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
+    @UseInterceptors(FileInterceptor(&#x27;file&#x27;))
+    @Patch(&#x27;:productId/images&#x27;)
+    @ApiDocsUpdateProductImage()
+    async updateProductImages(
+        @UploadedFile(
+            new ParseFilePipe({
+                validators: [
+                    new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
+                    new FileTypeValidator({
+                        fileType: /^image\/(png|jpe?g|webp)$/i,
+                        skipMagicNumbersValidation: true,
+                    }),
+                ],
+            }),
+        )
+        file: Express.Multer.File,
+        @Param(&#x27;productId&#x27;) productId: string,
+        @Req() req: Request,
+    ) {
+        const userId &#x3D; req.tokenData!.sub;
+        return this.productService.updateProductImages(userId, productId, file);
+    }
+
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
+    @Roles(UserRole.SUPPLIER)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
+    @Delete(&#x27;:productId/image/:fileName&#x27;)
+    @ApiDocsDeleteProductImage()
+    async deleteProductImage(
+        @Param(&#x27;productId&#x27;) productId: string,
+        @Param(&#x27;fileName&#x27;) fileName: string,
+        @Req() req: Request,
+    ) {
+        const userId &#x3D; req.tokenData!.sub;
+        return this.productService.deleteProductImage(
+            userId,
+            productId,
+            fileName,
+        );
+    }
+
+    @ApiDocsJwtAuthGuard()
+    @ApiDocsRolesGuard()
+    @ApiDocsVerifiedGuard()
+    @Roles(UserRole.SUPPLIER)
+    @UseGuards(JwtAuthGuard, RolesGuard, VerifiedGuard)
+    @Delete(&#x27;:productId&#x27;)
+    @ApiDocsDeleteProduct()
+    async deleteProduct(
+        @Param(&#x27;productId&#x27;) productId: string,
+        @Req() req: Request,
+    ) {
+        const userId &#x3D; req.tokenData!.sub;
+        return this.productService.deleteProduct(userId, productId);
+    }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'controller';
+            var COMPODOC_CURRENT_PAGE_URL = 'ProductController.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

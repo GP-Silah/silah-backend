@@ -1,0 +1,1488 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >GroupPurchaseService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/group-purchase/group-purchase.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#deadlineDaysFromEnum" >deadlineDaysFromEnum</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllGroupPurchaseForProduct" >getAllGroupPurchaseForProduct</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getGroupById" >getGroupById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSuitableGroupPurchasesForProduct" >getSuitableGroupPurchasesForProduct</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#joinGroupPurchase" >joinGroupPurchase</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#startGroupPurchase" >startGroupPurchase</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toGroupPurchaseBuyerResponseDto" >toGroupPurchaseBuyerResponseDto</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toGroupPurchaseResponseDto" >toGroupPurchaseResponseDto</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prisma: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, productService: <a href="../injectables/ProductService.html" target="_self">ProductService</a>, supplierService: <a href="../injectables/SupplierService.html" target="_self">SupplierService</a>, buyerService: <a href="../injectables/BuyerService.html" target="_self">BuyerService</a>, notificationService: <a href="../injectables/NotificationService.html" target="_self">NotificationService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/group-purchase/group-purchase.service.ts:28</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prisma</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>productService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ProductService.html" target="_self" >ProductService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>supplierService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SupplierService.html" target="_self" >SupplierService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>buyerService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/BuyerService.html" target="_self" >BuyerService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>notificationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/NotificationService.html" target="_self" >NotificationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deadlineDaysFromEnum"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>deadlineDaysFromEnum</b></span>
+                        <a href="#deadlineDaysFromEnum"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deadlineDaysFromEnum(enumValue?: <a href="../miscellaneous/enumerations.html#GroupPurchaseDeadline" target="_self">GroupPurchaseDeadline | null</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="204"
+                                    class="link-to-prism">src/group-purchase/group-purchase.service.ts:204</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>enumValue</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/enumerations.html#GroupPurchaseDeadline" target="_self" >GroupPurchaseDeadline | null</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllGroupPurchaseForProduct"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllGroupPurchaseForProduct</b></span>
+                        <a href="#getAllGroupPurchaseForProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllGroupPurchaseForProduct(productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="101"
+                                    class="link-to-prism">src/group-purchase/group-purchase.service.ts:101</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getGroupById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getGroupById</b></span>
+                        <a href="#getGroupById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getGroupById(groupId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="133"
+                                    class="link-to-prism">src/group-purchase/group-purchase.service.ts:133</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>groupId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSuitableGroupPurchasesForProduct"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getSuitableGroupPurchasesForProduct</b></span>
+                        <a href="#getSuitableGroupPurchasesForProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSuitableGroupPurchasesForProduct(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="152"
+                                    class="link-to-prism">src/group-purchase/group-purchase.service.ts:152</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/GroupPurchaseResponseDto.html" target="_self" >Promise&lt;GroupPurchaseResponseDto[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="joinGroupPurchase"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>joinGroupPurchase</b></span>
+                        <a href="#joinGroupPurchase"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>joinGroupPurchase(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, groupId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, quantity: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="313"
+                                    class="link-to-prism">src/group-purchase/group-purchase.service.ts:313</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>groupId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>quantity</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="startGroupPurchase"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>startGroupPurchase</b></span>
+                        <a href="#startGroupPurchase"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>startGroupPurchase(userId: unknown, productId: unknown, quantity: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="218"
+                                    class="link-to-prism">src/group-purchase/group-purchase.service.ts:218</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>quantity</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toGroupPurchaseBuyerResponseDto"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toGroupPurchaseBuyerResponseDto</b></span>
+                        <a href="#toGroupPurchaseBuyerResponseDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toGroupPurchaseBuyerResponseDto(buyerRelation: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="38"
+                                    class="link-to-prism">src/group-purchase/group-purchase.service.ts:38</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>buyerRelation</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;GroupPurchaseBuyerResponseDto&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toGroupPurchaseResponseDto"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toGroupPurchaseResponseDto</b></span>
+                        <a href="#toGroupPurchaseResponseDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toGroupPurchaseResponseDto(groupPurchase: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="54"
+                                    class="link-to-prism">src/group-purchase/group-purchase.service.ts:54</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>groupPurchase</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/GroupPurchaseResponseDto.html" target="_self" >Promise&lt;GroupPurchaseResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+    BadRequestException,
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from &#x27;@nestjs/common&#x27;;
+import { BuyerService } from &#x27;src/buyer/buyer.service&#x27;;
+import { PrismaService } from &#x27;src/prisma/prisma.service&#x27;;
+import { ProductService } from &#x27;src/product/product.service&#x27;;
+import { SupplierService } from &#x27;src/supplier/supplier.service&#x27;;
+import {
+    GroupPurchaseBuyerResponseDto,
+    GroupPurchaseResponseDto,
+} from &#x27;./dtos/groupPurchaseResponse.dto&#x27;;
+import {
+    GroupPurchaseDeadline,
+    GroupPurchaseStatus,
+    InvoiceStatus,
+    InvoiceTermsOfPayment,
+    NotificationEntityType,
+    NotificationType,
+    PreInvoiceStatus,
+} from &#x27;@prisma/client&#x27;;
+import { addDays } from &#x27;date-fns&#x27;;
+import { NotificationService } from &#x27;src/notification/notification.service&#x27;;
+
+@Injectable()
+export class GroupPurchaseService {
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly productService: ProductService,
+        private readonly supplierService: SupplierService,
+        private readonly buyerService: BuyerService,
+        private readonly notificationService: NotificationService,
+    ) {}
+
+    // --- 1. Map GroupPurchaseBuyer to DTO ---
+    async toGroupPurchaseBuyerResponseDto(
+        buyerRelation: any,
+    ): Promise&lt;GroupPurchaseBuyerResponseDto&gt; {
+        const buyerDto &#x3D; new GroupPurchaseBuyerResponseDto();
+        buyerDto.groupPurchaseBuyerId &#x3D; buyerRelation.id;
+        buyerDto.quantity &#x3D; buyerRelation.quantity;
+        buyerDto.priceBasedQuantity &#x3D; buyerRelation.priceBasedQuantity;
+        buyerDto.joinedAt &#x3D; buyerRelation.joinedAt;
+        buyerDto.buyer &#x3D; await this.buyerService.toBuyerResponseDto(
+            buyerRelation.buyer.user,
+            buyerRelation.buyer,
+        );
+        return buyerDto;
+    }
+
+    // --- 2. Map GroupPurchase to DTO ---
+    async toGroupPurchaseResponseDto(
+        groupPurchase: any,
+    ): Promise&lt;GroupPurchaseResponseDto&gt; {
+        const product &#x3D; groupPurchase.product;
+        const supplier &#x3D; groupPurchase.supplier;
+
+        const remainingQuantity &#x3D; Math.max(
+            0,
+            groupPurchase.minGroupQuantity - groupPurchase.actualGroupQuantity,
+        );
+
+        const discountPercentage &#x3D; product.price
+            ? Math.round(
+                  ((product.price - product.groupPurchasePrice) /
+                      product.price) *
+                      100,
+              )
+            : 0;
+
+        const dto &#x3D; new GroupPurchaseResponseDto();
+        dto.groupPurchaseId &#x3D; groupPurchase.id;
+        dto.city &#x3D; groupPurchase.city;
+        dto.minGroupQuantity &#x3D; groupPurchase.minGroupQuantity;
+        dto.actualGroupQuantity &#x3D; groupPurchase.actualGroupQuantity;
+        dto.remainingQuantity &#x3D; remainingQuantity;
+        dto.totalPrice &#x3D; groupPurchase.totalPrice;
+        dto.groupUnitPrice &#x3D; groupPurchase.groupUnitPrice;
+        dto.discountPercentage &#x3D; discountPercentage;
+        dto.deadline &#x3D; groupPurchase.deadline;
+        dto.status &#x3D; groupPurchase.status;
+        dto.createdAt &#x3D; groupPurchase.createdAt;
+
+        dto.product &#x3D; await this.productService.toProductResponseDto(product);
+        dto.supplier &#x3D; await this.supplierService.toSupplierResponseDTO(
+            supplier.user,
+            supplier,
+        );
+
+        dto.joinedBuyers &#x3D; await Promise.all(
+            groupPurchase.joinedBuyers.map((buyerRelation) &#x3D;&gt;
+                this.toGroupPurchaseBuyerResponseDto(buyerRelation),
+            ),
+        );
+
+        return dto;
+    }
+
+    async getAllGroupPurchaseForProduct(productId: string) {
+        // Validate product existence
+        const product &#x3D; await this.prisma.product.findFirst({
+            where: { id: productId, isDeleted: false },
+        });
+        if (!product) {
+            throw new NotFoundException(
+                &#x60;Product with ID ${productId} not found&#x60;,
+            );
+        }
+
+        // Fetch all group purchases for this product
+        const groupPurchases &#x3D; await this.prisma.groupPurchase.findMany({
+            where: { productId },
+            include: {
+                product: { include: { category: true } },
+                supplier: { include: { user: true } },
+                joinedBuyers: {
+                    include: { buyer: { include: { user: true } } },
+                },
+            },
+            orderBy: { createdAt: &#x27;desc&#x27; },
+        });
+
+        // Map to DTOs
+        const dtoList &#x3D; await Promise.all(
+            groupPurchases.map((gp) &#x3D;&gt; this.toGroupPurchaseResponseDto(gp)),
+        );
+
+        return dtoList;
+    }
+
+    async getGroupById(groupId: string) {
+        const group &#x3D; await this.prisma.groupPurchase.findUnique({
+            where: { id: groupId },
+            include: {
+                product: { include: { category: true } },
+                supplier: { include: { user: true } },
+                joinedBuyers: {
+                    include: { buyer: { include: { user: true } } },
+                },
+            },
+        });
+        if (!group) {
+            throw new NotFoundException(
+                &#x60;Group Purchase with ID ${groupId} not found&#x60;,
+            );
+        }
+        return this.toGroupPurchaseResponseDto(group);
+    }
+
+    async getSuitableGroupPurchasesForProduct(
+        userId: string,
+        productId: string,
+    ): Promise&lt;GroupPurchaseResponseDto[]&gt; {
+        // Validate product
+        const product &#x3D; await this.prisma.product.findFirst({
+            where: { id: productId, isDeleted: false },
+        });
+        if (!product) {
+            throw new NotFoundException(
+                &#x60;Product with ID ${productId} not found&#x60;,
+            );
+        }
+
+        // Get buyer &amp; city
+        const buyer &#x3D; await this.prisma.buyer.findUnique({
+            where: { userId },
+            include: { user: true },
+        });
+        if (!buyer) {
+            throw new NotFoundException(&#x60;Buyer not found&#x60;);
+        }
+        const city &#x3D; buyer.user.city.toLowerCase();
+
+        // Find open &amp; suitable group purchases
+        const now &#x3D; new Date();
+        const groupPurchases &#x3D; await this.prisma.groupPurchase.findMany({
+            where: {
+                productId,
+                city,
+                status: GroupPurchaseStatus.OPEN,
+                deadline: { gt: now }, // still valid
+            },
+            include: {
+                product: { include: { category: true } },
+                supplier: { include: { user: true } },
+                joinedBuyers: {
+                    include: { buyer: { include: { user: true } } },
+                },
+            },
+            orderBy: [{ deadline: &#x27;asc&#x27; }, { createdAt: &#x27;desc&#x27; }],
+        });
+
+        // Map to DTOs
+        const dtoList &#x3D; await Promise.all(
+            groupPurchases.map((gp) &#x3D;&gt; this.toGroupPurchaseResponseDto(gp)),
+        );
+
+        return dtoList;
+    }
+
+    // --- map enum to number of days ---
+    private deadlineDaysFromEnum(
+        enumValue?: GroupPurchaseDeadline | null,
+    ): number {
+        // map string enum values to days
+        const map: Record&lt;string, number&gt; &#x3D; {
+            THREE_DAYS: 3,
+            FIVE_DAYS: 5,
+            SEVEN_DAYS: 7,
+        };
+
+        if (!enumValue) return 3; // fallback default
+        return map[enumValue] ?? 3;
+    }
+
+    async startGroupPurchase(userId, productId, quantity) {
+        // 1. Validate buyer exists
+        const buyer &#x3D; await this.prisma.buyer.findUnique({
+            where: { userId },
+            include: { user: true },
+        });
+        if (!buyer) throw new NotFoundException(&#x27;Buyer not found&#x27;);
+        const city &#x3D; buyer.user.city.toLowerCase();
+
+        // 2. Validate product exists and published
+        const product &#x3D; await this.prisma.product.findFirst({
+            where: {
+                id: productId,
+                isDeleted: false,
+                isPublished: true,
+                supplier: { isStoreClosed: false },
+            },
+            include: { supplier: { include: { user: true } } },
+        });
+        if (!product) throw new NotFoundException(&#x27;Product not found&#x27;);
+        if (!product.allowGroupPurchase) {
+            throw new BadRequestException(
+                &#x27;Group purchases are not enabled for this product&#x27;,
+            );
+        }
+
+        // 3. Check if an open group purchase already exists
+        const now &#x3D; new Date();
+        const existingOpenGroup &#x3D; await this.prisma.groupPurchase.findFirst({
+            where: {
+                productId,
+                city,
+                status: GroupPurchaseStatus.OPEN,
+                deadline: { gt: now }, // still valid
+            }});
+        if (existingOpenGroup)
+            throw new ConflictException(
+                &#x27;There is already an open group purchase for this product&#x27;,
+            );
+
+        // 4. Compute initial values
+        const groupUnitPrice &#x3D; product.groupPurchasePrice!;
+        const priceBasedQuantity &#x3D; quantity * groupUnitPrice;
+        const totalPrice &#x3D; priceBasedQuantity + product.supplier!.deliveryFees;
+
+        const days &#x3D; this.deadlineDaysFromEnum(product.groupPurchaseDuration!);
+        const deadline &#x3D; new Date();
+        deadline.setDate(deadline.getDate() + days);
+
+        // 5. Create group purchase
+        const groupPurchase &#x3D; await this.prisma.groupPurchase.create({
+            data: {
+                productId,
+                supplierId: product.supplierId!,
+                city,
+                minGroupQuantity: product.minGroupOrderQuantity!,
+                actualGroupQuantity: quantity,
+                totalPrice,
+                deadline,
+                status: GroupPurchaseStatus.OPEN,
+                joinedBuyers: {
+                    create: {
+                        buyerId: buyer.id,
+                        quantity,
+                        priceBasedQuantity,
+                        totalPrice,
+                        joinedAt: new Date(),
+                    },
+                },
+            },
+            include: {
+                product: { include: { category: true } },
+                supplier: { include: { user: true } },
+                joinedBuyers: {
+                    include: { buyer: { include: { user: true } } },
+                },
+            },
+        });
+
+        // 6. Create preinvoice
+        const preInvoice &#x3D; await this.prisma.preInvoice.create({
+            data: {
+                groupPurchaseBuyerId: groupPurchase.joinedBuyers[0].id,
+                buyerId: buyer.id,
+                supplierId: groupPurchase.supplierId,
+                productId: product.id,
+                amount: totalPrice,
+                status: PreInvoiceStatus.PENDING,
+            },
+        });
+
+        // 7. Return response DTO
+        return this.toGroupPurchaseResponseDto(groupPurchase);
+    }
+
+    async joinGroupPurchase(userId: string, groupId: string, quantity: number) {
+        // 1. Validate buyer
+        const buyer &#x3D; await this.prisma.buyer.findUnique({
+            where: { userId },
+            include: { user: true },
+        });
+        if (!buyer) throw new NotFoundException(&#x27;Buyer not found&#x27;);
+        const city &#x3D; buyer.user.city.toLowerCase();
+
+        // 2. Validate group
+        const group &#x3D; await this.prisma.groupPurchase.findUnique({
+            where: { id: groupId },
+            include: {
+                product: true,
+                supplier: { include: { user: true } },
+                joinedBuyers: { include: { buyer: true } },
+            },
+        });
+        if (!group) throw new NotFoundException(&#x27;Group purchase not found&#x27;);
+
+        if (group.status !&#x3D;&#x3D; GroupPurchaseStatus.OPEN)
+            throw new BadRequestException(&#x27;This group purchase is not open&#x27;);
+
+        if (group.deadline &lt; new Date())
+            throw new BadRequestException(&#x27;This group purchase has expired&#x27;);
+
+        if (group.city.toLowerCase() !&#x3D;&#x3D; city)
+            throw new BadRequestException(
+                &#x27;You can only join group purchases in your city&#x27;,
+            );
+
+        // 3. Check if already joined
+        const alreadyJoined &#x3D; await this.prisma.groupPurchaseBuyer.findFirst({
+            where: { buyerId: buyer.id, groupPurchaseId: groupId },
+        });
+        if (alreadyJoined)
+            throw new ConflictException(
+                &#x27;You already joined this group purchase&#x27;,
+            );
+
+        // 4. Compute new totals
+        const product &#x3D; group.product;
+        const newActual &#x3D; group.actualGroupQuantity + quantity;
+        const groupUnitPrice &#x3D; product.groupPurchasePrice!;
+        const addedPrice &#x3D; quantity * groupUnitPrice;
+        const totalPrice &#x3D; addedPrice + group.supplier.deliveryFees;
+        const newPriceBasedQuantity &#x3D; group.totalPrice + addedPrice;
+        const newTotalPrice &#x3D; group.totalPrice + totalPrice;
+
+        // if (newActual &gt; group.minGroupQuantity * 5) {
+        //     // just to prevent weird data errors or overbuying
+        //     throw new BadRequestException(&#x27;Group purchase limit exceeded&#x27;);
+        // }
+
+        // Compute number of buyers (existing + new one)
+        const currentBuyerCount &#x3D; group.joinedBuyers.length;
+        const newBuyerCount &#x3D; currentBuyerCount + 1;
+
+        // Determine new status
+        let newStatus: GroupPurchaseStatus &#x3D; group.status;
+        if (
+            newActual &gt;&#x3D; group.minGroupQuantity &amp;&amp; // quantity goal met
+            newBuyerCount &gt;&#x3D; 5 // at least 5 buyers joined
+        ) {
+            newStatus &#x3D; GroupPurchaseStatus.CLOSED;
+        } else {
+            newStatus &#x3D; GroupPurchaseStatus.OPEN;
+        }
+
+        // 5. Add buyer and update totals
+        const updatedGroup &#x3D; await this.prisma.groupPurchase.update({
+            where: { id: groupId },
+            data: {
+                actualGroupQuantity: newActual,
+                totalPrice: newTotalPrice,
+                joinedBuyers: {
+                    create: {
+                        buyerId: buyer.id,
+                        quantity,
+                        priceBasedQuantity: addedPrice,
+                        totalPrice,
+                        joinedAt: new Date(),
+                    },
+                },
+                status: newStatus,
+            },
+            include: {
+                product: { include: { category: true } },
+                supplier: { include: { user: true } },
+                joinedBuyers: {
+                    include: { buyer: { include: { user: true } } },
+                },
+            },
+        });
+
+        // 6. Create preinvocie for the new joined buyer
+        const newJoinedBuyer &#x3D; await this.prisma.groupPurchaseBuyer.findFirst({
+            where: {
+                buyerId: buyer.id,
+                groupPurchaseId: groupId,
+            },
+            include: { buyer: { include: { user: true } } },
+        });
+
+        const preInvoice &#x3D; await this.prisma.preInvoice.create({
+            data: {
+                groupPurchaseBuyerId: newJoinedBuyer!.id,
+                buyerId: buyer.id,
+                supplierId: updatedGroup.supplierId,
+                productId: product.id,
+                amount: totalPrice,
+                status: PreInvoiceStatus.PENDING,
+            },
+        });
+
+        // 7. If group succeeded, create invoices for every joined buyer
+        if (updatedGroup.status &#x3D;&#x3D;&#x3D; GroupPurchaseStatus.CLOSED) {
+            // Fetch all pre-invoices for this group
+            const preInvoices &#x3D; await this.prisma.preInvoice.findMany({
+                where: {
+                    groupPurchaseBuyer: { groupPurchaseId: groupId },
+                },
+                include: {
+                    buyer: true,
+                    supplier: true,
+                    groupPurchaseBuyer: true,
+                },
+            });
+
+            for (const pre of preInvoices) {
+                // Create invoice
+                const invoice &#x3D; await this.prisma.invoice.create({
+                    data: {
+                        buyerId: pre.buyerId!,
+                        supplierId: pre.supplierId!,
+                        deliveryDate: addDays(new Date(), 30),
+                        termsOfPayment: InvoiceTermsOfPayment.FULL,
+                        uponDeliveryAmount: pre.amount,
+                        amount: pre.amount,
+                        notesAndTerms: &#x60;System Note: This invoice was automatically generated because the group purchase for &quot;${updatedGroup.product.name}&quot; has successfully met all requirements. The expected delivery date has been set to 30 days from the invoice creation by system default.&#x60;,
+                        status: InvoiceStatus.PENDING,
+                    },
+                });
+
+                // Link pre-invoice to this invoice and mark success
+                await this.prisma.preInvoice.update({
+                    where: { id: pre.id },
+                    data: {
+                        invoiceId: invoice.id,
+                        status: PreInvoiceStatus.SUCCESSFUL,
+                    },
+                });
+
+                await this.notificationService.createNotification({
+                    senderUserId: pre.supplier!.userId,
+                    receiverUserId: pre.buyer!.userId,
+                    type: NotificationType.GROUP_PURCHASE_STATUS_CHANGED,
+                    title: &#x27;Group Purchase Status Changed!&#x27;,
+                    content: &#x60;The group purchase &quot;${group.id}&quot; has closed successfully. Your pre-invoice has been upgraded to a full invoice. You can procced with payment now.&#x60;,
+                    entityId: group.id,
+                    entityType: NotificationEntityType.GROUP_PURCHASE,
+                });
+            }
+        }
+
+        // 8. Return DTO
+        return this.toGroupPurchaseResponseDto(updatedGroup);
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'GroupPurchaseService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
