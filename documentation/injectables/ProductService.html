@@ -1,0 +1,2091 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >ProductService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/product/product.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#STOCK_THRESHOLDS" >STOCK_THRESHOLDS</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createProduct" >createProduct</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteProduct" >deleteProduct</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteProductImage" >deleteProductImage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#duplicateProduct" >duplicateProduct</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllProducts" >getAllProducts</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllSupplierProducts" >getAllSupplierProducts</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getProductById" >getProductById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#getStockStatus" >getStockStatus</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toProductResponseDto" >toProductResponseDto</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateProduct" >updateProduct</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateProductImages" >updateProductImages</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prisma: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, fileService: <a href="../injectables/FileService.html" target="_self">FileService</a>, supplierService: <a href="../injectables/SupplierService.html" target="_self">SupplierService</a>, translationService: <a href="../injectables/TranslationService.html" target="_self">TranslationService</a>, smartSearchService: <a href="../injectables/SmartSearchService.html" target="_self">SmartSearchService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/product/product.service.ts:29</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prisma</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>fileService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/FileService.html" target="_self" >FileService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>supplierService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SupplierService.html" target="_self" >SupplierService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>translationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TranslationService.html" target="_self" >TranslationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>smartSearchService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SmartSearchService.html" target="_self" >SmartSearchService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createProduct"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createProduct</b></span>
+                        <a href="#createProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createProduct(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/CreateProductDto.html" target="_self">CreateProductDto</a>, files: Express.Multer.File[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="285"
+                                    class="link-to-prism">src/product/product.service.ts:285</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateProductDto.html" target="_self" >CreateProductDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>files</td>
+                                            <td>
+                                                        <code>Express.Multer.File[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ProductResponseDto.html" target="_self" >Promise&lt;ProductResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteProduct"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteProduct</b></span>
+                        <a href="#deleteProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteProduct(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="646"
+                                    class="link-to-prism">src/product/product.service.ts:646</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteProductImage"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteProductImage</b></span>
+                        <a href="#deleteProductImage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteProductImage(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, fileName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="590"
+                                    class="link-to-prism">src/product/product.service.ts:590</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fileName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="duplicateProduct"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>duplicateProduct</b></span>
+                        <a href="#duplicateProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>duplicateProduct(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="397"
+                                    class="link-to-prism">src/product/product.service.ts:397</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllProducts"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllProducts</b></span>
+                        <a href="#getAllProducts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllProducts(targetLang: "ar" | "en", userId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="132"
+                                    class="link-to-prism">src/product/product.service.ts:132</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ProductResponseDto.html" target="_self" >Promise&lt;ProductResponseDto[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllSupplierProducts"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllSupplierProducts</b></span>
+                        <a href="#getAllSupplierProducts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllSupplierProducts(supplierId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, targetLang: "ar" | "en", userId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="219"
+                                    class="link-to-prism">src/product/product.service.ts:219</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>supplierId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ProductResponseDto.html" target="_self" >Promise&lt;ProductResponseDto[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getProductById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getProductById</b></span>
+                        <a href="#getProductById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getProductById(productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, targetLang: "ar" | "en", userId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="184"
+                                    class="link-to-prism">src/product/product.service.ts:184</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ProductResponseDto.html" target="_self" >Promise&lt;ProductResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStockStatus"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>getStockStatus</b></span>
+                        <a href="#getStockStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStockStatus(stock: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="46"
+                                    class="link-to-prism">src/product/product.service.ts:46</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>stock</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>&quot;VERY LOW&quot; | &quot;LOW&quot; | &quot;AVERAGE&quot; | &quot;GOOD&quot;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toProductResponseDto"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toProductResponseDto</b></span>
+                        <a href="#toProductResponseDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toProductResponseDto(product: unknown, targetLang?: "ar" | "en")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="55"
+                                    class="link-to-prism">src/product/product.service.ts:55</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>product</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;unknown&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateProduct"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateProduct</b></span>
+                        <a href="#updateProduct"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateProduct(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/UpdateProductDto.html" target="_self">UpdateProductDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="468"
+                                    class="link-to-prism">src/product/product.service.ts:468</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateProductDto.html" target="_self" >UpdateProductDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateProductImages"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateProductImages</b></span>
+                        <a href="#updateProductImages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateProductImages(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, productId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, file: Express.Multer.File)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="536"
+                                    class="link-to-prism">src/product/product.service.ts:536</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>productId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>file</td>
+                                            <td>
+                                                        <code>Express.Multer.File</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="STOCK_THRESHOLDS"></a>
+                    <span class="name">
+                        <span ><b>STOCK_THRESHOLDS</b></span>
+                        <a href="#STOCK_THRESHOLDS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+        VERY_LOW: 5, // less than 5 units → VERY LOW
+        LOW: 10, // 5–9 units → LOW
+        AVERAGE: 30, // 10–29 units → AVERAGE
+        GOOD: Infinity, // 30+ units → GOOD
+    }</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/product/product.service.ts:39</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { SupplierService } from &#x27;./../supplier/supplier.service&#x27;;
+import {
+    BadRequestException,
+    forwardRef,
+    Inject,
+    Injectable,
+    NotFoundException,
+} from &#x27;@nestjs/common&#x27;;
+import {
+    Category,
+    ItemType,
+    Prisma,
+    Product,
+    Supplier,
+    SupplierPlan,
+    SupplierStatus,
+    User,
+    UserRole,
+} from &#x27;@prisma/client&#x27;;
+import { ProductResponseDto } from &#x27;./dtos/productResponse.dto&#x27;;
+import { FileService } from &#x27;src/file/file.service&#x27;;
+import { PrismaService } from &#x27;src/prisma/prisma.service&#x27;;
+import { CreateProductDto } from &#x27;./dtos/createProduct.dto&#x27;;
+import { UpdateProductDto } from &#x27;./dtos/updateProduct.dto&#x27;;
+import { TranslationService } from &#x27;src/translation/translation.service&#x27;;
+import { SmartSearchService } from &#x27;src/smart-search/smart-search.service&#x27;;
+
+@Injectable()
+export class ProductService {
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly fileService: FileService,
+        private readonly supplierService: SupplierService,
+        private readonly translationService: TranslationService,
+        @Inject(forwardRef(() &#x3D;&gt; SmartSearchService))
+        private readonly smartSearchService: SmartSearchService,
+    ) {}
+
+    STOCK_THRESHOLDS &#x3D; {
+        VERY_LOW: 5, // less than 5 units → VERY LOW
+        LOW: 10, // 5–9 units → LOW
+        AVERAGE: 30, // 10–29 units → AVERAGE
+        GOOD: Infinity, // 30+ units → GOOD
+    };
+
+    private getStockStatus(
+        stock: number,
+    ): &#x27;VERY LOW&#x27; | &#x27;LOW&#x27; | &#x27;AVERAGE&#x27; | &#x27;GOOD&#x27; {
+        if (stock &lt; this.STOCK_THRESHOLDS.VERY_LOW) return &#x27;VERY LOW&#x27;;
+        if (stock &lt; this.STOCK_THRESHOLDS.LOW) return &#x27;LOW&#x27;;
+        if (stock &lt; this.STOCK_THRESHOLDS.AVERAGE) return &#x27;AVERAGE&#x27;;
+        return &#x27;GOOD&#x27;;
+    }
+
+    async toProductResponseDto(
+        product: Product &amp; {
+            supplier?: (Supplier &amp; { user: User }) | null;
+            category: Category;
+        },
+        targetLang?: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ): Promise&lt;ProductResponseDto &amp; { targetLang?: string }&gt; {
+        // include targetLang in response if translated
+        // Supplier DTO
+        const supplierDto &#x3D; product.supplier
+            ? await this.supplierService.toSupplierResponseDTO(
+                  product.supplier.user,
+                  product.supplier,
+              )
+            : null;
+
+        // Signed URLs
+        const imagesFilesUrls &#x3D; await Promise.all(
+            product.imagesFilesNames.map((name) &#x3D;&gt;
+                this.fileService.getFileUrl(name),
+            ),
+        );
+
+        let name &#x3D; product.name;
+        let description &#x3D; product.description;
+
+        // Only translate if targetLang is provided
+        if (targetLang) {
+            name &#x3D; await this.translationService.translateText(
+                product.name,
+                targetLang,
+            );
+            description &#x3D; await this.translationService.translateText(
+                product.description,
+                targetLang,
+            );
+        }
+
+        let wishlistCount: number | undefined &#x3D; undefined;
+        if (product.supplier?.plan &#x3D;&#x3D;&#x3D; &#x27;PREMIUM&#x27;) {
+            wishlistCount &#x3D; product.wishlistCount;
+        }
+
+        return {
+            productId: product.id,
+            supplierId: product.supplierId ?? null,
+            supplier: supplierDto,
+            name,
+            description,
+            price: product.price,
+            stock: product.stock,
+            category: {
+                id: product.categoryId,
+                name: product.category.name,
+            },
+            imagesFilesNames: product.imagesFilesNames,
+            imagesFilesUrls,
+            caseQuantity: product.caseQuantity,
+            minOrderQuantity: product.minOrderQuantity,
+            maxOrderQuantity: product.maxOrderQuantity ?? undefined,
+            allowGroupPurchase: product.allowGroupPurchase,
+            minGroupOrderQuantity: product.minGroupOrderQuantity ?? undefined,
+            groupPurchasePrice: product.groupPurchasePrice ?? undefined,
+            groupPurchaseDuration: product.groupPurchaseDuration ?? undefined,
+            isPublished: product.isPublished,
+            stockStatus: this.getStockStatus(product.stock),
+            ...(wishlistCount !&#x3D;&#x3D; undefined ? { wishlistCount } : {}),
+            avgRating: product.avgRating,
+            ratingsCount: product.ratingsCount,
+            createdAt: product.createdAt,
+            updatedAt: product.updatedAt,
+            isDeleted: product.isDeleted,
+            deletedAt: product.deletedAt ?? undefined,
+            ...(targetLang ? { targetLang } : {}), // include targetLang only if translated
+        };
+    }
+
+    async getAllProducts(
+        targetLang: &#x27;ar&#x27; | &#x27;en&#x27;,
+        userId?: string,
+    ): Promise&lt;ProductResponseDto[]&gt; {
+        let isPublishedFilter: boolean | undefined &#x3D; true; // default for buyers
+
+        if (userId) {
+            const user &#x3D; await this.prisma.user.findUnique({
+                where: { id: userId },
+                include: { supplier: true, buyer: true },
+            });
+            if (user?.supplier) {
+                isPublishedFilter &#x3D; undefined; // supplier sees all products
+            }
+        }
+
+        const products &#x3D; await this.prisma.product.findMany({
+            where: {
+                isDeleted: false,
+                supplier: {
+                    isStoreClosed: false,
+                    status: SupplierStatus.ACTIVE,
+                },
+                ...(isPublishedFilter !&#x3D;&#x3D; undefined
+                    ? { isPublished: isPublishedFilter }
+                    : {}),
+            },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        if (userId) {
+            const user &#x3D; await this.prisma.user.findFirst({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang &#x3D; user.preferredLanguage.toLocaleLowerCase();
+                if (lang &#x3D;&#x3D;&#x3D; &#x27;ar&#x27; || lang &#x3D;&#x3D;&#x3D; &#x27;en&#x27;) {
+                    targetLang &#x3D; lang;
+                }
+            }
+        }
+
+        return await Promise.all(
+            products.map((product) &#x3D;&gt;
+                this.toProductResponseDto(product, targetLang),
+            ),
+        );
+    }
+
+    async getProductById(
+        productId: string,
+        targetLang: &#x27;ar&#x27; | &#x27;en&#x27;,
+        userId?: string,
+    ): Promise&lt;ProductResponseDto&gt; {
+        const product &#x3D; await this.prisma.product.findUnique({
+            where: {
+                id: productId,
+            },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+        if (!product) {
+            throw new NotFoundException(
+                &#x60;Product with id ${productId} not found&#x60;,
+            );
+        }
+
+        if (userId) {
+            const user &#x3D; await this.prisma.user.findUnique({
+                where: { id: userId },
+            });
+            if (user) {
+                const lang &#x3D; user.preferredLanguage.toLocaleLowerCase();
+                if (lang &#x3D;&#x3D;&#x3D; &#x27;ar&#x27; || lang &#x3D;&#x3D;&#x3D; &#x27;en&#x27;) {
+                    targetLang &#x3D; lang;
+                }
+            }
+        }
+
+        return this.toProductResponseDto(product, targetLang);
+    }
+
+    async getAllSupplierProducts(
+        supplierId: string,
+        targetLang: &#x27;ar&#x27; | &#x27;en&#x27;,
+        userId?: string,
+    ): Promise&lt;ProductResponseDto[]&gt; {
+        const whereClause: Prisma.ProductWhereInput &#x3D; {
+            supplierId,
+            isDeleted: false,
+        };
+
+        let finalTargetLang &#x3D; targetLang;
+
+        if (userId) {
+            const caller &#x3D; await this.prisma.user.findUnique({
+                where: { id: userId },
+                select: {
+                    id: true,
+                    role: true,
+                    supplier: { select: { id: true } },
+                    buyer: { select: { id: true } },
+                    preferredLanguage: true,
+                },
+            });
+
+            if (!caller) {
+                whereClause.isPublished &#x3D; true;
+            } else {
+                const isSupplierOwner &#x3D; caller.supplier?.id &#x3D;&#x3D;&#x3D; supplierId;
+
+                if (isSupplierOwner) {
+                    // Do NOT set isPublished → show drafts
+                    if (caller.role !&#x3D;&#x3D; UserRole.SUPPLIER) {
+                        whereClause.isPublished &#x3D; true; // edge case safety
+                    }
+                } else {
+                    whereClause.isPublished &#x3D; true; // buyer or other supplier
+                }
+
+                // Language override
+                if (caller.preferredLanguage) {
+                    const lang &#x3D; caller.preferredLanguage.toLowerCase();
+                    if (lang &#x3D;&#x3D;&#x3D; &#x27;ar&#x27; || lang &#x3D;&#x3D;&#x3D; &#x27;en&#x27;) {
+                        finalTargetLang &#x3D; lang;
+                    }
+                }
+            }
+        } else {
+            // Public access → only published
+            whereClause.isPublished &#x3D; true;
+        }
+
+        const products &#x3D; await this.prisma.product.findMany({
+            where: whereClause,
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        const dtos &#x3D; await Promise.all(
+            products.map((p) &#x3D;&gt; this.toProductResponseDto(p, finalTargetLang)),
+        );
+
+        return dtos;
+    }
+
+    async createProduct(
+        userId: string,
+        dto: CreateProductDto,
+        files: Express.Multer.File[],
+    ): Promise&lt;ProductResponseDto&gt; {
+        // 1. Check supplier
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found&#x27;);
+        }
+
+        // Enforce product limit for BASIC plan
+        if (supplier.plan &#x3D;&#x3D;&#x3D; SupplierPlan.BASIC) {
+            const activeProductsCount &#x3D; await this.prisma.product.count({
+                where: {
+                    supplierId: supplier.id,
+                    isDeleted: false,
+                },
+            });
+
+            const MAX_BASIC_PRODUCTS &#x3D; 10;
+            if (activeProductsCount &gt;&#x3D; MAX_BASIC_PRODUCTS) {
+                throw new BadRequestException(
+                    &#x60;Basic plan suppliers can only list up to ${MAX_BASIC_PRODUCTS} products. You already have ${activeProductsCount}.&#x60;,
+                );
+            }
+        }
+
+        // 2. Validate image count (1–3)
+        if (!files || files.length &#x3D;&#x3D;&#x3D; 0) {
+            throw new BadRequestException(
+                &#x27;At least one product image is required&#x27;,
+            );
+        }
+        if (files.length &gt; 3) {
+            throw new BadRequestException(
+                &#x27;A maximum of 3 product images is allowed&#x27;,
+            );
+        }
+
+        // 3. Validate category
+        const category &#x3D; await this.prisma.category.findUnique({
+            where: { id: dto.categoryId },
+        });
+
+        if (!category) {
+            throw new NotFoundException(&#x27;Category not found&#x27;);
+        }
+
+        // Must be a subcategory (has parentCategoryId)
+        if (!category.parentCategoryId) {
+            throw new BadRequestException(
+                &#x27;Products must be assigned to a subcategory, not a main category&#x27;,
+            );
+        }
+
+        // Must also be for products, not services
+        if (category.usedFor !&#x3D;&#x3D; &#x27;PRODUCT&#x27;) {
+            throw new BadRequestException(
+                &#x27;This category is not valid for products&#x27;,
+            );
+        }
+
+        // 4. Upload images to R2
+        const uploadedFileNames &#x3D; await Promise.all(
+            files.map((file) &#x3D;&gt; this.fileService.uploadFile(file)),
+        );
+
+        // 5. Create product
+        const product &#x3D; await this.prisma.product.create({
+            data: {
+                supplierId: supplier.id,
+                name: dto.name,
+                description: dto.description,
+                price: dto.price,
+                stock: dto.stock ?? 0,
+                categoryId: dto.categoryId,
+                imagesFilesNames: uploadedFileNames,
+                caseQuantity: dto.caseQuantity ?? 1,
+                minOrderQuantity: dto.minOrderQuantity ?? 1,
+                maxOrderQuantity: dto.maxOrderQuantity ?? null,
+                allowGroupPurchase: dto.allowGroupPurchase ?? false,
+                minGroupOrderQuantity: dto.minGroupOrderQuantity ?? null,
+                groupPurchasePrice: dto.groupPurchasePrice ?? null,
+                groupPurchaseDuration: dto.groupPurchaseDuration ?? null,
+                isPublished: dto.isPublished ?? false,
+            },
+        });
+
+        // 6. Return DTO
+        const fullProduct &#x3D; await this.prisma.product.findUnique({
+            where: { id: product.id },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        // 7. Generate embedding
+        await this.smartSearchService.generateAndStoreEmbedding({
+            itemId: fullProduct!.id,
+            itemType: ItemType.PRODUCT,
+            name: fullProduct!.name,
+            description: fullProduct!.description,
+            categoryName: fullProduct!.category!.name,
+        });
+
+        return this.toProductResponseDto(fullProduct!);
+    }
+
+    async duplicateProduct(userId: string, productId: string) {
+        // 1. Check supplier
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found&#x27;);
+        }
+
+        // 2. Find the original product
+        const originalProduct &#x3D; await this.prisma.product.findUnique({
+            where: { id: productId, supplierId: supplier.id },
+        });
+        if (!originalProduct) {
+            throw new NotFoundException(&#x27;Product not found&#x27;);
+        }
+
+        // 3. Duplicate the product
+        const duplicatedProduct &#x3D; await this.prisma.product.create({
+            data: {
+                supplierId: supplier.id,
+                name: &#x60;${originalProduct.name} (Copy)&#x60;,
+                description: originalProduct.description,
+                price: originalProduct.price,
+                stock: originalProduct.stock,
+                categoryId: originalProduct.categoryId,
+                imagesFilesNames: originalProduct.imagesFilesNames,
+                caseQuantity: originalProduct.caseQuantity,
+                minOrderQuantity: originalProduct.minOrderQuantity,
+                maxOrderQuantity: originalProduct.maxOrderQuantity,
+                allowGroupPurchase: originalProduct.allowGroupPurchase,
+                minGroupOrderQuantity: originalProduct.minGroupOrderQuantity,
+                groupPurchasePrice: originalProduct.groupPurchasePrice,
+                groupPurchaseDuration: originalProduct.groupPurchaseDuration,
+                isPublished: false, // don’t publish a copy by default
+            },
+        });
+
+        // Query back with relations (require for toProductResponseDto function inputs)
+        const fullDuplicatedProduct &#x3D; await this.prisma.product.findUnique({
+            where: { id: duplicatedProduct.id },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        // 4. Duplicate embedding
+        const originalEmbedding &#x3D; await this.prisma.itemEmbedding.findUnique({
+            where: {
+                itemId_itemType: {
+                    itemId: originalProduct.id,
+                    itemType: ItemType.PRODUCT,
+                },
+            },
+        });
+
+        if (originalEmbedding) {
+            await this.prisma.itemEmbedding.create({
+                data: {
+                    itemId: fullDuplicatedProduct!.id,
+                    itemType: ItemType.PRODUCT,
+                    embedding: originalEmbedding.embedding,
+                },
+            });
+        }
+
+        return this.toProductResponseDto(fullDuplicatedProduct!);
+    }
+
+    // Update product fields only (no images)
+    async updateProduct(
+        userId: string,
+        productId: string,
+        dto: UpdateProductDto,
+    ) {
+        // 1. Check supplier
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found&#x27;);
+        }
+
+        // 2. Find product
+        const product &#x3D; await this.prisma.product.findUnique({
+            where: { id: productId, supplierId: supplier.id },
+        });
+        if (!product) {
+            throw new NotFoundException(&#x27;Product not found&#x27;);
+        }
+
+        // 3. If categoryId is updated, validate category
+        if (dto.categoryId) {
+            const category &#x3D; await this.prisma.category.findUnique({
+                where: { id: dto.categoryId },
+            });
+            if (!category) {
+                throw new NotFoundException(&#x27;Category not found&#x27;);
+            }
+            if (!category.parentCategoryId) {
+                throw new BadRequestException(
+                    &#x27;Products must be assigned to a subcategory, not a main category&#x27;,
+                );
+            }
+            if (category.usedFor !&#x3D;&#x3D; &#x27;PRODUCT&#x27;) {
+                throw new BadRequestException(
+                    &#x27;This category is not valid for products&#x27;,
+                );
+            }
+        }
+
+        // 4. Update product
+        const updatedProduct &#x3D; await this.prisma.product.update({
+            where: { id: product.id },
+            data: dto,
+        });
+
+        // 5. Query back with relations
+        const fullProduct &#x3D; await this.prisma.product.findUnique({
+            where: { id: updatedProduct.id },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        // 6. Update embedding
+        await this.smartSearchService.generateAndStoreEmbedding({
+            itemId: fullProduct!.id,
+            itemType: ItemType.PRODUCT,
+            name: fullProduct!.name,
+            description: fullProduct!.description,
+            categoryName: fullProduct!.category!.name,
+        });
+
+        return this.toProductResponseDto(fullProduct!);
+    }
+
+    async updateProductImages(
+        userId: string,
+        productId: string,
+        file: Express.Multer.File,
+    ) {
+        // 1. Check supplier
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found&#x27;);
+        }
+
+        // 2. Find product
+        const product &#x3D; await this.prisma.product.findUnique({
+            where: { id: productId, supplierId: supplier.id, isDeleted: false },
+        });
+        if (!product) {
+            throw new NotFoundException(&#x27;Product not found&#x27;);
+        }
+
+        // 3. Validate image count (max 3)
+        if (product.imagesFilesNames.length &gt;&#x3D; 3) {
+            throw new BadRequestException(
+                &#x27;A maximum of 3 product images is allowed&#x27;,
+            );
+        }
+
+        // 4. Upload new image
+        const uploadedFileName &#x3D; await this.fileService.uploadFile(file);
+
+        // 5. Update product images
+        const updatedProduct &#x3D; await this.prisma.product.update({
+            where: { id: product.id },
+            data: {
+                imagesFilesNames: [
+                    ...product.imagesFilesNames,
+                    uploadedFileName,
+                ],
+            },
+        });
+
+        // 6. Return DTO
+        const fullProduct &#x3D; await this.prisma.product.findUnique({
+            where: { id: updatedProduct.id },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        return this.toProductResponseDto(fullProduct!);
+    }
+
+    async deleteProductImage(
+        userId: string,
+        productId: string,
+        fileName: string,
+    ) {
+        // 1. Check supplier
+        const supplier &#x3D; await this.prisma.supplier.findUnique({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found.&#x27;);
+        }
+
+        // 2. Find the product
+        const product &#x3D; await this.prisma.product.findUnique({
+            where: { id: productId, supplierId: supplier.id },
+        });
+        if (!product) {
+            throw new NotFoundException(&#x27;Product not found.&#x27;);
+        }
+
+        // 3. Check if the image exists in product.imagesFilesNames
+        if (!product.imagesFilesNames.includes(fileName)) {
+            throw new BadRequestException(&#x27;Image not found in this product.&#x27;);
+        }
+
+        // 4. Filter out the image
+        const updatedImages &#x3D; product.imagesFilesNames.filter(
+            (img) &#x3D;&gt; img !&#x3D;&#x3D; fileName,
+        );
+
+        if (updatedImages.length &#x3D;&#x3D;&#x3D; 0) {
+            throw new BadRequestException(
+                &#x27;A product must have at least one image.&#x27;,
+            );
+        }
+
+        // 5. Update product
+        const updatedProduct &#x3D; await this.prisma.product.update({
+            where: { id: product.id },
+            data: { imagesFilesNames: updatedImages },
+        });
+
+        // Future Work ?: Delete the file from R2 storage
+        // 6. Query back full product with relations for DTO
+        const fullProduct &#x3D; await this.prisma.product.findUnique({
+            where: { id: updatedProduct.id },
+            include: {
+                supplier: { include: { user: true } },
+                category: true,
+            },
+        });
+
+        return this.toProductResponseDto(fullProduct!);
+    }
+
+    async deleteProduct(userId: string, productId: string) {
+        // 1. Check supplier
+        const supplier &#x3D; await this.prisma.supplier.findFirst({
+            where: { userId },
+        });
+        if (!supplier) {
+            throw new NotFoundException(&#x27;Supplier not found&#x27;);
+        }
+
+        // 2. Find the product
+        const product &#x3D; await this.prisma.product.findFirst({
+            where: { id: productId, supplierId: supplier.id, isDeleted: false },
+        });
+        if (!product) {
+            throw new NotFoundException(&#x27;Product not found&#x27;);
+        }
+
+        // 3. Soft-delete
+        await this.prisma.product.update({
+            where: { id: product.id },
+            data: {
+                isDeleted: true,
+                deletedAt: new Date(),
+            },
+        });
+
+        // 4. Return message
+        return {
+            message: &#x27;Product deleted successfully&#x27;,
+        };
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'ProductService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

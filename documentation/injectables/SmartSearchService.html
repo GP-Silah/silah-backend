@@ -1,0 +1,1096 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >SmartSearchService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/smart-search/smart-search.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#ensureEmbedding" >ensureEmbedding</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#generateAndStoreEmbedding" >generateAndStoreEmbedding</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSimilarItems" >getSimilarItems</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUserLanguage" >getUserLanguage</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prisma: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, productService: <a href="../injectables/ProductService.html" target="_self">ProductService</a>, serviceService: <a href="../injectables/ServiceService.html" target="_self">ServiceService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/smart-search/smart-search.service.ts:18</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prisma</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>productService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ProductService.html" target="_self" >ProductService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>serviceService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ServiceService.html" target="_self" >ServiceService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ensureEmbedding"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>ensureEmbedding</b></span>
+                        <a href="#ensureEmbedding"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>ensureEmbedding(item: literal type)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="358"
+                                    class="link-to-prism">src/smart-search/smart-search.service.ts:358</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>item</td>
+                                            <td>
+                                                        <code>literal type</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateAndStoreEmbedding"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>generateAndStoreEmbedding</b></span>
+                        <a href="#generateAndStoreEmbedding"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>generateAndStoreEmbedding(params: literal type)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="399"
+                                    class="link-to-prism">src/smart-search/smart-search.service.ts:399</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>params</td>
+                                            <td>
+                                                        <code>literal type</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSimilarItems"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getSimilarItems</b></span>
+                        <a href="#getSimilarItems"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSimilarItems(dto: <a href="../classes/SmartSearchRequestDto.html" target="_self">SmartSearchRequestDto</a>, targetLang?: "ar" | "en")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="37"
+                                    class="link-to-prism">src/smart-search/smart-search.service.ts:37</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/SmartSearchRequestDto.html" target="_self" >SmartSearchRequestDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/SmartSearchResponseDto.html" target="_self" >Promise&lt;SmartSearchResponseDto[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUserLanguage"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getUserLanguage</b></span>
+                        <a href="#getUserLanguage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUserLanguage(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="28"
+                                    class="link-to-prism">src/smart-search/smart-search.service.ts:28</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Helper: fetch user&#39;s preferred language</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;&quot;ar&quot; | &quot;en&quot; | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+    BadRequestException,
+    forwardRef,
+    HttpException,
+    HttpStatus,
+    Inject,
+    Injectable,
+} from &#x27;@nestjs/common&#x27;;
+import { PrismaService } from &#x27;src/prisma/prisma.service&#x27;;
+import { SmartSearchRequestDto } from &#x27;./dtos/smartSearchRequest.dto&#x27;;
+import { SmartSearchResponseDto } from &#x27;./dtos/smartSearchResponse.dto&#x27;;
+import { ItemType, SupplierStatus } from &#x27;@prisma/client&#x27;;
+import axios from &#x27;axios&#x27;;
+import { ProductService } from &#x27;src/product/product.service&#x27;;
+import { ServiceService } from &#x27;src/service/service.service&#x27;;
+
+@Injectable()
+export class SmartSearchService {
+    constructor(
+        private readonly prisma: PrismaService,
+        @Inject(forwardRef(() &#x3D;&gt; ProductService))
+        private readonly productService: ProductService,
+        @Inject(forwardRef(() &#x3D;&gt; ServiceService))
+        private readonly serviceService: ServiceService,
+    ) {}
+
+    /** Helper: fetch user&#x27;s preferred language */
+    async getUserLanguage(userId: string): Promise&lt;&#x27;ar&#x27; | &#x27;en&#x27; | null&gt; {
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { preferredLanguage: true },
+        });
+        const lang &#x3D; user?.preferredLanguage?.toLowerCase();
+        return lang &#x3D;&#x3D;&#x3D; &#x27;ar&#x27; || lang &#x3D;&#x3D;&#x3D; &#x27;en&#x27; ? lang : null;
+    }
+
+    async getSimilarItems(
+        dto: SmartSearchRequestDto,
+        targetLang?: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ): Promise&lt;SmartSearchResponseDto[]&gt; {
+        const { itemId, text } &#x3D; dto;
+
+        // 1. Validate: at least itemId or itemName must exist
+        if (!itemId &amp;&amp; !text) {
+            throw new BadRequestException(
+                &#x27;Either itemId or text must be provided&#x27;,
+            );
+        }
+
+        let item;
+        let itemType;
+        let embedding;
+        let productPayloads: any[] &#x3D; [];
+        let servicePayloads: any[] &#x3D; [];
+
+        // 2. If itemId is given, validate it exists
+        if (itemId) {
+            // try both tables
+            const product &#x3D; await this.prisma.product.findFirst({
+                where: {
+                    id: itemId,
+                    isDeleted: false,
+                    isPublished: true,
+                    supplier: {
+                        isStoreClosed: false,
+                        status: SupplierStatus.ACTIVE,
+                    },
+                },
+                include: {
+                    supplier: { include: { user: true } },
+                    category: true,
+                },
+            });
+            const service &#x3D; await this.prisma.service.findFirst({
+                where: {
+                    id: itemId,
+                    isDeleted: false,
+                    isPublished: true,
+                    supplier: {
+                        isStoreClosed: false,
+                        status: SupplierStatus.ACTIVE,
+                    },
+                },
+                include: {
+                    supplier: { include: { user: true } },
+                    category: true,
+                },
+            });
+
+            if (product) {
+                item &#x3D; product;
+                itemType &#x3D; ItemType.PRODUCT;
+
+                // fetch all products
+                const allProducts &#x3D; await this.prisma.product.findMany({
+                    where: {
+                        isDeleted: false,
+                        isPublished: true,
+                        supplier: {
+                            isStoreClosed: false,
+                            status: SupplierStatus.ACTIVE,
+                        },
+                    },
+                    include: { category: true },
+                });
+
+                productPayloads &#x3D; await Promise.all(
+                    allProducts.map(async (p) &#x3D;&gt; ({
+                        id: p.id,
+                        name: p.name,
+                        description: p.description ?? null,
+                        category_name: p.category!.name,
+                        embedding: await this.ensureEmbedding({
+                            id: p.id,
+                            name: p.name,
+                            description: p.description,
+                            category: p.category,
+                            type: ItemType.PRODUCT,
+                        }),
+                    })),
+                );
+            } else if (service) {
+                item &#x3D; service;
+                itemType &#x3D; ItemType.SERVICE;
+
+                // fetch all services
+                const allServices &#x3D; await this.prisma.service.findMany({
+                    where: {
+                        isDeleted: false,
+                        isPublished: true,
+                        supplier: {
+                            isStoreClosed: false,
+                            status: SupplierStatus.ACTIVE,
+                        },
+                    },
+                    include: { category: true },
+                });
+
+                servicePayloads &#x3D; await Promise.all(
+                    allServices.map(async (s) &#x3D;&gt; ({
+                        id: s.id,
+                        name: s.name,
+                        description: s.description ?? null,
+                        category_name: s.category!.name,
+                        embedding: await this.ensureEmbedding({
+                            id: s.id,
+                            name: s.name,
+                            description: s.description,
+                            category: s.category,
+                            type: ItemType.SERVICE,
+                        }),
+                    })),
+                );
+            } else {
+                throw new BadRequestException(
+                    &#x60;No item found with the given ID&#x60;,
+                );
+            }
+
+            embedding &#x3D; await this.ensureEmbedding({
+                id: itemId,
+                name: item.name,
+                description: item.description,
+                category: item.category,
+                type: itemType,
+            });
+
+            if (!embedding) {
+                throw new BadRequestException(
+                    &#x60;Embedding not found for item ${itemId} (${itemType})&#x60;,
+                );
+            }
+        }
+
+        // Fill missing request fields from DB
+        if (!text) dto.text &#x3D; item.name;
+
+        if (!itemId) {
+            const [allProducts, allServices] &#x3D; await Promise.all([
+                this.prisma.product.findMany({
+                    where: {
+                        isDeleted: false,
+                        isPublished: true,
+                        supplier: {
+                            isStoreClosed: false,
+                            status: SupplierStatus.ACTIVE,
+                        },
+                    },
+                    include: { category: true },
+                }),
+                this.prisma.service.findMany({
+                    where: {
+                        isDeleted: false,
+                        isPublished: true,
+                        supplier: {
+                            isStoreClosed: false,
+                            status: SupplierStatus.ACTIVE,
+                        },
+                    },
+                    include: { category: true },
+                }),
+            ]);
+
+            productPayloads &#x3D; await Promise.all(
+                allProducts.map(async (p) &#x3D;&gt; ({
+                    id: p.id,
+                    name: p.name,
+                    description: p.description ?? null,
+                    category_name: p.category?.name ?? null,
+                    embedding: await this.ensureEmbedding({
+                        id: p.id,
+                        name: p.name,
+                        description: p.description,
+                        category: p.category,
+                        type: ItemType.PRODUCT,
+                    }),
+                })),
+            );
+
+            servicePayloads &#x3D; await Promise.all(
+                allServices.map(async (s) &#x3D;&gt; ({
+                    id: s.id,
+                    name: s.name,
+                    description: s.description ?? null,
+                    category_name: s.category?.name ?? null,
+                    embedding: await this.ensureEmbedding({
+                        id: s.id,
+                        name: s.name,
+                        description: s.description,
+                        category: s.category,
+                        type: ItemType.SERVICE,
+                    }),
+                })),
+            );
+        }
+
+        // Build payload for FastAPI
+        let payload;
+
+        if (itemType &#x3D;&#x3D;&#x3D; ItemType.PRODUCT) {
+            payload &#x3D; {
+                text: dto.text,
+                item_id: itemId,
+                embedding,
+                candidates: productPayloads,
+            };
+        } else if (itemType &#x3D;&#x3D;&#x3D; ItemType.SERVICE) {
+            payload &#x3D; {
+                text: dto.text,
+                item_id: itemId,
+                embedding,
+                candidates: servicePayloads,
+            };
+        } else {
+            // If itemType is unknown (free-text search with no itemId), send both products and services
+            payload &#x3D; {
+                text: dto.text,
+                item_id: null,
+                embedding: null,
+                candidates: [...productPayloads, ...servicePayloads],
+            };
+        }
+
+        // Call FastAPI
+        let aiResults: any[];
+        try {
+            const response &#x3D; await axios.post(
+                &#x60;${process.env.AI_BACKEND_URL}/similar-search&#x60;,
+                payload,
+            );
+            aiResults &#x3D; response.data;
+        } catch (err: any) {
+            console.error(&#x27;FastAPI request failed:&#x27;, err.message);
+            throw new HttpException(
+                &#x27;AI backend is unavailable&#x27;,
+                HttpStatus.BAD_GATEWAY,
+            );
+        }
+
+        // Validate AI response
+        if (
+            !Array.isArray(aiResults) ||
+            !aiResults.every((r) &#x3D;&gt; r.id &amp;&amp; typeof r.rank &#x3D;&#x3D;&#x3D; &#x27;number&#x27;)
+        ) {
+            throw new HttpException(
+                &#x27;Invalid AI response format&#x27;,
+                HttpStatus.BAD_GATEWAY,
+            );
+        }
+
+        // Fetch details from DB based on resolvedType
+        let items: any[] &#x3D; [];
+        if (itemType &#x3D;&#x3D;&#x3D; ItemType.PRODUCT) {
+            items &#x3D; await this.prisma.product.findMany({
+                where: { id: { in: aiResults.map((r: any) &#x3D;&gt; r.id) } },
+                include: {
+                    supplier: { include: { user: true } },
+                    category: true,
+                },
+            });
+        } else if (itemType &#x3D;&#x3D;&#x3D; ItemType.SERVICE) {
+            items &#x3D; await this.prisma.service.findMany({
+                where: { id: { in: aiResults.map((r: any) &#x3D;&gt; r.id) } },
+                include: {
+                    supplier: { include: { user: true } },
+                    category: true,
+                },
+            });
+        } else {
+            // If type unknown, fetch both products and services concurrently
+            const [products, services] &#x3D; await Promise.all([
+                this.prisma.product.findMany({
+                    where: { id: { in: aiResults.map((r: any) &#x3D;&gt; r.id) } },
+                    include: {
+                        supplier: { include: { user: true } },
+                        category: true,
+                    },
+                }),
+                this.prisma.service.findMany({
+                    where: { id: { in: aiResults.map((r: any) &#x3D;&gt; r.id) } },
+                    include: {
+                        supplier: { include: { user: true } },
+                        category: true,
+                    },
+                }),
+            ]);
+            items &#x3D; [...products, ...services];
+        }
+
+        // Merge ranking score from FastAPI with DB items
+        const mappedItems &#x3D; await Promise.all(
+            items.map(async (item) &#x3D;&gt; {
+                const match &#x3D; aiResults.find((r: any) &#x3D;&gt; r.id &#x3D;&#x3D;&#x3D; item.id);
+                if (!match) return null;
+
+                let dtoItem;
+                // Use category.usedFor to determine type
+                if (item.category?.usedFor &#x3D;&#x3D;&#x3D; &#x27;PRODUCT&#x27;) {
+                    dtoItem &#x3D; await this.productService.toProductResponseDto(
+                        item,
+                        targetLang,
+                    );
+                } else {
+                    dtoItem &#x3D; await this.serviceService.toServiceResponseDto(
+                        item,
+                        targetLang,
+                    );
+                }
+
+                return { text: dto.text, item: dtoItem, rank: match.rank };
+            }),
+        );
+
+        return mappedItems.filter(Boolean) as SmartSearchResponseDto[];
+    }
+
+    // --- Embedding helpers
+    private async ensureEmbedding(item: {
+        id: string;
+        name: string;
+        description?: string | null;
+        category?: { name: string | null };
+        type: ItemType;
+    }) {
+        // Try to fetch existing embedding
+        let embeddingRecord &#x3D; await this.prisma.itemEmbedding.findUnique({
+            where: {
+                itemId_itemType: {
+                    itemId: item.id,
+                    itemType: item.type,
+                },
+            },
+        });
+
+        if (!embeddingRecord) {
+            // If not found, generate &amp; store it
+            await this.generateAndStoreEmbedding({
+                itemId: item.id,
+                itemType: item.type,
+                name: item.name,
+                description: item.description ?? null,
+                categoryName: item.category?.name ?? &#x27;&#x27;,
+            });
+
+            // Fetch again
+            embeddingRecord &#x3D; await this.prisma.itemEmbedding.findUnique({
+                where: {
+                    itemId_itemType: {
+                        itemId: item.id,
+                        itemType: item.type,
+                    },
+                },
+            });
+        }
+
+        return embeddingRecord?.embedding ?? null;
+    }
+
+    async generateAndStoreEmbedding(params: {
+        itemId: string;
+        itemType: ItemType;
+        name: string;
+        categoryName: string;
+        description?: string | null;
+    }): Promise&lt;void&gt; {
+        const { itemId, itemType, name, description, categoryName } &#x3D; params;
+
+        try {
+            // 1. Call FastAPI to generate embedding
+            const response &#x3D; await axios.post(
+                &#x60;${process.env.AI_BACKEND_URL}/embed&#x60;,
+                {
+                    name,
+                    description: description ?? null,
+                    category_name: categoryName,
+                },
+            );
+
+            const embedding &#x3D; response.data?.embedding;
+            if (!embedding || !Array.isArray(embedding)) {
+                throw new Error(&#x27;Invalid embedding response from AI backend&#x27;);
+            }
+
+            // 2. Upsert into DB
+            await this.prisma.itemEmbedding.upsert({
+                where: {
+                    itemId_itemType: {
+                        itemId,
+                        itemType,
+                    },
+                },
+                update: {
+                    embedding,
+                },
+                create: {
+                    itemId,
+                    itemType,
+                    embedding,
+                },
+            });
+        } catch (err: any) {
+            console.error(&#x27;Embedding generation failed:&#x27;, err.message);
+            throw new HttpException(
+                &#x27;Failed to generate embedding for item&#x27;,
+                HttpStatus.BAD_GATEWAY,
+            );
+        }
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'SmartSearchService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

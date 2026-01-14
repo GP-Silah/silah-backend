@@ -1,0 +1,1757 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >NotificationService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/notification/notification.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#notifications$" >notifications$</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createNotification" >createNotification</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMyNotifications" >getMyNotifications</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getNotificationPreferences" >getNotificationPreferences</a>
+                            </li>
+                            <li>
+                                <a href="#getNotificationStream" >getNotificationStream</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUserLanguage" >getUserLanguage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#markNotificationAsRead" >markNotificationAsRead</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#markNotificationsAsReadInBulk" >markNotificationsAsReadInBulk</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toNotificationResponseDto" >toNotificationResponseDto</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#translateNotification" >translateNotification</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateNotificationPreferences" >updateNotificationPreferences</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prisma: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, translationService: <a href="../injectables/TranslationService.html" target="_self">TranslationService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/notification/notification.service.ts:23</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prisma</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>userService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/UserService.html" target="_self" >UserService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>translationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TranslationService.html" target="_self" >TranslationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createNotification"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createNotification</b></span>
+                        <a href="#createNotification"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createNotification(data: <a href="../interfaces/CreateNotification.html" target="_self">CreateNotification</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="448"
+                                    class="link-to-prism">src/notification/notification.service.ts:448</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>data</td>
+                                            <td>
+                                                            <code><a href="../interfaces/CreateNotification.html" target="_self" >CreateNotification</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/NotificationResponseDto.html" target="_self" >Promise&lt;NotificationResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMyNotifications"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getMyNotifications</b></span>
+                        <a href="#getMyNotifications"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMyNotifications(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, notificationType?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, targetLang?: "ar" | "en")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="223"
+                                    class="link-to-prism">src/notification/notification.service.ts:223</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&#x27;all&#x27;</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>notificationType</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/NotificationResponseDto.html" target="_self" >Promise&lt;NotificationResponseDto[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getNotificationPreferences"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getNotificationPreferences</b></span>
+                        <a href="#getNotificationPreferences"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getNotificationPreferences(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="88"
+                                    class="link-to-prism">src/notification/notification.service.ts:88</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getNotificationStream"></a>
+                    <span class="name">
+                        <span ><b>getNotificationStream</b></span>
+                        <a href="#getNotificationStream"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getNotificationStream()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="444"
+                                    class="link-to-prism">src/notification/notification.service.ts:444</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUserLanguage"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getUserLanguage</b></span>
+                        <a href="#getUserLanguage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUserLanguage(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="32"
+                                    class="link-to-prism">src/notification/notification.service.ts:32</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Helper: get user preferred language</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;&quot;ar&quot; | &quot;en&quot; | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markNotificationAsRead"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>markNotificationAsRead</b></span>
+                        <a href="#markNotificationAsRead"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>markNotificationAsRead(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, notificationId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="354"
+                                    class="link-to-prism">src/notification/notification.service.ts:354</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>notificationId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markNotificationsAsReadInBulk"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>markNotificationsAsReadInBulk</b></span>
+                        <a href="#markNotificationsAsReadInBulk"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>markNotificationsAsReadInBulk(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/MarkNotificationsAsReadDto.html" target="_self">MarkNotificationsAsReadDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="389"
+                                    class="link-to-prism">src/notification/notification.service.ts:389</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/MarkNotificationsAsReadDto.html" target="_self" >MarkNotificationsAsReadDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toNotificationResponseDto"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toNotificationResponseDto</b></span>
+                        <a href="#toNotificationResponseDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toNotificationResponseDto(notification: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="66"
+                                    class="link-to-prism">src/notification/notification.service.ts:66</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>notification</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/NotificationResponseDto.html" target="_self" >Promise&lt;NotificationResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="translateNotification"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>translateNotification</b></span>
+                        <a href="#translateNotification"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>translateNotification(notification: <a href="../classes/NotificationResponseDto.html" target="_self">NotificationResponseDto</a>, targetLang: "ar" | "en")</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="42"
+                                    class="link-to-prism">src/notification/notification.service.ts:42</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Helper: translate notification title/content</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>notification</td>
+                                            <td>
+                                                            <code><a href="../classes/NotificationResponseDto.html" target="_self" >NotificationResponseDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>targetLang</td>
+                                            <td>
+                                                        <code>&quot;ar&quot; | &quot;en&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/NotificationResponseDto.html" target="_self" >Promise&lt;NotificationResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateNotificationPreferences"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateNotificationPreferences</b></span>
+                        <a href="#updateNotificationPreferences"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateNotificationPreferences(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/UpdateNotificationPreferencesDto.html" target="_self">UpdateNotificationPreferencesDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="146"
+                                    class="link-to-prism">src/notification/notification.service.ts:146</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateNotificationPreferencesDto.html" target="_self" >UpdateNotificationPreferencesDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="notifications$"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>notifications$</b></span>
+                        <a href="#notifications$"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Subject&lt;{
+        receiverUserId: string;
+        notification: NotificationResponseDto;
+    }&gt;()</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/notification/notification.service.ts:20</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { UserService } from &#x27;src/user/user.service&#x27;;
+import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
+} from &#x27;@nestjs/common&#x27;;
+import { PrismaService } from &#x27;src/prisma/prisma.service&#x27;;
+import { UpdateNotificationPreferencesDto } from &#x27;./dtos/updateNotificationPreference.dto&#x27;;
+import { NotificationType, UserRole } from &#x27;@prisma/client&#x27;;
+import { NotificationResponseDto } from &#x27;./dtos/notificationResponse.dto&#x27;;
+import { MarkNotificationsAsReadDto } from &#x27;./dtos/markNotificationsReadBulk.dto&#x27;;
+import { startOfDay, startOfWeek, startOfMonth } from &#x27;date-fns&#x27;;
+import { Subject } from &#x27;rxjs&#x27;;
+import { CreateNotification } from &#x27;src/types/createNotification&#x27;;
+import { TranslationService } from &#x27;src/translation/translation.service&#x27;;
+
+@Injectable()
+export class NotificationService {
+    private readonly notifications$ &#x3D; new Subject&lt;{
+        receiverUserId: string;
+        notification: NotificationResponseDto;
+    }&gt;();
+
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly userService: UserService,
+        private readonly translationService: TranslationService,
+    ) {}
+
+    /** Helper: get user preferred language */
+    async getUserLanguage(userId: string): Promise&lt;&#x27;ar&#x27; | &#x27;en&#x27; | null&gt; {
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { preferredLanguage: true },
+        });
+        const lang &#x3D; user?.preferredLanguage?.toLowerCase();
+        return lang &#x3D;&#x3D;&#x3D; &#x27;ar&#x27; || lang &#x3D;&#x3D;&#x3D; &#x27;en&#x27; ? lang : null;
+    }
+
+    /** Helper: translate notification title/content */
+    async translateNotification(
+        notification: NotificationResponseDto,
+        targetLang: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ): Promise&lt;NotificationResponseDto&gt; {
+        if (!notification || targetLang &#x3D;&#x3D;&#x3D; &#x27;en&#x27;) return notification;
+
+        const [translatedTitle, translatedContent] &#x3D; await Promise.all([
+            this.translationService.translateText(
+                notification.title,
+                targetLang,
+            ),
+            this.translationService.translateText(
+                notification.content,
+                targetLang,
+            ),
+        ]);
+
+        return {
+            ...notification,
+            title: translatedTitle,
+            content: translatedContent,
+        };
+    }
+
+    async toNotificationResponseDto(
+        notification: any,
+    ): Promise&lt;NotificationResponseDto&gt; {
+        return {
+            notificationId: notification.id,
+            sender: await this.userService.toUserResponseDTO(
+                notification.sender,
+            ),
+            receiver: await this.userService.toUserResponseDTO(
+                notification.receiver,
+            ),
+            notificationType: notification.notificationType,
+            title: notification.title,
+            content: notification.content,
+            isRead: notification.isRead,
+            readAt: notification.readAt,
+            createdAt: notification.createdAt,
+            relatedEntityId: notification.entityId,
+            relatedEntityType: notification.entityType,
+        };
+    }
+
+    async getNotificationPreferences(userId: string) {
+        // Step 1: Get the user and their role
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { id: true, role: true },
+        });
+
+        if (!user) throw new NotFoundException(&#x27;User not found&#x27;);
+
+        // Step 2: Get existing preferences or create default
+        let prefs &#x3D; await this.prisma.notificationPreference.findUnique({
+            where: { userId },
+        });
+
+        if (!prefs) {
+            prefs &#x3D; await this.prisma.notificationPreference.create({
+                data: { userId },
+            });
+        }
+
+        // Step 3: Define allowed fields per role
+        const baseFields &#x3D; [&#x27;allowNotifications&#x27;, &#x27;newMessageNotify&#x27;];
+        const supplierFields &#x3D; [
+            ...baseFields,
+            &#x27;newOrderNotify&#x27;,
+            &#x27;newReviewNotify&#x27;,
+            &#x27;biddingStatusNotify&#x27;,
+            &#x27;invoiceStatusNotify&#x27;,
+        ];
+        const buyerFields &#x3D; [
+            ...baseFields,
+            &#x27;newInvoiceNotify&#x27;,
+            &#x27;newOfferNotify&#x27;,
+            &#x27;orderStatusNotify&#x27;,
+            &#x27;groupPurchaseStatusNotify&#x27;,
+        ];
+
+        let allowedFields: string[];
+        if (user.role &#x3D;&#x3D;&#x3D; UserRole.SUPPLIER) allowedFields &#x3D; supplierFields;
+        else if (user.role &#x3D;&#x3D;&#x3D; UserRole.BUYER) allowedFields &#x3D; buyerFields;
+        else {
+            throw new ForbiddenException(
+                &#x27;Unsupported user role for notifications&#x27;,
+            );
+        }
+
+        // Step 4: Pick only allowed fields
+        const filteredPrefs: Record&lt;string, boolean&gt; &#x3D; {};
+        for (const key of allowedFields) {
+            filteredPrefs[key] &#x3D; prefs[key];
+        }
+
+        return {
+            message: &#x27;Notification preferences retrieved successfully&#x27;,
+            notificationPreferences: filteredPrefs,
+        };
+    }
+
+    async updateNotificationPreferences(
+        userId: string,
+        dto: UpdateNotificationPreferencesDto,
+    ) {
+        // Step 1: Get the user and their role
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { id: true, role: true },
+        });
+
+        if (!user) throw new NotFoundException(&#x27;User not found&#x27;);
+
+        // Step 2: Get existing preferences or create default
+        const existingPrefs &#x3D;
+            await this.prisma.notificationPreference.findUnique({
+                where: { userId },
+            });
+
+        if (!existingPrefs) {
+            await this.prisma.notificationPreference.create({
+                data: { userId },
+            });
+        }
+
+        // Step 3: Define allowed fields per role
+        const baseFields &#x3D; [&#x27;allowNotifications&#x27;, &#x27;newMessageNotify&#x27;];
+        const supplierFields &#x3D; [
+            ...baseFields,
+            &#x27;newOrderNotify&#x27;,
+            &#x27;newReviewNotify&#x27;,
+            &#x27;biddingStatusNotify&#x27;,
+            &#x27;invoiceStatusNotify&#x27;,
+        ];
+        const buyerFields &#x3D; [
+            ...baseFields,
+            &#x27;newInvoiceNotify&#x27;,
+            &#x27;newOfferNotify&#x27;,
+            &#x27;orderStatusNotify&#x27;,
+            &#x27;groupPurchaseStatusNotify&#x27;,
+        ];
+
+        let allowedFields: string[];
+        if (user.role &#x3D;&#x3D;&#x3D; UserRole.SUPPLIER) allowedFields &#x3D; supplierFields;
+        else if (user.role &#x3D;&#x3D;&#x3D; UserRole.BUYER) allowedFields &#x3D; buyerFields;
+        else {
+            throw new ForbiddenException(
+                &#x27;Unsupported user role for notifications&#x27;,
+            );
+        }
+
+        // Step 4: Filter out invalid keys (not allowed for this role)
+        const filteredUpdate &#x3D; Object.entries(dto).reduce(
+            (acc, [key, value]) &#x3D;&gt; {
+                if (allowedFields.includes(key)) acc[key] &#x3D; value;
+                return acc;
+            },
+            {} as Record&lt;string, boolean&gt;,
+        );
+
+        if (Object.keys(filteredUpdate).length &#x3D;&#x3D;&#x3D; 0) {
+            throw new BadRequestException(
+                &#x27;No valid preferences to update for this role&#x27;,
+            );
+        }
+
+        // Step 5: Update preferences
+        const updated &#x3D; await this.prisma.notificationPreference.update({
+            where: { userId },
+            data: filteredUpdate,
+        });
+
+        return {
+            message: &#x27;Notification preferences updated successfully&#x27;,
+            newNotificationPreferences: updated,
+        };
+    }
+
+    async getMyNotifications(
+        userId: string,
+        date: string &#x3D; &#x27;all&#x27;,
+        notificationType?: string,
+        targetLang?: &#x27;ar&#x27; | &#x27;en&#x27;,
+    ): Promise&lt;NotificationResponseDto[]&gt; {
+        // --- Step 0: Get user role (we use it to decide which notification types are relevant) ---
+        const user &#x3D; await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { role: true },
+        });
+
+        if (!user) {
+            throw new NotFoundException(&#x27;User not found&#x27;);
+        }
+
+        // Define allowed notification types per role
+        const SUPPLIER_NOTIFICATION_TYPES: NotificationType[] &#x3D; [
+            &#x27;NEW_MESSAGE&#x27;,
+            &#x27;NEW_ORDER&#x27;,
+            &#x27;NEW_REVIEW&#x27;,
+            &#x27;BID_STATUS_CHANGED&#x27;,
+            &#x27;INVOICE_STATUS_CHANGED&#x27;,
+        ];
+
+        const BUYER_NOTIFICATION_TYPES: NotificationType[] &#x3D; [
+            &#x27;NEW_MESSAGE&#x27;,
+            &#x27;NEW_INVOICE&#x27;,
+            &#x27;NEW_OFFER&#x27;,
+            &#x27;ORDER_STATUS_CHANGED&#x27;,
+            &#x27;GROUP_PURCHASE_STATUS_CHANGED&#x27;,
+        ];
+
+        const allowedTypes &#x3D;
+            user.role &#x3D;&#x3D;&#x3D; UserRole.SUPPLIER
+                ? SUPPLIER_NOTIFICATION_TYPES
+                : user.role &#x3D;&#x3D;&#x3D; UserRole.BUYER
+                  ? BUYER_NOTIFICATION_TYPES
+                  : [];
+
+        if (allowedTypes.length &#x3D;&#x3D;&#x3D; 0) {
+            // If there is an unsupported role, fail fast
+            throw new ForbiddenException(
+                &#x27;Unsupported user role for notifications&#x27;,
+            );
+        }
+
+        // --- Step 1: Build dynamic Prisma filter ---
+        const where: any &#x3D; {
+            receiverUserId: userId,
+            // Only notifications relevant to this role
+            type: { in: allowedTypes },
+        };
+
+        // --- Handle date filter ---
+        const now &#x3D; new Date();
+        let startDate: Date | undefined;
+
+        switch (date?.toLowerCase()) {
+            case &#x27;today&#x27;:
+                startDate &#x3D; startOfDay(now);
+                break;
+            case &#x27;this-week&#x27;:
+                startDate &#x3D; startOfWeek(now, { weekStartsOn: 0 }); // week starts on Sunday
+                break;
+            case &#x27;this-month&#x27;:
+                startDate &#x3D; startOfMonth(now);
+                break;
+            case &#x27;all&#x27;:
+            case undefined:
+                break;
+            default:
+                throw new BadRequestException(
+                    &quot;Invalid &#x27;date&#x27; filter. Use: all, today, this-week, this-month&quot;,
+                );
+        }
+
+        if (startDate) {
+            where.createdAt &#x3D; { gte: startDate };
+        }
+
+        // --- Handle type filter (user asked for a specific type) ---
+        if (notificationType) {
+            const upper &#x3D; notificationType.toUpperCase();
+
+            // Validate requested type is a valid NotificationType
+            const validNotificationTypes &#x3D; Object.values(NotificationType);
+            if (!validNotificationTypes.includes(upper as NotificationType)) {
+                throw new BadRequestException(
+                    &#x60;Invalid notification type: ${notificationType}&#x60;,
+                );
+            }
+
+            // If requested type is valid but not allowed for this role -&gt; forbidden
+            if (!allowedTypes.includes(upper as NotificationType)) {
+                throw new ForbiddenException(
+                    &#x60;Notification type &#x27;${upper}&#x27; is not available for the current user role&#x60;,
+                );
+            }
+
+            // Narrow the query by the specific requested type
+            where.type &#x3D; upper;
+        }
+
+        // Step 2: Query notifications
+        const notifications &#x3D; await this.prisma.notification.findMany({
+            where,
+            include: {
+                sender: true,
+                receiver: true,
+            },
+            orderBy: { createdAt: &#x27;desc&#x27; },
+        });
+
+        if (!notifications.length) return [];
+
+        // Step 3: Convert to DTO
+        const dtos &#x3D; await Promise.all(
+            notifications.map((n) &#x3D;&gt; this.toNotificationResponseDto(n)),
+        );
+
+        // Step 4: Translate title/content of the notification
+        if (targetLang &amp;&amp; targetLang !&#x3D;&#x3D; &#x27;en&#x27;) {
+            return Promise.all(
+                dtos.map((dto) &#x3D;&gt; this.translateNotification(dto, targetLang)),
+            );
+        }
+
+        return dtos;
+    }
+
+    async markNotificationAsRead(userId: string, notificationId: string) {
+        // Step 1: Find the notification
+        const notification &#x3D; await this.prisma.notification.findUnique({
+            where: { id: notificationId },
+            include: { sender: true, receiver: true },
+        });
+
+        if (!notification) {
+            throw new NotFoundException(&#x27;Notification not found&#x27;);
+        }
+
+        // Step 2: Verify ownership (receiver must be the logged-in user)
+        if (notification.receiverUserId !&#x3D;&#x3D; userId) {
+            throw new ForbiddenException(
+                &#x27;You are not authorized to modify this notification&#x27;,
+            );
+        }
+
+        // Step 3: Update only if it’s not already read
+        if (!notification.isRead) {
+            await this.prisma.notification.update({
+                where: { id: notificationId },
+                data: { isRead: true, readAt: new Date() },
+            });
+        }
+
+        // Step 4: Return the updated DTO
+        const updated &#x3D; await this.prisma.notification.findUnique({
+            where: { id: notificationId },
+            include: { sender: true, receiver: true },
+        });
+
+        return this.toNotificationResponseDto(updated);
+    }
+
+    async markNotificationsAsReadInBulk(
+        userId: string,
+        dto: MarkNotificationsAsReadDto,
+    ) {
+        const { notificationIds } &#x3D; dto;
+
+        if (!notificationIds || notificationIds.length &#x3D;&#x3D;&#x3D; 0) {
+            throw new BadRequestException(&#x27;No notification IDs provided&#x27;);
+        }
+
+        // Step 1: Get notifications belonging to this user
+        const userNotifications &#x3D; await this.prisma.notification.findMany({
+            where: {
+                id: { in: notificationIds },
+                receiverUserId: userId,
+            },
+        });
+
+        if (userNotifications.length &#x3D;&#x3D;&#x3D; 0) {
+            throw new NotFoundException(
+                &#x27;No valid notifications found for this user&#x27;,
+            );
+        }
+
+        // Step 2: Filter unread ones to avoid unnecessary updates
+        const unreadIds &#x3D; userNotifications
+            .filter((n) &#x3D;&gt; !n.isRead)
+            .map((n) &#x3D;&gt; n.id);
+
+        if (unreadIds.length &#x3D;&#x3D;&#x3D; 0) {
+            return {
+                message: &#x27;All notifications are already marked as read&#x27;,
+                updatedCount: 0,
+            };
+        }
+
+        // Step 3: Bulk update using updateMany
+        const result &#x3D; await this.prisma.notification.updateMany({
+            where: {
+                id: { in: unreadIds },
+                receiverUserId: userId,
+            },
+            data: {
+                isRead: true,
+                readAt: new Date(),
+            },
+        });
+
+        // Step 4: Return response summary
+        return {
+            message: &#x60;Successfully marked ${result.count} notification(s) as read&#x60;,
+            updatedCount: result.count,
+        };
+    }
+
+    getNotificationStream() {
+        return this.notifications$.asObservable();
+    }
+
+    async createNotification(
+        data: CreateNotification,
+    ): Promise&lt;NotificationResponseDto&gt; {
+        // Step 1: Create the notification in the database
+        const notification &#x3D; await this.prisma.notification.create({
+            data: {
+                senderUserId: data.senderUserId,
+                receiverUserId: data.receiverUserId,
+                type: data.type,
+                title: data.title,
+                content: data.content,
+                entityId: data.entityId,
+                entityType: data.entityType,
+            },
+            include: { sender: true, receiver: true },
+        });
+
+        // Step 2: Convert to DTO
+        const dto &#x3D; await this.toNotificationResponseDto(notification);
+
+        // Step 2.5: Load notification preferences + receiver role
+        const [preference, receiver] &#x3D; await Promise.all([
+            this.prisma.notificationPreference.findUnique({
+                where: { userId: data.receiverUserId },
+            }),
+            this.prisma.user.findUnique({
+                where: { id: data.receiverUserId },
+                select: { role: true },
+            }),
+        ]);
+
+        const userLang &#x3D; await this.getUserLanguage(data.receiverUserId);
+
+        // Translate before emitting
+        const translatedDto &#x3D;
+            userLang &amp;&amp; userLang !&#x3D;&#x3D; &#x27;en&#x27;
+                ? await this.translateNotification(dto, userLang)
+                : dto;
+
+        if (!receiver) {
+            // Silently skip real-time if user doesn&#x27;t exist (notification still saved)
+            return translatedDto;
+        }
+
+        // Define allowed types per role (same as in getMyNotifications — keep in sync!)
+        const ALLOWED_BY_ROLE: Record&lt;string, NotificationType[]&gt; &#x3D; {
+            SUPPLIER: [
+                &#x27;NEW_MESSAGE&#x27;,
+                &#x27;NEW_ORDER&#x27;,
+                &#x27;NEW_REVIEW&#x27;,
+                &#x27;BID_STATUS_CHANGED&#x27;,
+                &#x27;INVOICE_STATUS_CHANGED&#x27;,
+            ],
+            BUYER: [
+                &#x27;NEW_MESSAGE&#x27;,
+                &#x27;NEW_INVOICE&#x27;,
+                &#x27;NEW_OFFER&#x27;,
+                &#x27;ORDER_STATUS_CHANGED&#x27;,
+                &#x27;GROUP_PURCHASE_STATUS_CHANGED&#x27;,
+            ],
+        };
+
+        const allowedTypes &#x3D; ALLOWED_BY_ROLE[receiver.role] || [];
+
+        // Block real-time emit if type is not allowed for this role
+        if (!allowedTypes.includes(data.type)) {
+            // We still return the DTO (in case caller expects it)
+            // But we DO NOT emit to the stream — this fixes the ghost notifications!
+            return translatedDto;
+        }
+
+        // Step 3: Emit based on preference
+        if (preference?.allowNotifications) {
+            let shouldSend &#x3D; false;
+
+            switch (data.type) {
+                case &#x27;NEW_MESSAGE&#x27;:
+                    shouldSend &#x3D; preference.newMessageNotify;
+                    break;
+                case &#x27;NEW_ORDER&#x27;:
+                    shouldSend &#x3D; preference.newOrderNotify;
+                    break;
+                case &#x27;NEW_REVIEW&#x27;:
+                    shouldSend &#x3D; preference.newReviewNotify;
+                    break;
+                case &#x27;NEW_INVOICE&#x27;:
+                    shouldSend &#x3D; preference.newInvoiceNotify;
+                    break;
+                case &#x27;NEW_OFFER&#x27;:
+                    shouldSend &#x3D; preference.newOfferNotify;
+                    break;
+                case &#x27;BID_STATUS_CHANGED&#x27;:
+                    shouldSend &#x3D; preference.biddingStatusNotify;
+                    break;
+                case &#x27;INVOICE_STATUS_CHANGED&#x27;:
+                    shouldSend &#x3D; preference.invoiceStatusNotify;
+                    break;
+                case &#x27;ORDER_STATUS_CHANGED&#x27;:
+                    shouldSend &#x3D; preference.orderStatusNotify;
+                    break;
+                case &#x27;GROUP_PURCHASE_STATUS_CHANGED&#x27;:
+                    shouldSend &#x3D; preference.groupPurchaseStatusNotify;
+                    break;
+                default:
+                    shouldSend &#x3D; false;
+            }
+
+            if (shouldSend) {
+                this.notifications$.next({
+                    receiverUserId: data.receiverUserId,
+                    notification: translatedDto,
+                });
+            }
+        }
+
+        return translatedDto;
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'NotificationService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

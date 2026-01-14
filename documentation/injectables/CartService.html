@@ -1,0 +1,1915 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>silah-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">silah-backend documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >CartService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/cart/cart.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#addItem" >addItem</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#checkoutCart" >checkoutCart</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteCart" >deleteCart</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getActiveCartByUserId" >getActiveCartByUserId</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getBuyerActiveCart" >getBuyerActiveCart</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getCartWithRelations" >getCartWithRelations</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#recalculateCartTotals" >recalculateCartTotals</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#removeItem" >removeItem</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#removeSupplierFromCart" >removeSupplierFromCart</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toCartResponseDto" >toCartResponseDto</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateItemQuantity" >updateItemQuantity</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prisma: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, translationService: <a href="../injectables/TranslationService.html" target="_self">TranslationService</a>, tapPaymentsService: <a href="../injectables/TapPaymentsService.html" target="_self">TapPaymentsService</a>, notificationService: <a href="../injectables/NotificationService.html" target="_self">NotificationService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/cart/cart.service.ts:16</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prisma</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>translationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TranslationService.html" target="_self" >TranslationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>tapPaymentsService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TapPaymentsService.html" target="_self" >TapPaymentsService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>notificationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/NotificationService.html" target="_self" >NotificationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="addItem"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>addItem</b></span>
+                        <a href="#addItem"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>addItem(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/AddCartItemDto.html" target="_self">AddCartItemDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="87"
+                                    class="link-to-prism">src/cart/cart.service.ts:87</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/AddCartItemDto.html" target="_self" >AddCartItemDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="checkoutCart"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>checkoutCart</b></span>
+                        <a href="#checkoutCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>checkoutCart(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dto: <a href="../classes/CheckoutCartDto.html" target="_self">CheckoutCartDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="376"
+                                    class="link-to-prism">src/cart/cart.service.ts:376</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/CheckoutCartDto.html" target="_self" >CheckoutCartDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteCart"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteCart</b></span>
+                        <a href="#deleteCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteCart(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="333"
+                                    class="link-to-prism">src/cart/cart.service.ts:333</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getActiveCartByUserId"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getActiveCartByUserId</b></span>
+                        <a href="#getActiveCartByUserId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getActiveCartByUserId(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="599"
+                                    class="link-to-prism">src/cart/cart.service.ts:599</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>--- UTILITY: Get active cart for a buyer ---</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getBuyerActiveCart"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getBuyerActiveCart</b></span>
+                        <a href="#getBuyerActiveCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getBuyerActiveCart(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="82"
+                                    class="link-to-prism">src/cart/cart.service.ts:82</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/CartResponseDto.html" target="_self" >Promise&lt;CartResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getCartWithRelations"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getCartWithRelations</b></span>
+                        <a href="#getCartWithRelations"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getCartWithRelations(cartId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="663"
+                                    class="link-to-prism">src/cart/cart.service.ts:663</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>--- UTILITY: Fetch cart with relations ---</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>cartId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="recalculateCartTotals"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>recalculateCartTotals</b></span>
+                        <a href="#recalculateCartTotals"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>recalculateCartTotals(cartId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="626"
+                                    class="link-to-prism">src/cart/cart.service.ts:626</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>--- UTILITY: Recalculate totals ---</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>cartId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeItem"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>removeItem</b></span>
+                        <a href="#removeItem"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>removeItem(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, itemId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="305"
+                                    class="link-to-prism">src/cart/cart.service.ts:305</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>itemId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeSupplierFromCart"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>removeSupplierFromCart</b></span>
+                        <a href="#removeSupplierFromCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>removeSupplierFromCart(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, supplierId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="344"
+                                    class="link-to-prism">src/cart/cart.service.ts:344</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>supplierId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toCartResponseDto"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toCartResponseDto</b></span>
+                        <a href="#toCartResponseDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toCartResponseDto(cart: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="24"
+                                    class="link-to-prism">src/cart/cart.service.ts:24</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>cart</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/CartResponseDto.html" target="_self" >Promise&lt;CartResponseDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateItemQuantity"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateItemQuantity</b></span>
+                        <a href="#updateItemQuantity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateItemQuantity(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, itemId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, newQuantity: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="218"
+                                    class="link-to-prism">src/cart/cart.service.ts:218</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>itemId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>newQuantity</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+    BadRequestException,
+    Injectable,
+    NotFoundException,
+} from &#x27;@nestjs/common&#x27;;
+import { PrismaService } from &#x27;src/prisma/prisma.service&#x27;;
+import { CartResponseDto } from &#x27;./dtos/cartResponse.dto&#x27;;
+import { AddCartItemDto } from &#x27;./dtos/addCartItem.dto&#x27;;
+import { TranslationService } from &#x27;src/translation/translation.service&#x27;;
+import { TapPaymentsService } from &#x27;src/tap-payments/tap-payments.service&#x27;;
+import { CheckoutCartDto } from &#x27;./dtos/checkoutCart.dto&#x27;;
+import { NotificationService } from &#x27;src/notification/notification.service&#x27;;
+import { NotificationEntityType, NotificationType } from &#x27;@prisma/client&#x27;;
+
+@Injectable()
+export class CartService {
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly translationService: TranslationService,
+        private readonly tapPaymentsService: TapPaymentsService,
+        private readonly notificationService: NotificationService,
+    ) {}
+
+    async toCartResponseDto(cart: any): Promise&lt;CartResponseDto&gt; {
+        const lang &#x3D; cart.user?.preferredLanguage ?? &#x27;EN&#x27;; // default if user missing
+        const targetLang &#x3D; [&#x27;ar&#x27;, &#x27;en&#x27;].includes(lang.toLowerCase())
+            ? lang.toLowerCase()
+            : &#x27;en&#x27;; // fallback to English
+
+        // Calculate distinct product count
+        const totalItemsCount &#x3D; cart.suppliers.reduce(
+            (acc, s) &#x3D;&gt; acc + s.cartItems.length,
+            0,
+        );
+
+        return {
+            cartId: cart.id,
+            buyerId: cart.buyerId,
+            productsTotal: cart.productsTotal,
+            deliveryFees: cart.deliveryFees,
+            cartTotal: cart.cartTotal,
+            isBought: cart.isBought,
+            totalItemsCount,
+            suppliers: await Promise.all(
+                cart.suppliers.map(async (s: any) &#x3D;&gt; ({
+                    cartBySupplierId: s.id,
+                    supplierId: s.supplierId,
+                    deliveryFee: s.supplier?.deliveryFees ?? 0,
+                    subTotal: s.subTotal,
+                    supplierTotalPrice: s.supplierTotalPrice,
+                    cartItems: await Promise.all(
+                        s.cartItems.map(async (item: any) &#x3D;&gt; {
+                            // Translate product name if needed
+                            const productName &#x3D;
+                                targetLang &#x3D;&#x3D;&#x3D; &#x27;en&#x27;
+                                    ? item.product.name
+                                    : await this.translationService.translateText(
+                                          item.product.name,
+                                          targetLang,
+                                      );
+
+                            // --- mark out-of-stock items ---
+                            const isAvailable &#x3D;
+                                item.product.stock &gt;&#x3D; item.quantity;
+
+                            return {
+                                cartItemId: item.id,
+                                productId: item.productId,
+                                productName,
+                                productPrice: item.product.price,
+                                quantity: item.quantity,
+                                itemTotalPrice: item.itemTotalPrice,
+                                isAvailable,
+                            };
+                        }),
+                    ),
+                })),
+            ),
+        };
+    }
+
+    async getBuyerActiveCart(userId: string): Promise&lt;CartResponseDto&gt; {
+        const { cart } &#x3D; await this.getActiveCartByUserId(userId);
+        return this.toCartResponseDto(cart);
+    }
+
+    async addItem(userId: string, dto: AddCartItemDto) {
+        // Get the buyer first
+        const buyer &#x3D; await this.prisma.buyer.findUnique({
+            where: { userId },
+        });
+        if (!buyer) throw new NotFoundException(&#x27;Buyer not found&#x27;);
+
+        // Get product and supplier together
+        const product &#x3D; await this.prisma.product.findUnique({
+            where: { id: dto.productId },
+            include: { supplier: true },
+        });
+
+        if (!product) throw new NotFoundException(&#x27;Product not found&#x27;);
+        if (!product.supplier || product.supplier.isDeleted) {
+            throw new BadRequestException(
+                &#x27;Supplier for this product not found&#x27;,
+            );
+        }
+
+        if (product.stock &lt; dto.quantity) {
+            throw new BadRequestException(
+                &#x60;Only ${product.stock} units available in stock&#x60;,
+            );
+        }
+
+        // --- Validate quantity against case quantity and min/max order quantities ---
+        if (dto.quantity % product.caseQuantity !&#x3D;&#x3D; 0) {
+            throw new BadRequestException(
+                &#x60;Quantity must be in multiples of ${product.caseQuantity}&#x60;,
+            );
+        }
+        if (dto.quantity &lt; product.minOrderQuantity) {
+            throw new BadRequestException(
+                &#x60;Quantity must be at least the minimum order quantity: ${product.minOrderQuantity}&#x60;,
+            );
+        }
+        if (
+            product.maxOrderQuantity &amp;&amp;
+            dto.quantity &gt; product.maxOrderQuantity
+        ) {
+            throw new BadRequestException(
+                &#x60;Quantity must not exceed the maximum order quantity: ${product.maxOrderQuantity}&#x60;,
+            );
+        }
+
+        const supplier &#x3D; product.supplier;
+
+        // Try to find an active cart, create one if none exists
+        let activeCart &#x3D; await this.prisma.cart.findFirst({
+            where: { buyerId: buyer.id, isBought: false, isDeleted: false },
+        });
+
+        if (!activeCart) {
+            activeCart &#x3D; await this.prisma.cart.create({
+                data: {
+                    buyerId: buyer.id,
+                    productsTotal: 0,
+                    deliveryFees: 0,
+                    cartTotal: 0,
+                },
+            });
+        }
+
+        // Get or create CartBySupplier
+        let cartBySupplier &#x3D; await this.prisma.cartBySupplier.findFirst({
+            where: { cartId: activeCart.id, supplierId: supplier.id },
+        });
+        if (!cartBySupplier) {
+            cartBySupplier &#x3D; await this.prisma.cartBySupplier.create({
+                data: {
+                    cartId: activeCart.id,
+                    supplierId: supplier.id,
+                    deliveryFee: supplier.deliveryFees,
+                    subTotal: 0,
+                    supplierTotalPrice: 0,
+                },
+            });
+        }
+
+        // Add or update CartItem
+        let cartItem &#x3D; await this.prisma.cartItem.findFirst({
+            where: {
+                cartBySupplierId: cartBySupplier.id,
+                productId: dto.productId,
+            },
+        });
+
+        if (cartItem) {
+            cartItem &#x3D; await this.prisma.cartItem.update({
+                where: { id: cartItem.id },
+                data: {
+                    quantity: cartItem.quantity + dto.quantity,
+                    itemTotalPrice:
+                        (cartItem.quantity + dto.quantity) * product.price,
+                },
+            });
+        } else {
+            cartItem &#x3D; await this.prisma.cartItem.create({
+                data: {
+                    cartBySupplierId: cartBySupplier.id,
+                    productId: dto.productId,
+                    quantity: dto.quantity,
+                    itemTotalPrice: dto.quantity * product.price,
+                },
+            });
+        }
+
+        // Recalculate CartBySupplier totals immediately
+        const newSubTotalAgg &#x3D; await this.prisma.cartItem.aggregate({
+            _sum: { itemTotalPrice: true },
+            where: { cartBySupplierId: cartBySupplier.id },
+        });
+        const newSubTotal &#x3D; newSubTotalAgg._sum.itemTotalPrice ?? 0;
+
+        // Recalculate CartBySupplier totals
+        await this.prisma.cartBySupplier.update({
+            where: { id: cartBySupplier.id },
+            data: {
+                subTotal: newSubTotal,
+                supplierTotalPrice: newSubTotal + (supplier?.deliveryFees ?? 0),
+            },
+        });
+
+        // Recalculate overall cart totals
+        await this.recalculateCartTotals(activeCart.id);
+
+        const newCart &#x3D; await this.getCartWithRelations(activeCart.id);
+        return this.toCartResponseDto(newCart);
+    }
+
+    async updateItemQuantity(
+        userId: string,
+        itemId: number,
+        newQuantity: number,
+    ) {
+        if (newQuantity &lt; 1)
+            throw new BadRequestException(&#x27;Quantity must be at least 1&#x27;);
+
+        const { cart } &#x3D; await this.getActiveCartByUserId(userId);
+
+        const item &#x3D; await this.prisma.cartItem.findUnique({
+            where: { id: itemId },
+            include: {
+                product: true,
+                cartBySupplier: {
+                    include: {
+                        supplier: true,
+                    },
+                },
+            },
+        });
+
+        if (!item || item.cartBySupplier.cartId !&#x3D;&#x3D; cart.id) {
+            throw new NotFoundException(&#x27;Item not found in this cart&#x27;);
+        }
+
+        if (item.product.stock &lt; newQuantity) {
+            throw new BadRequestException(
+                &#x60;Only ${item.product.stock} units available in stock&#x60;,
+            );
+        }
+
+        // --- Validate new quantity against case quantity and min/max ---
+        if (newQuantity % item.product.caseQuantity !&#x3D;&#x3D; 0) {
+            throw new BadRequestException(
+                &#x60;Quantity must be in multiples of ${item.product.caseQuantity}&#x60;,
+            );
+        }
+        if (newQuantity &lt; item.product.minOrderQuantity) {
+            throw new BadRequestException(
+                &#x60;Quantity must be at least the minimum order quantity: ${item.product.minOrderQuantity}&#x60;,
+            );
+        }
+        if (
+            item.product.maxOrderQuantity &amp;&amp;
+            newQuantity &gt; item.product.maxOrderQuantity
+        ) {
+            throw new BadRequestException(
+                &#x60;Quantity must not exceed the maximum order quantity: ${item.product.maxOrderQuantity}&#x60;,
+            );
+        }
+
+        // Update item
+        await this.prisma.cartItem.update({
+            where: { id: itemId },
+            data: {
+                quantity: newQuantity,
+                itemTotalPrice: newQuantity * item.product.price,
+            },
+        });
+
+        const cartBySupplier &#x3D; item.cartBySupplier;
+
+        // Recalculate CartBySupplier totals
+        const newSubTotalAgg &#x3D; await this.prisma.cartItem.aggregate({
+            _sum: { itemTotalPrice: true },
+            where: { cartBySupplierId: cartBySupplier.id },
+        });
+        const newSubTotal &#x3D; newSubTotalAgg._sum.itemTotalPrice ?? 0;
+
+        // Recalculate CartBySupplier totals
+        await this.prisma.cartBySupplier.update({
+            where: { id: cartBySupplier.id },
+            data: {
+                subTotal: newSubTotal,
+                supplierTotalPrice:
+                    newSubTotal + (cartBySupplier.supplier?.deliveryFees ?? 0),
+            },
+        });
+
+        // Recalculate overall cart totals
+        await this.recalculateCartTotals(cart.id);
+
+        const updatedCart &#x3D; await this.getCartWithRelations(cart.id);
+        return this.toCartResponseDto(updatedCart);
+    }
+
+    async removeItem(userId: string, itemId: number) {
+        const { cart } &#x3D; await this.getActiveCartByUserId(userId);
+
+        const cartItem &#x3D; await this.prisma.cartItem.findUnique({
+            where: { id: itemId },
+            include: { cartBySupplier: true },
+        });
+        if (!cartItem || cartItem.cartBySupplier.cartId !&#x3D;&#x3D; cart.id) {
+            throw new NotFoundException(&#x27;Item not found in this cart&#x27;);
+        }
+
+        await this.prisma.cartItem.delete({ where: { id: itemId } });
+
+        // If no items left for supplier, remove CartBySupplier
+        const remaining &#x3D; await this.prisma.cartItem.count({
+            where: { cartBySupplierId: cartItem.cartBySupplierId },
+        });
+        if (remaining &#x3D;&#x3D;&#x3D; 0) {
+            await this.prisma.cartBySupplier.delete({
+                where: { id: cartItem.cartBySupplierId },
+            });
+        }
+
+        await this.recalculateCartTotals(cart.id);
+        const newCart &#x3D; await this.getCartWithRelations(cart.id);
+        return this.toCartResponseDto(newCart);
+    }
+
+    async deleteCart(userId: string): Promise&lt;{ message: string }&gt; {
+        const { cart } &#x3D; await this.getActiveCartByUserId(userId);
+        await this.prisma.cart.update({
+            where: { id: cart.id },
+            data: { isDeleted: true, deletedAt: new Date() },
+        });
+        return {
+            message: &#x27;Cart deleted successfully&#x27;,
+        };
+    }
+
+    async removeSupplierFromCart(userId: string, supplierId: string) {
+        const { cart } &#x3D; await this.getActiveCartByUserId(userId);
+
+        const cartBySupplier &#x3D; await this.prisma.cartBySupplier.findFirst({
+            where: { cartId: cart.id, supplierId },
+        });
+        if (!cartBySupplier)
+            throw new NotFoundException(&#x27;Supplier not found in this cart&#x27;);
+
+        await this.prisma.cartBySupplier.delete({
+            where: { id: cartBySupplier.id },
+        });
+
+        // If no suppliers left, delete cart
+        const remainingSuppliers &#x3D; await this.prisma.cartBySupplier.count({
+            where: { cartId: cart.id },
+        });
+        if (remainingSuppliers &#x3D;&#x3D;&#x3D; 0) {
+            await this.prisma.cart.update({
+                where: { id: cart.id },
+                data: { isDeleted: true, deletedAt: new Date() },
+            });
+            throw new NotFoundException(
+                &#x27;Cart is now empty and has been deleted&#x27;,
+            );
+        }
+
+        await this.recalculateCartTotals(cart.id);
+        const newCart &#x3D; await this.getCartWithRelations(cart.id);
+        return this.toCartResponseDto(newCart);
+    }
+
+    async checkoutCart(userId: string, dto: CheckoutCartDto) {
+        const { cart, buyer } &#x3D; await this.getActiveCartByUserId(userId);
+
+        if (cart.suppliers.length &#x3D;&#x3D;&#x3D; 0) {
+            throw new BadRequestException(&#x27;Cart is empty&#x27;);
+        }
+
+        // --- Check stock before proceeding ---
+        for (const supplierCart of cart.suppliers) {
+            for (const item of supplierCart.cartItems) {
+                if (item.product.stock &lt; item.quantity) {
+                    throw new BadRequestException(
+                        &#x60;Product &quot;${item.product.name}&quot; is out of stock. Remove it from the cart to proceed.&#x60;,
+                    );
+                }
+            }
+        }
+
+        if (!buyer.card) {
+            throw new BadRequestException(&#x27;No saved card found for this buyer&#x27;);
+        }
+        if (!buyer.user.tapCustomerId)
+            throw new BadRequestException(&#x27;Missing Tap customer ID&#x27;);
+
+        // --- Path 1: Confirm existing charge if chargeId is provided ---
+        if (dto.chargeId) {
+            const charge &#x3D; await this.tapPaymentsService.getCharge(
+                dto.chargeId,
+            );
+
+            await this.tapPaymentsService.validateCharge(charge);
+
+            if ([&#x27;CAPTURED&#x27;, &#x27;AUTHORIZED&#x27;].includes(charge.status)) {
+                // Create orders + reduce stock
+                const orders &#x3D; await Promise.all(
+                    cart.suppliers.map(async (supplierCart) &#x3D;&gt; {
+                        // Create the order with nested order items
+                        const order &#x3D; await this.prisma.order.create({
+                            data: {
+                                tapChargeId: charge.id,
+                                buyerId: buyer.id,
+                                cartId: cart.id,
+                                supplierId: supplierCart.supplierId,
+                                finalPrice: supplierCart.supplierTotalPrice,
+                                items: {
+                                    create: supplierCart.cartItems.map(
+                                        (cartItem) &#x3D;&gt; ({
+                                            productId: cartItem.product.id,
+                                            quantity: cartItem.quantity,
+                                            unitPrice: cartItem.product.price,
+                                            totalPrice:
+                                                cartItem.product.price *
+                                                cartItem.quantity,
+                                        }),
+                                    ),
+                                },
+                            },
+                            include: {
+                                items: {
+                                    include: {
+                                        product: {
+                                            include: { category: true },
+                                        },
+                                    },
+                                },
+                            },
+                        });
+
+                        // Reduce stock for each product in the supplier cart
+                        await Promise.all(
+                            supplierCart.cartItems.map((item) &#x3D;&gt;
+                                this.prisma.product.update({
+                                    where: { id: item.product.id },
+                                    data: {
+                                        stock:
+                                            item.product.stock - item.quantity,
+                                    },
+                                }),
+                            ),
+                        );
+
+                        // Send a notification for the supplier
+                        this.notificationService.createNotification({
+                            senderUserId: buyer.user.id,
+                            receiverUserId: supplierCart.supplier.userId,
+                            type: NotificationType.NEW_ORDER,
+                            title: &#x27;New Order!&#x27;,
+                            content: &#x60;You have received a new order from ${buyer.user.name}&#x60;,
+                            entityId: order.id,
+                            entityType: NotificationEntityType.ORDER,
+                        });
+
+                        return order;
+                    }),
+                );
+
+                await this.prisma.cart.update({
+                    where: { id: cart.id },
+                    data: { isBought: true },
+                });
+
+                return {
+                    message: &#x27;Paid successfully&#x27;,
+                    tapChargeId: charge.id,
+                    buyerId: buyer.id,
+                    cartId: cart.id,
+                    totalPaid: cart.cartTotal,
+                    orders,
+                };
+            }
+
+            throw new BadRequestException(
+                &#x60;Charge not successful yet. Status: ${charge.status}&#x60;,
+            );
+        }
+
+        // --- Path 2: Create new charge if no chargeId ---
+        const token &#x3D; await this.tapPaymentsService.createTokenFromSavedCard(
+            buyer.user.tapCustomerId,
+            buyer.card.tapCardId,
+        );
+
+        const charge &#x3D; await this.tapPaymentsService.payWithSavedCard(
+            buyer.user.tapCustomerId,
+            token.id,
+            buyer.card.tapCardId,
+            cart.cartTotal, // major units
+            dto.redirectUrl ||
+                &#x60;${process.env.FRONTEND_URL}/buyer/payment/callback?type&#x3D;cart&#x60;,
+        );
+
+        // --- Redirect for 3DS if necessary ---
+        if (charge.status &#x3D;&#x3D;&#x3D; &#x27;INITIATED&#x27; &amp;&amp; charge.transaction?.url) {
+            return {
+                message: &#x27;Redirect for authentication&#x27;,
+                redirectUrl: charge.transaction.url,
+                chargeId: charge.id,
+            };
+        }
+
+        // --- Complete checkout if charge captured/authorized ---
+        if ([&#x27;CAPTURED&#x27;, &#x27;AUTHORIZED&#x27;].includes(charge.status)) {
+            const orders &#x3D; await Promise.all(
+                cart.suppliers.map(async (supplierCart) &#x3D;&gt; {
+                    // Create the order with nested order items
+                    const order &#x3D; await this.prisma.order.create({
+                        data: {
+                            tapChargeId: charge.id,
+                            buyerId: buyer.id,
+                            cartId: cart.id,
+                            supplierId: supplierCart.supplierId,
+                            finalPrice: supplierCart.supplierTotalPrice,
+                            items: {
+                                create: supplierCart.cartItems.map(
+                                    (cartItem) &#x3D;&gt; ({
+                                        productId: cartItem.product.id,
+                                        quantity: cartItem.quantity,
+                                        unitPrice: cartItem.product.price,
+                                        totalPrice:
+                                            cartItem.product.price *
+                                            cartItem.quantity,
+                                    }),
+                                ),
+                            },
+                        },
+                        include: {
+                            items: {
+                                include: {
+                                    product: { include: { category: true } },
+                                },
+                            },
+                        },
+                    });
+
+                    // Reduce stock for all products in the supplier cart
+                    await Promise.all(
+                        supplierCart.cartItems.map(async (cartItem) &#x3D;&gt; {
+                            const product &#x3D; cartItem.product;
+                            await this.prisma.product.update({
+                                where: { id: product.id },
+                                data: {
+                                    stock: product.stock - cartItem.quantity,
+                                },
+                            });
+                        }),
+                    );
+
+                    // Send a notification for the supplier
+                    this.notificationService.createNotification({
+                        senderUserId: buyer.user.id,
+                        receiverUserId: supplierCart.supplier.userId,
+                        type: NotificationType.NEW_ORDER,
+                        title: &#x27;New Order!&#x27;,
+                        content: &#x60;You have received a new order from ${buyer.user.name}&#x60;,
+                        entityId: order.id,
+                        entityType: NotificationEntityType.ORDER,
+                    });
+
+                    return order;
+                }),
+            );
+
+            await this.prisma.cart.update({
+                where: { id: cart.id },
+                data: { isBought: true },
+            });
+
+            return {
+                message: &#x27;Paid successfully&#x27;,
+                tapChargeId: charge.id,
+                buyerId: buyer.id,
+                cartId: cart.id,
+                totalPaid: cart.cartTotal,
+                orders,
+            };
+        }
+
+        throw new BadRequestException(
+            &#x60;Payment failed. Charge status: ${charge.status}&#x60;,
+        );
+    }
+
+    /** --- UTILITY: Get active cart for a buyer --- */
+    private async getActiveCartByUserId(userId: string) {
+        const buyer &#x3D; await this.prisma.buyer.findUnique({
+            where: { userId },
+            include: { user: true, card: true },
+        });
+        if (!buyer) throw new NotFoundException(&#x27;Buyer not found&#x27;);
+
+        const cart &#x3D; await this.prisma.cart.findFirst({
+            where: { buyerId: buyer.id, isBought: false, isDeleted: false },
+            include: {
+                suppliers: {
+                    include: {
+                        cartItems: { include: { product: true } },
+                        supplier: true,
+                    },
+                },
+                buyer: { include: { user: true } },
+            },
+        });
+
+        if (!cart)
+            throw new NotFoundException(&#x27;No active cart found for this buyer&#x27;);
+
+        return { cart, buyer };
+    }
+
+    /** --- UTILITY: Recalculate totals --- */
+    private async recalculateCartTotals(cartId: string) {
+        // Fetch cartBySupplier along with the supplier row
+        const cartSuppliers &#x3D; await this.prisma.cartBySupplier.findMany({
+            where: { cartId },
+            include: { supplier: true },
+        });
+
+        const productsTotal &#x3D; cartSuppliers.reduce(
+            (sum, s) &#x3D;&gt; sum + s.subTotal,
+            0,
+        );
+        const deliveryFees &#x3D; cartSuppliers.reduce(
+            (sum, s) &#x3D;&gt; sum + (s.supplier?.deliveryFees ?? 0),
+            0,
+        );
+        const cartTotal &#x3D; productsTotal + deliveryFees;
+
+        await this.prisma.cart.update({
+            where: { id: cartId },
+            data: { productsTotal, deliveryFees, cartTotal },
+        });
+
+        // Also update each cartBySupplier total price correctly
+        await Promise.all(
+            cartSuppliers.map(async (s) &#x3D;&gt; {
+                await this.prisma.cartBySupplier.update({
+                    where: { id: s.id },
+                    data: {
+                        supplierTotalPrice:
+                            s.subTotal + (s.supplier?.deliveryFees ?? 0),
+                    },
+                });
+            }),
+        );
+    }
+
+    /** --- UTILITY: Fetch cart with relations --- */
+    private async getCartWithRelations(cartId: string) {
+        return this.prisma.cart.findFirst({
+            where: { id: cartId },
+            include: {
+                suppliers: {
+                    include: {
+                        cartItems: { include: { product: true } },
+                        supplier: true,
+                    },
+                },
+                buyer: { include: { user: true } },
+            },
+        });
+    }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'CartService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

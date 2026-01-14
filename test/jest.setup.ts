@@ -1,11 +1,12 @@
 import * as dotenv from 'dotenv';
 
-// Load merged env first (should contain correct test DB)
+// ✅ Load the merged env file which contains DATABASE_URL with :5433
 dotenv.config({ path: '.env.merged', override: true });
 
-// Optional: if you need to override anything specific for test
-process.env.DB_HOST = process.env.DB_HOST || 'localhost';
-process.env.DB_PORT = process.env.DB_PORT || '5432';
-process.env.DATABASE_URL =
-    process.env.DATABASE_URL ||
-    `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.POSTGRES_DB}?schema=public`;
+// ✅ Ensure DATABASE_URL exists, but DO NOT regenerate or override port
+if (!process.env.DATABASE_URL) {
+  throw new Error('❌ DATABASE_URL is not defined in .env.merged!');
+}
+
+console.log(`🧪 Using Test Database URL: ${process.env.DATABASE_URL}`);
+
